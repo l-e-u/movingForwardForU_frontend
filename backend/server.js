@@ -1,10 +1,15 @@
 import 'dotenv/config';
 import express, { json } from 'express';
-import models, { connectToDatabase } from './models/index.js';
+import { connectToDatabase } from './models/index.js';
 import jobRoutes from './routes/jobs.js';
+import cors from 'cors';
+
+const PORT = process.env.PORT;
 
 // express app
 const app = express();
+app.use(cors());
+
 
 // middleware
 app.use(json());
@@ -20,8 +25,8 @@ app.use('/api/jobs', jobRoutes);
 connectToDatabase(process.env.MONGO_URI)
     .then(() => {
         // listen for requests
-        app.listen(process.env.PORT, () => {
-            console.log('Server started on port 3000');
+        app.listen(PORT, () => {
+            console.log('Server started on port:', PORT);
         });
     })
     .catch((error) => {

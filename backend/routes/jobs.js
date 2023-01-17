@@ -1,34 +1,21 @@
 import { Router } from 'express';
+import { createJob, getJob, getJobs, deleteJob, updateJob } from '../controllers/jobController.js'
 
 const router = Router();
 
 // GET all jobs
-router.get('/', (req, res) => {
-    res.json({ msg: 'GET all jobs.' });
-});
+router.get('/', getJobs);
 
 // GET a single job
-router.get('/:id', (req, res) => {
-    res.json({ msg: 'GET job: ' + req.params.id });
-});
+router.get('/:id', getJob);
 
 // POST a new job
-router.post('/', (req, res) => {
-    res.json({
-        msg: 'POST a new job.',
-        jobType: req.body.type,
-        jobCarrier: req.body.carrier,
-    });
-});
+router.post('/', createJob);
 
 // DELETE a job
-router.delete('/:id', (req, res) => {
-    res.json({ msg: 'DELETE a job number :' + req.params.id });
-});
+router.delete('/:id', deleteJob);
 
 // UPDATE a job
-router.patch('/:id', (req, res) => {
-    res.json({ msg: 'UPDATE job: ' + req.params.id });
-});
+router.patch('/:id', updateJob);
 
 export default router;
