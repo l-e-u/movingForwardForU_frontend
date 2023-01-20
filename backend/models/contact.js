@@ -13,24 +13,16 @@ const validatePhone = function (string) {
 }
 
 const contactSchema = Schema({
+    organization: String,
     firstName: String,
-    middleName: String,
     lastName: String,
-    note: String,
-    address: String,
-    email: {
-        type: String,
-        trim: true,
-        lowercase: true,
-        unique: true,
-        required: 'Email address is required',
-        validate: [validateEmail, 'Please fill a valid email address.'],
-    },
-    phone: {
-        type: String,
-        trim: true,
-        validate: [validatePhone, 'Please fill a valid phone number.']
-    }
+    street1: String,
+    street2: String,
+    city: String,
+    state: String,
+    zipcode: Number,
+    email: String,
+    phone: Number
 });
 
 export default contactSchema;

@@ -3,16 +3,11 @@ import { Schema, model as Model } from 'mongoose';
 const jobSchema = new Schema(
     {
         status: String,
-        pickUp: String,
-        dropOff: String,
-        contacts: {
-            type: Array,
-            default: [],
-        },
-        carriers: {
-            type: Array,
-            default: [],
-        }
+        from: String,
+        to: String,
+        customer: String,
+        note: String,
+        parcel: String
     },
     { timestamps: true }
 );

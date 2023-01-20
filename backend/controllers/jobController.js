@@ -40,8 +40,8 @@ const createJob = async (req, res) => {
     }
     catch (error) {
         res.status(400).json({ error: error.message });
-    }
-}
+    };
+};
 
 // delete a workout
 const deleteJob = async (req, res) => {

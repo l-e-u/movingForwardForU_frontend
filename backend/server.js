@@ -1,10 +1,15 @@
 import 'dotenv/config';
 import express, { json } from 'express';
 import { connectToDatabase } from './models/index.js';
-import jobRoutes from './routes/jobs.js';
 import cors from 'cors';
 
+// routes
+import jobRoutes from './routes/jobs.js';
+import statusRoutes from './routes/status.js'
+import userRoutes from './routes/users.js'
+
 const PORT = process.env.PORT;
+const URI = process.env.MONGO_URI;
 
 // express app
 const app = express();
@@ -20,9 +25,11 @@ app.use((req, res, next) => {
 
 // routes
 app.use('/api/jobs', jobRoutes);
+app.use('/api/status', statusRoutes);
+app.use('/api/users', userRoutes);
 
 // connect to db
-connectToDatabase(process.env.MONGO_URI)
+connectToDatabase(URI)
     .then(() => {
         // listen for requests
         app.listen(PORT, () => {
