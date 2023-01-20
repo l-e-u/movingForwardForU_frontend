@@ -35,20 +35,25 @@ const StatusForm = () => {
         <form className="create" onSubmit={handleSubmit}>
             <h3>Add a New Status</h3>
 
+            {/* input for status name */}
             <label htmlFor="name">Name:</label>
             <input
                 type="text"
                 name="name"
                 id="name"
                 onChange={(e) => setName(e.target.value)}
-                value={name} />
+                value={name}
+            />
+
+            {/* input for status description */}
             <label htmlFor="description">Description:</label>
             <input
                 type="text"
                 name="description"
                 id="description"
                 onChange={(e) => setDescription(e.target.value)}
-                value={description} />
+                value={description}
+            />
 
             <button>Add Status</button>
             {error && <div className="error">{error}</div>}

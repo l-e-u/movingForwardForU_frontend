@@ -27,14 +27,14 @@ const getJob = async (req, res) => {
 
 // create new job
 const createJob = async (req, res) => {
-    const { status, pickUp, dropOff, contacts, carriers } = req.body;
+    const { status, from, to } = req.body;
 
     // add doc to db
     try {
         const job = await Job.create({
             status,
-            pickUp,
-            dropOff,
+            from,
+            to,
         });
         res.status(200).json(job);
     }

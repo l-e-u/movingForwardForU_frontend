@@ -3,7 +3,8 @@ import { useJobsContext } from "../hooks/useJobsContext.js";
 
 // components
 import JobDetails from '../components/JobDetails.js';
-import StatusForm from "../components/StatusForm.js";
+import JobForm from '../components/JobForm.js'
+// import StatusForm from "../components/StatusForm.js";
 
 const Home = () => {
     const { jobs, dispatch } = useJobsContext();
@@ -19,6 +20,7 @@ const Home = () => {
         };
 
         fetchJobs();
+        // eslint-disable-next-line
     }, []);
 
     return (
@@ -28,7 +30,7 @@ const Home = () => {
                     return <JobDetails key={job._id} job={job} />
                 })}
             </div>
-            <StatusForm />
+            <JobForm />
         </div>
     )
 };

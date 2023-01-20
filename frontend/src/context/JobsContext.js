@@ -7,10 +7,12 @@ export const jobsReducer = (state, action) => {
         case 'SET_JOBS':
             return { jobs: action.payload };
 
-        case 'CREATE_JOBS':
-            return { jobs: [action.playload, ...state.jobs] };
+        // takes the new job and merges it with the rest of the jobs array
+        case 'CREATE_JOB':
+            return { jobs: [action.payload, ...state.jobs] };
 
-        default: state;
+        default:
+            return state;
     };
 };
 
