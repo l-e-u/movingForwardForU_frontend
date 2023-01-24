@@ -1,21 +1,51 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useJobsContext } from "../hooks/useJobsContext.js";
+import { useStatusesContext } from "../hooks/useStatusesContext.js";
 
 const JobForm = () => {
-    const { dispatch } = useJobsContext();
-    const [status, setStatus] = useState('');
+    const JobsContext = useJobsContext();
+    const jobsDispatch = JobsContext.dispatch;
+
+    const StatusesContext = useStatusesContext();
+    const statuses = StatusesContext.statuses;
+    const statusesDispatch = StatusesContext.dispatch;
+
+    const [statusName, setStatusName] = useState('');
     const [from, setFrom] = useState('');
     const [to, setTo] = useState('');
     const [error, setError] = useState(null);
     const [emptyFields, setEmptyFields] = useState([]);
 
+    // fetch all statuses
+    useEffect(() => {
+        const fetchStatuses = async () => {
+            const response = await fetch('http://localhost:4000/api/status');
+            const json = await response.json();
+
+            // by default the first status is set
+            if (response.ok) {
+                setStatusName(json[0].name);
+                statusesDispatch({ type: 'SET_STATUSES', payload: json });
+            };
+        };
+
+        fetchStatuses();
+    }, [statusesDispatch]);
+
+    // POST a new job
     const handleSubmit = async (e) => {
         e.preventDefault();
 
+
+        // DEV.. TEMP FROM AND TO VALUES
         const job = {
-            status,
-            from,
-            to
+            statusName,
+            from: {
+                street1: from
+            },
+            to: {
+                street1: to
+            }
         };
 
         const response = await fetch('http://localhost:4000/api/jobs', {
@@ -25,6 +55,8 @@ const JobForm = () => {
         });
         const json = await response.json();
 
+        console.log(json);
+
         if (!response.ok) {
             setError(json.error);
             setEmptyFields(json.emptyFields);
@@ -32,13 +64,13 @@ const JobForm = () => {
 
         if (response.ok) {
             // reset the form
-            [setStatus, setFrom, setTo].forEach((stateSetter) => stateSetter(''));
+            [setFrom, setTo].forEach((stateSetter) => stateSetter(''));
 
             // reset errors
             setError(null);
             setEmptyFields([]);
 
-            dispatch({ type: 'CREATE_JOB', payload: json });
+            jobsDispatch({ type: 'CREATE_JOB', payload: json });
         };
     }
 
@@ -48,14 +80,18 @@ const JobForm = () => {
 
             {/* selection for job status */}
             <label htmlFor="status">Status:</label>
-            <input
+            <select
                 className={emptyFields.includes('Status') ? 'error' : ''}
-                type="text"
                 name="status"
                 id="status"
-                onChange={(e) => setStatus(e.target.value)}
-                value={status}
-            />
+                onChange={(e) => setStatusName(e.target.value)}
+            >
+                {statuses && statuses.map((status) => {
+                    return (
+                        <option key={status._id}>{status.name}</option>
+                    )
+                })}
+            </select>
 
             {/* input for job pick up from address */}
             <label htmlFor="from">From:</label>

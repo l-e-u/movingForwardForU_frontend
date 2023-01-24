@@ -1,9 +1,10 @@
 import mongoose from 'mongoose';
-import Job from '../models/job.js'
+import Job from '../models/job.js';
+import Status from '../models/status.js';
 
 // get all jobs
 const getJobs = async (req, res) => {
-    const jobs = await Job.find({});
+    const jobs = await Job.find({}).populate('status');
 
     return res.status(200).json(jobs);
 }
@@ -16,7 +17,7 @@ const getJob = async (req, res) => {
         return res.status(404).json({ error: 'No such job.' });
     };
 
-    const job = await Job.findById(id);
+    const job = await Job.findById(id).populate('status');
 
     if (!job) {
         return res.status(404).json({ error: 'No such job.' });
@@ -27,11 +28,11 @@ const getJob = async (req, res) => {
 
 // create new job
 const createJob = async (req, res) => {
-    const { status, from, to } = req.body;
+    const { statusName, from, to } = req.body;
 
     let emptyFields = [];
 
-    if (!status) emptyFields.push('Status');
+    if (!statusName) emptyFields.push('Status');
     if (!from) emptyFields.push('From');
     if (!to) emptyFields.push('To');
 
@@ -41,11 +42,17 @@ const createJob = async (req, res) => {
 
     // add doc to db
     try {
-        const job = await Job.create({
-            status,
+        const status_id = await Status.findOne({ name: statusName }, '_id');
+
+        let job = await Job.create({
             from,
             to,
+            status: status_id,
         });
+
+        // populate status field to return name, description, and _id
+        job = await job.populate('status');
+
         res.status(200).json(job);
     }
     catch (error) {

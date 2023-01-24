@@ -22,6 +22,8 @@ const Home = () => {
         fetchJobs();
     }, [dispatch]);
 
+    console.log(jobs);
+
     return (
         <div className='home'>
             <div className='jobs'>
