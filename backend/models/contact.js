@@ -1,16 +1,4 @@
-import { Schema } from 'mongoose';
-
-const validateEmail = function (email) {
-    var re = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
-    return re.test(email)
-};
-
-const validatePhone = function (string) {
-    let isPhoneNumber = /\d{9}/;
-    let phoneNum = string.replace(/\D/g, '');
-
-    return isPhoneNumber.test(phoneNum);
-}
+import { Schema, model as Model } from 'mongoose';
 
 const contactSchema = Schema({
     organization: String,
@@ -21,8 +9,10 @@ const contactSchema = Schema({
     city: String,
     state: String,
     zipcode: Number,
+    phone: Number,
     email: String,
-    phone: Number
 });
 
-export default contactSchema;
+const Contact = Model('Contact', contactSchema);
+
+export default Contact;

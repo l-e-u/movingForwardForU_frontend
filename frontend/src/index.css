@@ -43,9 +43,13 @@ header a {
 
 /* homepage */
 .home {
-  display: grid;
-  grid-template-columns: 3fr 1fr;
-  gap: 100px;
+  display: flex;
+  flex-wrap: wrap-reverse;
+  gap: 20px;
+}
+
+.jobs {
+  flex: 1 0 350px;
 }
 
 .job-details {
@@ -106,6 +110,10 @@ form button {
   cursor: pointer;
 }
 
+form.create {
+  flex: 1 1 250px;
+}
+
 div.error {
   padding: 10px;
   background: #ffefef;
@@ -113,4 +121,8 @@ div.error {
   color: var(--error);
   border-radius: 4px;
   margin: 20px 0;
+}
+
+input.error {
+  border: 1px solid var(--error);
 }

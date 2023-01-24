@@ -29,6 +29,16 @@ const getJob = async (req, res) => {
 const createJob = async (req, res) => {
     const { status, from, to } = req.body;
 
+    let emptyFields = [];
+
+    if (!status) emptyFields.push('Status');
+    if (!from) emptyFields.push('From');
+    if (!to) emptyFields.push('To');
+
+    if (emptyFields.length > 0) {
+        return res.status(400).json({ error: 'Please fill in all the fields', emptyFields });
+    };
+
     // add doc to db
     try {
         const job = await Job.create({

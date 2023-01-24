@@ -20,8 +20,7 @@ const Home = () => {
         };
 
         fetchJobs();
-        // eslint-disable-next-line
-    }, []);
+    }, [dispatch]);
 
     return (
         <div className='home'>

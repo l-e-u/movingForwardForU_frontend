@@ -7,6 +7,7 @@ const JobForm = () => {
     const [from, setFrom] = useState('');
     const [to, setTo] = useState('');
     const [error, setError] = useState(null);
+    const [emptyFields, setEmptyFields] = useState([]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -26,13 +27,17 @@ const JobForm = () => {
 
         if (!response.ok) {
             setError(json.error);
+            setEmptyFields(json.emptyFields);
         };
+
         if (response.ok) {
             // reset the form
             [setStatus, setFrom, setTo].forEach((stateSetter) => stateSetter(''));
 
+            // reset errors
             setError(null);
-            console.log('new job added:', json);
+            setEmptyFields([]);
+
             dispatch({ type: 'CREATE_JOB', payload: json });
         };
     }
@@ -44,6 +49,7 @@ const JobForm = () => {
             {/* selection for job status */}
             <label htmlFor="status">Status:</label>
             <input
+                className={emptyFields.includes('Status') ? 'error' : ''}
                 type="text"
                 name="status"
                 id="status"
@@ -54,6 +60,7 @@ const JobForm = () => {
             {/* input for job pick up from address */}
             <label htmlFor="from">From:</label>
             <input
+                className={emptyFields.includes('From') ? 'error' : ''}
                 type="text"
                 name="from"
                 id="from"
@@ -64,6 +71,7 @@ const JobForm = () => {
             {/* input for job delivery to address */}
             <label htmlFor="to">To:</label>
             <input
+                className={emptyFields.includes('To') ? 'error' : ''}
                 type="text"
                 name="to"
                 id="to"
