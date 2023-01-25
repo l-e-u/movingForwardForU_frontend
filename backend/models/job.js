@@ -32,7 +32,7 @@ const fromToSchema = new Schema({
 
 const jobSchema = new Schema(
     {
-        status: {
+        status_id: {
             type: Schema.Types.ObjectId,
             ref: 'Status'
         },
@@ -41,7 +41,7 @@ const jobSchema = new Schema(
             ref: 'User'
         }],
 
-        customer: {
+        customer_id: {
             type: Schema.Types.ObjectId,
             ref: 'Contact'
         },
@@ -49,6 +49,15 @@ const jobSchema = new Schema(
         log: [logSchema],
         from: fromToSchema,
         to: fromToSchema,
+    },
+    {
+        // when sending job doc to the client, change status_id object to status
+        toJSON: {
+            transform: function (doc, json) {
+                json.status = json.status_id;
+                delete json.status_id;
+            }
+        }
     },
     { timestamps: true }
 );

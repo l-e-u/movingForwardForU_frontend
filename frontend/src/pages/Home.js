@@ -14,6 +14,8 @@ const Home = () => {
             const response = await fetch('http://localhost:4000/api/jobs');
             const json = await response.json();
 
+            console.log('from server:', json);
+
             if (response.ok) {
                 dispatch({ type: 'SET_JOBS', payload: json });
             };
@@ -22,7 +24,6 @@ const Home = () => {
         fetchJobs();
     }, [dispatch]);
 
-    console.log(jobs);
 
     return (
         <div className='home'>
