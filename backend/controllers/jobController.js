@@ -1,6 +1,5 @@
 import mongoose from 'mongoose';
 import Job from '../models/job.js';
-import Status from '../models/status.js';
 
 // get all jobs
 const getJobs = async (req, res) => {

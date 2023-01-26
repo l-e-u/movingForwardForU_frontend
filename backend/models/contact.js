@@ -8,9 +8,10 @@ const contactSchema = Schema({
     street2: String,
     city: String,
     state: String,
-    zipcode: Number,
+    zipcode: String,
     phone: Number,
     email: String,
+    note: String,
 });
 
 const Contact = Model('Contact', contactSchema);
