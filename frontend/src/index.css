@@ -86,7 +86,8 @@ header a {
 
 /* status form */
 label,
-input {
+input,
+textarea {
   display: block;
 }
 
@@ -97,7 +98,8 @@ form select {
   text-transform: capitalize;
 }
 
-input {
+input,
+textarea {
   padding: 10px;
   margin-top: 10px;
   margin-bottom: 20px;
@@ -139,6 +141,8 @@ div.error {
   margin: 20px 0;
 }
 
-input.error {
+input.error,
+textarea.error,
+select.error {
   border: 1px solid var(--error);
 }

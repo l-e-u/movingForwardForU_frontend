@@ -4,6 +4,7 @@ import { useJobsContext } from "../hooks/useJobsContext.js";
 // components
 import JobDetails from '../components/JobDetails.js';
 import JobForm from '../components/JobForm.js'
+import ContactForm from "../components/ContactForm.js";
 // import StatusForm from "../components/StatusForm.js";
 
 const Home = () => {
@@ -32,7 +33,8 @@ const Home = () => {
                     return <JobDetails key={job._id} job={job} />
                 })}
             </div>
-            <JobForm />
+            {/* <JobForm /> */}
+            <ContactForm />
         </div>
     )
 };
