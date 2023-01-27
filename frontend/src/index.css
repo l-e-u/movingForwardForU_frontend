@@ -67,6 +67,11 @@ header a {
   color: var(--primary);
 }
 
+.job-details h5 {
+  margin: .5rem 0;
+  font-weight: 500;
+}
+
 .job-details p {
   margin: 0;
   font-size: 0.9em;

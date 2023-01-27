@@ -140,7 +140,7 @@ const ContactForm = () => {
                 value={organization}
             />
 
-            <h4>Name:</h4>
+            <h5>Name:</h5>
             <label htmlFor="firstName">First:</label>
             <input
                 type="text"
@@ -159,7 +159,7 @@ const ContactForm = () => {
                 value={lastName}
             />
 
-            <h4>Address:</h4>
+            <h5>Address:</h5>
             <label htmlFor="street1">Street 1:</label>
             <input
                 type="text"

@@ -1,7 +1,9 @@
 import { useState } from "react";
+import { useStatusesContext } from "../hooks/useStatusesContext.js";
 
 // Form to create a status for a job and description of what the status means.
 const StatusForm = () => {
+    const { dispatch } = useStatusesContext();
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
     const [error, setError] = useState(null);
@@ -22,6 +24,8 @@ const StatusForm = () => {
             setError(json.error);
         };
         if (response.ok) {
+            dispatch({ type: 'CREATE_STATUS', payload: json });
+
             // reset the form
             setName('');
             setDescription('');

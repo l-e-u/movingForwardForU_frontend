@@ -5,7 +5,7 @@ import { useJobsContext } from "../hooks/useJobsContext.js";
 import JobDetails from '../components/JobDetails.js';
 import JobForm from '../components/JobForm.js'
 import ContactForm from "../components/ContactForm.js";
-// import StatusForm from "../components/StatusForm.js";
+import StatusForm from "../components/StatusForm.js";
 
 const Home = () => {
     const { jobs, dispatch } = useJobsContext();
@@ -14,8 +14,6 @@ const Home = () => {
         const fetchJobs = async () => {
             const response = await fetch('http://localhost:4000/api/jobs');
             const json = await response.json();
-
-            console.log('from server:', json);
 
             if (response.ok) {
                 dispatch({ type: 'SET_JOBS', payload: json });
@@ -33,8 +31,9 @@ const Home = () => {
                     return <JobDetails key={job._id} job={job} />
                 })}
             </div>
-            {/* <JobForm /> */}
-            <ContactForm />
+            <JobForm />
+            {/* <ContactForm /> */}
+            <StatusForm />
         </div>
     )
 };

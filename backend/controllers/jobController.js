@@ -3,7 +3,7 @@ import Job from '../models/job.js';
 
 // get all jobs
 const getJobs = async (req, res) => {
-    const jobs = await Job.find({}).populate('status_id');
+    const jobs = await Job.find({}).populate(['status_id', 'customer_id']);
 
     return res.status(200).json(jobs);
 }
@@ -27,15 +27,16 @@ const getJob = async (req, res) => {
 
 // create new job
 const createJob = async (req, res) => {
-    const { status_id, from, to } = req.body;
+    const { status_id, customer_id, from, to } = req.body;
 
     let emptyFields = [];
 
     // DEV NOTE: ADD VALIDATION FOR STATUS_ID AND SEND OUT ERROR IF INVALID
 
+    if (!customer_id) emptyFields.push('Customer');
     if (!status_id) emptyFields.push('Status');
-    if (!from) emptyFields.push('From');
-    if (!to) emptyFields.push('To');
+    if (!from.street1) emptyFields.push('From');
+    if (!to.street1) emptyFields.push('To');
 
     if (emptyFields.length > 0) {
         return res.status(400).json({ error: 'Please fill in all the fields', emptyFields });
@@ -46,11 +47,12 @@ const createJob = async (req, res) => {
         let job = await Job.create({
             from,
             to,
-            status_id: selectedStatus._id,
+            status_id,
+            customer_id
         });
 
         // populate status field to return name, description, and _id
-        job = await job.populate('status_id');
+        job = await job.populate(['status_id', 'customer_id']);
 
         res.status(200).json(job);
     }

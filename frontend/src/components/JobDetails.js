@@ -21,6 +21,7 @@ const JobDetails = ({ job }) => {
     return (
         <div className='job-details'>
             <h4>{job.status.name}</h4>
+            <h5>{job.customer.organization}</h5>
             <p><strong>From: </strong> {job.from.street1}</p>
             <p><strong>To: </strong> {job.to.street1}</p>
             <p>{formatDistanceToNow(new Date(job.createdAt), { addSuffix: true })}</p>

@@ -43,9 +43,6 @@ const createContact = async (req, res) => {
     let emptyFields = [];
 
     // DEV NOTE: ADD VALIDATION FOR STATUS_ID AND SEND OUT ERROR IF INVALID
-
-    console.log(zipcode);
-
     if (!organization) emptyFields.push('Organization');
     if (!street1) emptyFields.push('Street1');
     if (!city) emptyFields.push('City');

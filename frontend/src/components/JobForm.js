@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useJobsContext } from "../hooks/useJobsContext.js";
 import { useStatusesContext } from "../hooks/useStatusesContext.js";
+import { useContactsContext } from "../hooks/useContactsContext.js";
 
 import DateInput from './DateInput.js';
 import TimeInput from "./TimeInput.js";
@@ -9,13 +10,18 @@ const JobForm = () => {
     const JobsContext = useJobsContext();
     const jobsDispatch = JobsContext.dispatch;
 
+    const ContactsContext = useContactsContext();
+    const contacts = ContactsContext.contacts;
+    const contactsDispatch = ContactsContext.dispatch;
+
     const StatusesContext = useStatusesContext();
     const statuses = StatusesContext.statuses;
     const statusesDispatch = StatusesContext.dispatch;
 
 
     // state for user input
-    const [statusName, setStatusName] = useState('');
+    const [selectedStatusName, setSelectedStatusName] = useState('');
+    const [selectedContactOrg, setSelectedContactOrg] = useState('');
     const [from, setFrom] = useState('');
     const [to, setTo] = useState('');
     const [hours, setHours] = useState(new Date().getHours());
@@ -32,26 +38,35 @@ const JobForm = () => {
     useEffect(() => {
         const fetchStatuses = async () => {
             const response = await fetch('http://localhost:4000/api/status');
-            const json = await response.json();
 
-            // by default the first status is set
-            if (response.ok) {
-                setStatusName(json[0].name);
-                statusesDispatch({ type: 'SET_STATUSES', payload: json });
-            };
+            if (response.ok) return await response.json();
         };
 
-        fetchStatuses();
-    }, [statusesDispatch]);
+        const fetchContacts = async () => {
+            const response = await fetch('http://localhost:4000/api/contacts');
+
+            if (response.ok) return await response.json();
+        };
+
+        // ensure the server returned all our requests with valid data
+        Promise.all([fetchStatuses(), fetchContacts()])
+            .then(([fetchedStatuses, fetchedContacts]) => {
+                statusesDispatch({ type: 'SET_STATUSES', payload: fetchedStatuses });
+                contactsDispatch({ type: 'SET_CONTACTS', payload: fetchedContacts });
+            })
+            .catch((reject) => console.log(reject));
+    }, [statusesDispatch, contactsDispatch]);
 
     // POST a new job
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const selectedStatus = statuses.find(s => s.name === statusName);
+        const selectedStatus = statuses.find(s => s.name === selectedStatusName);
+        const selectedContact = contacts.find(c => c.organization === selectedContactOrg);
 
         // DEV.. TEMP FROM AND TO VALUES
         const job = {
             status_id: selectedStatus._id,
+            customer_id: selectedContact._id,
             from: {
                 street1: from
             },
@@ -66,8 +81,6 @@ const JobForm = () => {
             headers: { 'Content-Type': 'application/json' }
         });
         const json = await response.json();
-
-        console.log(json);
 
         if (!response.ok) {
             setError(json.error);
@@ -86,24 +99,49 @@ const JobForm = () => {
         };
     }
 
+
+    console.log(statuses);
     return (
         <form className="create" onSubmit={handleSubmit}>
             <h3>Add a New Job</h3>
 
             {/* selection for job status */}
-            <label className="inline" htmlFor="status">Status:</label>
-            <select
-                className={emptyFields.includes('Status') ? 'error' : ''}
-                name="status"
-                id="status"
-                onChange={(e) => setStatusName(e.target.value)}
-            >
-                {statuses && statuses.map((status) => {
-                    return (
-                        <option key={status._id}>{status.name}</option>
-                    )
-                })}
-            </select>
+            <div>
+                <label className="inline" htmlFor="status">Status:</label>
+                <select
+                    className={emptyFields.includes('Status') ? 'error' : ''}
+                    name="status"
+                    id="status"
+                    onChange={(e) => setSelectedStatusName(e.target.value)}
+                >
+                    {/* user has to make a selection, once an option has been chosen, the first 'Select...' is disabled */}
+                    <option disabled={!!selectedStatusName}>Select...</option>
+                    {statuses && statuses.map((status) => {
+                        return (
+                            <option key={status._id}>{status.name}</option>
+                        )
+                    })}
+                </select>
+            </div>
+
+            {/* selection for contact/customer */}
+            <div>
+                <label className="inline" htmlFor="contact">Contact:</label>
+                <select
+                    className={emptyFields.includes('Contact') ? 'error' : ''}
+                    name="contact"
+                    id="contact"
+                    onChange={(e) => setSelectedContactOrg(e.target.value)}
+                >
+                    {/* user has to make a selection, once an option has been chosen, the first 'Select...' is disabled */}
+                    <option disabled={!!selectedContactOrg}>Select...</option>
+                    {contacts && contacts.map((contact) => {
+                        return (
+                            <option key={contact._id}>{contact.organization}</option>
+                        )
+                    })}
+                </select>
+            </div>
 
             <DateInput
                 month={month}

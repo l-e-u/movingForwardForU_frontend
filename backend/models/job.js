@@ -51,15 +51,19 @@ const jobSchema = new Schema(
         to: fromToSchema,
     },
     {
-        // when sending job doc to the client, change status_id object to status
+        timestamps: true,
+
+        // when sending json to client rename properties of id references
         toJSON: {
             transform: function (doc, json) {
                 json.status = json.status_id;
+                json.customer = json.customer_id;
+
                 delete json.status_id;
+                delete json.customer_id;
             }
         }
-    },
-    { timestamps: true }
+    }
 );
 
 const Job = Model('Job', jobSchema);

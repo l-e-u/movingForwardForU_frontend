@@ -8,7 +8,7 @@ export const statusesReducer = (state, action) => {
             return { statuses: action.payload };
 
         case 'CREATE_STATUS':
-            return { statuses: [action.playload, ...state.statuses] };
+            return { statuses: [action.payload, ...state.statuses] };
 
         default:
             return state;
