@@ -89,11 +89,20 @@ header a {
   color: #333;
 }
 
-/* status form */
+/* forms */
 label,
 input,
 textarea {
   display: block;
+}
+
+form legend {
+  text-transform: capitalize;
+  padding: 0 .5rem;
+}
+
+form fieldset label {
+  font-size: small;
 }
 
 form select {
@@ -104,7 +113,8 @@ form select {
 }
 
 input,
-textarea {
+textarea,
+fieldset {
   padding: 10px;
   margin-top: 10px;
   margin-bottom: 20px;

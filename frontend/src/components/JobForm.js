@@ -5,6 +5,7 @@ import { useContactsContext } from "../hooks/useContactsContext.js";
 
 import DateInput from './DateInput.js';
 import TimeInput from "./TimeInput.js";
+import AddressInput from "./AddressInput.js";
 
 const JobForm = () => {
     const JobsContext = useJobsContext();
@@ -22,8 +23,26 @@ const JobForm = () => {
     // state for user input
     const [selectedStatusName, setSelectedStatusName] = useState('');
     const [selectedContactOrg, setSelectedContactOrg] = useState('');
+    const [fromAddressIsChecked, setFromAddressIsChecked] = useState(false);
+
+    // from address info
     const [from, setFrom] = useState('');
+    const [fromStreet1, setFromStreet1] = useState('');
+    const [fromStreet2, setFromStreet2] = useState('');
+    const [fromCity, setFromCity] = useState('');
+    const [fromState, setFromState] = useState('');
+    const [fromZipcode, setFromZipCode] = useState('');
+    const [fromAttn, setFromAttn] = useState('');
+
+    // to address info
     const [to, setTo] = useState('');
+    const [toStreet1, setToStreet1] = useState('');
+    const [toStreet2, setToStreet2] = useState('');
+    const [toCity, setToCity] = useState('');
+    const [toState, setToState] = useState('');
+    const [toZipcode, setToZipCode] = useState('');
+    const [toAttn, setToAttn] = useState('');
+
     const [hours, setHours] = useState(new Date().getHours());
     const [minutes, setMinutes] = useState(new Date().getMinutes());
     const [month, setMonth] = useState(new Date().getMonth());
@@ -99,8 +118,6 @@ const JobForm = () => {
         };
     }
 
-
-    console.log(statuses);
     return (
         <form className="create" onSubmit={handleSubmit}>
             <h3>Add a New Job</h3>
@@ -160,25 +177,37 @@ const JobForm = () => {
             />
 
             {/* input for job pick up from address */}
-            <label htmlFor="from">From:</label>
-            <input
-                className={emptyFields.includes('From') ? 'error' : ''}
-                type="text"
-                name="from"
+            <label>From:</label>
+            <AddressInput
                 id="from"
-                onChange={(e) => { setFrom(e.target.value) }}
-                value={from}
+                street1={fromStreet1}
+                street2={fromStreet2}
+                city={fromCity}
+                state={fromState}
+                zipcode={fromZipcode}
+                setStreet1={setFromStreet1}
+                setStreet2={setFromStreet2}
+                setCity={setFromCity}
+                setState={setFromState}
+                setZipcode={setFromZipCode}
+                emptyFields={emptyFields}
             />
 
             {/* input for job delivery to address */}
-            <label htmlFor="to">To:</label>
-            <input
-                className={emptyFields.includes('To') ? 'error' : ''}
-                type="text"
-                name="to"
+            <label>To:</label>
+            <AddressInput
                 id="to"
-                onChange={(e) => { setTo(e.target.value) }}
-                value={to}
+                street1={toStreet1}
+                street2={toStreet2}
+                city={toCity}
+                state={toState}
+                zipcode={toZipcode}
+                setStreet1={setToStreet1}
+                setStreet2={setToStreet2}
+                setCity={setToCity}
+                setState={setToState}
+                setZipcode={setToZipCode}
+                emptyFields={emptyFields}
             />
 
             <button>Add Job</button>

@@ -13,7 +13,7 @@ const logSchema = new Schema(
 );
 
 const parcelSchema = new Schema({
-    customerReference: String,
+    reference: String,
     weight: String,
     length: String,
     width: String,
