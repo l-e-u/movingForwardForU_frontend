@@ -96,13 +96,30 @@ textarea {
   display: block;
 }
 
-form legend {
-  text-transform: capitalize;
-  padding: 0 .5rem;
+form .tabs {
+  margin-left: 2rem;
+  cursor: pointer;
 }
 
-form fieldset label {
-  font-size: small;
+form .tabs span {
+  padding: .5rem 2rem 0 2rem;
+}
+
+form .tabs+.tabContent {
+  margin-top: 0;
+  position: relative;
+}
+
+form .tabs .selected {
+  border: 1px solid #ddd;
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px;
+  border-bottom: 0;
+  position: relative;
+  top: 1px;
+  z-index: 1;
+  /* background color under development : find a way to inherit from body */
+  background: #f1f1f1;
 }
 
 form select {
@@ -114,7 +131,7 @@ form select {
 
 input,
 textarea,
-fieldset {
+.tabContent {
   padding: 10px;
   margin-top: 10px;
   margin-bottom: 20px;
@@ -132,10 +149,12 @@ form button {
   background: var(--primary);
   border: 0;
   color: #fff;
+  display: flex;
   padding: 10px;
   font-family: "Poppins";
   border-radius: 4px;
   cursor: pointer;
+  margin-left: auto;
 }
 
 form .inline {

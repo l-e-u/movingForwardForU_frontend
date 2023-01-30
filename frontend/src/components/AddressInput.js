@@ -4,6 +4,7 @@ const AddressInput = (
         street1,
         street2,
         city,
+        state,
         zipcode,
         setStreet1,
         setStreet2,
@@ -12,64 +13,119 @@ const AddressInput = (
         setZipcode,
         emptyFields
     }) => {
-    const states = new Map([
-        ["AL", "Alabama"],
-        ["AK", "Alaska"],
-        ["AZ", "Arizona"],
-        ["AR", "Arkansas"],
-        ["CA", "California"],
-        ["CO", "Colorado"],
-        ["CT", "Connecticut"],
-        ["DE", "Delaware"],
-        ["DC", "District Of Columbia"],
-        ["FL", "Florida"],
-        ["GA", "Georgia"],
-        ["HI", "Hawaii"],
-        ["ID", "Idaho"],
-        ["IL", "Illinois"],
-        ["IN", "Indiana"],
-        ["IA", "Iowa"],
-        ["KS", "Kansas"],
-        ["KY", "Kentucky"],
-        ["LA", "Louisiana"],
-        ["ME", "Maine"],
-        ["MD", "Maryland"],
-        ["MA", "Massachusetts"],
-        ["MI", "Michigan"],
-        ["MN", "Minnesota"],
-        ["MS", "Mississippi"],
-        ["MO", "Missouri"],
-        ["MT", "Montana"],
-        ["NE", "Nebraska"],
-        ["NV", "Nevada"],
-        ["NH", "New Hampshire"],
-        ["NJ", "New Jersey"],
-        ["NM", "New Mexico"],
-        ["NY", "New York"],
-        ["NC", "North Carolina"],
-        ["ND", "North Dakota"],
-        ["OH", "Ohio"],
-        ["OK", "Oklahoma"],
-        ["OR", "Oregon"],
-        ["PA", "Pennsylvania"],
-        ["RI", "Rhode Island"],
-        ["SC", "South Carolina"],
-        ["SD", "South Dakota"],
-        ["TN", "Tennessee"],
-        ["TX", "Texas"],
-        ["UT", "Utah"],
-        ["VT", "Vermont"],
-        ["VA", "Virginia"],
-        ["WA", "Washington"],
-        ["WV", "West Virginia"],
-        ["WI", "Wisconsin"],
-        ["WY", "Wyoming"]
+
+    // uses user input to look up state abbreviation to store
+    const statesKeyIsFullNameMap = new Map([
+        ['alabama', 'al'],
+        ['alaska', 'ak'],
+        ['arizona', 'az'],
+        ['arkansas', 'ar'],
+        ['california', 'ca'],
+        ['colorado', 'co'],
+        ['connecticut', 'ct'],
+        ['delaware', 'de'],
+        ['florida', 'fl'],
+        ['georgia', 'ga'],
+        ['hawaii', 'hi'],
+        ['idaho', 'id'],
+        ['illinois', 'il'],
+        ['indiana', 'in'],
+        ['iowa', 'ia'],
+        ['kansas', 'ks'],
+        ['kentucky', 'ky'],
+        ['louisiana', 'la'],
+        ['maine', 'me'],
+        ['maryland', 'md'],
+        ['massachusetts', 'ma'],
+        ['michigan', 'mi'],
+        ['minnesota', 'mn'],
+        ['mississippi', 'ms'],
+        ['missouri', 'mo'],
+        ['montana', 'mt'],
+        ['nebraska', 'ne'],
+        ['nevada', 'nv'],
+        ['new hampshire', 'nh'],
+        ['new jersey', 'nj'],
+        ['new mexico', 'nm'],
+        ['new york', 'ny'],
+        ['north carolina', 'nc'],
+        ['north dakota', 'nd'],
+        ['ohio', 'oh'],
+        ['oklahoma', 'ok'],
+        ['oregon', 'or'],
+        ['palau', 'pw'],
+        ['pennsylvania', 'pa'],
+        ['rhode island', 'ri'],
+        ['south carolina', 'sc'],
+        ['south dakota', 'sd'],
+        ['tennessee', 'tn'],
+        ['texas', 'tx'],
+        ['utah', 'ut'],
+        ['vermont', 'vt'],
+        ['virginia', 'va'],
+        ['washington', 'wa'],
+        ['west virginia', 'wv'],
+        ['wisconsin', 'wi'],
+        ['wyoming', 'wy']
+    ]);
+
+    // checks state property and populates value for select element
+    const statesKeyIsAbbreviatedMap = new Map([
+        ["al", "alabama"],
+        ["ak", "alaska"],
+        ["az", "arizona"],
+        ["ar", "arkansas"],
+        ["ca", "california"],
+        ["co", "colorado"],
+        ["ct", "connecticut"],
+        ["de", "delaware"],
+        ["dc", "district of columbia"],
+        ["fl", "florida"],
+        ["ga", "georgia"],
+        ["hi", "hawaii"],
+        ["id", "idaho"],
+        ["il", "illinois"],
+        ["in", "indiana"],
+        ["ia", "iowa"],
+        ["ks", "kansas"],
+        ["ky", "kentucky"],
+        ["la", "louisiana"],
+        ["me", "maine"],
+        ["md", "maryland"],
+        ["ma", "massachusetts"],
+        ["mi", "michigan"],
+        ["mn", "minnesota"],
+        ["ms", "mississippi"],
+        ["mo", "missouri"],
+        ["mt", "montana"],
+        ["ne", "nebraska"],
+        ["nv", "nevada"],
+        ["nh", "new hampshire"],
+        ["nj", "new jersey"],
+        ["nm", "new mexico"],
+        ["ny", "new york"],
+        ["nc", "north carolina"],
+        ["nd", "north dakota"],
+        ["oh", "ohio"],
+        ["ok", "oklahoma"],
+        ["or", "oregon"],
+        ["pa", "pennsylvania"],
+        ["ri", "rhode island"],
+        ["sc", "south carolina"],
+        ["sd", "south dakota"],
+        ["tn", "tennessee"],
+        ["tx", "texas"],
+        ["ut", "utah"],
+        ["vt", "vermont"],
+        ["va", "virginia"],
+        ["wa", "washington"],
+        ["wv", "west virginia"],
+        ["wi", "wisconsin"],
+        ["wy", "wyoming"]
     ]);
 
     return (
-        <fieldset>
-            <legend>Address</legend>
-
+        <div>
             <label htmlFor={id + 'Stree1'}>Street 1</label>
             <input
                 className={emptyFields.includes('Street1') ? 'error' : ''}
@@ -104,9 +160,11 @@ const AddressInput = (
             <select
                 name={id + 'State'}
                 id={id + 'State'}
-                onChange={(e) => setState(states.get(e.target.value))}
+                onChange={(e) => setState(statesKeyIsFullNameMap.get(e.target.value))}
+                value={statesKeyIsAbbreviatedMap.get(state) || 'Select...'}
             >
-                {[...states.entries()].map(([key, value]) => <option key={key}>{value}</option>)}
+                <option disabled={!!state}>Select...</option>
+                {[...statesKeyIsAbbreviatedMap.entries()].map(([key, value]) => <option key={key}>{value}</option>)}
             </select>
 
             <label htmlFor={id + 'Zipcode'}>Zipcode</label>
@@ -118,7 +176,7 @@ const AddressInput = (
                 onChange={(e) => { setZipcode(e.target.value) }}
                 value={zipcode}
             />
-        </fieldset>
+        </div>
     );
 };
 

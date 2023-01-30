@@ -23,10 +23,9 @@ const JobForm = () => {
     // state for user input
     const [selectedStatusName, setSelectedStatusName] = useState('');
     const [selectedContactOrg, setSelectedContactOrg] = useState('');
-    const [fromAddressIsChecked, setFromAddressIsChecked] = useState(false);
+    const [fromTab_isActive, setFromTab_isActive] = useState(true);
 
     // from address info
-    const [from, setFrom] = useState('');
     const [fromStreet1, setFromStreet1] = useState('');
     const [fromStreet2, setFromStreet2] = useState('');
     const [fromCity, setFromCity] = useState('');
@@ -35,7 +34,6 @@ const JobForm = () => {
     const [fromAttn, setFromAttn] = useState('');
 
     // to address info
-    const [to, setTo] = useState('');
     const [toStreet1, setToStreet1] = useState('');
     const [toStreet2, setToStreet2] = useState('');
     const [toCity, setToCity] = useState('');
@@ -53,7 +51,7 @@ const JobForm = () => {
     const [error, setError] = useState(null);
     const [emptyFields, setEmptyFields] = useState([]);
 
-    // fetch all statuses
+    // fetch all statuses and contacts
     useEffect(() => {
         const fetchStatuses = async () => {
             const response = await fetch('http://localhost:4000/api/status');
@@ -87,10 +85,20 @@ const JobForm = () => {
             status_id: selectedStatus._id,
             customer_id: selectedContact._id,
             from: {
-                street1: from
+                street1: fromStreet1,
+                street2: fromStreet2,
+                city: fromCity,
+                state: fromState,
+                zipcode: fromZipcode,
+                attn: fromAttn
             },
             to: {
-                street1: to
+                street1: toStreet1,
+                street2: toStreet2,
+                city: toCity,
+                state: toState,
+                zipcode: toZipcode,
+                attn: toAttn
             }
         };
 
@@ -108,7 +116,6 @@ const JobForm = () => {
 
         if (response.ok) {
             // reset the form
-            [setFrom, setTo].forEach((stateSetter) => stateSetter(''));
 
             // reset errors
             setError(null);
@@ -116,7 +123,9 @@ const JobForm = () => {
 
             jobsDispatch({ type: 'CREATE_JOB', payload: json });
         };
-    }
+    };
+
+    const handleTabSwitch = (e) => setFromTab_isActive(!fromTab_isActive);
 
     return (
         <form className="create" onSubmit={handleSubmit}>
@@ -160,54 +169,68 @@ const JobForm = () => {
                 </select>
             </div>
 
-            <DateInput
-                month={month}
-                day={day}
-                year={year}
-                setMonth={setMonth}
-                setDate={setDate}
-                setYear={setYear}
-            />
+            {/* container for the tabs and its content */}
+            <div>
+                <div className="tabs flexContainer">
+                    <span
+                        className={fromTab_isActive ? 'selected' : ''}
+                        onClick={handleTabSwitch}
+                    >
+                        From
+                    </span>
+                    <span
+                        className={fromTab_isActive ? '' : 'selected'}
 
-            <TimeInput
-                hours={hours}
-                minutes={minutes}
-                setHours={setHours}
-                setMinutes={setMinutes}
-            />
+                        onClick={handleTabSwitch}
+                    >
+                        To
+                    </span>
+                </div>
+                <div className="tabContent">
+                    <DateInput
+                        month={month}
+                        day={day}
+                        year={year}
+                        setMonth={setMonth}
+                        setDate={setDate}
+                        setYear={setYear}
+                    />
 
-            {/* input for job pick up from address */}
-            <label>From:</label>
-            <AddressInput
-                id="from"
-                street1={fromStreet1}
-                street2={fromStreet2}
-                city={fromCity}
-                state={fromState}
-                zipcode={fromZipcode}
-                setStreet1={setFromStreet1}
-                setStreet2={setFromStreet2}
-                setCity={setFromCity}
-                setState={setFromState}
-                setZipcode={setFromZipCode}
-                emptyFields={emptyFields}
-            />
+                    <TimeInput
+                        hours={hours}
+                        minutes={minutes}
+                        setHours={setHours}
+                        setMinutes={setMinutes}
+                    />
 
-            {/* input for job delivery to address */}
-            <label>To:</label>
-            <AddressInput
-                id="to"
-                street1={toStreet1}
-                street2={toStreet2}
-                city={toCity}
-                state={toState}
-                zipcode={toZipcode}
-                setStreet1={setToStreet1}
-                setStreet2={setToStreet2}
-                setCity={setToCity}
-                setState={setToState}
-                setZipcode={setToZipCode}
-                emptyFields={emptyFields}
+                    {/* input for job pick up from address */}
+                    <AddressInput
+                        id="job"
+                        street1={fromTab_isActive ? fromStreet1 : toStreet1}
+                        street2={fromTab_isActive ? fromStreet2 : toStreet2}
+                        city={fromTab_isActive ? fromCity : toCity}
+                        state={fromTab_isActive ? fromState : toState}
+                        zipcode={fromTab_isActive ? fromZipcode : toZipcode}
+                        setStreet1={fromTab_isActive ? setFromStreet1 : setToStreet1}
+                        setStreet2={fromTab_isActive ? setFromStreet2 : setToStreet2}
+                        setCity={fromTab_isActive ? setFromCity : setToCity}
+                        setState={fromTab_isActive ? setFromState : setToState}
+                        setZipcode={fromTab_isActive ? setFromZipCode : setToZipCode}
+                        emptyFields={emptyFields}
+                    />
+                </div>
+            </div>
+
+            <label htmlFor="attn">Attn</label>
+            <input
+                type="text"
+                name="attn"
+                id="attn"
+                onChange={(e) => {
+                    const setStateSetter = fromTab_isActive ? setFromAttn : setToAttn;
+                    setStateSetter(e.target.value);
+                }}
+                value={fromTab_isActive ? fromAttn : toAttn}
             />
 
             <button>Add Job</button>
