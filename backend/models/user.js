@@ -1,29 +1,12 @@
 import { Schema, model as Model } from 'mongoose';
-import uniqueValidator from 'mongoose-unique-validator';
+import Email from './email.js';
 import bcrypt from 'bcrypt';
-const SALT_WORK_FACTOR = 10;
+import validator from 'validator';
 
-const Email = new Schema({
-
-    address: {
-        type: String, lowercase: true,
-        required: [true, "can't be blank"],
-        match: [/\S+@\S+\.\S+/, 'is invalid'],
-        index: true
-    },
-    // Change the default to true if you don't need to validate a new user's email address
-    validated: {
-        type: Boolean,
-        default: false
-    }
-
-});
-
-
-const Point = new Schema({
+const pointSchema = new Schema({
     type: {
         type: String,
-        enum: ['Point'],
+        enum: ['pointSchema'],
         required: true
     },
     coordinates: {
@@ -32,11 +15,10 @@ const Point = new Schema({
     }
 });
 
-const UserSchema = new Schema({
+const userSchema = new Schema({
 
     username: {
         type: String,
-        lowercase: true,
         unique: true,
         required: [true, "can't be blank"],
         match: [/^[a-zA-Z0-9]+$/, 'is invalid'],
@@ -47,9 +29,9 @@ const UserSchema = new Schema({
         type: String,
         required: true
     },
-    email: {
-        type: Email,
-        required: true
+    email_id: {
+        type: Schema.Types.ObjectId,
+        ref: 'Email'
     },
     profile: {
         firstName: String,
@@ -64,7 +46,7 @@ const UserSchema = new Schema({
             country: String,
             zip: String,
             location: {
-                type: Point,
+                type: pointSchema,
                 required: false
             }
         }
@@ -73,23 +55,49 @@ const UserSchema = new Schema({
         type: Boolean,
         default: true
     }
-}, { timestamps: true }
+}, {
+    timestamps: true,
+    toJSON: {
+        transform: function (doc, json) {
+            json.email = json.email_id;
+
+            delete json.email_id;
+        }
+    }
+}
 );
 
-UserSchema.plugin(uniqueValidator, { message: 'is already taken.' });
+// static signup method
+userSchema.statics.signup = async function (username, addy, password) {
+    // validation
+    if (!username || !addy || !password) throw Error('All fields must be filled');
+    if (!validator.isEmail(addy)) throw Error('Email is not valid');
+    if (!validator.isStrongPassword(password)) throw Error('Password not strong enough');
 
-UserSchema.pre("save", function (next) {
-    if (!this.isModified("password")) {
-        return next();
-    }
-    this.password = bcrypt.hashSync(this.password, SALT_WORK_FACTOR);
-    next();
-});
+    const userQuery = await this.findOne({ username });
+    const emailQuery = await Email.findOne({ address: addy });
 
-UserSchema.methods.comparePassword = function (plaintext, callback) {
-    return callback(null, bcrypt.compareSync(plaintext, this.password));
+    // throw error if any queries have results
+    if (userQuery) throw Error('Username already in use');
+    if (emailQuery) throw Error('Email already in use');
+
+    const salt = await bcrypt.genSalt(10);
+    const hash = await bcrypt.hash(password, salt);
+
+    const email = await Email.create({ address: addy });
+    const user = await this.create({
+        username,
+        email_id: email._id,
+        password: hash
+    });
+
+    return user;
 };
 
-const User = Model('User', UserSchema);
+// userSchema.methods.comparePassword = function (plaintext, callback) {
+//     return callback(null, bcrypt.compareSync(plaintext, this.password));
+// };
+
+const User = Model('User', userSchema);
 
 export default User;

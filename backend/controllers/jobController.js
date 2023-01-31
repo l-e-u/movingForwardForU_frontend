@@ -16,7 +16,7 @@ const getJob = async (req, res) => {
         return res.status(404).json({ error: 'No such job.' });
     };
 
-    const job = await Job.findById(id).populate('status');
+    const job = await Job.findById(id).populate(['status_id', 'customer_id']);
 
     if (!job) {
         return res.status(404).json({ error: 'No such job.' });

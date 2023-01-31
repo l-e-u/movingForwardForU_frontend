@@ -1,9 +1,27 @@
-import mongoose from 'mongoose';
 import User from "../models/user.js";
+
+// login user
+const loginUser = async (req, res) => {
+    res.json({ messages: 'login user' });
+};
+
+// signup user
+const signupUser = async (req, res) => {
+    const { username, addy, password } = req.body;
+
+    try {
+        const user = await User.signup(username, addy, password);
+
+        res.status(200).json({ username, addy, user });
+    }
+    catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+};
 
 // get all users
 const getUsers = async (req, res) => {
-    const users = await User.find({});
+    const users = await User.find({}).populate('email_id');
 
     return res.status(200).json(users);
 };
@@ -16,7 +34,7 @@ const getUser = async (req, res) => {
         return res.status(404).json({ error: 'No such user.' });
     };
 
-    const user = await User.findById(id);
+    const user = await User.findById(id).populate('email_id');
 
     if (!user) {
         return res.status(404).json({ error: 'No such user.' });
@@ -84,4 +102,4 @@ const updateUser = async (req, res) => {
     res.status(200).json(user);
 };
 
-export { getUsers, getUser, createUser, deleteUser, updateUser };
+export { loginUser, signupUser, getUsers, getUser, createUser, deleteUser, updateUser };

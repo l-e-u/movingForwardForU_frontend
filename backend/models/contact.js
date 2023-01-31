@@ -11,7 +11,10 @@ const contactSchema = new Schema(
         state: String,
         zipcode: String,
         phone: Number,
-        email: String,
+        email: {
+            type: Schema.Types.ObjectId,
+            ref: 'Email'
+        },
         note: String,
     },
     { timestamps: true }
