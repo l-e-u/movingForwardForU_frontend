@@ -26,7 +26,7 @@ const fromToSchema = new Schema({
     street2: String,
     city: String,
     state: String,
-    zip: String,
+    zipcode: String,
     attn: String,
 })
 
@@ -46,7 +46,10 @@ const jobSchema = new Schema(
             ref: 'Contact'
         },
         parcel: parcelSchema,
-        log: [logSchema],
+        log: {
+            type: [logSchema],
+            index: true
+        },
         from: fromToSchema,
         to: fromToSchema,
     },

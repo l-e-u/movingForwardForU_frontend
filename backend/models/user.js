@@ -1,5 +1,4 @@
 import { Schema, model as Model } from 'mongoose';
-import Email from './email.js';
 import bcrypt from 'bcrypt';
 import validator from 'validator';
 
@@ -22,16 +21,18 @@ const userSchema = new Schema({
         unique: true,
         required: [true, "can't be blank"],
         match: [/^[a-zA-Z0-9]+$/, 'is invalid'],
-        index: true
     },
     //Our password is hashed with bcrypt
     password: {
         type: String,
         required: true
     },
-    email_id: {
-        type: Schema.Types.ObjectId,
-        ref: 'Email'
+    email: {
+        type: String,
+        lowercase: true,
+        unique: true,
+        required: [true, "can't be blank"],
+        match: [/\S+@\S+\.\S+/, 'is invalid'],
     },
     profile: {
         firstName: String,
@@ -55,27 +56,18 @@ const userSchema = new Schema({
         type: Boolean,
         default: true
     }
-}, {
-    timestamps: true,
-    toJSON: {
-        transform: function (doc, json) {
-            json.email = json.email_id;
-
-            delete json.email_id;
-        }
-    }
-}
+}, { timestamps: true }
 );
 
 // static signup method
-userSchema.statics.signup = async function (username, addy, password) {
+userSchema.statics.signup = async function (username, email, password) {
     // validation
-    if (!username || !addy || !password) throw Error('All fields must be filled');
-    if (!validator.isEmail(addy)) throw Error('Email is not valid');
+    if (!username || !email || !password) throw Error('All fields must be filled');
+    if (!validator.isEmail(email)) throw Error('Email is not valid');
     if (!validator.isStrongPassword(password)) throw Error('Password not strong enough');
 
     const userQuery = await this.findOne({ username });
-    const emailQuery = await Email.findOne({ address: addy });
+    const emailQuery = await this.findOne({ email });
 
     // throw error if any queries have results
     if (userQuery) throw Error('Username already in use');
@@ -84,14 +76,21 @@ userSchema.statics.signup = async function (username, addy, password) {
     const salt = await bcrypt.genSalt(10);
     const hash = await bcrypt.hash(password, salt);
 
-    const email = await Email.create({ address: addy });
     const user = await this.create({
         username,
-        email_id: email._id,
+        email,
         password: hash
     });
 
     return user;
+};
+
+// static login method
+
+userSchema.statics.login = async function (email, password) {
+    if (!addy || !password) throw Error('All fields must be filled');
+
+    const user = await this.findOne({ email });
 };
 
 // userSchema.methods.comparePassword = function (plaintext, callback) {

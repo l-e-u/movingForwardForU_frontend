@@ -1,4 +1,10 @@
+import mongoose from "mongoose";
 import User from "../models/user.js";
+import jwt from 'jsonwebtoken';
+
+const createToken = (_id) => {
+    return jwt.sign({ _id }, process.env.SECURE, { expiresIn: '2d' });
+};
 
 // login user
 const loginUser = async (req, res) => {
@@ -7,12 +13,15 @@ const loginUser = async (req, res) => {
 
 // signup user
 const signupUser = async (req, res) => {
-    const { username, addy, password } = req.body;
+    const { username, email, password } = req.body;
 
     try {
-        const user = await User.signup(username, addy, password);
+        const user = await User.signup(username, email, password);
 
-        res.status(200).json({ username, addy, user });
+        // create a token
+        const token = createToken(user._id);
+
+        res.status(200).json({ email, token });
     }
     catch (error) {
         res.status(400).json({ error: error.message });
@@ -21,7 +30,7 @@ const signupUser = async (req, res) => {
 
 // get all users
 const getUsers = async (req, res) => {
-    const users = await User.find({}).populate('email_id');
+    const users = await User.find({});
 
     return res.status(200).json(users);
 };
@@ -34,7 +43,7 @@ const getUser = async (req, res) => {
         return res.status(404).json({ error: 'No such user.' });
     };
 
-    const user = await User.findById(id).populate('email_id');
+    const user = await User.findById(id);
 
     if (!user) {
         return res.status(404).json({ error: 'No such user.' });
@@ -45,24 +54,21 @@ const getUser = async (req, res) => {
 
 // create a new user
 const createUser = async (req, res) => {
-    const { username, password, email, profile } = req.body;
+    const { username, password, email } = req.body;
 
-    console.log(req.body);
-
-    // add doc to db
+    // add user doc to db
     try {
         const user = await User.create({
             username,
             password,
             email,
-            profile
         });
 
         return res.status(200).json(user);
     }
     catch (error) {
         return res.status(400).json({ error: error.message })
-    }
+    };
 };
 
 // delete a user
