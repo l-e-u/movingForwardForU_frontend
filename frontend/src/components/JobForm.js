@@ -2,12 +2,14 @@ import { useEffect, useState } from "react";
 import { useJobsContext } from "../hooks/useJobsContext.js";
 import { useStatusesContext } from "../hooks/useStatusesContext.js";
 import { useContactsContext } from "../hooks/useContactsContext.js";
+import { useAuthContext } from "../hooks/useAuthContext.js";
 
 import DateInput from './DateInput.js';
 import TimeInput from "./TimeInput.js";
 import AddressInput from "./AddressInput.js";
 
 const JobForm = () => {
+    const { user } = useAuthContext();
     const JobsContext = useJobsContext();
     const jobsDispatch = JobsContext.dispatch;
 
@@ -77,6 +79,12 @@ const JobForm = () => {
     // POST a new job
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        if (!user) {
+            setError('You must be logged in');
+            return
+        };
+
         const selectedStatus = statuses.find(s => s.name === selectedStatusName);
         const selectedContact = contacts.find(c => c.organization === selectedContactOrg);
 
@@ -105,7 +113,10 @@ const JobForm = () => {
         const response = await fetch('http://localhost:4000/api/jobs', {
             method: 'POST',
             body: JSON.stringify(job),
-            headers: { 'Content-Type': 'application/json' }
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${user.token}`
+            }
         });
         const json = await response.json();
 

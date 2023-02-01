@@ -1,7 +1,16 @@
 import { Router } from 'express';
-import { createJob, getJob, getJobs, deleteJob, updateJob } from '../controllers/jobController.js'
+import {
+    createJob,
+    getJob,
+    getJobs,
+    deleteJob,
+    updateJob
+} from '../controllers/jobController.js'
+import { requireAuth } from '../middleware/requireAuth.js';
 
 const router = Router();
+
+router.use(requireAuth);
 
 // GET all jobs
 router.get('/', getJobs);
