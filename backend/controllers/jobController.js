@@ -33,10 +33,10 @@ const createJob = async (req, res) => {
 
     // DEV NOTE: ADD VALIDATION FOR STATUS_ID AND SEND OUT ERROR IF INVALID
 
-    if (!customer_id) emptyFields.push('Customer');
-    if (!status_id) emptyFields.push('Status');
-    if (!from.street1) emptyFields.push('From');
-    if (!to.street1) emptyFields.push('To');
+    // if (!customer_id) emptyFields.push('Customer');
+    // if (!status_id) emptyFields.push('Status');
+    // if (!from.street1) emptyFields.push('From');
+    // if (!to.street1) emptyFields.push('To');
 
     if (emptyFields.length > 0) {
         return res.status(400).json({ error: 'Please fill in all the fields', emptyFields });

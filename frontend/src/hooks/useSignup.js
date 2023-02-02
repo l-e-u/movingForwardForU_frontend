@@ -18,6 +18,7 @@ export const useSignup = () => {
             body: JSON.stringify({ username, email, password })
         });
 
+        // expecting username, isAdmin boolean, and jwt token
         const json = await response.json();
 
         if (!response.ok) {
@@ -27,7 +28,7 @@ export const useSignup = () => {
 
         if (response.ok) {
             // save the user to local storage
-            localStorage.setItem('user', JSON.stringify(json));
+            localStorage.setItem('token', JSON.stringify({ token: json.token }));
 
             // update the auth context
             dispatch({ type: 'LOGIN', payload: json });

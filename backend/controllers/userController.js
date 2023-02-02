@@ -16,7 +16,11 @@ const loginUser = async (req, res) => {
         // create a token
         const token = createToken(user._id);
 
-        res.status(200).json({ username, token });
+        res.status(200).json({
+            username,
+            token,
+            isAdmin: user.isAdmin
+        });
     }
     catch (error) {
         res.status(400).json({ error: error.message });
@@ -33,7 +37,11 @@ const signupUser = async (req, res) => {
         // create a token
         const token = createToken(user._id);
 
-        res.status(200).json({ username, token });
+        res.status(200).json({
+            username,
+            token,
+            isAdmin: user.isAdmin
+        });
     }
     catch (error) {
         res.status(400).json({ error: error.message });
@@ -62,6 +70,30 @@ const getUser = async (req, res) => {
     };
 
     res.status(200).json(user);
+};
+
+// using token on browser's local storage, verify token, return username and isAdmin permission
+const getUserAuthorization = async (req, res) => {
+    // verify authentication
+    const { authentication } = req.headers;
+
+    if (!authentication) {
+        return res.status(401).json({ error: 'Access denied, login or signup' });
+    };
+
+    const token = authentication.split(' ')[1];
+
+    try {
+        const { _id } = jwt.verify(token, process.env.SECURE);
+
+        const user = await User.findOne({ _id }).select('_id isAdmin username');
+
+        return res.status(200).json(user);
+    }
+    catch (error) {
+        console.log(error);
+        res.status(401).json({ error: 'Request denied' });
+    };
 };
 
 // create a new user
@@ -110,7 +142,8 @@ const updateUser = async (req, res) => {
 
     const user = await User.findByIdAndUpdate(
         { _id: id },
-        { ...req.body }
+        { ...req.body },
+        { returnDocument: 'after' }
     );
 
     if (!user) {
@@ -120,4 +153,4 @@ const updateUser = async (req, res) => {
     res.status(200).json(user);
 };
 
-export { loginUser, signupUser, getUsers, getUser, createUser, deleteUser, updateUser };
+export { loginUser, signupUser, getUsers, getUser, createUser, deleteUser, updateUser, getUserAuthorization };

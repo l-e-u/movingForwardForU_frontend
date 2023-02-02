@@ -16,7 +16,7 @@ const Home = () => {
         const fetchJobs = async () => {
             const response = await fetch('http://localhost:4000/api/jobs', {
                 headers: {
-                    'Authorization': `Bearer ${user.token}`
+                    'Authentication': `Bearer ${user.token}`
                 }
             });
             const json = await response.json();
@@ -37,7 +37,7 @@ const Home = () => {
                     return <JobDetails key={job._id} job={job} />
                 })}
             </div>
-            <JobForm />
+            {user.isAdmin && <JobForm />}
             {/* <ContactForm /> */}
             {/* <StatusForm /> */}
         </div>

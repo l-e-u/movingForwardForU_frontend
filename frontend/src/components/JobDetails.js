@@ -19,7 +19,7 @@ const JobDetails = ({ job }) => {
         const response = await fetch('http://localhost:4000/api/jobs/' + job._id, {
             method: 'DELETE',
             headers: {
-                'Authorization': `Bearer ${user.token}`
+                'Authentication': `Bearer ${user.token}`
             }
         });
 
