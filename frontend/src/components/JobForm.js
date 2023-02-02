@@ -115,7 +115,7 @@ const JobForm = () => {
             body: JSON.stringify(job),
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${user.token}`
+                'Authentication': `Bearer ${user.token}`
             }
         });
         const json = await response.json();
