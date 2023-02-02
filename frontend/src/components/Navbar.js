@@ -1,10 +1,12 @@
 import { Link } from 'react-router-dom';
 import { useAuthContext } from '../hooks/useAuthContext.js';
 import { useLogout } from '../hooks/useLogout.js';
+import NavbarAdmin from './NavbarAdmin.js';
 
 const Navbar = () => {
     const { logout } = useLogout();
     const { user } = useAuthContext();
+    const isAdmin = user ? user.isAdmin : null;
 
     return (
         <header>
@@ -27,6 +29,10 @@ const Navbar = () => {
                     )}
                 </nav>
             </div>
+            {/* Admin navigation */}
+            {isAdmin && (
+                <NavbarAdmin />
+            )}
         </header>
     )
 }

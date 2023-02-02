@@ -10,17 +10,9 @@ import AddressInput from "./AddressInput.js";
 
 const JobForm = () => {
     const { user } = useAuthContext();
-    const JobsContext = useJobsContext();
-    const jobsDispatch = JobsContext.dispatch;
-
-    const ContactsContext = useContactsContext();
-    const contacts = ContactsContext.contacts;
-    const contactsDispatch = ContactsContext.dispatch;
-
-    const StatusesContext = useStatusesContext();
-    const statuses = StatusesContext.statuses;
-    const statusesDispatch = StatusesContext.dispatch;
-
+    const { dispatch: jobsDispatch } = useJobsContext();
+    const { contacts, dispatch: contactsDispatch } = useContactsContext();
+    const { statuses, dispatch: statusesDispatch } = useStatusesContext();
 
     // state for user input
     const [selectedStatusName, setSelectedStatusName] = useState('');

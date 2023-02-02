@@ -49,7 +49,7 @@ header a {
 }
 
 .jobs {
-  flex: 1 0 400px;
+  flex: 1 0 350px;
 }
 
 .job-details {
@@ -58,7 +58,6 @@ header a {
   margin: 20px auto;
   padding: 20px;
   position: relative;
-  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.05);
 }
 
 .job-details h4 {
@@ -187,6 +186,25 @@ nav {
   align-items: center;
 }
 
+nav.admin {
+  padding: .5rem 0 0 0;
+  width: 100%;
+}
+
+nav.admin div {
+  flex: 1 1 0;
+  text-align: center;
+  cursor: pointer;
+  padding-bottom: .5rem;
+  border-bottom-width: 2px;
+  border-bottom-style: solid;
+  border-bottom-color: transparent;
+}
+
+nav.admin div.selected {
+  border-bottom-color: cornflowerblue;
+}
+
 nav a {
   margin-left: 10px;
 }
@@ -211,4 +229,9 @@ form.login {
   padding: 20px;
   background: #fff;
   border-radius: 4px;
+}
+
+/* misc */
+.shadow {
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.05);
 }

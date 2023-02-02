@@ -31,7 +31,7 @@ const JobDetails = ({ job }) => {
     };
 
     return (
-        <div className='job-details'>
+        <div className='job-details shadow'>
             <h4>{job.status.name}</h4>
             <h5>{job.customer.organization}</h5>
             <p><strong>From: </strong> {fromAddress}</p>

@@ -4,9 +4,6 @@ import { useAuthContext } from '../hooks/useAuthContext.js';
 
 // components
 import JobDetails from '../components/JobDetails.js';
-import JobForm from '../components/JobForm.js'
-import ContactForm from "../components/ContactForm.js";
-import StatusForm from "../components/StatusForm.js";
 
 const Home = () => {
     const { jobs, dispatch } = useJobsContext();
@@ -37,9 +34,6 @@ const Home = () => {
                     return <JobDetails key={job._id} job={job} />
                 })}
             </div>
-            {user.isAdmin && <JobForm />}
-            {/* <ContactForm /> */}
-            {/* <StatusForm /> */}
         </div>
     )
 };
