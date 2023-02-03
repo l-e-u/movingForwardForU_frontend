@@ -9,7 +9,7 @@ const Statuses = () => {
 
     useEffect(() => {
         const fetchStatuses = async () => {
-            const response = await fetch('http://localhost:4000/api/status', {
+            const response = await fetch('http://localhost:4000/api/statuses', {
                 headers: {
                     'Authentication': `Bearer ${user.token}`
                 }

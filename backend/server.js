@@ -5,9 +5,9 @@ import cors from 'cors';
 
 // routes
 import jobRoutes from './routes/jobs.js';
-import statusRoutes from './routes/status.js';
+import statusRoutes from './routes/statuses.js';
 import contactRoutes from './routes/contacts.js';
-import userRoutes from './routes/user.js';
+import userRoutes from './routes/users.js';
 
 const PORT = process.env.PORT;
 const URI = process.env.MONGO_URI;
@@ -26,9 +26,9 @@ app.use((req, res, next) => {
 
 // routes
 app.use('/api/jobs', jobRoutes);
-app.use('/api/status', statusRoutes);
+app.use('/api/statuses', statusRoutes);
 app.use('/api/contacts', contactRoutes);
-app.use('/api/user', userRoutes);
+app.use('/api/users', userRoutes);
 
 // connect to db
 connectToDatabase(URI)
