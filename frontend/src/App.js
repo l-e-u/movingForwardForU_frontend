@@ -7,6 +7,8 @@ import Login from './pages/Login.js';
 import Signup from './pages/Signup.js';
 import Navbar from './components/Navbar.js'
 import Statuses from './pages/Statuses.js';
+import Contacts from './pages/Contacts.js';
+import Users from './pages/Users.js';
 
 function App() {
   const { user } = useAuthContext();
@@ -24,6 +26,14 @@ function App() {
             <Route
               path='/statuses'
               element={<Statuses />}
+            />
+            <Route
+            path='/contacts'
+            element={<Contacts />}
+            />
+            <Route
+            path='/users'
+            element={<Users />}
             />
             <Route
               path='/login'
