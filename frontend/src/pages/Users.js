@@ -1,10 +1,10 @@
 import { useEffect } from 'react';
 import { useAuthContext } from '../hooks/useAuthContext.js';
-import { useUserContext } from '../hooks/useUserContext.js';
+import { useUsersContext } from '../hooks/useUsersContext.js';
 import UserDetails from '../components/UserDetails.js'
 
 const Users = () => {
-    const { users, dispatch } = useUserContext();
+    const { users, dispatch } = useUsersContext();
     const { user } = useAuthContext();
 
     useEffect(() => {
@@ -19,7 +19,7 @@ const Users = () => {
             const json = await response.json();
 
             if (response.ok) {
-                dispatch({ type: 'SET_CONTACTS', payload: json });
+                dispatch({ type: 'SET_USERS', payload: json });
             };
         };
 
@@ -27,9 +27,9 @@ const Users = () => {
     }, [dispatch, user]);
 
     return (
-        <div className="contacts">
-            {users && users.map((user) => {
-                return <UserDetails key={user._id} contact={user} />
+        <div className="users">
+            {users && users.map((u) => {
+                return <UserDetails key={u._id} user={u} />
             })}
         </div>
     );

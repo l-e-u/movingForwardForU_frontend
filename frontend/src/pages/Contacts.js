@@ -1,10 +1,10 @@
 import { useEffect } from 'react';
 import { useAuthContext } from '../hooks/useAuthContext.js';
-import { useContactContext } from '../hooks/useContactContext.js'
+import { useContactsContext } from '../hooks/useContactsContext.js'
 import ContactDetails from '../components/ContactDetails.js';
 
 const Contacts = () => {
-  const { contacts, dispatch } = useContactContext();
+  const { contacts, dispatch } = useContactsContext();
   const { user } = useAuthContext();
 
   useEffect(() => {

@@ -98,4 +98,13 @@ const updateJob = async (req, res) => {
     res.status(200).json(job);
 };
 
-export { createJob, getJob, getJobs, deleteJob, updateJob };
+// get all jobs that are assinged to the user
+const getJobsByUserId = async (req, res) => {
+    // jobs route authenticates user and stores _id in the response
+    const { _id } = req.user;
+    console.log('Will filter jobs with this user id:', _id);
+
+    res.status(404).json({ error: 'under development' });
+};
+
+export { createJob, getJob, getJobs, deleteJob, updateJob, getJobsByUserId };

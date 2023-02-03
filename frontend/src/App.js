@@ -3,6 +3,7 @@ import { useAuthContext } from './hooks/useAuthContext.js';
 
 // pages & components
 import MyJobs from './pages/MyJobs.js';
+import AllJobs from './pages/AllJobs.js'
 import Login from './pages/Login.js';
 import Signup from './pages/Signup.js';
 import Navbar from './components/Navbar.js'
@@ -24,16 +25,20 @@ function App() {
               element={user ? <MyJobs /> : <Navigate to='/login' />}
             />
             <Route
+              path='/alljobs'
+              element={<AllJobs />}
+            />
+            <Route
               path='/statuses'
               element={<Statuses />}
             />
             <Route
-            path='/contacts'
-            element={<Contacts />}
+              path='/contacts'
+              element={<Contacts />}
             />
             <Route
-            path='/users'
-            element={<Users />}
+              path='/users'
+              element={<Users />}
             />
             <Route
               path='/login'

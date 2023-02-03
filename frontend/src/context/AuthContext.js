@@ -25,7 +25,7 @@ export const AuthContextProvider = ({ children }) => {
         const { token } = JSON.parse(localStorage.getItem('token'));
 
         const fetchPermission = async () => {
-            const response = await fetch('http://localhost:4000/api/user/permissions', {
+            const response = await fetch('http://localhost:4000/api/users/permissions', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
