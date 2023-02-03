@@ -28,12 +28,10 @@ const Home = () => {
 
 
     return (
-        <div className='home'>
-            <div className='jobs'>
-                {jobs && jobs.map((job) => {
-                    return <JobDetails key={job._id} job={job} />
-                })}
-            </div>
+        <div className='jobs'>
+            {jobs && jobs.map((job) => {
+                return <JobDetails key={job._id} job={job} />
+            })}
         </div>
     )
 };

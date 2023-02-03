@@ -15,13 +15,14 @@ const NavbarAdmin = () => {
         <nav className='admin'>
             {links.map((link, index) => {
                 return (
-                    <div
+                    <Link
                         key={index}
+                        to='/statuses'
                         className={selected === index ? 'selected' : ''}
                         onClick={() => setSelected(index)}
                     >
                         {link}
-                    </div>
+                    </Link>
                 )
             })}
         </nav>

@@ -41,18 +41,13 @@ header a {
   margin: 0 auto;
 }
 
-/* homepage */
-.home {
-  display: flex;
-  flex-wrap: wrap-reverse;
-  gap: 20px;
-}
-
-.jobs {
+.jobs,
+.statuses {
   flex: 1 0 350px;
 }
 
-.job-details {
+.job-details,
+.details {
   background: #fff;
   border-radius: 4px;
   margin: 20px auto;
@@ -60,24 +55,28 @@ header a {
   position: relative;
 }
 
-.job-details h4 {
+.job-details h4,
+.details h4 {
   margin: 0 0 10px 0;
   font-size: 1.2em;
   color: var(--primary);
 }
 
-.job-details h5 {
+.job-details h5,
+.details h5 {
   margin: .5rem 0;
   font-weight: 500;
 }
 
-.job-details p {
+.job-details p,
+.details p {
   margin: 0;
   font-size: 0.9em;
   color: #555;
 }
 
-.job-details span {
+.job-details span,
+.details span {
   position: absolute;
   top: 20px;
   right: 20px;
@@ -191,7 +190,7 @@ nav.admin {
   width: 100%;
 }
 
-nav.admin div {
+nav.admin a {
   flex: 1 1 0;
   text-align: center;
   cursor: pointer;
@@ -201,12 +200,8 @@ nav.admin div {
   border-bottom-color: transparent;
 }
 
-nav.admin div.selected {
+nav.admin a.selected {
   border-bottom-color: cornflowerblue;
-}
-
-nav a {
-  margin-left: 10px;
 }
 
 nav button {
