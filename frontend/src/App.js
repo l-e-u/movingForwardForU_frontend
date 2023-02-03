@@ -23,7 +23,7 @@ function App() {
             />
             <Route
               path='/statuses'
-              element={user ? <Statuses /> : <Navigate to='/' />}
+              element={<Statuses />}
             />
             <Route
               path='/login'

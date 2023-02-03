@@ -1,14 +1,14 @@
 import { useState } from 'react';
-import { Link, useLinkClickHandler } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 const NavbarAdmin = () => {
     const [selected, setSelected] = useState(0);
     const links = [
         { name: 'My Jobs', path: '/' },
-        { name: 'All Jobs', path: '/' },
-        { name: 'Contacts', path: '/' },
+        { name: 'All Jobs', path: '/alljobs' },
+        { name: 'Contacts', path: '/contacts' },
         { name: 'Statuses', path: '/statuses' },
-        { name: 'Users', path: '/' },
+        { name: 'Users', path: '/users' },
     ];
 
 
