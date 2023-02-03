@@ -2,7 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { useAuthContext } from './hooks/useAuthContext.js';
 
 // pages & components
-import Home from './pages/Home.js';
+import MyJobs from './pages/MyJobs.js';
 import Login from './pages/Login.js';
 import Signup from './pages/Signup.js';
 import Navbar from './components/Navbar.js'
@@ -19,7 +19,7 @@ function App() {
           <Routes>
             <Route
               path='/'
-              element={user ? <Home /> : <Navigate to='/login' />}
+              element={user ? <MyJobs /> : <Navigate to='/login' />}
             />
             <Route
               path='/statuses'
