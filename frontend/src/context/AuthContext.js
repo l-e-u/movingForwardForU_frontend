@@ -22,10 +22,14 @@ export const AuthContextProvider = ({ children }) => {
 
     // at first load, check if there's a user's token in local storage that has not been expired
     useEffect(() => {
-        const { token } = JSON.parse(localStorage.getItem('token'));
+        const item = localStorage.getItem('token');
+
+        if (!item) return;
+
+        const { token } = JSON.parse(item);
 
         const fetchPermission = async () => {
-            const response = await fetch('http://localhost:4000/api/users/permissions', {
+            const response = await fetch('http://localhost:4000/api/users/login', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -34,15 +38,10 @@ export const AuthContextProvider = ({ children }) => {
             });
 
             // user doc if valid
-            const json = await response.json();
+            const user = await response.json();
+            user.token = token;
 
             if (response.ok) {
-                const { username, isAdmin } = json;
-                const user = {
-                    username,
-                    isAdmin,
-                    token
-                };
                 dispatch({ type: 'LOGIN', payload: user });
             };
         };

@@ -6,8 +6,30 @@ const createToken = (_id) => {
     return jwt.sign({ _id }, process.env.SECURE, { expiresIn: '2d' });
 };
 
-// login user
+// when the homepage refeshes, it checks browser's localStorage for a tocken
+// once the token is verified, user is granted access.
+// else, no token or malformed token, redirects to login
 const loginUser = async (req, res) => {
+    // verify authentication if a token is present
+    const { authentication } = req.headers;
+
+    if (authentication) {
+        const token = authentication.split(' ')[1];
+
+        try {
+            const { _id } = jwt.verify(token, process.env.SECURE);
+
+            const user = await User.findOne({ _id });
+
+            // user model will remove password when sending json
+            return res.status(200).json(user);
+        }
+        catch (error) {
+            console.log(error);
+            res.status(401).json({ error: 'Request denied' });
+        };
+    };
+
     const { username, password } = req.body;
 
     try {
@@ -16,11 +38,7 @@ const loginUser = async (req, res) => {
         // create a token
         const token = createToken(user._id);
 
-        res.status(200).json({
-            username,
-            token,
-            isAdmin: user.isAdmin
-        });
+        res.status(200).json({ user, token });
     }
     catch (error) {
         res.status(400).json({ error: error.message });
@@ -70,30 +88,6 @@ const getUser = async (req, res) => {
     };
 
     res.status(200).json(user);
-};
-
-// using token on browser's local storage, verify token, return username and isAdmin permission
-const getUserAuthorization = async (req, res) => {
-    // verify authentication
-    const { authentication } = req.headers;
-
-    if (!authentication) {
-        return res.status(401).json({ error: 'Access denied, login or signup' });
-    };
-
-    const token = authentication.split(' ')[1];
-
-    try {
-        const { _id } = jwt.verify(token, process.env.SECURE);
-
-        const user = await User.findOne({ _id }).select('_id isAdmin username');
-
-        return res.status(200).json(user);
-    }
-    catch (error) {
-        console.log(error);
-        res.status(401).json({ error: 'Request denied' });
-    };
 };
 
 // create a new user
@@ -153,4 +147,4 @@ const updateUser = async (req, res) => {
     res.status(200).json(user);
 };
 
-export { loginUser, signupUser, getUsers, getUser, createUser, deleteUser, updateUser, getUserAuthorization };
+export { loginUser, signupUser, getUsers, getUser, createUser, deleteUser, updateUser };

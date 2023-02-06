@@ -60,7 +60,14 @@ const userSchema = new Schema({
         type: Boolean,
         default: true
     }
-}, { timestamps: true }
+}, {
+    timestamps: true,
+    toJSON: {
+        transform: function (doc, json) {
+            delete json.password
+        }
+    }
+}
 );
 
 // static signup method

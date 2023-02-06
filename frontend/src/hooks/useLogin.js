@@ -12,13 +12,13 @@ export const useLogin = () => {
         // don't want to show the error if user is trying to rectify, so null error at the start
         setError(null);
 
-        const response = await fetch('http://localhost:4000/api/user/login', {
+        const response = await fetch('http://localhost:4000/api/users/login', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ username, password })
         });
 
-        // expecting username, isAdmin boolean, and jwt token
+        // expecting user (w/o password) and token
         const json = await response.json();
 
         if (!response.ok) {
@@ -27,11 +27,13 @@ export const useLogin = () => {
         };
 
         if (response.ok) {
+            const { user, token } = json;
+            user.token = token;
             // save the user to local storage
-            localStorage.setItem('token', JSON.stringify({ token: json.token }));
+            localStorage.setItem('token', JSON.stringify({ token: token }));
 
             // update the auth context
-            dispatch({ type: 'LOGIN', payload: json });
+            dispatch({ type: 'LOGIN', payload: user });
 
             setIsLoading(false);
         };

@@ -1,6 +1,9 @@
 /* google font */
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;800&family=VT323&display=swap');
 
+/* bootstrap icons */
+@import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css");
+
 /* layout */
 :root {
   --primary: #1aac83;
@@ -46,7 +49,6 @@ header a {
   flex: 1 0 350px;
 }
 
-.job-details,
 .details {
   background: #fff;
   border-radius: 4px;
@@ -55,27 +57,27 @@ header a {
   position: relative;
 }
 
-.job-details h4,
 .details h4 {
   margin: 0 0 10px 0;
   font-size: 1.2em;
   color: var(--primary);
 }
 
-.job-details h5,
 .details h5 {
   margin: .5rem 0;
   font-weight: 500;
 }
 
-.job-details p,
 .details p {
   margin: 0;
   font-size: 0.9em;
   color: #555;
 }
 
-.job-details span,
+.details strong {
+  padding-right: .5rem;
+}
+
 .details span {
   position: absolute;
   top: 20px;
@@ -85,6 +87,11 @@ header a {
   padding: 6px;
   border-radius: 50%;
   color: #333;
+}
+
+.details ul {
+  list-style-type: none;
+  outline: 1px solid #ddd;
 }
 
 /* forms */
@@ -160,8 +167,8 @@ form .inline {
   margin-right: 1rem;
 }
 
-form.create {
-  flex: 1 1 250px;
+form {
+  margin-bottom: 3rem;
 }
 
 div.error {

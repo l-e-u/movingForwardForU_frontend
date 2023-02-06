@@ -4,12 +4,22 @@ const logSchema = new Schema(
     {
         note: String,
         upload: String,
-        user: {
+        user_id: {
             type: Schema.Types.ObjectId,
             ref: 'User'
         }
     },
-    { timestamps: true }
+    {
+        timestamps: true,
+        // when sending json to client rename properties of id references
+        toJSON: {
+            transform: function (doc, json) {
+                json.user = json.user_id;
+
+                delete json.user_id;
+            }
+        }
+    }
 );
 
 const parcelSchema = new Schema({
@@ -46,10 +56,7 @@ const jobSchema = new Schema(
             ref: 'Contact'
         },
         parcel: parcelSchema,
-        log: {
-            type: [logSchema],
-            index: true
-        },
+        log: [logSchema],
         from: fromToSchema,
         to: fromToSchema,
     },

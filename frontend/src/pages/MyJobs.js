@@ -5,7 +5,7 @@ import { useAuthContext } from '../hooks/useAuthContext.js';
 // components
 import JobDetails from '../components/JobDetails.js';
 
-const Home = () => {
+const MyJobs = () => {
     const { jobs, dispatch } = useJobsContext();
     const { user } = useAuthContext();
 
@@ -16,16 +16,17 @@ const Home = () => {
                     'Authentication': `Bearer ${user.token}`
                 }
             });
-            const json = await response.json();
+
+            // expecting all jobs returned
+            const myJobs = await response.json();
 
             if (response.ok) {
-                dispatch({ type: 'SET_JOBS', payload: json });
+                dispatch({ type: 'SET_JOBS', payload: myJobs });
             };
         };
 
         if (user) fetchJobs();
     }, [dispatch, user]);
-
 
     return (
         <div className='jobs'>
@@ -36,4 +37,4 @@ const Home = () => {
     )
 };
 
-export default Home;
+export default MyJobs;

@@ -9,13 +9,9 @@ import {
     getUsers,
     deleteUser,
     updateUser,
-    getUserAuthorization
 } from "../controllers/userController.js";
 
 const router = Router();
-
-// get a user's permissions
-router.post('/permissions', getUserAuthorization)
 
 // login route
 router.post('/login', loginUser);

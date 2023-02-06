@@ -3,7 +3,15 @@ import Job from '../models/job.js';
 
 // get all jobs
 const getJobs = async (req, res) => {
-    const jobs = await Job.find({}).populate(['status_id', 'customer_id']);
+    // populate and rename status_id to status
+    // populate and rename customer_id to customer
+    // populate and rename log's user_id to user, but only return the username and _id of the user who created the log entry
+    const jobs = await Job.find({}).populate([
+        'status_id',
+        'customer_id',
+        { path: 'drivers', select: 'username' },
+        { path: 'log.user_id', select: 'username' }
+    ]);
 
     return res.status(200).json(jobs);
 }
@@ -16,7 +24,12 @@ const getJob = async (req, res) => {
         return res.status(404).json({ error: 'No such job.' });
     };
 
-    const job = await Job.findById(id).populate(['status_id', 'customer_id']);
+    const job = await Job.findById(id).populate([
+        'status_id',
+        'customer_id',
+        { path: 'drivers', select: 'username' },
+        { path: 'log.user_id', select: 'username' }
+    ]);
 
     if (!job) {
         return res.status(404).json({ error: 'No such job.' });
@@ -28,6 +41,7 @@ const getJob = async (req, res) => {
 // create new job
 const createJob = async (req, res) => {
     const { status_id, customer_id, from, to } = req.body;
+    const { _id: user_id } = req.user;
 
     let emptyFields = [];
 
@@ -48,11 +62,21 @@ const createJob = async (req, res) => {
             from,
             to,
             status_id,
-            customer_id
+            customer_id,
+            log: {
+                note: "Created",
+                user_id
+            }
         });
 
-        // populate status field to return name, description, and _id
-        job = await job.populate(['status_id', 'customer_id']);
+
+        // populate fields
+        job = await job.populate([
+            'status_id',
+            'customer_id',
+            { path: 'drivers', select: 'username' },
+            { path: 'log.user_id', select: 'username' }
+        ]);
 
         res.status(200).json(job);
     }
@@ -61,7 +85,7 @@ const createJob = async (req, res) => {
     };
 };
 
-// delete a workout
+// delete a job
 const deleteJob = async (req, res) => {
     const { id } = req.params;
 
@@ -78,7 +102,7 @@ const deleteJob = async (req, res) => {
     res.status(200).json(job);
 };
 
-// update a workout
+// update a job
 const updateJob = async (req, res) => {
     const { id } = req.params;
 
@@ -98,13 +122,23 @@ const updateJob = async (req, res) => {
     res.status(200).json(job);
 };
 
-// get all jobs that are assinged to the user
+// get all jobs that are assinged to the logged user
 const getJobsByUserId = async (req, res) => {
     // jobs route authenticates user and stores _id in the response
     const { _id } = req.user;
-    console.log('Will filter jobs with this user id:', _id);
 
-    res.status(404).json({ error: 'under development' });
+    const jobs = await Job.find({ drivers: _id }).populate([
+        'status_id',
+        'customer_id',
+        { path: 'drivers', select: 'username' },
+        { path: 'log.user_id', select: 'username' }
+    ]);
+    res.status(200).json(jobs);
+
+
+    // console.log('Will filter jobs with this user id:', _id);
+
+    // res.status(404).json({ error: 'under development' });
 };
 
 export { createJob, getJob, getJobs, deleteJob, updateJob, getJobsByUserId };

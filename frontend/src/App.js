@@ -13,6 +13,13 @@ import Users from './pages/Users.js';
 
 function App() {
   const { user } = useAuthContext();
+  let Jobs;
+
+  console.log(user)
+
+  if (user) {
+    Jobs = user.isAdmin ? AllJobs : MyJobs;
+  }
 
   return (
     <div className="App">
@@ -22,23 +29,19 @@ function App() {
           <Routes>
             <Route
               path='/'
-              element={user ? <MyJobs /> : <Navigate to='/login' />}
-            />
-            <Route
-              path='/alljobs'
-              element={<AllJobs />}
+              element={user ? <Jobs /> : <Navigate to='/login' />}
             />
             <Route
               path='/statuses'
-              element={<Statuses />}
+              element={user ? <Statuses /> : <Navigate to='/login' />}
             />
             <Route
               path='/contacts'
-              element={<Contacts />}
+              element={user ? <Contacts /> : <Navigate to='/login' />}
             />
             <Route
               path='/users'
-              element={<Users />}
+              element={user ? <Users /> : <Navigate to='/login' />}
             />
             <Route
               path='/login'

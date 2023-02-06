@@ -3,6 +3,7 @@ import { useJobsContext } from "../hooks/useJobsContext.js";
 import { useStatusesContext } from "../hooks/useStatusesContext.js";
 import { useContactsContext } from "../hooks/useContactsContext.js";
 import { useAuthContext } from "../hooks/useAuthContext.js";
+import { useUsersContext } from "../hooks/useUsersContext.js";
 
 import DateInput from './DateInput.js';
 import TimeInput from "./TimeInput.js";
@@ -13,6 +14,7 @@ const JobForm = () => {
     const { dispatch: jobsDispatch } = useJobsContext();
     const { contacts, dispatch: contactsDispatch } = useContactsContext();
     const { statuses, dispatch: statusesDispatch } = useStatusesContext();
+    const { users, dispatch: usersDispatch } = useUsersContext();
 
     // state for user input
     const [selectedStatusName, setSelectedStatusName] = useState('');
@@ -48,7 +50,7 @@ const JobForm = () => {
     // fetch all statuses and contacts
     useEffect(() => {
         const fetchStatuses = async () => {
-            const response = await fetch('http://localhost:4000/api/status');
+            const response = await fetch('http://localhost:4000/api/statuses');
 
             if (response.ok) return await response.json();
         };
@@ -59,14 +61,21 @@ const JobForm = () => {
             if (response.ok) return await response.json();
         };
 
+        const fetchUsers = async () => {
+            const response = await fetch('http://localhost:4000/api/users');
+
+            if (response.ok) return await response.json();
+        };
+
         // ensure the server returned all our requests with valid data
-        Promise.all([fetchStatuses(), fetchContacts()])
-            .then(([fetchedStatuses, fetchedContacts]) => {
+        Promise.all([fetchStatuses(), fetchContacts(), fetchUsers()])
+            .then(([fetchedStatuses, fetchedContacts, fetchedUsers]) => {
                 statusesDispatch({ type: 'SET_STATUSES', payload: fetchedStatuses });
                 contactsDispatch({ type: 'SET_CONTACTS', payload: fetchedContacts });
+                usersDispatch({ type: 'SET_USERS', payload: fetchedUsers });
             })
             .catch((reject) => console.log(reject));
-    }, [statusesDispatch, contactsDispatch]);
+    }, [statusesDispatch, contactsDispatch, usersDispatch]);
 
     // POST a new job
     const handleSubmit = async (e) => {
@@ -80,7 +89,7 @@ const JobForm = () => {
         const selectedStatus = statuses.find(s => s.name === selectedStatusName);
         const selectedContact = contacts.find(c => c.organization === selectedContactOrg);
 
-        // DEV.. TEMP FROM AND TO VALUES
+        // user id is appended on server end
         const job = {
             status_id: selectedStatus._id,
             customer_id: selectedContact._id,
@@ -167,6 +176,21 @@ const JobForm = () => {
                     {contacts && contacts.map((contact) => {
                         return (
                             <option key={contact._id}>{contact.organization}</option>
+                        )
+                    })}
+                </select>
+            </div>
+
+            {/* selection for users */}
+            <div>
+                <label className="inline" htmlFor="drivers">Drivers:</label>
+                <select
+                    name="drivers"
+                    id="drivers"
+                >
+                    {users && users.map((driver) => {
+                        return (
+                            <option key={driver._id}>{driver.username}</option>
                         )
                     })}
                 </select>
