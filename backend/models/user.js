@@ -2,18 +2,6 @@ import { Schema, model as Model } from 'mongoose';
 import bcrypt from 'bcrypt';
 import validator from 'validator';
 
-const pointSchema = new Schema({
-    type: {
-        type: String,
-        enum: ['pointSchema'],
-        required: true
-    },
-    coordinates: {
-        type: [Number],
-        required: true
-    }
-});
-
 const userSchema = new Schema({
 
     username: {
@@ -38,24 +26,10 @@ const userSchema = new Schema({
         required: [true, "can't be blank"],
         match: [/\S+@\S+\.\S+/, 'is invalid'],
     },
-    profile: {
-        firstName: String,
-        lastName: String,
-        avatar: String,
-        bio: String,
-        address: {
-            street1: String,
-            street2: String,
-            city: String,
-            state: String,
-            country: String,
-            zip: String,
-            location: {
-                type: pointSchema,
-                required: false
-            }
-        }
-    },
+    firstName: String,
+    lastName: String,
+    avatar: String,
+    address: String,
     active: {
         type: Boolean,
         default: true

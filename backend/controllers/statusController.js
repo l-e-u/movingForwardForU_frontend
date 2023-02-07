@@ -71,7 +71,8 @@ const updateStatus = async (req, res) => {
 
     const status = await Status.findByIdAndUpdate(
         { _id: id },
-        { ...req.body }
+        { ...req.body },
+        { returnDocument: 'after' }
     );
 
     if (!status) {

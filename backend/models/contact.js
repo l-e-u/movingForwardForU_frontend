@@ -2,24 +2,32 @@ import { Schema, model as Model } from 'mongoose';
 
 const contactSchema = new Schema(
     {
-        organization: String,
         firstName: String,
         lastName: String,
-        street1: String,
-        street2: String,
-        city: String,
-        state: String,
-        zipcode: String,
-        phone: Number,
-        email: {
-            type: Schema.Types.ObjectId,
-            ref: 'Email'
-        },
         note: String,
+        address: String,
+        billingAddress: String,
+        organization: {
+            type: String,
+            require: true,
+            unique: true
+        },
+        email: {
+            type: String,
+            lowercase: true,
+            match: [/\S+@\S+\.\S+/, 'is invalid'],
+        },
+        phone: {
+            number: Number,
+            ext: Number
+        },
+        createdBy: {
+            type: Schema.Types.ObjectId,
+            ref: 'User',
+            require: true
+        }
     },
     { timestamps: true }
 );
 
-const Contact = Model('Contact', contactSchema);
-
-export default Contact;
+export default Model('Contact', contactSchema);;

@@ -2,80 +2,62 @@ import { Schema, model as Model } from 'mongoose';
 
 const logSchema = new Schema(
     {
-        note: String,
         upload: String,
-        user_id: {
+        note: {
+            type: String,
+            trim: true,
+            require: true
+        },
+        createdBy: {
             type: Schema.Types.ObjectId,
-            ref: 'User'
+            ref: 'User',
+            require: true
         }
     },
-    {
-        timestamps: true,
-        // when sending json to client rename properties of id references
-        toJSON: {
-            transform: function (doc, json) {
-                json.user = json.user_id;
-
-                delete json.user_id;
-            }
-        }
-    }
+    { timestamps: true }
 );
-
-const parcelSchema = new Schema({
-    reference: String,
-    weight: String,
-    length: String,
-    width: String,
-    height: String,
-});
-
-const fromToSchema = new Schema({
-    dateTime: Date,
-    street1: String,
-    street2: String,
-    city: String,
-    state: String,
-    zipcode: String,
-    attn: String,
-})
 
 const jobSchema = new Schema(
     {
-        status_id: {
+        vehicle: {
             type: Schema.Types.ObjectId,
-            ref: 'Status'
+            ref: 'Vehicle'
+        },
+        createdBy: {
+            type: Schema.Types.ObjectId,
+            ref: 'User'
+        },
+        reference: {
+            type: String,
+            trim: true,
+        },
+        status: {
+            type: Schema.Types.ObjectId,
+            ref: 'Status',
+            require: true
         },
         drivers: [{
             type: Schema.Types.ObjectId,
             ref: 'User'
         }],
 
-        customer_id: {
+        customer: {
             type: Schema.Types.ObjectId,
             ref: 'Contact'
         },
-        parcel: parcelSchema,
-        log: [logSchema],
-        from: fromToSchema,
-        to: fromToSchema,
+        parcelDimensions: {
+            weight: String,
+            length: String,
+            width: String,
+            height: String,
+        },
+        logs: [logSchema],
+        stops: [{
+            type: Schema.Types.ObjectId,
+            ref: 'Stop',
+        }]
     },
-    {
-        timestamps: true,
-
-        // when sending json to client rename properties of id references
-        toJSON: {
-            transform: function (doc, json) {
-                json.status = json.status_id;
-                json.customer = json.customer_id;
-
-                delete json.status_id;
-                delete json.customer_id;
-            }
-        }
-    }
+    { timestamps: true }
 );
 
-const Job = Model('Job', jobSchema);
-
-export default Job;
+export default Model('Job', jobSchema);;

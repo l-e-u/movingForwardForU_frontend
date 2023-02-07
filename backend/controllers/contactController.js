@@ -93,7 +93,8 @@ const updateContact = async (req, res) => {
 
     const contact = await Contact.findByIdAndUpdate(
         { _id: id },
-        { ...req.body }
+        { ...req.body },
+        { returnDocument: 'after' }
     );
 
     if (!contact) {

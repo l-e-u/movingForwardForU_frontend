@@ -1,7 +1,7 @@
 import { Schema, model as Model } from 'mongoose';
 import uniqueValidator from 'mongoose-unique-validator';
 
-const statusSchema = new Schema(
+const vehicleSchema = new Schema(
     {
         name: {
             type: String,
@@ -17,16 +17,12 @@ const statusSchema = new Schema(
         createdBy: {
             type: Schema.Types.ObjectId,
             ref: 'User',
-            // require: true
-        },
-        isDefault: {
-            type: Boolean,
-            default: false
+            require: true
         },
     },
     { timestamps: true }
 );
 
-statusSchema.plugin(uniqueValidator, { message: 'is already in use.' });
+vehicleSchema.plugin(uniqueValidator, { message: 'is already in use.' });
 
-export default Model('Status', statusSchema);
+export default Model('Vehicle', vehicleSchema);

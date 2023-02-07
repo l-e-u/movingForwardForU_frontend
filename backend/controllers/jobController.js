@@ -7,10 +7,10 @@ const getJobs = async (req, res) => {
     // populate and rename customer_id to customer
     // populate and rename log's user_id to user, but only return the username and _id of the user who created the log entry
     const jobs = await Job.find({}).populate([
-        'status_id',
-        'customer_id',
-        { path: 'drivers', select: 'username' },
-        { path: 'log.user_id', select: 'username' }
+        'status',
+        'customer',
+        'drivers',
+        'logs.createdBy'
     ]);
 
     return res.status(200).json(jobs);
@@ -112,7 +112,8 @@ const updateJob = async (req, res) => {
 
     const job = await Job.findByIdAndUpdate(
         { _id: id },
-        { ...req.body }
+        { ...req.body },
+        { returnDocument: 'after' }
     );
 
     if (!job) {

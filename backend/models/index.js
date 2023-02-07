@@ -9,8 +9,8 @@ const connectToDatabase = () => {
     return mongoose.connect(process.env.MONGO_URI);
 };
 
-const models = { Job, Status };
+// const models = { Job, Status };
 
 export { connectToDatabase };
 
-export default models;
+// export default models;
