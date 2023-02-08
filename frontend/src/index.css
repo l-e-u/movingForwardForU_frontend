@@ -15,83 +15,20 @@
 }
 
 body {
-  background: #f1f1f1;
+  background: var(--bs-gray-200);
   margin: 0;
-  font-family: "Poppins";
+  font-family: "Poppins" !important;
+  font-size: 16px;
+  color: var(--bs-gray-900);
 }
 
-header {
-  background: #fff;
-}
-
-header .container {
+.maxWidth1400px {
   max-width: 1400px;
-  margin: 0 auto;
-  padding: 10px 20px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
 }
 
-header a {
-  color: #333;
-  text-decoration: none;
-}
-
-.pages {
-  max-width: 1400px;
-  padding: 20px;
-  margin: 0 auto;
-}
-
-.jobs,
-.statuses {
-  flex: 1 0 350px;
-}
-
-.details {
-  background: #fff;
-  border-radius: 4px;
-  margin: 20px auto;
-  padding: 20px;
-  position: relative;
-}
-
-.details h4 {
-  margin: 0 0 10px 0;
-  font-size: 1.2em;
-  color: var(--primary);
-}
-
-.details h5 {
-  margin: .5rem 0;
-  font-weight: 500;
-}
-
-.details p {
-  margin: 0;
-  font-size: 0.9em;
-  color: #555;
-}
-
-.details strong {
-  padding-right: .5rem;
-}
-
-.details span {
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  cursor: pointer;
-  background: #f1f1f1;
-  padding: 6px;
-  border-radius: 50%;
-  color: #333;
-}
-
-.details ul {
-  list-style-type: none;
-  outline: 1px solid #ddd;
+/* targets nav bar and overview containers */
+.theme-light {
+  background-color: var(--bs-white);
 }
 
 /* forms */
@@ -187,20 +124,6 @@ select.error {
 }
 
 /* navbar */
-nav {
-  display: flex;
-  align-items: center;
-}
-
-nav a {
-  margin-left: 10px;
-}
-
-nav.admin {
-  padding: .5rem 0 0 0;
-  width: 100%;
-}
-
 nav.admin a {
   flex: 1 1 0;
   text-align: center;
@@ -215,18 +138,6 @@ nav.admin a.selected {
   border-bottom-color: cornflowerblue;
 }
 
-nav button {
-  background: #fff;
-  color: var(--primary);
-  border: 2px solid var(--primary);
-  padding: 6px 10px;
-  border-radius: 4px;
-  font-family: 'Poppins';
-  cursor: pointer;
-  font-size: 1em;
-  margin-left: 1rem;
-}
-
 /* auth forms */
 form.signup,
 form.login {
@@ -235,9 +146,4 @@ form.login {
   padding: 20px;
   background: #fff;
   border-radius: 4px;
-}
-
-/* misc */
-.shadow {
-  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.05);
 }
