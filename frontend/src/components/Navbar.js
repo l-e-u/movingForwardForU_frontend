@@ -1,24 +1,35 @@
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuthContext } from '../hooks/useAuthContext.js';
 import { useLogout } from '../hooks/useLogout.js';
-import NavbarAdmin from './NavbarAdmin.js';
 
 const Navbar = () => {
+    const [selected, setSelected] = useState(0);
+    const links = [
+        { name: 'Jobs', path: '/' },
+        { name: 'Contacts', path: '/contacts' },
+        { name: 'Statuses', path: '/statuses' },
+        { name: 'Users', path: '/users' },
+    ];
     const { logout } = useLogout();
     const { user } = useAuthContext();
     const isAdmin = user ? user.isAdmin : null;
 
     return (
-        <header>
-            <div className='container'>
-                <Link to='/'>
+        <header className='theme-light'>
+            <div className='d-flex p-3 align-middle justify-content-between'>
+                <Link to='/' className='text-reset text-decoration-none'>
                     <h1>Moving Forward</h1>
                 </Link>
                 <nav>
                     {user && (
                         <div>
-                            <span>{user.username}</span>
-                            <button onClick={logout}>Log out</button>
+                            <span>{user.firstName}</span>
+                            <button
+                                type='button'
+                                className='btn btn-danger btn-sm'
+                                onClick={logout}
+                            >Log out</button>
                         </div>
                     )}
                     {!user && (
@@ -31,7 +42,20 @@ const Navbar = () => {
             </div>
             {/* Admin navigation */}
             {isAdmin && (
-                <NavbarAdmin />
+                <nav className='admin d-flex'>
+                    {links.map((link, index) => {
+                        return (
+                            <Link
+                                key={index}
+                                to={link.path}
+                                className={(selected === index ? 'selected' : '') + ' text-decoration-none text-reset'}
+                                onClick={() => setSelected(index)}
+                            >
+                                {link.name}
+                            </Link>
+                        )
+                    })}
+                </nav>
             )}
         </header>
     )

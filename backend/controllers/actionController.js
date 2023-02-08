@@ -73,7 +73,7 @@ const updateAction = async (req, res) => {
         { _id: id },
         { ...req.body },
         { returnDocument: 'after' }
-    );
+    ).populate('createdBy');
 
     if (!action) {
         return res.status(404).json({ error: 'No such action.' });

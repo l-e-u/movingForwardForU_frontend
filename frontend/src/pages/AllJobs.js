@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useJobsContext } from "../hooks/useJobsContext.js";
 import { useAuthContext } from '../hooks/useAuthContext.js';
+import OverviewContainer from "../components/OverviewContainer.js";
 import JobForm from '../components/JobForm.js';
 
 // components
@@ -24,31 +25,35 @@ const AllJobs = () => {
             if (response.ok) {
                 const jobsAssignedToMe = allJobs.filter((job) => {
                     return job.drivers.some((driver) => {
-                        console.log('driver:', driver);
-                        console.log('user:', user);
                         return driver._id === user._id
                     });
                 });
                 dispatch({ type: 'SET_JOBS', payload: allJobs });
-                console.log('myJobs:', jobsAssignedToMe);
                 setMyJobs(jobsAssignedToMe);
             };
         };
 
         if (user) fetchAllJobs();
     }, [dispatch, user]);
-    console.log(jobs);
 
     return (
         <div className='jobs'>
-            <JobForm />
-            <h2>My Jobs</h2>
+            {/* <JobForm /> */}
+            <h3>My Jobs</h3>
             {myJobs.map((job) => {
-                return <JobDetails key={job._id} job={job} />
+                return (
+                    <OverviewContainer key={job._id}>
+                        <JobDetails job={job} />
+                    </OverviewContainer>
+                );
             })}
-            <h2>All Jobs</h2>
+            <h3>All Jobs</h3>
             {jobs && jobs.map((job) => {
-                return <JobDetails key={job._id} job={job} />
+                return (
+                    <OverviewContainer key={job._id}>
+                        <JobDetails job={job} />
+                    </OverviewContainer>
+                );
             })}
         </div>
     )

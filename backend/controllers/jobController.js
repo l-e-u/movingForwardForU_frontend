@@ -1,17 +1,18 @@
 import mongoose from 'mongoose';
 import Job from '../models/job.js';
 
+const docFieldsToPopulate = [
+    'status',
+    'customer',
+    'drivers',
+    'createdBy',
+    'vehicle',
+    'logs.createdBy'
+];
+
 // get all jobs
 const getJobs = async (req, res) => {
-    // populate and rename status_id to status
-    // populate and rename customer_id to customer
-    // populate and rename log's user_id to user, but only return the username and _id of the user who created the log entry
-    const jobs = await Job.find({}).populate([
-        'status',
-        'customer',
-        'drivers',
-        'logs.createdBy'
-    ]);
+    let jobs = await Job.find({}).populate(docFieldsToPopulate);
 
     return res.status(200).json(jobs);
 }
@@ -24,12 +25,7 @@ const getJob = async (req, res) => {
         return res.status(404).json({ error: 'No such job.' });
     };
 
-    const job = await Job.findById(id).populate([
-        'status_id',
-        'customer_id',
-        { path: 'drivers', select: 'username' },
-        { path: 'log.user_id', select: 'username' }
-    ]);
+    const job = await Job.findById(id).populate(docFieldsToPopulate);
 
     if (!job) {
         return res.status(404).json({ error: 'No such job.' });
@@ -40,7 +36,6 @@ const getJob = async (req, res) => {
 
 // create new job
 const createJob = async (req, res) => {
-    const { status_id, customer_id, from, to } = req.body;
     const { _id: user_id } = req.user;
 
     let emptyFields = [];
@@ -58,25 +53,10 @@ const createJob = async (req, res) => {
 
     // add doc to db
     try {
-        let job = await Job.create({
-            from,
-            to,
-            status_id,
-            customer_id,
-            log: {
-                note: "Created",
-                user_id
-            }
-        });
-
+        let job = await Job.create({ ...req.body });
 
         // populate fields
-        job = await job.populate([
-            'status_id',
-            'customer_id',
-            { path: 'drivers', select: 'username' },
-            { path: 'log.user_id', select: 'username' }
-        ]);
+        job = await job.populate(docFieldsToPopulate);
 
         res.status(200).json(job);
     }
@@ -114,7 +94,7 @@ const updateJob = async (req, res) => {
         { _id: id },
         { ...req.body },
         { returnDocument: 'after' }
-    );
+    ).populate(docFieldsToPopulate);
 
     if (!job) {
         return res.status(404).json({ error: 'No such job.' });
@@ -128,18 +108,8 @@ const getJobsByUserId = async (req, res) => {
     // jobs route authenticates user and stores _id in the response
     const { _id } = req.user;
 
-    const jobs = await Job.find({ drivers: _id }).populate([
-        'status_id',
-        'customer_id',
-        { path: 'drivers', select: 'username' },
-        { path: 'log.user_id', select: 'username' }
-    ]);
+    const jobs = await Job.find({ drivers: _id }).populate(docFieldsToPopulate);
     res.status(200).json(jobs);
-
-
-    // console.log('Will filter jobs with this user id:', _id);
-
-    // res.status(404).json({ error: 'under development' });
 };
 
 export { createJob, getJob, getJobs, deleteJob, updateJob, getJobsByUserId };

@@ -15,8 +15,6 @@ function App() {
   const { user } = useAuthContext();
   let Jobs;
 
-  console.log(user)
-
   if (user) {
     Jobs = user.isAdmin ? AllJobs : MyJobs;
   }
@@ -25,7 +23,7 @@ function App() {
     <div className="App">
       <BrowserRouter>
         <Navbar />
-        <div className='pages'>
+        <div className='p-4 mx-auto my-0 maxWidth1400px'>
           <Routes>
             <Route
               path='/'

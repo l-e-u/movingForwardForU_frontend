@@ -13,9 +13,9 @@ router.get('/:id', getContact);
 router.post('/', createContact);
 
 // DELETE a contact
-router.delete('/', deleteContact);
+router.delete('/:id', deleteContact);
 
 // UPDATE a contact
-router.patch('/', updateContact);
+router.patch('/:id', updateContact);
 
 export default router;

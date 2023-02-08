@@ -3,7 +3,7 @@ import Contact from '../models/contact.js';
 
 // get all contacts
 const getContacts = async (req, res) => {
-    const contacts = await Contact.find({});
+    const contacts = await Contact.find({}).populate('createdBy');
 
     return res.status(200).json(contacts);
 }
@@ -16,7 +16,7 @@ const getContact = async (req, res) => {
         return res.status(404).json({ error: 'No such contact.' });
     };
 
-    const contact = await Contact.findById(id);
+    const contact = await Contact.findById(id).populate('createdBy');
 
     if (!contact) {
         return res.status(404).json({ error: 'No such contact.' });
@@ -31,11 +31,7 @@ const createContact = async (req, res) => {
         organization,
         firstName,
         lastName,
-        street1,
-        street2,
-        city,
-        state,
-        zipcode,
+        address,
         phone,
         email,
     } = req.body;
@@ -44,10 +40,7 @@ const createContact = async (req, res) => {
 
     // DEV NOTE: ADD VALIDATION FOR STATUS_ID AND SEND OUT ERROR IF INVALID
     if (!organization) emptyFields.push('Organization');
-    if (!street1) emptyFields.push('Street1');
-    if (!city) emptyFields.push('City');
-    if (!state) emptyFields.push('State');
-    if (!zipcode) emptyFields.push('Zipcode');
+    if (!address) emptyFields.push('Street1');
 
     if (emptyFields.length > 0) {
         return res.status(400).json({ error: 'Please fill in all the fields', emptyFields });
@@ -58,6 +51,9 @@ const createContact = async (req, res) => {
         let contact = await Contact.create({
             ...req.body
         });
+
+        // populate field
+        contact = await contact.populate('createdBy');
 
         res.status(200).json(contact);
     }
@@ -95,7 +91,8 @@ const updateContact = async (req, res) => {
         { _id: id },
         { ...req.body },
         { returnDocument: 'after' }
-    );
+    ).populate('createdBy');
+
 
     if (!contact) {
         return res.status(404).json({ error: 'No such contact.' });

@@ -3,7 +3,7 @@ import Status from '../models/status.js'
 
 // get all statuses
 const getStatuses = async (req, res) => {
-    const statuses = await Status.find({});
+    const statuses = await Status.find({}).populate('createdBy');
 
     return res.status(200).json(statuses);
 };
@@ -16,7 +16,7 @@ const getStatus = async (req, res) => {
         return res.status(404).json({ error: 'No such status.' });
     };
 
-    const status = await Status.findById(id);
+    const status = await Status.findById(id).populate('createdBy');
 
     if (!status) {
         return res.status(404).json({ error: 'No such status.' });
@@ -33,10 +33,14 @@ const createStatus = async (req, res) => {
     try {
         if ([name, description].some(input => input.trim() === '')) throw { message: 'Cannot be empty.' };
 
-        const status = await Status.create({
+        let status = await Status.create({
             name,
             description,
         });
+
+        // populate field
+        status = await status.populate('createdBy');
+
         res.status(200).json(status);
     }
     catch (error) {
@@ -73,7 +77,7 @@ const updateStatus = async (req, res) => {
         { _id: id },
         { ...req.body },
         { returnDocument: 'after' }
-    );
+    ).populate('createdBy');
 
     if (!status) {
         return res.status(404).json({ error: 'No such status.' });

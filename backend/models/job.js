@@ -1,8 +1,20 @@
 import { Schema, model as Model } from 'mongoose';
 
+const transportSchema = new Schema({
+    address: {
+        type: String,
+        trim: true,
+        require: true
+    },
+    name: String,
+    date: Date,
+    attn: String,
+    instructions: String,
+    uploads: String
+});
+
 const logSchema = new Schema(
     {
-        upload: String,
         note: {
             type: String,
             trim: true,
@@ -19,6 +31,8 @@ const logSchema = new Schema(
 
 const jobSchema = new Schema(
     {
+        pickup: transportSchema,
+        delivery: transportSchema,
         vehicle: {
             type: Schema.Types.ObjectId,
             ref: 'Vehicle'
@@ -43,7 +57,8 @@ const jobSchema = new Schema(
 
         customer: {
             type: Schema.Types.ObjectId,
-            ref: 'Contact'
+            ref: 'Contact',
+            require: true
         },
         parcelDimensions: {
             weight: String,
@@ -52,10 +67,6 @@ const jobSchema = new Schema(
             height: String,
         },
         logs: [logSchema],
-        stops: [{
-            type: Schema.Types.ObjectId,
-            ref: 'Stop',
-        }]
     },
     { timestamps: true }
 );
