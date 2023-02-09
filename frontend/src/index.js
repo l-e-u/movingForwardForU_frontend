@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import { JobsContextProvider } from './context/JobsContext.js';
+import { MyJobsContextProvider } from './context/MyJobsContext.js';
 import { StatusesContextProvider } from './context/StatusesContext.js'
 import { ContactsContextProvider } from './context/ContactsContext.js';
 import { AuthContextProvider } from './context/AuthContext.js';
@@ -20,7 +21,9 @@ root.render(
             <StatusesContextProvider>
               <ContactsContextProvider>
                 <JobsContextProvider>
-                  <App />
+                  <MyJobsContextProvider>
+                    <App />
+                  </MyJobsContextProvider>
                 </JobsContextProvider>
               </ContactsContextProvider>
             </StatusesContextProvider>

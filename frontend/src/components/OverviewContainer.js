@@ -1,7 +1,7 @@
-const OverviewContainer = ({ children }) => {
+const OverviewContainer = (props) => {
     return (
         <div className='shadow-sm theme-light rounded-2 position-relative my-4 p-4'>
-            {children}
+            {props.children}
         </div>
     );
 };

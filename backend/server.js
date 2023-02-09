@@ -9,7 +9,6 @@ import statusRoutes from './routes/statuses.js';
 import contactRoutes from './routes/contacts.js';
 import userRoutes from './routes/users.js';
 import vehicleRoutes from './routes/vehicles.js';
-import stopRoutes from './routes/stops.js';
 import actionRoutes from './routes/actions.js';
 
 const PORT = process.env.PORT;
@@ -33,7 +32,6 @@ app.use('/api/statuses', statusRoutes);
 app.use('/api/contacts', contactRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/vehicles', vehicleRoutes);
-app.use('/api/stops', stopRoutes);
 app.use('/api/actions', actionRoutes);
 
 // connect to db

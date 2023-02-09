@@ -1,9 +1,9 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { useAuthContext } from './hooks/useAuthContext.js';
 
-// pages & components
+// pages
 import MyJobs from './pages/MyJobs.js';
-import AllJobs from './pages/AllJobs.js'
+import Jobs from './pages/Jobs.js'
 import Login from './pages/Login.js';
 import Signup from './pages/Signup.js';
 import Navbar from './components/Navbar.js'
@@ -13,11 +13,6 @@ import Users from './pages/Users.js';
 
 function App() {
   const { user } = useAuthContext();
-  let Jobs;
-
-  if (user) {
-    Jobs = user.isAdmin ? AllJobs : MyJobs;
-  }
 
   return (
     <div className="App">
@@ -27,6 +22,10 @@ function App() {
           <Routes>
             <Route
               path='/'
+              element={user ? <MyJobs /> : <Navigate to='/login' />}
+            />
+            <Route
+              path='/jobs'
               element={user ? <Jobs /> : <Navigate to='/login' />}
             />
             <Route

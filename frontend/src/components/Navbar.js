@@ -6,7 +6,8 @@ import { useLogout } from '../hooks/useLogout.js';
 const Navbar = () => {
     const [selected, setSelected] = useState(0);
     const links = [
-        { name: 'Jobs', path: '/' },
+        { name: 'My Jobs', path: '/' },
+        { name: 'Jobs', path: '/jobs' },
         { name: 'Contacts', path: '/contacts' },
         { name: 'Statuses', path: '/statuses' },
         { name: 'Users', path: '/users' },
@@ -17,9 +18,9 @@ const Navbar = () => {
 
     return (
         <header className='theme-light'>
-            <div className='d-flex p-3 align-middle justify-content-between'>
+            <div className='d-flex p-3 align-items-center justify-content-between'>
                 <Link to='/' className='text-reset text-decoration-none'>
-                    <h1>Moving Forward</h1>
+                    <h1 className='m-0'>Moving Forward</h1>
                 </Link>
                 <nav>
                     {user && (
@@ -34,8 +35,8 @@ const Navbar = () => {
                     )}
                     {!user && (
                         <div>
-                            <Link to='/login'>Login</Link>
-                            <Link to='/signup'>Signup</Link>
+                            <Link to='/login' className='px-1 text-decoration-none text-reset'>Login</Link>
+                            <Link to='/signup' className='px-1 text-decoration-none text-reset'>Signup</Link>
                         </div>
                     )}
                 </nav>
