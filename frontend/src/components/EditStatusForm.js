@@ -2,38 +2,44 @@ import { useState } from "react";
 import { useStatusesContext } from "../hooks/useStatusesContext.js";
 import { useAuthContext } from "../hooks/useAuthContext.js";
 
-// Form to create a status for a job and description of what the status means.
-const StatusForm = ({ isShowing, setShow }) => {
+// Form to update a status
+const StatusForm = ({ isShowing, setShow, status }) => {
     const { user } = useAuthContext();
     const { dispatch } = useStatusesContext();
-    const [name, setName] = useState('');
-    const [description, setDescription] = useState('');
+    const [name, setName] = useState(status.name);
+    const [description, setDescription] = useState(status.description);
     const [error, setError] = useState(null);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        const status = { name, description };
+        // only store the values that have been updated
+        // on the server side, ES6 spread operator will exclude undefined values and only defined values will be updated
+        const updatedStatus = {
+            name: name === status.name ? undefined : name,
+            description: description === status.description ? undefined : description
+        }
 
-        const response = await fetch('http://localhost:4000/api/statuses', {
-            method: 'POST',
-            body: JSON.stringify(status),
+        const response = await fetch('http://localhost:4000/api/statuses/' + status._id, {
+            method: 'PATCH',
+            body: JSON.stringify(updatedStatus),
             headers: {
                 'Content-Type': 'application/json',
                 'Authentication': `Bearer ${user.token}`
             }
         });
+
+        // expecting updated status
         const json = await response.json();
 
         if (!response.ok) {
             setError(json.error);
         };
         if (response.ok) {
-            dispatch({ type: 'CREATE_STATUS', payload: json });
+            dispatch({ type: 'UPDATE_STATUS', payload: json });
 
-            // reset the form
-            setName('');
-            setDescription('');
+            // hide the form
+            setShow(false);
 
             setError(null);
         };
@@ -41,7 +47,7 @@ const StatusForm = ({ isShowing, setShow }) => {
 
     return (
         <form onSubmit={handleSubmit}>
-            <h2>Add a New Status</h2>
+            <h2>Edit Status</h2>
 
             <div className="mb-3">
                 <label htmlFor="name" className="form-label">Name</label>
@@ -73,7 +79,7 @@ const StatusForm = ({ isShowing, setShow }) => {
                 >
                     Cancel
                 </button>
-                <button type="submit" className='btn btn-sm btn-success rounded-pill px-3'>Save</button>
+                <button type="submit" className='btn btn-sm btn-success rounded-pill px-3'>Update</button>
                 {error && <div className="error">{error}</div>}
             </div>
         </form>

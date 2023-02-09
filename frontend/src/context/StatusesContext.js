@@ -10,6 +10,12 @@ export const statusesReducer = (state, action) => {
         case 'CREATE_STATUS':
             return { statuses: [action.payload, ...state.statuses] };
 
+        case 'DELETE_STATUS':
+            return { statuses: state.statuses.filter((s) => s._id !== action.payload._id) };
+
+        case 'UPDATE_STATUS':
+            return { statuses: state.statuses.map((s) => s._id === action.payload._id ? action.payload : s) };
+
         default:
             return state;
     };

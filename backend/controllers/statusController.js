@@ -27,6 +27,7 @@ const getStatus = async (req, res) => {
 
 // create a new status
 const createStatus = async (req, res) => {
+    const { _id: user_id } = req.user;
     const { name, description } = req.body;
 
     // add doc to db
@@ -36,6 +37,7 @@ const createStatus = async (req, res) => {
         let status = await Status.create({
             name,
             description,
+            createdBy: user_id
         });
 
         // populate field
