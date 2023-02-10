@@ -7,12 +7,13 @@ const statusSchema = new Schema(
             type: String,
             unique: true,
             trim: true,
-            require: true,
+            match: [/^[A-Za-z0-9 ]*$/, 'Only letters, numbers, and spaces.'],
+            required: [true, 'Cannot be empty.']
         },
         description: {
             type: String,
             trim: true,
-            require: true,
+            required: [true, 'Cannot be empty.']
         },
         createdBy: {
             type: Schema.Types.ObjectId,
@@ -27,6 +28,6 @@ const statusSchema = new Schema(
     { timestamps: true }
 );
 
-statusSchema.plugin(uniqueValidator, { message: 'is already in use.' });
+statusSchema.plugin(uniqueValidator, { message: 'Is already in use.' });
 
 export default Model('Status', statusSchema);

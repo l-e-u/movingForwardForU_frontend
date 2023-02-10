@@ -36,28 +36,35 @@ const Statuses = () => {
         if (user) fetchStatuses();
     }, [dispatch, user]);
 
-    // function closure returns an async func that deletes the job
-    const deleteStatusById = (_id) => {
-        return async () => {
-            if (!user) return;
+    // deletes status by _id
+    const deleteStatusById = async (_id) => {
+        if (!user) return;
 
-            const response = await fetch('http://localhost:4000/api/statuses/' + _id, {
-                method: 'DELETE',
-                headers: {
-                    'Authentication': `Bearer ${user.token}`
-                }
-            });
+        const response = await fetch('http://localhost:4000/api/statuses/' + _id, {
+            method: 'DELETE',
+            headers: {
+                'Authentication': `Bearer ${user.token}`
+            }
+        });
 
-            const json = await response.json();
+        const json = await response.json();
 
-            if (response.ok) {
-                dispatch({ type: 'DELETE_STATUS', payload: json })
-            };
+        if (response.ok) {
+            dispatch({ type: 'DELETE_STATUS', payload: json })
+        };
+    };
+
+    // function closure, returns a func that can hide the edit form, and will delete selected status
+    const handleDeleteClick = (_id) => {
+        return () => {
+            // if user deletes the status that is currently loaded on the editStatusForm then remove the editStatusForm
+            if (_id === statusToEdit._id) setShowEditStatusForm(false);
+            deleteStatusById(_id);
         };
     };
 
     // function closure returns a func that sets the status to be edited, hides the CreateStatusForm and shows EditStatusForm
-    const handleEdit = (status) => {
+    const handleEditClick = (status) => {
         return () => {
             setStatusToEdit(status);
             setShowCreateStatusForm(false);
@@ -68,7 +75,9 @@ const Statuses = () => {
     return (
         <div className='statuses'>
             {showCreateStatusForm && <StatusForm isShowing={showCreateStatusForm} setShow={setShowCreateStatusForm} />}
+
             {showEditStatusForm && <EditStatusForm status={statusToEdit} isShowing={showEditStatusForm} setShow={setShowEditStatusForm} />}
+
             {(!showCreateStatusForm && !showEditStatusForm) &&
                 <button
                     type='button'
@@ -78,13 +87,15 @@ const Statuses = () => {
                     + New Status
                 </button>
             }
+
             {statuses && statuses.map((status) => {
                 const { _id } = status;
+
                 return (
                     <OverviewContainer key={_id} >
                         <div className="position-absolute top-0 end-0 pe-3 pt-2 w-25 d-flex justify-content-between">
-                            <EditDocIcon onClick={handleEdit(status)} />
-                            <DeleteDocIcon onClick={deleteStatusById(_id)} />
+                            <EditDocIcon onClick={handleEditClick(status)} />
+                            <DeleteDocIcon onClick={handleDeleteClick(_id)} />
                         </div>
                         <h4 className="text-primary">{status.name}</h4>
                         <p>{status.description}</p>

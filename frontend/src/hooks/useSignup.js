@@ -22,6 +22,7 @@ export const useSignup = () => {
         const json = await response.json();
 
         if (!response.ok) {
+            console.log('in signUp:', json.error.errors);
             setIsLoading(false);
             setError(json.error);
         };

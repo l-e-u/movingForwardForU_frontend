@@ -7,6 +7,13 @@ const Signup = () => {
     const [password, setPassword] = useState('');
     const { signup, error, isLoading } = useSignup();
 
+    if (error) {
+        console.log(error);
+
+        const { errors } = error;
+        console.log('has username error:', errors.hasOwnProperty('username'));
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
 
@@ -45,7 +52,7 @@ const Signup = () => {
             />
 
             <button disabled={isLoading}>Sign in</button>
-            {error && <div className="error">{error}</div>}
+            {error && <div className="error">{error.message}</div>}
         </form>
     )
 };

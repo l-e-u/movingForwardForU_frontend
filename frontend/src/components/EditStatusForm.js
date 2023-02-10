@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useStatusesContext } from "../hooks/useStatusesContext.js";
 import { useAuthContext } from "../hooks/useAuthContext.js";
 
@@ -9,6 +9,15 @@ const StatusForm = ({ isShowing, setShow, status }) => {
     const [name, setName] = useState(status.name);
     const [description, setDescription] = useState(status.description);
     const [error, setError] = useState(null);
+
+    useEffect(() => {
+        setName(n => status.name);
+        setDescription(d => status.description);
+    }, [status]);
+
+    console.log(status)
+    console.log(name)
+    console.log(description)
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -46,7 +55,8 @@ const StatusForm = ({ isShowing, setShow, status }) => {
     };
 
     return (
-        <form onSubmit={handleSubmit}>
+        <form className='position-relative' onSubmit={handleSubmit}>
+            <i class="bi bi-x-circle-fill text-danger position-absolute top-0 end-0" onClick={() => setShow(!isShowing)}></i>
             <h2>Edit Status</h2>
 
             <div className="mb-3">
@@ -73,15 +83,8 @@ const StatusForm = ({ isShowing, setShow, status }) => {
                 />
             </div>
 
-            <div className="d-flex justify-content-between px-2">
-                <button type="button" className="btn btn-sm btn-danger rounded-pill px-3"
-                    onClick={() => setShow(!isShowing)}
-                >
-                    Cancel
-                </button>
-                <button type="submit" className='btn btn-sm btn-success rounded-pill px-3'>Update</button>
-                {error && <div className="error">{error}</div>}
-            </div>
+            <button type="submit" className='d-flex btn btn-sm btn-success rounded-pill px-3 mx-auto'>Update</button>
+            {error && <div className="error">{error}</div>}
         </form>
     );
 };

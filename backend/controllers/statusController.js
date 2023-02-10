@@ -27,16 +27,16 @@ const getStatus = async (req, res) => {
 
 // create a new status
 const createStatus = async (req, res) => {
+    // user added to req after status route authenticates the user
     const { _id: user_id } = req.user;
-    const { name, description } = req.body;
+    const { name, description, isDefault } = req.body;
 
     // add doc to db
     try {
-        if ([name, description].some(input => input.trim() === '')) throw { message: 'Cannot be empty.' };
-
         let status = await Status.create({
-            name,
-            description,
+            isDefault,
+            name: name.replace(/\s+/g, ' '),
+            description: description.replace(/\s+/g, ' '),
             createdBy: user_id
         });
 
@@ -46,7 +46,7 @@ const createStatus = async (req, res) => {
         res.status(200).json(status);
     }
     catch (error) {
-        res.status(400).json({ error: error.message });
+        res.status(400).json({ error });
     };
 };
 

@@ -1,81 +1,64 @@
 import { useState } from "react";
-import { useStatusesContext } from "../hooks/useStatusesContext.js";
-import { useAuthContext } from "../hooks/useAuthContext.js";
+import { useCreateStatus } from "../hooks/useCreateStatus.js";
 
 // Form to create a status for a job and description of what the status means.
 const StatusForm = ({ isShowing, setShow }) => {
-    const { user } = useAuthContext();
-    const { dispatch } = useStatusesContext();
+    const { createStatus, error, isLoading } = useCreateStatus();
+    let nameErrorClass = '';
+    let descriptionErrorClass = '';
+
+    // local state
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
-    const [error, setError] = useState(null);
+
+    if (error) {
+        console.error(error);
+        if (error.name) nameErrorClass = 'is-invalid';
+        if (error.description) descriptionErrorClass = 'is-invalid';
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        const status = { name, description };
+        // trims and removes extra spaces on the frontend; the backend controller will remove extra spaces and the model will trim for validation before saving
+        setName(name => name.replace(/\s+/g, ' ').trim());
+        setDescription(desc => desc.replace(/\s+/g, ' ').trim());
 
-        const response = await fetch('http://localhost:4000/api/statuses', {
-            method: 'POST',
-            body: JSON.stringify(status),
-            headers: {
-                'Content-Type': 'application/json',
-                'Authentication': `Bearer ${user.token}`
-            }
-        });
-        const json = await response.json();
-
-        if (!response.ok) {
-            setError(json.error);
-        };
-        if (response.ok) {
-            dispatch({ type: 'CREATE_STATUS', payload: json });
-
-            // reset the form
-            setName('');
-            setDescription('');
-
-            setError(null);
-        };
+        await createStatus({ name, description });
     };
 
     return (
-        <form onSubmit={handleSubmit}>
+        <form className='position-relative' onSubmit={handleSubmit}>
+            <i class="bi bi-x-circle-fill text-danger position-absolute top-0 end-0" onClick={() => setShow(!isShowing)}></i>
             <h2>Add a New Status</h2>
 
             <div className="mb-3">
                 <label htmlFor="name" className="form-label">Name</label>
                 <input
                     type="text"
-                    className="form-control"
+                    className={`form-control ${nameErrorClass}`}
                     name="name"
                     id="name"
                     onChange={(e) => setName(e.target.value)}
                     value={name}
                 />
+                {(error && error.name) && <div className="invalid-feedback">{error.name.message}</div>}
             </div>
 
             <div className="mb-3">
                 <label htmlFor="description" className="form-label">Description</label>
                 <input
                     type="text"
-                    className="form-control"
+                    className={`form-control ${descriptionErrorClass}`}
                     name="description"
                     id="description"
                     onChange={(e) => setDescription(e.target.value)}
                     value={description}
                 />
+                {(error && error.description) && <div className="invalid-feedback">{error.description.message}</div>}
             </div>
 
-            <div className="d-flex justify-content-between px-2">
-                <button type="button" className="btn btn-sm btn-danger rounded-pill px-3"
-                    onClick={() => setShow(!isShowing)}
-                >
-                    Cancel
-                </button>
-                <button type="submit" className='btn btn-sm btn-success rounded-pill px-3'>Save</button>
-                {error && <div className="error">{error}</div>}
-            </div>
+            <button type="submit" disabled={isLoading} className='d-flex btn btn-sm btn-success rounded-pill px-3 mx-auto'>Save</button>
         </form>
     );
 };
