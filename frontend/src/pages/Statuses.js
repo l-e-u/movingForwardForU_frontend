@@ -76,9 +76,8 @@ const Statuses = () => {
         <div className='statuses'>
             {showCreateStatusForm && <StatusForm isShowing={showCreateStatusForm} setShow={setShowCreateStatusForm} />}
 
-            {showEditStatusForm && <EditStatusForm status={statusToEdit} isShowing={showEditStatusForm} setShow={setShowEditStatusForm} />}
 
-            {(!showCreateStatusForm && !showEditStatusForm) &&
+            {!showCreateStatusForm &&
                 <button
                     type='button'
                     className={'rounded-pill btn btn-primary btn-sm px-3 d-block mx-auto'}
@@ -90,6 +89,7 @@ const Statuses = () => {
 
             {statuses && statuses.map((status) => {
                 const { _id } = status;
+                const isClickedToEdit = showEditStatusForm && (_id === statusToEdit._id);
 
                 return (
                     <OverviewContainer key={_id} >
@@ -100,6 +100,13 @@ const Statuses = () => {
                         <h4 className="text-primary">{status.name}</h4>
                         <p>{status.description}</p>
                         <CreatedInfo createdBy={status.createdBy} createdAt={status.createdAt} />
+
+                        {/* when user clicks to edit this status, the form will appear right below it */}
+                        {isClickedToEdit &&
+                            <div className='p-3 mb-2 border-top'>
+                                <EditStatusForm status={statusToEdit} isShowing={showEditStatusForm} setShow={setShowEditStatusForm} />
+                            </div>
+                        }
                     </OverviewContainer>
                 )
             })}

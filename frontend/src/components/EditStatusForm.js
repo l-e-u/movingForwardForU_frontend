@@ -56,7 +56,7 @@ const StatusForm = ({ isShowing, setShow, status }) => {
 
     return (
         <form className='position-relative' onSubmit={handleSubmit}>
-            <i class="bi bi-x-circle-fill text-danger position-absolute top-0 end-0" onClick={() => setShow(!isShowing)}></i>
+            <i className="bi bi-x-circle-fill text-danger position-absolute top-0 end-0" onClick={() => setShow(!isShowing)}></i>
             <h2>Edit Status</h2>
 
             <div className="mb-3">
