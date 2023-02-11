@@ -59,6 +59,11 @@ const StatusForm = ({ isShowing, setShow, status }) => {
             <i className="bi bi-x-circle-fill text-danger position-absolute top-0 end-0" onClick={() => setShow(!isShowing)}></i>
             <h2>Edit Status</h2>
 
+            <p>
+                <i class="bi bi-exclamation-triangle-fill text-warning pe-2"></i>
+                Changes will also reflect on all jobs with the same status.
+            </p>
+
             <div className="mb-3">
                 <label htmlFor="name" className="form-label">Name</label>
                 <input

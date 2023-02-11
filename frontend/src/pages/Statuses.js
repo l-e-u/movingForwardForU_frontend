@@ -93,9 +93,11 @@ const Statuses = () => {
 
                 return (
                     <OverviewContainer key={_id} >
-                        <div className="position-absolute top-0 end-0 pe-3 pt-2 w-25 d-flex justify-content-between">
-                            <EditDocIcon onClick={handleEditClick(status)} />
-                            <DeleteDocIcon onClick={handleDeleteClick(_id)} />
+                        <div className="position-absolute top-0 end-0 pe-3 pt-2 d-flex">
+                            {!isClickedToEdit && <EditDocIcon onClick={handleEditClick(status)} />}
+                            <div className="ps-5">
+                                <DeleteDocIcon onClick={handleDeleteClick(_id)} />
+                            </div>
                         </div>
                         <h4 className="text-primary">{status.name}</h4>
                         <p>{status.description}</p>

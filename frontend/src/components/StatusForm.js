@@ -28,7 +28,7 @@ const StatusForm = ({ isShowing, setShow }) => {
     };
 
     return (
-        <form className='position-relative' onSubmit={handleSubmit}>
+        <form className='position-relative mb-4' onSubmit={handleSubmit}>
             <i class="bi bi-x-circle-fill text-danger position-absolute top-0 end-0" onClick={() => setShow(!isShowing)}></i>
             <h2>Add a New Status</h2>
 
