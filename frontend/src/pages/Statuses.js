@@ -105,7 +105,7 @@ const Statuses = () => {
 
                         {/* when user clicks to edit this status, the form will appear right below it */}
                         {isClickedToEdit &&
-                            <div className='p-3 mb-2 border-top'>
+                            <div className='py-3 mb-2 border-top'>
                                 <EditStatusForm status={statusToEdit} isShowing={showEditStatusForm} setShow={setShowEditStatusForm} />
                             </div>
                         }

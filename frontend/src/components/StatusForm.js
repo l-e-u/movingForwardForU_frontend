@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useCreateStatus } from "../hooks/useCreateStatus.js";
 
 // Form to create a status for a job and description of what the status means.
-const StatusForm = ({ isShowing, setShow }) => {
+const CreateStatusForm = ({ isShowing, setShow }) => {
     const { createStatus, error, isLoading } = useCreateStatus();
     let nameErrorClass = '';
     let descriptionErrorClass = '';
@@ -11,25 +11,27 @@ const StatusForm = ({ isShowing, setShow }) => {
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
 
-    if (error) {
-        console.error(error);
-        if (error.name) nameErrorClass = 'is-invalid';
-        if (error.description) descriptionErrorClass = 'is-invalid';
+    // handles errors thrown by failed validations on models
+    if (error && error.errors) {
+        const { errors } = error;
+        if (errors.name) nameErrorClass = 'is-invalid';
+        if (errors.description) descriptionErrorClass = 'is-invalid';
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        // trims and removes extra spaces on the frontend; the backend controller will remove extra spaces and the model will trim for validation before saving
-        setName(name => name.replace(/\s+/g, ' ').trim());
-        setDescription(desc => desc.replace(/\s+/g, ' ').trim());
+        // remove extra spaces
+        const nameEdited = name.replace(/\s+/g, ' ');
+        const descEdited = description.replace(/\s+/g, ' ');
+        setName(nameEdited);
+        setDescription(descEdited);
 
-        await createStatus({ name, description });
+        await createStatus({ nameEdited, descEdited });
     };
 
     return (
         <form className='position-relative mb-4' onSubmit={handleSubmit}>
-            <i class="bi bi-x-circle-fill text-danger position-absolute top-0 end-0" onClick={() => setShow(!isShowing)}></i>
             <h2>Add a New Status</h2>
 
             <div className="mb-3">
@@ -58,9 +60,20 @@ const StatusForm = ({ isShowing, setShow }) => {
                 {(error && error.description) && <div className="invalid-feedback">{error.description.message}</div>}
             </div>
 
-            <button type="submit" disabled={isLoading} className='d-flex btn btn-sm btn-success rounded-pill px-3 mx-auto'>Save</button>
+            <div className="d-flex justify-content-between">
+                <button
+                    className="btn btn-sm btn-danger rounded-pill px-3" onClick={() => setShow(!isShowing)}>Cancel</button>
+
+                <button
+                    type="submit"
+                    disabled={isLoading}
+                    className='btn btn-sm btn-success rounded-pill px-3'>Save</button>
+            </div>
+
+            {/* show error message involving mogoose or express issues */}
+            {(error && !error.errors) && <div className="text-danger">{error.name || error.message}</div>}
         </form>
     );
 };
 
-export default StatusForm;
+export default CreateStatusForm;

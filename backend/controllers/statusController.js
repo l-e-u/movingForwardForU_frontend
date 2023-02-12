@@ -35,8 +35,8 @@ const createStatus = async (req, res) => {
     try {
         let status = await Status.create({
             isDefault,
-            name: name.replace(/\s+/g, ' '),
-            description: description.replace(/\s+/g, ' '),
+            name,
+            description,
             createdBy: user_id
         });
 
@@ -72,20 +72,29 @@ const updateStatus = async (req, res) => {
     const { id } = req.params;
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
-        return res.status(404).json({ error: 'No such status.' });
+        return res.status(404).json({ message: 'No such status.' });
     };
 
-    const status = await Status.findByIdAndUpdate(
-        { _id: id },
-        { ...req.body },
-        { returnDocument: 'after' }
-    ).populate('createdBy');
+    try {
+        const status = await Status.findByIdAndUpdate(
+            { _id: id },
+            { ...req.body },
+            {
+                returnDocument: 'after',
+                runValidators: true
+            }
+        ).populate('createdBy');
 
-    if (!status) {
-        return res.status(404).json({ error: 'No such status.' });
+        if (!status) {
+            return res.status(404).json({ message: 'No such status.' });
+        };
+
+        res.status(200).json(status);
+    }
+    catch (error) {
+        console.error(error);
+        res.status(400).json({ error });
     };
-
-    res.status(200).json(status);
 };
 
 export { createStatus, getStatus, getStatuses, deleteStatus, updateStatus };
