@@ -5,7 +5,6 @@ import { useAuthContext } from './hooks/useAuthContext.js';
 import MyJobs from './pages/MyJobs.js';
 import Jobs from './pages/Jobs.js'
 import Login from './pages/Login.js';
-import Signup from './pages/Signup.js';
 import Navbar from './components/Navbar.js'
 import Statuses from './pages/Statuses.js';
 import Contacts from './pages/Contacts.js';
@@ -43,10 +42,6 @@ function App() {
             <Route
               path='/login'
               element={!user ? <Login /> : <Navigate to='/' />}
-            />
-            <Route
-              path='/signup'
-              element={!user ? <Signup /> : <Navigate to='/' />}
             />
           </Routes>
         </div>

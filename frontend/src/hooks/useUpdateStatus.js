@@ -9,16 +9,12 @@ export const useUpdateStatus = () => {
     const { user } = useAuthContext();
 
     const updateStatus = async ({ name, description, _id }) => {
-
-        console.log('name:', name);
-        console.log('desc:', description)
-
         setIsLoading(true);
 
         // don't want to show the error if the user is trying to rectify, so null error at the start
         setError(null);
 
-        const response = await fetch('http://localhost:4000/api/statuses/' + _id, {
+        const response = await fetch('/api/statuses/' + _id, {
             method: 'PATCH',
             body: JSON.stringify({ name, description }),
             headers: {
@@ -31,8 +27,10 @@ export const useUpdateStatus = () => {
         const json = await response.json();
 
         if (!response.ok) {
+            console.log(json)
+            const { error } = json;
             console.error(error);
-            setError(json.error);
+            setError(error);
             setIsLoading(false);
         };
 

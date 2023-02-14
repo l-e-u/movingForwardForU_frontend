@@ -9,7 +9,7 @@ const Users = () => {
 
     useEffect(() => {
         const fetchUsers = async () => {
-            const response = await fetch('http://localhost:4000/api/users', {
+            const response = await fetch('/api/users', {
                 headers: {
                     'Authentication': `Bearer ${user.token}`
                 }

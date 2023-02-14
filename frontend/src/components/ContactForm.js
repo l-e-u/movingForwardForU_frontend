@@ -94,7 +94,7 @@ const ContactForm = () => {
             note
         };
 
-        const response = await fetch('http://localhost:4000/api/contacts', {
+        const response = await fetch('/api/contacts', {
             method: 'POST',
             body: JSON.stringify(contact),
             headers: { 'Content-Type': 'application/json' }

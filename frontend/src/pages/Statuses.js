@@ -19,7 +19,7 @@ const Statuses = () => {
 
     useEffect(() => {
         const fetchStatuses = async () => {
-            const response = await fetch('http://localhost:4000/api/statuses', {
+            const response = await fetch('/api/statuses', {
                 headers: {
                     'Authentication': `Bearer ${user.token}`
                 }
@@ -40,7 +40,7 @@ const Statuses = () => {
     const deleteStatusById = async (_id) => {
         if (!user) return;
 
-        const response = await fetch('http://localhost:4000/api/statuses/' + _id, {
+        const response = await fetch('/api/statuses/' + _id, {
             method: 'DELETE',
             headers: {
                 'Authentication': `Bearer ${user.token}`
@@ -51,15 +51,6 @@ const Statuses = () => {
 
         if (response.ok) {
             dispatch({ type: 'DELETE_STATUS', payload: json })
-        };
-    };
-
-    // function closure, returns a func that can hide the edit form, and will delete selected status
-    const handleDeleteClick = (_id) => {
-        return () => {
-            // if user deletes the status that is currently loaded on the editStatusForm then remove the editStatusForm
-            if (_id === statusToEdit._id) setShowEditStatusForm(false);
-            deleteStatusById(_id);
         };
     };
 
@@ -88,28 +79,39 @@ const Statuses = () => {
             }
 
             {statuses && statuses.map((status) => {
-                const { _id } = status;
+                const { _id, name, description, createdBy, createdAt } = status;
                 const isClickedToEdit = showEditStatusForm && (_id === statusToEdit._id);
 
                 return (
-                    <OverviewContainer key={_id} >
-                        <div className="position-absolute top-0 end-0 pe-3 pt-2 d-flex">
-                            {!isClickedToEdit && <EditDocIcon onClick={handleEditClick(status)} />}
-                            <div className="ps-5">
-                                <DeleteDocIcon onClick={handleDeleteClick(_id)} />
-                            </div>
-                        </div>
-                        <h4 className="text-primary">{status.name}</h4>
-                        <p>{status.description}</p>
-                        <CreatedInfo createdBy={status.createdBy} createdAt={status.createdAt} />
+                    <div key={_id} className='my-4'>
+                        <OverviewContainer >
+                            <div className="position-absolute top-0 end-0 pe-3 pt-2 d-flex">
+                                {!isClickedToEdit && <EditDocIcon onClick={handleEditClick(status)} />}
+                                <div className="ps-5">
 
-                        {/* when user clicks to edit this status, the form will appear right below it */}
-                        {isClickedToEdit &&
-                            <div className='py-3 mb-2 border-top'>
-                                <EditStatusForm status={statusToEdit} isShowing={showEditStatusForm} setShow={setShowEditStatusForm} />
+                                    <DeleteDocIcon onClick={() => deleteStatusById(_id)} />
+                                </div>
                             </div>
-                        }
-                    </OverviewContainer>
+                            <h4 className="text-primary">{name}</h4>
+                            <p>{description}</p>
+
+                            {/* when user clicks to edit this status, the form will appear right below it */}
+                            {isClickedToEdit &&
+                                <div className='py-3 mb-2 border-top'>
+                                    <EditStatusForm
+                                        statusId={_id}
+                                        statusName={name}
+                                        statusDesc={description}
+                                        isShowing={showEditStatusForm}
+                                        setShow={setShowEditStatusForm}
+                                    />
+                                </div>
+                            }
+                        </OverviewContainer>
+                        <div className="mt-1 pe-2">
+                            <CreatedInfo createdBy={createdBy} createdAt={createdAt} />
+                        </div>
+                    </div>
                 )
             })}
         </div>

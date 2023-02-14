@@ -4,30 +4,44 @@ import { useCreateStatus } from "../hooks/useCreateStatus.js";
 // Form to create a status for a job and description of what the status means.
 const CreateStatusForm = ({ isShowing, setShow }) => {
     const { createStatus, error, isLoading } = useCreateStatus();
-    let nameErrorClass = '';
-    let descriptionErrorClass = '';
 
     // local state
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
 
+    const nameNoExtraSpacesAndTrimmed = name.replace(/\s+/g, ' ').trim();
+    const descNoExtraSpacesAndTrimmed = description.replace(/\s+/g, ' ').trim();
+
+    // error handling
+    let nameErrorClass = '';
+    let descErrorClass = '';
+    let nameErrorMsg;
+    let descErrorMsg;
+
     // handles errors thrown by failed validations on models
     if (error && error.errors) {
         const { errors } = error;
-        if (errors.name) nameErrorClass = 'is-invalid';
-        if (errors.description) descriptionErrorClass = 'is-invalid';
+        if (errors.name) {
+            nameErrorClass = ' is-invalid';
+            nameErrorMsg = errors.name.message;
+        };
+
+        if (errors.description) {
+            descErrorClass = ' is-invalid';
+            descErrorMsg = errors.description.message;
+        };
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        // remove extra spaces
-        const nameEdited = name.replace(/\s+/g, ' ');
-        const descEdited = description.replace(/\s+/g, ' ');
-        setName(nameEdited);
-        setDescription(descEdited);
+        setName(nameNoExtraSpacesAndTrimmed);
+        setDescription(descNoExtraSpacesAndTrimmed);
 
-        await createStatus({ nameEdited, descEdited });
+        await createStatus({
+            name: nameNoExtraSpacesAndTrimmed,
+            description: descNoExtraSpacesAndTrimmed
+        });
     };
 
     return (
@@ -38,26 +52,26 @@ const CreateStatusForm = ({ isShowing, setShow }) => {
                 <label htmlFor="name" className="form-label">Name</label>
                 <input
                     type="text"
-                    className={`form-control ${nameErrorClass}`}
+                    className={'form-control' + nameErrorClass}
                     name="name"
                     id="name"
                     onChange={(e) => setName(e.target.value)}
                     value={name}
                 />
-                {(error && error.name) && <div className="invalid-feedback">{error.name.message}</div>}
+                <div className="invalid-feedback">{nameErrorMsg}</div>
             </div>
 
             <div className="mb-3">
                 <label htmlFor="description" className="form-label">Description</label>
-                <input
+                <textarea
                     type="text"
-                    className={`form-control ${descriptionErrorClass}`}
+                    className={'form-control' + descErrorClass}
                     name="description"
                     id="description"
                     onChange={(e) => setDescription(e.target.value)}
                     value={description}
-                />
-                {(error && error.description) && <div className="invalid-feedback">{error.description.message}</div>}
+                ></textarea>
+                <div className="invalid-feedback">{descErrorMsg}</div>
             </div>
 
             <div className="d-flex justify-content-between">
@@ -70,8 +84,8 @@ const CreateStatusForm = ({ isShowing, setShow }) => {
                     className='btn btn-sm btn-success rounded-pill px-3'>Save</button>
             </div>
 
-            {/* show error message involving mogoose or express issues */}
-            {(error && !error.errors) && <div className="text-danger">{error.name || error.message}</div>}
+            {/* any errors other than name and description input validation */}
+            {(error && !error.errors) && <div className="text-danger mt-3">{error.name || error.message + ' Refresh page. If problem persists, contact developer.'}</div>}
         </form>
     );
 };

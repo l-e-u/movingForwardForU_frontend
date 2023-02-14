@@ -8,7 +8,7 @@ const CreatedInfo = (props) => {
     const timeCreated = String(date.getHours()).padStart(2, '0') + String(date.getMinutes()).padStart(2, '0');
 
     return (
-        <small className='fst-italic position-absolute bottom-0 end-0 text-secondary pe-3 pb-2'>
+        <small className='d-block text-end fst-italic text-secondary'>
             {`created on ${dateCreated} at ${timeCreated} by ${firstName} ${lastInitial}.`}
         </small>
     );

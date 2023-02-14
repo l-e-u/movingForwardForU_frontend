@@ -46,6 +46,7 @@ const createStatus = async (req, res) => {
         res.status(200).json(status);
     }
     catch (error) {
+        console.error(error.errors)
         res.status(400).json({ error });
     };
 };
@@ -72,7 +73,7 @@ const updateStatus = async (req, res) => {
     const { id } = req.params;
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
-        return res.status(404).json({ message: 'No such status.' });
+        return res.status(404).json({ error: { message: 'No such status.' } });
     };
 
     try {
@@ -86,7 +87,7 @@ const updateStatus = async (req, res) => {
         ).populate('createdBy');
 
         if (!status) {
-            return res.status(404).json({ message: 'No such status.' });
+            return res.status(404).json({ error: { message: 'No such status.' } });
         };
 
         res.status(200).json(status);

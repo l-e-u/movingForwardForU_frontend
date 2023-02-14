@@ -16,7 +16,7 @@ const MyJobs = () => {
 
     useEffect(() => {
         const fetchJobs = async () => {
-            const response = await fetch('http://localhost:4000/api/jobs/', {
+            const response = await fetch('/api/jobs/', {
                 headers: {
                     'Authentication': `Bearer ${user.token}`
                 }

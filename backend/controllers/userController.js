@@ -26,7 +26,7 @@ const loginUser = async (req, res) => {
         }
         catch (error) {
             console.log(error);
-            res.status(401).json({ error: 'Request denied' });
+            return res.status(401).json({ error: 'Request denied' });
         };
     };
 
@@ -38,10 +38,10 @@ const loginUser = async (req, res) => {
         // create a token
         const token = createToken(user._id);
 
-        res.status(200).json({ user, token });
+        return res.status(200).json({ user, token });
     }
     catch (error) {
-        res.status(400).json({ error: error.message });
+        return res.status(400).json({ error: error.message });
     };
 };
 

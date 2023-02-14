@@ -12,7 +12,7 @@ export const useSignup = () => {
         // don't want to show the error if user is trying to rectify, so null error at the start
         setError(null);
 
-        const response = await fetch('http://localhost:4000/api/users/signup', {
+        const response = await fetch('/api/users/signup', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ username, email, password })

@@ -50,19 +50,19 @@ const JobForm = () => {
     // fetch all statuses and contacts
     useEffect(() => {
         const fetchStatuses = async () => {
-            const response = await fetch('http://localhost:4000/api/statuses');
+            const response = await fetch('/api/statuses');
 
             if (response.ok) return await response.json();
         };
 
         const fetchContacts = async () => {
-            const response = await fetch('http://localhost:4000/api/contacts');
+            const response = await fetch('/api/contacts');
 
             if (response.ok) return await response.json();
         };
 
         const fetchUsers = async () => {
-            const response = await fetch('http://localhost:4000/api/users');
+            const response = await fetch('/api/users');
 
             if (response.ok) return await response.json();
         };
@@ -111,7 +111,7 @@ const JobForm = () => {
             }
         };
 
-        const response = await fetch('http://localhost:4000/api/jobs', {
+        const response = await fetch('/api/jobs', {
             method: 'POST',
             body: JSON.stringify(job),
             headers: {

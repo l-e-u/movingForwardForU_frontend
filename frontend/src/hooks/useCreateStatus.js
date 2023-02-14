@@ -14,7 +14,7 @@ export const useCreateStatus = () => {
         // don't want to show the error if the user is trying to rectify, so null error at the start
         setError(null);
 
-        const response = await fetch('http://localhost:4000/api/statuses', {
+        const response = await fetch('/api/statuses', {
             method: 'POST',
             body: JSON.stringify(status),
             headers: {
@@ -27,7 +27,7 @@ export const useCreateStatus = () => {
         const json = await response.json();
 
         if (!response.ok) {
-            console.error(error);
+            console.error(json);
             setError(json.error);
             setIsLoading(false);
         };
