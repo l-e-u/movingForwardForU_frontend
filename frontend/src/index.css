@@ -44,3 +44,8 @@ nav.menu {
 .theme-light {
   background-color: var(--bs-white);
 }
+
+.required::before {
+  content: '* ';
+  color: var(--bs-danger);
+}

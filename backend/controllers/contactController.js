@@ -27,38 +27,39 @@ const getContact = async (req, res) => {
 
 // create new contact
 const createContact = async (req, res) => {
+    // user added to req after status route authenticates the user
+    const { _id: user_id } = req.user;
     const {
         organization,
-        firstName,
-        lastName,
+        name,
         address,
-        phone,
+        phoneNumber,
+        phoneExt,
         email,
+        note
     } = req.body;
-
-    let emptyFields = [];
-
-    // DEV NOTE: ADD VALIDATION FOR STATUS_ID AND SEND OUT ERROR IF INVALID
-    if (!organization) emptyFields.push('Organization');
-    if (!address) emptyFields.push('Street1');
-
-    if (emptyFields.length > 0) {
-        return res.status(400).json({ error: 'Please fill in all the fields', emptyFields });
-    };
 
     // add doc to db
     try {
         let contact = await Contact.create({
-            ...req.body
+            organization,
+            name,
+            address,
+            phoneNumber,
+            phoneExt,
+            email,
+            note,
+            createdBy: user_id
         });
 
         // populate field
         contact = await contact.populate('createdBy');
 
-        res.status(200).json(contact);
+        return res.status(200).json(contact);
     }
     catch (error) {
-        res.status(400).json({ error: error.message });
+        console.error(error.errors)
+        return res.status(400).json({ error });
     };
 };
 

@@ -5,7 +5,7 @@ import { useStatusesContext } from "../hooks/useStatusesContext.js";
 // components
 import OverviewContainer from '../components/OverviewContainer.js';
 import EditStatusForm from '../components/EditStatusForm.js';
-import StatusForm from "../components/StatusForm.js";
+import CreateStatusForm from "../components/CreateStatusForm.js";
 import CreatedInfo from '../components/CreatedInfo.js';
 import DeleteDocIcon from "../components/DeleteDocIcon.js";
 import EditDocIcon from "../components/EditDocIcon.js";
@@ -37,9 +37,7 @@ const Statuses = () => {
     }, [dispatch, user]);
 
     // deletes status by _id
-    const deleteStatusById = async (_id) => {
-        if (!user) return;
-
+    const deleteById = async (_id) => {
         const response = await fetch('/api/statuses/' + _id, {
             method: 'DELETE',
             headers: {
@@ -65,8 +63,7 @@ const Statuses = () => {
 
     return (
         <div className='statuses'>
-            {showCreateStatusForm && <StatusForm isShowing={showCreateStatusForm} setShow={setShowCreateStatusForm} />}
-
+            {showCreateStatusForm && <CreateStatusForm isShowing={showCreateStatusForm} setShow={setShowCreateStatusForm} />}
 
             {!showCreateStatusForm &&
                 <button
@@ -85,13 +82,14 @@ const Statuses = () => {
                 return (
                     <div key={_id} className='my-4'>
                         <OverviewContainer >
+                            {/* Edit and Delete options */}
                             <div className="position-absolute top-0 end-0 pe-3 pt-2 d-flex">
                                 {!isClickedToEdit && <EditDocIcon onClick={handleEditClick(status)} />}
                                 <div className="ps-5">
-
-                                    <DeleteDocIcon onClick={() => deleteStatusById(_id)} />
+                                    <DeleteDocIcon onClick={() => deleteById(_id)} />
                                 </div>
                             </div>
+
                             <h4 className="text-primary">{name}</h4>
                             <p>{description}</p>
 

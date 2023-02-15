@@ -1,15 +1,25 @@
 import { Schema, model as Model } from 'mongoose';
+import uniqueValidator from 'mongoose-unique-validator';
 
 const contactSchema = new Schema(
     {
-        firstName: String,
-        lastName: String,
-        note: String,
-        address: String,
+        name: {
+            type: String,
+            trim: true,
+        },
+        note: {
+            type: String,
+            trim: true
+        },
+        address: {
+            type: String,
+            required: [true, 'Cannot be empty.']
+        },
         billingAddress: String,
         organization: {
             type: String,
-            require: true,
+            required: [true, 'Cannot be empty.'],
+            trim: true,
             unique: true
         },
         email: {
@@ -17,9 +27,13 @@ const contactSchema = new Schema(
             lowercase: true,
             match: [/\S+@\S+\.\S+/, 'is invalid'],
         },
-        phone: {
-            number: Number,
-            ext: Number
+        phoneNumber: {
+            type: Number,
+            match: [/^\d{9}$/, 'Needs to have 9 digits.']
+        },
+        phoneExt: {
+            type: Number,
+            match: [/^[0-9]+$/, 'Numbers only.']
         },
         createdBy: {
             type: Schema.Types.ObjectId,
@@ -29,5 +43,7 @@ const contactSchema = new Schema(
     },
     { timestamps: true }
 );
+
+contactSchema.plugin(uniqueValidator, { message: 'Is already in use.' });
 
 export default Model('Contact', contactSchema);;

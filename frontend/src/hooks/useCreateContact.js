@@ -1,22 +1,22 @@
-import { useState } from "react"
+import { useState } from "react";
 import { useAuthContext } from "./useAuthContext";
-import { useStatusesContext } from "./useStatusesContext";
+import { useContactsContext } from "./useContactsContext";
 
-export const useCreateStatus = () => {
+export const useCreateContact = () => {
     const [error, setError] = useState(null);
     const [isLoading, setIsLoading] = useState(null);
-    const { dispatch } = useStatusesContext();
+    const { dispatch } = useContactsContext();
     const { user } = useAuthContext();
 
-    const createStatus = async (status) => {
+    const createContact = async (contact) => {
         setIsLoading(true);
 
         // don't want to show the error if the user is trying to rectify, so null error at the start
         setError(null);
 
-        const response = await fetch('/api/statuses', {
+        const response = await fetch('/api/contacts', {
             method: 'POST',
-            body: JSON.stringify(status),
+            body: JSON.stringify(contact),
             headers: {
                 'Content-Type': 'application/json',
                 'Authentication': `Bearer ${user.token}`
@@ -36,9 +36,9 @@ export const useCreateStatus = () => {
             setError(null);
             setIsLoading(false);
 
-            dispatch({ type: 'CREATE_STATUS', payload: json });
+            dispatch({ type: 'CREATE_CONTACT', payload: json });
         };
     };
 
-    return { createStatus, isLoading, error };
+    return { createContact, isLoading, error };
 };

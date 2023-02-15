@@ -34,8 +34,10 @@ const Navbar = () => {
             </div>
 
             {/* new menu dev */}
-            <nav className={'position-fixed d-flex top-0 start-0 w-100 h-100 menu' + (showMenu ? ' show' : ' d-none')} >
-                <div className='theme-light d-flex flex-column w-75 p-4'>
+            <nav
+                className={'position-fixed d-flex top-0 start-0 w-100 h-100 menu' + (showMenu ? ' show' : ' d-none')}
+            >
+                <div className='theme-light d-flex flex-column w-75 p-4 overflow-auto'>
                     {user && <div className='border-bottom py-3'>
                         <p className='text-center m-0'>{user.firstName}</p>
                     </div>

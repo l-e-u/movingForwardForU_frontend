@@ -43,11 +43,11 @@ const createStatus = async (req, res) => {
         // populate field
         status = await status.populate('createdBy');
 
-        res.status(200).json(status);
+        return res.status(200).json(status);
     }
     catch (error) {
         console.error(error.errors)
-        res.status(400).json({ error });
+        return res.status(400).json({ error });
     };
 };
 
