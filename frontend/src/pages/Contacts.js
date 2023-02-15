@@ -8,13 +8,19 @@ import CreateContactForm from '../components/CreateContactForm.js';
 import CreatedInfo from '../components/CreatedInfo.js';
 import DeleteDocIcon from "../components/DeleteDocIcon.js";
 import EditDocIcon from "../components/EditDocIcon.js";
+import EditContactForm from '../components/EditContactForm.js';
+import ContactOverview from '../components/ContactOverview.js';
 
 const Contacts = () => {
+  const { contacts, dispatch } = useContactsContext();
+  const { user } = useAuthContext();
+
+  console.log(contacts)
+
+  // local state
   const [docToEdit, setDocToEdit] = useState(null);
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [showEditForm, setShowEditForm] = useState(false);
-  const { contacts, dispatch } = useContactsContext();
-  const { user } = useAuthContext();
 
   useEffect(() => {
     const fetchContacts = async () => {
@@ -74,23 +80,34 @@ const Contacts = () => {
         </button>
       }
       {contacts && contacts.map((contact) => {
-        const { _id, address, organization, createdBy, createdAt } = contact;
-        const isClickedToEdit = showEditForm && (_id === docToEdit._id);
+        const { _id, address, billingAddress, email, phoneNumber, phoneExt, name, organization, createdBy, note, createdAt } = contact;
+        const isEditingThisDoc = showEditForm && (_id === docToEdit._id);
 
         return (
           <div key={_id} className='my-4'>
-            <OverviewContainer key={_id}>
+            <OverviewContainer>
               {/* Edit and Delete options */}
               <div className="position-absolute top-0 end-0 pe-3 pt-2 d-flex">
-                {!isClickedToEdit && <EditDocIcon onClick={handleEditClick(contact)} />}
+                {!isEditingThisDoc && <EditDocIcon onClick={handleEditClick(contact)} />}
                 <div className="ps-5">
 
                   <DeleteDocIcon onClick={() => deleteById(_id)} />
                 </div>
               </div>
 
-              <h4 className='text-primary'>{organization}</h4>
-              <div>{address}</div>
+              {isEditingThisDoc ?
+                <EditContactForm
+                  setShowThisForm={setShowEditForm}
+                  _id={_id}
+                  address={address}
+                  billingAddress={billingAddress}
+                  email={email}
+                  phoneNumber={phoneNumber}
+                  phoneExt={phoneExt}
+                  name={name}
+                  organization={organization}
+                  note={note} /> :
+                <ContactOverview {...contact} />}
             </OverviewContainer>
             <div className="mt-1 pe-2">
               <CreatedInfo createdBy={createdBy} createdAt={createdAt} />

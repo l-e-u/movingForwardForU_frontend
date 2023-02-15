@@ -1,22 +1,33 @@
 import { useState } from "react";
-import { useCreateContact } from "../hooks/useCreateContact.js";
+import { useUpdateContact } from "../hooks/useUpdateContact.js";
 
 // functions
 import { noCharChanges } from "../utils/StringUtils.js";
 
 // Form to create a contact for a job and description of what the contact means.
-const CreateContactForm = ({ isShowing, setShow }) => {
-    const { createContact, error, isLoading } = useCreateContact();
+const EditContactForm = ({
+    setShowThisForm,
+    _id,
+    name,
+    address,
+    billingAddress,
+    organization,
+    phoneNumber,
+    phoneExt,
+    note,
+    email
+}) => {
+    const { updateContact, error, isLoading } = useUpdateContact()
 
-    // local state is undefined by default so when the user edits a contact, the server only updates the fields that have a value
-    const [name, setName] = useState('');
-    const [address, setAddress] = useState('');
-    const [billingAddress, setBillingAddress] = useState('');
-    const [organization, setOrganization] = useState('');
-    const [email, setEmail] = useState();
-    const [phoneNumber, setPhoneNumber] = useState('');
-    const [phoneExt, setPhoneExt] = useState('');
-    const [note, setNote] = useState('');
+    // local input state
+    const [nameInput, setNameInput] = useState(name);
+    const [addressInput, setAddressInput] = useState(address);
+    const [billingAddressInput, setBillingAddressInput] = useState(billingAddress);
+    const [organizationInput, setOrganizationInput] = useState(organization);
+    const [emailInput, setEmailInput] = useState(email);
+    const [phoneNumberInput, setPhoneNumberInput] = useState(phoneNumber);
+    const [phoneExtInput, setPhoneExtInput] = useState(phoneExt);
+    const [noteInput, setNoteInput] = useState(note);
 
     // const nameNoExtraSpacesAndTrimmed = name.replace(/\s+/g, ' ').trim();
     // const descNoExtraSpacesAndTrimmed = description.replace(/\s+/g, ' ').trim();
@@ -66,26 +77,33 @@ const CreateContactForm = ({ isShowing, setShow }) => {
         };
     };
 
+    // every input doesn't allow extra spaces
+    const handleOnChange = (stateSetter) => {
+        return (e) => {
+            const input = e.target.value;
+            stateSetter(input.replace(/\s+/g, ' '));
+        };
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        await createContact({
-            name,
-            address,
-            billingAddress,
-            organization,
-            email,
-            note,
-            phoneNumber,
-            phoneExt
+        await updateContact({
+            _id,
+            name: nameInput,
+            address: addressInput,
+            billingAddress: billingAddressInput,
+            organization: organizationInput,
+            email: emailInput,
+            note: noteInput,
+            phoneNumber: phoneNumberInput,
+            phoneExt: phoneExtInput
         });
     };
 
     return (
         <form className='mb-4' onSubmit={handleSubmit}>
-            <h2>Add a New Contact</h2>
-
-            <p className="text-danger w-100 text-end"> <small>* Required fields</small></p>
+            <h2>Edit Contact</h2>
 
             {/* ORGANIZATION */}
             <div className="form-floating mb-3">
@@ -95,9 +113,9 @@ const CreateContactForm = ({ isShowing, setShow }) => {
                     name="organization"
                     id="organization"
                     placeholder="Organization"
-                    value={organization}
-                    onChange={(e) => setOrganization(e.target.value)} />
-                <label htmlFor="organization" className="form-label required">
+                    value={organizationInput ?? ''}
+                    onChange={handleOnChange(setOrganizationInput)} />
+                <label htmlFor="organization" className="form-label">
                     Organization
                     {orgErrorMsg && <span className="ms-1 text-danger">{orgErrorMsg}</span>}
                 </label>
@@ -111,8 +129,8 @@ const CreateContactForm = ({ isShowing, setShow }) => {
                     name="name"
                     id="name"
                     placeholder="Name"
-                    onChange={(e) => setName(e.target.value)}
-                    value={name}
+                    onChange={(e) => setNameInput(e.target.value.replace(/\s+/g, ' '))}
+                    value={nameInput ?? ''}
                 />
                 <label htmlFor="name" className="form-label">Name</label>
             </div>
@@ -125,10 +143,10 @@ const CreateContactForm = ({ isShowing, setShow }) => {
                     name="address"
                     placeholder="Address"
                     id="address"
-                    onChange={(e) => setAddress(e.target.value)}
-                    value={address}
+                    onChange={(e) => setAddressInput(e.target.value)}
+                    value={addressInput ?? ''}
                 />
-                <label htmlFor="address" className="form-label required">{'Address' + addrErrorMsg}</label>
+                <label htmlFor="address" className="form-label">{'Address' + addrErrorMsg}</label>
             </div>
 
             {/* BILLING ADDRESS */}
@@ -139,8 +157,8 @@ const CreateContactForm = ({ isShowing, setShow }) => {
                     name="billing"
                     placeholder="Billing Address"
                     id="billing"
-                    onChange={(e) => setBillingAddress(e.target.value)}
-                    value={billingAddress}
+                    onChange={(e) => setBillingAddressInput(e.target.value)}
+                    value={billingAddressInput ?? ''}
                 />
                 <label htmlFor="address" className="form-label">Billing Address</label>
             </div>
@@ -152,8 +170,8 @@ const CreateContactForm = ({ isShowing, setShow }) => {
                     className={'form-control' + emailErrorClass}
                     id="email"
                     placeholder="name@example.com"
-                    value={email || ''}
-                    onChange={(e) => setEmail(e.target.value)} />
+                    value={emailInput ?? ''}
+                    onChange={(e) => setEmailInput(e.target.value)} />
                 <label htmlFor="email">
                     Email
                     {emailErrorMsg && <span className="ms-1 text-danger">{emailErrorMsg}</span>}
@@ -169,8 +187,8 @@ const CreateContactForm = ({ isShowing, setShow }) => {
                         name="phoneNumber"
                         placeholder="Phone"
                         id="phoneNumber"
-                        onChange={(e) => setPhoneNumber(e.target.value)}
-                        value={phoneNumber}
+                        onChange={(e) => setPhoneNumberInput(e.target.value)}
+                        value={phoneNumberInput ?? ''}
                     />
                     <label htmlFor="phoneNumber" className="form-label">{'Phone' + phoneNumberErrorMsg}</label>
                 </div>
@@ -182,8 +200,8 @@ const CreateContactForm = ({ isShowing, setShow }) => {
                         name="phoneExt"
                         placeholder="Ext"
                         id="phoneExt"
-                        onChange={(e) => setPhoneExt(e.target.value)}
-                        value={phoneExt}
+                        onChange={(e) => setPhoneExtInput(e.target.value)}
+                        value={phoneExtInput ?? ''}
                     />
                     <label htmlFor="PhoneExt" className="form-label">{'Ext' + phoneExtErrorMsg}</label>
                 </div>
@@ -197,8 +215,8 @@ const CreateContactForm = ({ isShowing, setShow }) => {
                     name="note"
                     placeholder="Note"
                     id="note"
-                    onChange={(e) => setNote(e.target.value)}
-                    value={note}
+                    onChange={(e) => setNoteInput(e.target.value)}
+                    value={noteInput ?? ''}
                     style={{ height: '100px' }}
                 ></textarea>
                 <label htmlFor="note" className="form-label">Note</label>
@@ -207,7 +225,7 @@ const CreateContactForm = ({ isShowing, setShow }) => {
             {/* BUTTONS */}
             <div className="d-flex justify-content-between">
                 <button
-                    className="btn btn-sm btn-danger rounded-pill px-3" onClick={() => setShow(!isShowing)}>Cancel</button>
+                    className="btn btn-sm btn-danger rounded-pill px-3" onClick={() => setShowThisForm(false)}>Cancel</button>
 
                 <button
                     type="submit"
@@ -221,4 +239,4 @@ const CreateContactForm = ({ isShowing, setShow }) => {
     );
 };
 
-export default CreateContactForm;
+export default EditContactForm;

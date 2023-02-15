@@ -15,7 +15,10 @@ const contactSchema = new Schema(
             type: String,
             required: [true, 'Cannot be empty.']
         },
-        billingAddress: String,
+        billingAddress: {
+            type: String,
+            trim: true
+        },
         organization: {
             type: String,
             required: [true, 'Cannot be empty.'],
@@ -25,6 +28,7 @@ const contactSchema = new Schema(
         email: {
             type: String,
             lowercase: true,
+            trim: true,
             match: [/\S+@\S+\.\S+/, 'is invalid'],
         },
         phoneNumber: {
