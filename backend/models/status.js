@@ -18,7 +18,7 @@ const statusSchema = new Schema(
         createdBy: {
             type: Schema.Types.ObjectId,
             ref: 'User',
-            // require: true
+            require: true
         },
         isDefault: {
             type: Boolean,

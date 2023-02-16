@@ -27,7 +27,8 @@ export const useCreateStatus = () => {
         const json = await response.json();
 
         if (!response.ok) {
-            console.error(json);
+            console.log(json);
+
             setError(json.error);
             setIsLoading(false);
         };

@@ -15,8 +15,6 @@ const Contacts = () => {
   const { contacts, dispatch } = useContactsContext();
   const { user } = useAuthContext();
 
-  console.log(contacts)
-
   // local state
   const [docToEdit, setDocToEdit] = useState(null);
   const [showCreateForm, setShowCreateForm] = useState(false);
@@ -74,9 +72,9 @@ const Contacts = () => {
         <button
           type='button'
           className={'rounded-pill btn btn-primary btn-sm px-3 d-block mx-auto'}
-          onClick={() => setShowCreateForm(!showCreateForm)}
+          onClick={() => setShowCreateForm(true)}
         >
-          + New Contact
+          Add New Contact
         </button>
       }
       {contacts && contacts.map((contact) => {
@@ -107,7 +105,8 @@ const Contacts = () => {
                   name={name}
                   organization={organization}
                   note={note} /> :
-                <ContactOverview {...contact} />}
+                <ContactOverview {...contact} />
+              }
             </OverviewContainer>
             <div className="mt-1 pe-2">
               <CreatedInfo createdBy={createdBy} createdAt={createdAt} />

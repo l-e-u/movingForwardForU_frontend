@@ -1,98 +1,93 @@
 import { useState } from "react";
 import { useUpdateStatus } from "../hooks/useUpdateStatus.js";
 
+// functions
+import { noCharChanges } from "../utils/StringUtils.js";
+
 // Form to update a status
-const UpdateStatusForm = ({
-    isShowing,
-    setShow,
-    statusId,
-    statusName,
-    statusDesc,
+const EditStatusForm = ({
+    setShowThisForm,
+    _id,
+    name,
+    description,
 }) => {
     const { updateStatus, error, isLoading } = useUpdateStatus();
 
     // local state
-    const [name, setName] = useState(statusName);
-    const [description, setDescription] = useState(statusDesc);
+    const [nameInput, setNameInput] = useState(name);
+    const [descriptionInput, setDescriptionInput] = useState(description);
 
-    const nameNoExtraSpacesAndTrimmed = name.replace(/\s+/g, ' ').trim();
-    const descNoExtraSpacesAndTrimmed = description.replace(/\s+/g, ' ').trim();
-    const nameHasChanged = nameNoExtraSpacesAndTrimmed !== statusName;
-    const descHasChanged = descNoExtraSpacesAndTrimmed !== statusDesc;
-    const noChanges = !nameHasChanged && !descHasChanged;
+    // error identification
+    const errorFromNameInput = (error && error.name);
+    const errorFromDescriptionInput = (error && error.description);
 
-    // error handling
-    let nameErrorClass = '';
-    let descErrorClass = '';
-    let nameErrorMsg;
-    let descErrorMsg;
+    // user cannot update a doc that has not character changes, this disables the update button
+    const noChanges = [[name, nameInput ?? ''], [description, descriptionInput ?? '']].every(strings => noCharChanges(strings[0], strings[1]));
 
-    // handles errors thrown by failed validations on models
-    if (error && error.errors) {
-        const { errors } = error;
-        if (errors.name) {
-            nameErrorClass = ' is-invalid';
-            nameErrorMsg = errors.name.message;
+    // every input doesn't allow extra spaces
+    const handleOnChange = (stateSetter) => {
+        return (e) => {
+            const value = e.target.value.replace(/\s+/g, ' ');
+            stateSetter(value);
         };
-
-        if (errors.description) {
-            descErrorClass = ' is-invalid';
-            descErrorMsg = errors.description.message;
-        }
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        setName(nameNoExtraSpacesAndTrimmed);
-        setDescription(descNoExtraSpacesAndTrimmed);
-
-        // only store the values that have been updated
-        // on the server side, ES6 spread operator will exclude undefined values and only defined values will be updated
         await updateStatus({
-            _id: statusId,
-            name: nameHasChanged ? nameNoExtraSpacesAndTrimmed : undefined,
-            description: descHasChanged ? descNoExtraSpacesAndTrimmed : undefined
+            _id,
+            name: nameInput,
+            description: descriptionInput
         });
     };
 
     return (
         <form className='position-relative' onSubmit={handleSubmit}>
             <h4>Edit Status</h4>
+
             <p>
                 <i className="bi bi-exclamation-triangle-fill text-warning pe-2"></i>
                 Changes will also reflect on all jobs with the same status.
             </p>
 
-            <div className="mb-3">
-                <label htmlFor="name" className="form-label">Name</label>
+            <p className="text-danger w-100 text-end"> <small>* Required fields</small></p>
+
+            <div className="form-floating mb-3">
                 <input
                     type="text"
-                    className={'form-control' + nameErrorClass}
+                    className={'form-control' + (errorFromNameInput ? ' is-invalid' : '')}
                     name="name"
+                    placeholder="Name"
                     id="name"
-                    onChange={(e) => setName(e.target.value)}
-                    value={name}
-                />
-                <div className="invalid-feedback">{nameErrorMsg}</div>
+                    onChange={handleOnChange(setNameInput)}
+                    value={nameInput ?? ''} />
+                <label htmlFor="name" className="form-label required">
+                    Name
+                    {errorFromNameInput && <span className="ms-1 text-danger">{': ' + error.name.message}</span>}
+                </label>
             </div>
 
-            <div className="mb-3">
-                <label htmlFor="description" className="form-label">Description</label>
+            <div className="form-floating mb-3">
                 <textarea
                     type="text"
-                    className={'form-control' + descErrorClass}
+                    className={'form-control' + (errorFromDescriptionInput ? ' is-invalid' : '')}
                     name="description"
+                    placeholder="Description"
                     id="description"
-                    onChange={(e) => setDescription(e.target.value)}
-                    value={description}
+                    onChange={handleOnChange(setDescriptionInput)}
+                    value={descriptionInput ?? ''}
+                    style={{ height: '100px' }}
                 ></textarea>
-                <div className="invalid-feedback">{descErrorMsg}</div>
+                <label htmlFor="description" className="form-label required">
+                    Description
+                    {errorFromDescriptionInput && <span className="ms-1 text-danger">{': ' + error.description.message}</span>}</label>
             </div>
+
             <div className="d-flex justify-content-between">
                 <button
                     className="btn btn-sm btn-danger rounded-pill px-3"
-                    onClick={() => setShow(!isShowing)}>Cancel</button>
+                    onClick={() => setShowThisForm(false)}>Cancel</button>
                 <button
                     type="submit"
                     disabled={isLoading || noChanges}
@@ -100,9 +95,9 @@ const UpdateStatusForm = ({
             </div>
 
             {/* any errors other than name and description input validation */}
-            {(error && !error.errors) && <div className="text-danger mt-3">{error.name || error.message + ' Refresh page. If problem persists, contact developer.'}</div>}
+            {(error && error.server) && <div className="text-danger mt-3">{`${error.server.message} Refresh page. If problem persists, contact developer.`}</div>}
         </form>
     );
 };
 
-export default UpdateStatusForm;
+export default EditStatusForm;

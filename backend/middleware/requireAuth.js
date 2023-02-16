@@ -6,7 +6,7 @@ const requireAuth = async (req, res, next) => {
     const { authentication } = req.headers;
 
     if (!authentication) {
-        return res.status(401).json({ error: 'Access denied, login or signup' });
+        return res.status(401).json({ error: 'Access denied, you need to login.' });
     };
 
     const token = authentication.split(' ')[1];

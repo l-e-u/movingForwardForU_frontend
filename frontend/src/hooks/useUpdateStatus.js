@@ -27,10 +27,9 @@ export const useUpdateStatus = () => {
         const json = await response.json();
 
         if (!response.ok) {
-            console.log(json)
-            const { error } = json;
-            console.error(error);
-            setError(error);
+            console.log(json);
+
+            setError(json.error);
             setIsLoading(false);
         };
 

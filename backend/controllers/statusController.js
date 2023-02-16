@@ -11,18 +11,19 @@ const getStatuses = async (req, res) => {
 // get a status
 const getStatus = async (req, res) => {
     const { id } = req.params;
+    const error = { server: { message: 'No such status' } };
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
-        return res.status(404).json({ error: 'No such status.' });
+        return res.status(404).json({ error });
     };
 
     const status = await Status.findById(id).populate('createdBy');
 
     if (!status) {
-        return res.status(404).json({ error: 'No such status.' });
+        return res.status(404).json({ error });
     };
 
-    res.status(200).json(status);
+    return res.status(200).json(status);
 };
 
 // create a new status
@@ -45,24 +46,34 @@ const createStatus = async (req, res) => {
 
         return res.status(200).json(status);
     }
-    catch (error) {
-        console.error(error.errors)
-        return res.status(400).json({ error });
+    catch (err) {
+        console.error(err);
+
+        // 'errors' contains any mongoose model-validation fails
+        const { errors } = err;
+
+        // if no input errors, then send back the err message as a server error
+        if (!errors) {
+            err.errors.server = err.message;
+        };
+
+        return res.status(400).json({ error: err.errors });
     };
 };
 
 // delete a status
 const deleteStatus = async (req, res) => {
     const { id } = req.params;
+    const error = { server: { message: 'No such status' } };
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
-        return res.status(404).json({ error: 'No such status.' });
+        return res.status(404).json({ error });
     };
 
     const status = await Status.findByIdAndDelete({ _id: id });
 
     if (!status) {
-        return res.status(404).json({ error: 'No such status.' });
+        return res.status(404).json({ error });
     };
 
     res.status(200).json(status);
@@ -73,7 +84,7 @@ const updateStatus = async (req, res) => {
     const { id } = req.params;
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
-        return res.status(404).json({ error: { message: 'No such status.' } });
+        return res.status(404).json({ message: 'No such status.' });
     };
 
     try {
@@ -87,14 +98,23 @@ const updateStatus = async (req, res) => {
         ).populate('createdBy');
 
         if (!status) {
-            return res.status(404).json({ error: { message: 'No such status.' } });
+            return res.status(404).json({ message: 'No such status.' });
         };
 
         res.status(200).json(status);
     }
-    catch (error) {
-        console.error(error);
-        res.status(400).json({ error });
+    catch (err) {
+        console.error(err);
+
+        // 'errors' contains any mongoose model-validation fails
+        const { errors } = err;
+
+        // if no input errors, then send back the err message as a server error
+        if (!errors) {
+            err.errors.server = err.message;
+        };
+
+        return res.status(400).json({ error: err.errors });
     };
 };
 

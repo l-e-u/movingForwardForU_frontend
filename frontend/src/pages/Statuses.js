@@ -9,14 +9,18 @@ import CreateStatusForm from "../components/CreateStatusForm.js";
 import CreatedInfo from '../components/CreatedInfo.js';
 import DeleteDocIcon from "../components/DeleteDocIcon.js";
 import EditDocIcon from "../components/EditDocIcon.js";
+import StatusOverview from "../components/StatusOverview.js";
 
 const Statuses = () => {
-    const [statusToEdit, setStatusToEdit] = useState(null);
-    const [showCreateStatusForm, setShowCreateStatusForm] = useState(false);
-    const [showEditStatusForm, setShowEditStatusForm] = useState(false);
     const { statuses, dispatch } = useStatusesContext();
     const { user } = useAuthContext();
 
+    // local state
+    const [docToEdit, setDocToEdit] = useState(null);
+    const [showCreateForm, setShowCreateForm] = useState(false);
+    const [showEditForm, setShowEditForm] = useState(false);
+
+    // get statuses once
     useEffect(() => {
         const fetchStatuses = async () => {
             const response = await fetch('/api/statuses', {
@@ -55,55 +59,51 @@ const Statuses = () => {
     // function closure returns a func that sets the status to be edited, hides the CreateStatusForm and shows EditStatusForm
     const handleEditClick = (status) => {
         return () => {
-            setStatusToEdit(status);
-            setShowCreateStatusForm(false);
-            setShowEditStatusForm(true);
+            setDocToEdit(status);
+            setShowCreateForm(false);
+            setShowEditForm(true);
         };
+    };
+
+    const handleCreateClick = () => {
+        setShowCreateForm(true);
+        setShowEditForm(false);
     };
 
     return (
         <div className='statuses'>
-            {showCreateStatusForm && <CreateStatusForm isShowing={showCreateStatusForm} setShow={setShowCreateStatusForm} />}
+            {showCreateForm && <CreateStatusForm isShowing={showCreateForm} setShow={setShowCreateForm} />}
 
-            {!showCreateStatusForm &&
+            {!showCreateForm &&
                 <button
                     type='button'
                     className={'rounded-pill btn btn-primary btn-sm px-3 d-block mx-auto'}
-                    onClick={() => setShowCreateStatusForm(!showCreateStatusForm)}
-                >
-                    + New Status
+                    onClick={handleCreateClick}>
+                    Create Status
                 </button>
             }
 
             {statuses && statuses.map((status) => {
-                const { _id, name, description, createdBy, createdAt } = status;
-                const isClickedToEdit = showEditStatusForm && (_id === statusToEdit._id);
+                const { _id, createdBy, createdAt } = status;
+                const isEditingThisDoc = showEditForm && (_id === docToEdit._id);
+                const editFormProps = {
+                    ...status,
+                    setShowThisForm: setShowEditForm
+                };
 
                 return (
                     <div key={_id} className='my-4'>
                         <OverviewContainer >
                             {/* Edit and Delete options */}
                             <div className="position-absolute top-0 end-0 pe-3 pt-2 d-flex">
-                                {!isClickedToEdit && <EditDocIcon onClick={handleEditClick(status)} />}
+                                {!isEditingThisDoc && <EditDocIcon onClick={handleEditClick(status)} />}
+
                                 <div className="ps-5">
                                     <DeleteDocIcon onClick={() => deleteById(_id)} />
                                 </div>
                             </div>
 
-                            <h4 className="text-primary">{name}</h4>
-                            <p>{description}</p>
-
-                            {/* when user clicks to edit this status, the form will appear right below it */}
-                            {isClickedToEdit &&
-                                <div className='py-3 mb-2 border-top'>
-                                    <EditStatusForm
-                                        statusId={_id}
-                                        statusName={name}
-                                        statusDesc={description}
-                                        isShowing={showEditStatusForm}
-                                        setShow={setShowEditStatusForm}
-                                    />
-                                </div>
+                            {isEditingThisDoc ? <EditStatusForm {...editFormProps} /> : <StatusOverview {...status} />
                             }
                         </OverviewContainer>
                         <div className="mt-1 pe-2">
