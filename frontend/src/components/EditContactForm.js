@@ -29,9 +29,6 @@ const EditContactForm = ({
     const [phoneExtInput, setPhoneExtInput] = useState(phoneExt);
     const [noteInput, setNoteInput] = useState(note);
 
-    // const nameNoExtraSpacesAndTrimmed = name.replace(/\s+/g, ' ').trim();
-    // const descNoExtraSpacesAndTrimmed = description.replace(/\s+/g, ' ').trim();
-
     // error classes
     let orgErrorClass = '';
     let addrErrorClass = '';
