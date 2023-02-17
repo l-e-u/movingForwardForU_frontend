@@ -87,7 +87,7 @@ const Jobs = () => {
                             <JobOverview {...job} />
                         </CardContainer>
                         <div className="mt-1 pe-2">
-                            <CreatedInfo createdBy={job.createdBy} createdAt={job.createdAt} />
+                            <CreatedInfo createdBy={createdBy} createdAt={createdAt} />
                         </div>
                     </div>
                 );

@@ -7,7 +7,7 @@ const userSchema = new Schema({
     username: {
         type: String,
         unique: true,
-        required: [true, "can't be blank"],
+        required: [true, 'Cannot be empty.'],
         match: [/^[a-zA-Z0-9]+$/, 'is invalid'],
     },
     isAdmin: {
@@ -23,7 +23,7 @@ const userSchema = new Schema({
         type: String,
         lowercase: true,
         unique: true,
-        required: [true, "can't be blank"],
+        required: [true, 'Cannot be empty.'],
         match: [/\S+@\S+\.\S+/, 'is invalid'],
     },
     firstName: String,
