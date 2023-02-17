@@ -1,69 +1,35 @@
 import { useState } from "react";
 import { useCreateContact } from "../hooks/useCreateContact.js";
 
-// functions
-import { noCharChanges } from "../utils/StringUtils.js";
-
 // Form to create a contact for a job and description of what the contact means.
 const CreateContactForm = ({ isShowing, setShow }) => {
     const { createContact, error, isLoading } = useCreateContact();
 
-    // local state is undefined by default so when the user edits a contact, the server only updates the fields that have a value
-    const [name, setName] = useState('');
+    // local state
     const [address, setAddress] = useState('');
-    const [billingAddress, setBillingAddress] = useState('');
     const [organization, setOrganization] = useState('');
-    const [email, setEmail] = useState();
+    const [name, setName] = useState('');
+    const [billingAddress, setBillingAddress] = useState('');
+    const [email, setEmail] = useState('');
     const [phoneNumber, setPhoneNumber] = useState('');
     const [phoneExt, setPhoneExt] = useState('');
     const [note, setNote] = useState('');
 
-    // const nameNoExtraSpacesAndTrimmed = name.replace(/\s+/g, ' ').trim();
-    // const descNoExtraSpacesAndTrimmed = description.replace(/\s+/g, ' ').trim();
+    // error identification for inputs with validators
+    const errorFromAddressInput = (error && error.address);
+    const errorFromOrganizationInput = (error && error.organization);
+    const errorFromEmailInput = (error && error.email);
+    const errorFromPhoneNumberInput = (error && error.phoneNumber);
+    const errorFromPhoneExtInput = (error && error.phoneExt);
 
-    // error classes
-    let orgErrorClass = '';
-    let addrErrorClass = '';
-    let phoneNumberErrorClass = '';
-    let phoneExtErrorClass = '';
-    let emailErrorClass = ''
+    // input does not allow extra spaces
+    const handleOnChangeRemoveExtraSpaces = (stateSetter) => {
+        return (e) => stateSetter(e.target.value.replace(/\s+/g, ' '));
+    };
 
-    // error messages
-    let orgErrorMsg;
-    let addrErrorMsg = '';
-    let phoneNumberErrorMsg = '';
-    let phoneExtErrorMsg = '';
-    let emailErrorMsg;
-
-    // handles errors thrown by failed validations on models
-    if (error && error.errors) {
-        const { errors } = error;
-        const { organization, address, email, phoneNumber, phoneExt } = errors;
-
-        if (organization) {
-            orgErrorClass = ' is-invalid';
-            orgErrorMsg = ': ' + errors.organization.message;
-        };
-
-        if (address) {
-            addrErrorClass = ' is-invalid';
-            addrErrorMsg = ': ' + errors.address.message;
-        };
-
-        if (phoneNumber) {
-            phoneNumberErrorClass = ' is-invalid';
-            phoneNumberErrorMsg = ': ' + phoneNumber.message;
-        };
-
-        if (phoneExt) {
-            phoneExtErrorClass = ' is-invalid';
-            phoneExtErrorMsg = ': ' + phoneExt.message;
-        };
-
-        if (email) {
-            emailErrorClass = ' is-invalid';
-            emailErrorMsg = ': ' + email.message;
-        };
+    // when the input loses focus it trims the input to reflect the value sent to the backend
+    const handleOnBlurTrimInput = (stateSetter) => {
+        return () => stateSetter(input => input.trim());
     };
 
     const handleSubmit = async (e) => {
@@ -83,7 +49,7 @@ const CreateContactForm = ({ isShowing, setShow }) => {
 
     return (
         <form className='mb-4' onSubmit={handleSubmit}>
-            <h2>Add a New Contact</h2>
+            <h2>New Contact</h2>
 
             <p className="text-danger w-100 text-end"> <small>* Required fields</small></p>
 
@@ -91,15 +57,16 @@ const CreateContactForm = ({ isShowing, setShow }) => {
             <div className="form-floating mb-3">
                 <input
                     type="text"
-                    className={'required form-control' + orgErrorClass}
+                    className={'required form-control' + (errorFromOrganizationInput ? ' is-invalid' : '')}
                     name="organization"
                     id="organization"
                     placeholder="Organization"
                     value={organization}
-                    onChange={(e) => setOrganization(e.target.value)} />
+                    onChange={(e) => setOrganization(e.target.value)}
+                    onBlur={handleOnBlurTrimInput(setOrganization)} />
                 <label htmlFor="organization" className="form-label required">
                     Organization
-                    {orgErrorMsg && <span className="ms-1 text-danger">{orgErrorMsg}</span>}
+                    {errorFromOrganizationInput && <span className="ms-1 text-danger">{error.organization.message}</span>}
                 </label>
             </div>
 
@@ -111,8 +78,9 @@ const CreateContactForm = ({ isShowing, setShow }) => {
                     name="name"
                     id="name"
                     placeholder="Name"
-                    onChange={(e) => setName(e.target.value)}
+                    onChange={handleOnChangeRemoveExtraSpaces(setName)}
                     value={name}
+                    onBlur={handleOnBlurTrimInput(setName)}
                 />
                 <label htmlFor="name" className="form-label">Name</label>
             </div>
@@ -121,14 +89,18 @@ const CreateContactForm = ({ isShowing, setShow }) => {
             <div className="form-floating mb-3">
                 <input
                     type="text"
-                    className={'form-control' + addrErrorClass}
+                    className={'form-control' + (errorFromAddressInput ? ' is-invalid' : '')}
                     name="address"
                     placeholder="Address"
                     id="address"
-                    onChange={(e) => setAddress(e.target.value)}
+                    onChange={handleOnChangeRemoveExtraSpaces(setAddress)}
                     value={address}
+                    onBlur={handleOnBlurTrimInput(setAddress)}
                 />
-                <label htmlFor="address" className="form-label required">{'Address' + addrErrorMsg}</label>
+                <label htmlFor="address" className="form-label required">
+                    Address
+                    {errorFromAddressInput && <span className="ms-1 text-danger">{error.organization.address}</span>}
+                </label>
             </div>
 
             {/* BILLING ADDRESS */}
@@ -139,9 +111,9 @@ const CreateContactForm = ({ isShowing, setShow }) => {
                     name="billing"
                     placeholder="Billing Address"
                     id="billing"
-                    onChange={(e) => setBillingAddress(e.target.value)}
+                    onChange={handleOnChangeRemoveExtraSpaces(setBillingAddress)}
                     value={billingAddress}
-                />
+                    onBlur={handleOnBlurTrimInput(setBillingAddress)} />
                 <label htmlFor="address" className="form-label">Billing Address</label>
             </div>
 
@@ -149,43 +121,50 @@ const CreateContactForm = ({ isShowing, setShow }) => {
             <div className="form-floating mb-3">
                 <input
                     type="email"
-                    className={'form-control' + emailErrorClass}
+                    className={'form-control' + (errorFromEmailInput ? ' is-invalid' : '')}
                     id="email"
                     placeholder="name@example.com"
                     value={email || ''}
-                    onChange={(e) => setEmail(e.target.value)} />
+                    onChange={handleOnChangeRemoveExtraSpaces(setEmail)}
+                    onBlur={handleOnBlurTrimInput(setEmail)} />
                 <label htmlFor="email">
                     Email
-                    {emailErrorMsg && <span className="ms-1 text-danger">{emailErrorMsg}</span>}
+                    {errorFromEmailInput && <span className="ms-1 text-danger">{error.email.message}</span>}
                 </label>
             </div>
 
             {/* PHONE NUMBER AND EXT */}
             <div className="d-flex gap-3 mb-3">
-                <div className="form-floating w-75">
+                <div className="form-floating w-50">
                     <input
                         type="text"
-                        className={'form-control' + phoneNumberErrorClass}
+                        className={'form-control' + (errorFromPhoneNumberInput ? ' is-invalid' : '')}
                         name="phoneNumber"
                         placeholder="Phone"
                         id="phoneNumber"
-                        onChange={(e) => setPhoneNumber(e.target.value)}
-                        value={phoneNumber}
-                    />
-                    <label htmlFor="phoneNumber" className="form-label">{'Phone' + phoneNumberErrorMsg}</label>
+                        onChange={handleOnChangeRemoveExtraSpaces(setPhoneNumber)}
+                        onBlur={handleOnBlurTrimInput(setPhoneNumber)}
+                        value={phoneNumber} />
+                    <label htmlFor="phoneNumber" className="form-label">
+                        Phone
+                        {errorFromPhoneNumberInput && <span className="ms-1 text-danger">{error.phoneNumber.message}</span>}
+                    </label>
                 </div>
-                <div className="form-floating w-25">
+                <div className="form-floating w-50">
                     <input
                         type="number"
                         min={0}
-                        className={'form-control' + phoneExtErrorClass}
+                        className={'form-control' + (errorFromPhoneExtInput ? ' is-invalid' : '')}
                         name="phoneExt"
                         placeholder="Ext"
                         id="phoneExt"
-                        onChange={(e) => setPhoneExt(e.target.value)}
+                        onChange={handleOnChangeRemoveExtraSpaces(setPhoneExt)}
                         value={phoneExt}
-                    />
-                    <label htmlFor="PhoneExt" className="form-label">{'Ext' + phoneExtErrorMsg}</label>
+                        onBlur={handleOnBlurTrimInput(setPhoneExt)} />
+                    <label htmlFor="PhoneExt" className="form-label">
+                        Ext
+                        {errorFromPhoneExtInput && <span className="ms-1 text-danger">{error.phoneExt.message}</span>}
+                    </label>
                 </div>
             </div>
 
@@ -197,7 +176,8 @@ const CreateContactForm = ({ isShowing, setShow }) => {
                     name="note"
                     placeholder="Note"
                     id="note"
-                    onChange={(e) => setNote(e.target.value)}
+                    onChange={handleOnChangeRemoveExtraSpaces(setNote)}
+                    onBlur={handleOnBlurTrimInput(setNote)}
                     value={note}
                     style={{ height: '100px' }}
                 ></textarea>
@@ -212,11 +192,11 @@ const CreateContactForm = ({ isShowing, setShow }) => {
                 <button
                     type="submit"
                     disabled={isLoading}
-                    className='btn btn-sm btn-success rounded-pill px-3'>Save</button>
+                    className='btn btn-sm btn-success rounded-pill px-3'>Create</button>
             </div>
 
-            {/* any errors other than name and description input validation */}
-            {(error && !error.errors) && <div className="text-danger mt-3">{error.name || error.message + ' Refresh page. If problem persists, contact developer.'}</div>}
+            {/* any errors other than input validation */}
+            {(error && error.server) && <div className="text-danger mt-3">{`${error.server.message} Refresh page. If problem persists, contact developer.`}</div>}
         </form>
     );
 };

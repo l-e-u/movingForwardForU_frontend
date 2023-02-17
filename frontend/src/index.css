@@ -18,7 +18,7 @@ body {
   background: var(--bs-gray-200);
   margin: 0;
   font-family: "Poppins" !important;
-  font-size: 14px;
+  font-size: 16px;
   color: var(--bs-gray-900);
 }
 
@@ -48,4 +48,12 @@ nav.menu {
 .required::before {
   content: '* ';
   color: var(--bs-danger);
+}
+
+.outline {
+  outline: var(--bs-border-width) var(--bs-border-style) var(--bs-border-color);
+}
+
+.text-green {
+  color: var(--primary) !important;
 }

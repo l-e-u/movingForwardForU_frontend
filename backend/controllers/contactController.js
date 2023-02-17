@@ -11,15 +11,16 @@ const getContacts = async (req, res) => {
 // get a single contact
 const getContact = async (req, res) => {
     const { id } = req.params;
+    const error = { server: { message: 'No such status' } };
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
-        return res.status(404).json({ error: 'No such contact.' });
+        return res.status(404).json({ error });
     };
 
     const contact = await Contact.findById(id).populate('createdBy');
 
     if (!contact) {
-        return res.status(404).json({ error: 'No such contact.' });
+        return res.status(404).json({ error });
     };
 
     res.status(200).json(contact);
@@ -57,24 +58,35 @@ const createContact = async (req, res) => {
 
         return res.status(200).json(contact);
     }
-    catch (error) {
-        console.error(error.errors)
-        return res.status(400).json({ error });
+    catch (err) {
+        console.error(err);
+
+        // 'errors' contains any mongoose model-validation fails
+        const { errors } = err;
+
+        // if no input errors, then send back the err message as a server error
+        if (!errors) {
+            err.errors.server = err.message;
+        };
+
+        return res.status(400).json({ error: err.errors });
     };
 };
 
 // delete a workout
 const deleteContact = async (req, res) => {
     const { id } = req.params;
+    const error = { server: { message: 'No such status' } };
+
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
-        return res.status(404).json({ error: 'No such contact.' });
+        return res.status(404).json({ error });
     };
 
     const contact = await Contact.findByIdAndDelete({ _id: id });
 
     if (!contact) {
-        return res.status(404).json({ error: 'No such contact.' });
+        return res.status(404).json({ error });
     };
 
     res.status(200).json(contact);
@@ -83,23 +95,42 @@ const deleteContact = async (req, res) => {
 // update a workout
 const updateContact = async (req, res) => {
     const { id } = req.params;
+    const error = { server: { message: 'No such status' } };
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
-        return res.status(404).json({ error: 'No such contact.' });
+        return res.status(404).json({ error });
     };
 
-    const contact = await Contact.findByIdAndUpdate(
-        { _id: id },
-        { ...req.body },
-        { returnDocument: 'after' }
-    ).populate('createdBy');
+    try {
+        const contact = await Contact.findByIdAndUpdate(
+            { _id: id },
+            { ...req.body },
+            {
+                returnDocument: 'after',
+                runValidators: true
+            }
+        ).populate('createdBy');
 
 
-    if (!contact) {
-        return res.status(404).json({ error: 'No such contact.' });
+        if (!contact) {
+            return res.status(404).json({ error });
+        };
+
+        res.status(200).json(contact);
+    }
+    catch (err) {
+        console.error(err);
+
+        // 'errors' contains any mongoose model-validation fails
+        const { errors } = err;
+
+        // if no input errors, then send back the err message as a server error
+        if (!errors) {
+            err.errors.server = err.message;
+        };
+
+        return res.status(400).json({ error: err.errors });
     };
-
-    res.status(200).json(contact);
 };
 
 export { createContact, getContact, getContacts, deleteContact, updateContact };

@@ -1,3 +1,5 @@
+import SmallHeader from "./SmallHeader";
+
 const ContactOverview = ({
     name,
     organization,
@@ -10,13 +12,30 @@ const ContactOverview = ({
 }) => {
     return (
         <div>
-            <h4 className='text-primary'>{organization}</h4>
-            <div>{name}</div>
-            <div>{address}</div>
-            <div>{billingAddress}</div>
-            <div>{email}</div>
-            <div>{phoneNumber + ' ' + phoneExt}</div>
-            <div>{note}</div>
+            <h2 className='text-primary fs-5'>{organization}</h2>
+            <address className="m-0">
+                <div>{address}</div>
+                {billingAddress &&
+                    <div className="mt-2">
+                        <SmallHeader text='Billing Address' />
+                        <div>{billingAddress}</div>
+                    </div>
+                }
+                {(name ?? email ?? phoneNumber) &&
+                    <div className="mt-2">
+                        <SmallHeader text='Contact' />
+                        {name && <div>{name}</div>}
+                        {email && <div>{email}</div>}
+                        {phoneNumber && <div>{phoneNumber + (phoneExt ? ' x' + phoneExt : '')}</div>}
+                    </div>
+                }
+            </address>
+            {note &&
+                <div className="mt-2">
+                    <SmallHeader text='Note' />
+                    <div>{note}</div>
+                </div>
+            }
         </div>
     );
 };

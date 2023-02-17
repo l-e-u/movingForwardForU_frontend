@@ -6,7 +6,7 @@ import { useAuthContext } from '../hooks/useAuthContext.js';
 import formatDistanceToNow from "date-fns/formatDistanceToNow";
 
 // components
-import OverviewContainer from "../components/OverviewContainer.js";
+import CardContainer from "../components/CardContainer.js";
 import LogHistory from "../components/LogHistory.js";
 import TransportInfo from "../components/TransportInfo.js";
 
@@ -42,7 +42,7 @@ const MyJobs = () => {
         <div className='jobs'>
             {myJobs && myJobs.map((job) => {
                 return (
-                    <OverviewContainer key={job._id}>
+                    <CardContainer key={job._id}>
                         <TransportInfo
                             legend='From'
                             {...job.pickup}
@@ -53,7 +53,7 @@ const MyJobs = () => {
                         />
                         <LogHistory logs={job.logs} />
                         <p>{formatDistanceToNow(new Date(job.createdAt), { addSuffix: true })}</p>
-                    </OverviewContainer>)
+                    </CardContainer>)
             })}
         </div>
     )

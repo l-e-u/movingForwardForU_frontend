@@ -22,14 +22,16 @@ const EditStatusForm = ({
     const errorFromDescriptionInput = (error && error.description);
 
     // user cannot update a doc that has not character changes, this disables the update button
-    const noChanges = [[name, nameInput ?? ''], [description, descriptionInput ?? '']].every(strings => noCharChanges(strings[0], strings[1]));
+    const noChanges = [[name, nameInput], [description, descriptionInput]].every(strings => noCharChanges(strings[0], strings[1]));
 
     // every input doesn't allow extra spaces
-    const handleOnChange = (stateSetter) => {
-        return (e) => {
-            const value = e.target.value.replace(/\s+/g, ' ');
-            stateSetter(value);
-        };
+    const handleOnChangeRemoveExtraSpaces = (stateSetter) => {
+        return (e) => stateSetter(e.target.value.replace(/\s+/g, ' '));
+    };
+
+    // when the input loses focus it trims the input to reflect the value sent to the backend
+    const handleOnBlurTrimInput = (stateSetter) => {
+        return () => stateSetter(input => input.trim());
     };
 
     const handleSubmit = async (e) => {
@@ -60,8 +62,9 @@ const EditStatusForm = ({
                     name="name"
                     placeholder="Name"
                     id="name"
-                    onChange={handleOnChange(setNameInput)}
-                    value={nameInput ?? ''} />
+                    onChange={handleOnChangeRemoveExtraSpaces(setNameInput)}
+                    onBlur={handleOnBlurTrimInput(setNameInput)}
+                    value={nameInput} />
                 <label htmlFor="name" className="form-label required">
                     Name
                     {errorFromNameInput && <span className="ms-1 text-danger">{': ' + error.name.message}</span>}
@@ -75,8 +78,9 @@ const EditStatusForm = ({
                     name="description"
                     placeholder="Description"
                     id="description"
-                    onChange={handleOnChange(setDescriptionInput)}
-                    value={descriptionInput ?? ''}
+                    onChange={handleOnChangeRemoveExtraSpaces(setDescriptionInput)}
+                    onBlur={handleOnBlurTrimInput(setDescriptionInput)}
+                    value={descriptionInput}
                     style={{ height: '100px' }}
                 ></textarea>
                 <label htmlFor="description" className="form-label required">

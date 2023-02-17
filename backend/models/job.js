@@ -4,13 +4,9 @@ const transportSchema = new Schema({
     address: {
         type: String,
         trim: true,
-        require: true
+        require: [true, 'Cannot be empty.']
     },
-    name: String,
     date: Date,
-    attn: String,
-    instructions: String,
-    uploads: String
 });
 
 const logSchema = new Schema(
@@ -18,12 +14,12 @@ const logSchema = new Schema(
         note: {
             type: String,
             trim: true,
-            require: true
+            required: [true, 'Cannot be empty.']
         },
         createdBy: {
             type: Schema.Types.ObjectId,
             ref: 'User',
-            require: true
+            required: true
         }
     },
     { timestamps: true }
@@ -33,38 +29,39 @@ const jobSchema = new Schema(
     {
         pickup: transportSchema,
         delivery: transportSchema,
+        parcel: {
+            type: String,
+            trim: true,
+            set: i => !i ? null : i
+        },
         vehicle: {
             type: Schema.Types.ObjectId,
-            ref: 'Vehicle'
+            ref: 'Vehicle',
+            set: i => !i ? null : i
         },
         createdBy: {
             type: Schema.Types.ObjectId,
-            ref: 'User'
+            ref: 'User',
+            required: true
         },
         reference: {
             type: String,
             trim: true,
+            set: i => !i ? null : i
         },
         status: {
             type: Schema.Types.ObjectId,
             ref: 'Status',
-            require: true
+            require: [true, 'Make a selection.']
         },
         drivers: [{
             type: Schema.Types.ObjectId,
             ref: 'User'
         }],
-
         customer: {
             type: Schema.Types.ObjectId,
             ref: 'Contact',
-            require: true
-        },
-        parcelDimensions: {
-            weight: String,
-            length: String,
-            width: String,
-            height: String,
+            require: [true, 'Make a selection.']
         },
         logs: [logSchema],
     },

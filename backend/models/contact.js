@@ -6,18 +6,22 @@ const contactSchema = new Schema(
         name: {
             type: String,
             trim: true,
+            set: i => !i ? null : i
         },
         note: {
             type: String,
-            trim: true
+            trim: true,
+            set: i => !i ? null : i
         },
         address: {
             type: String,
+            trim: true,
             required: [true, 'Cannot be empty.']
         },
         billingAddress: {
             type: String,
-            trim: true
+            trim: true,
+            set: i => !i ? null : i
         },
         organization: {
             type: String,
@@ -29,15 +33,19 @@ const contactSchema = new Schema(
             type: String,
             lowercase: true,
             trim: true,
+            set: i => !i ? null : i,
             match: [/\S+@\S+\.\S+/, 'is invalid'],
         },
         phoneNumber: {
-            type: Number,
-            match: [/^\d{9}$/, 'Needs to have 9 digits.']
+            type: String,
+            trim: true,
+            set: i => !i ? null : i.match(/\d/g).join(''),
+            match: [/^\d{10}$/, 'Needs to have 9 digits.']
         },
         phoneExt: {
-            type: Number,
-            match: [/^[0-9]+$/, 'Numbers only.']
+            type: String,
+            trim: true,
+            set: i => !i ? null : i.match(/\d/g).join(''),
         },
         createdBy: {
             type: Schema.Types.ObjectId,

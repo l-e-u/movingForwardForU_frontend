@@ -1,7 +1,7 @@
 const StatusOverview = ({ name, description }) => {
     return (
         <div>
-            <h4 className="text-primary">{name}</h4>
+            <h2 className="text-primary fs-5">{name}</h2>
             <p className="m-0">{description}</p>
         </div>
     );

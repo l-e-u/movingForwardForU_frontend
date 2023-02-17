@@ -28,6 +28,7 @@ export const useCreateContact = () => {
 
         if (!response.ok) {
             console.error(json);
+
             setError(json.error);
             setIsLoading(false);
         };

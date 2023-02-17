@@ -8,13 +8,13 @@ export const useUpdateContact = () => {
     const { dispatch } = useContactsContext();
     const { user } = useAuthContext();
 
-    const updateContact = async (contact) => {
+    const updateContact = async ({ _id, contact }) => {
         setIsLoading(true);
 
         // don't want to show the error if the user is trying to rectify, so null error at the start
         setError(null);
 
-        const response = await fetch('/api/contacts/' + contact._id, {
+        const response = await fetch('/api/contacts/' + _id, {
             method: 'PATCH',
             body: JSON.stringify(contact),
             headers: {
@@ -27,10 +27,9 @@ export const useUpdateContact = () => {
         const json = await response.json();
 
         if (!response.ok) {
-            console.log(json)
-            const { error } = json;
-            console.error(error);
-            setError(error);
+            console.log(json);
+
+            setError(json.error);
             setIsLoading(false);
         };
 

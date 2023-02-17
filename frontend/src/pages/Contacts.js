@@ -3,7 +3,7 @@ import { useAuthContext } from '../hooks/useAuthContext.js';
 import { useContactsContext } from '../hooks/useContactsContext.js'
 
 // components
-import OverviewContainer from '../components/OverviewContainer.js'
+import CardContainer from '../components/CardContainer.js'
 import CreateContactForm from '../components/CreateContactForm.js';
 import CreatedInfo from '../components/CreatedInfo.js';
 import DeleteDocIcon from "../components/DeleteDocIcon.js";
@@ -72,18 +72,22 @@ const Contacts = () => {
         <button
           type='button'
           className={'rounded-pill btn btn-primary btn-sm px-3 d-block mx-auto'}
-          onClick={() => setShowCreateForm(true)}
-        >
-          Add New Contact
+          onClick={() => setShowCreateForm(true)}>
+          Create A Contact
         </button>
       }
+
       {contacts && contacts.map((contact) => {
-        const { _id, address, billingAddress, email, phoneNumber, phoneExt, name, organization, createdBy, note, createdAt } = contact;
+        const { _id, createdBy, createdAt } = contact;
         const isEditingThisDoc = showEditForm && (_id === docToEdit._id);
+        const editFormProps = {
+          ...contact,
+          setShowThisForm: setShowEditForm
+        };
 
         return (
           <div key={_id} className='my-4'>
-            <OverviewContainer>
+            <CardContainer>
               {/* Edit and Delete options */}
               <div className="position-absolute top-0 end-0 pe-3 pt-2 d-flex">
                 {!isEditingThisDoc && <EditDocIcon onClick={handleEditClick(contact)} />}
@@ -94,20 +98,10 @@ const Contacts = () => {
               </div>
 
               {isEditingThisDoc ?
-                <EditContactForm
-                  setShowThisForm={setShowEditForm}
-                  _id={_id}
-                  address={address}
-                  billingAddress={billingAddress}
-                  email={email}
-                  phoneNumber={phoneNumber}
-                  phoneExt={phoneExt}
-                  name={name}
-                  organization={organization}
-                  note={note} /> :
+                <EditContactForm {...editFormProps} /> :
                 <ContactOverview {...contact} />
               }
-            </OverviewContainer>
+            </CardContainer>
             <div className="mt-1 pe-2">
               <CreatedInfo createdBy={createdBy} createdAt={createdAt} />
             </div>

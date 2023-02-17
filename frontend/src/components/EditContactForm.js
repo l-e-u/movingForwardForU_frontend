@@ -20,66 +20,42 @@ const EditContactForm = ({
     const { updateContact, error, isLoading } = useUpdateContact()
 
     // local input state
-    const [nameInput, setNameInput] = useState(name);
-    const [addressInput, setAddressInput] = useState(address);
-    const [billingAddressInput, setBillingAddressInput] = useState(billingAddress);
-    const [organizationInput, setOrganizationInput] = useState(organization);
-    const [emailInput, setEmailInput] = useState(email);
-    const [phoneNumberInput, setPhoneNumberInput] = useState(phoneNumber);
-    const [phoneExtInput, setPhoneExtInput] = useState(phoneExt);
-    const [noteInput, setNoteInput] = useState(note);
+    const [nameInput, setNameInput] = useState(name ?? '');
+    const [addressInput, setAddressInput] = useState(address ?? '');
+    const [billingAddressInput, setBillingAddressInput] = useState(billingAddress ?? '');
+    const [organizationInput, setOrganizationInput] = useState(organization ?? '');
+    const [emailInput, setEmailInput] = useState(email ?? '');
+    const [phoneNumberInput, setPhoneNumberInput] = useState(phoneNumber ?? '');
+    const [phoneExtInput, setPhoneExtInput] = useState(phoneExt ?? '');
+    const [noteInput, setNoteInput] = useState(note ?? '');
 
-    // error classes
-    let orgErrorClass = '';
-    let addrErrorClass = '';
-    let phoneNumberErrorClass = '';
-    let phoneExtErrorClass = '';
-    let emailErrorClass = ''
+    // error identification for inputs with validators
+    const errorFromAddressInput = (error && error.address);
+    const errorFromOrganizationInput = (error && error.organization);
+    const errorFromEmailInput = (error && error.email);
+    const errorFromPhoneNumberInput = (error && error.phoneNumber);
+    const errorFromPhoneExtInput = (error && error.phoneExt);
 
-    // error messages
-    let orgErrorMsg;
-    let addrErrorMsg = '';
-    let phoneNumberErrorMsg = '';
-    let phoneExtErrorMsg = '';
-    let emailErrorMsg;
+    // user cannot update a doc that has not character changes, this disables the update button
+    const noChanges = [
+        [name, nameInput],
+        [address, addressInput],
+        [billingAddress, billingAddressInput],
+        [organization, organizationInput],
+        [email, emailInput],
+        [phoneNumber, phoneNumberInput],
+        [phoneExt, phoneExtInput],
+        [note, noteInput]
+    ].every(strings => noCharChanges(strings[0], strings[1]));
 
-    // handles errors thrown by failed validations on models
-    if (error && error.errors) {
-        const { errors } = error;
-        const { organization, address, email, phoneNumber, phoneExt } = errors;
-
-        if (organization) {
-            orgErrorClass = ' is-invalid';
-            orgErrorMsg = ': ' + errors.organization.message;
-        };
-
-        if (address) {
-            addrErrorClass = ' is-invalid';
-            addrErrorMsg = ': ' + errors.address.message;
-        };
-
-        if (phoneNumber) {
-            phoneNumberErrorClass = ' is-invalid';
-            phoneNumberErrorMsg = ': ' + phoneNumber.message;
-        };
-
-        if (phoneExt) {
-            phoneExtErrorClass = ' is-invalid';
-            phoneExtErrorMsg = ': ' + phoneExt.message;
-        };
-
-        if (email) {
-            emailErrorClass = ' is-invalid';
-            emailErrorMsg = ': ' + email.message;
-        };
+    // when the input loses focus it trims the input to reflect the value sent to the backend
+    const handleOnBlurTrimInput = (stateSetter) => {
+        return () => stateSetter(input => input.trim());
     };
 
     // every input doesn't allow extra spaces
-    const handleOnChange = (stateSetter) => {
-        return (e) => {
-            const input = e.target.value;
-            stateSetter(input.replace(/\s+/g, ' '));
-        };
+    const handleOnChangeRemoveExtraSpaces = (stateSetter) => {
+        return (e) => stateSetter(e.target.value.replace(/\s+/g, ' '));
     };
 
     const handleSubmit = async (e) => {
@@ -87,14 +63,16 @@ const EditContactForm = ({
 
         await updateContact({
             _id,
-            name: nameInput,
-            address: addressInput,
-            billingAddress: billingAddressInput,
-            organization: organizationInput,
-            email: emailInput,
-            note: noteInput,
-            phoneNumber: phoneNumberInput,
-            phoneExt: phoneExtInput
+            contact: {
+                name: nameInput,
+                address: addressInput,
+                billingAddress: billingAddressInput,
+                organization: organizationInput,
+                email: emailInput,
+                note: noteInput,
+                phoneNumber: phoneNumberInput,
+                phoneExt: phoneExtInput
+            }
         });
     };
 
@@ -106,15 +84,16 @@ const EditContactForm = ({
             <div className="form-floating mb-3">
                 <input
                     type="text"
-                    className={'required form-control' + orgErrorClass}
+                    className={'required form-control' + (errorFromOrganizationInput ? ' is-invalid' : '')}
                     name="organization"
                     id="organization"
                     placeholder="Organization"
-                    value={organizationInput ?? ''}
-                    onChange={handleOnChange(setOrganizationInput)} />
+                    value={organizationInput}
+                    onChange={handleOnChangeRemoveExtraSpaces(setOrganizationInput)}
+                    onBlur={handleOnBlurTrimInput(setOrganizationInput)} />
                 <label htmlFor="organization" className="form-label">
                     Organization
-                    {orgErrorMsg && <span className="ms-1 text-danger">{orgErrorMsg}</span>}
+                    {errorFromOrganizationInput && <span className="ms-1 text-danger">{error.organization.message}</span>}
                 </label>
             </div>
 
@@ -126,8 +105,9 @@ const EditContactForm = ({
                     name="name"
                     id="name"
                     placeholder="Name"
-                    onChange={(e) => setNameInput(e.target.value.replace(/\s+/g, ' '))}
-                    value={nameInput ?? ''}
+                    onChange={handleOnChangeRemoveExtraSpaces(setNameInput)}
+                    value={nameInput}
+                    onBlur={handleOnBlurTrimInput(setNameInput)}
                 />
                 <label htmlFor="name" className="form-label">Name</label>
             </div>
@@ -136,14 +116,18 @@ const EditContactForm = ({
             <div className="form-floating mb-3">
                 <input
                     type="text"
-                    className={'form-control' + addrErrorClass}
+                    className={'form-control' + (errorFromAddressInput ? ' is-invalid' : '')}
                     name="address"
                     placeholder="Address"
                     id="address"
-                    onChange={(e) => setAddressInput(e.target.value)}
-                    value={addressInput ?? ''}
+                    onChange={handleOnChangeRemoveExtraSpaces(setAddressInput)}
+                    value={addressInput}
+                    onBlur={handleOnBlurTrimInput(setAddressInput)}
                 />
-                <label htmlFor="address" className="form-label">{'Address' + addrErrorMsg}</label>
+                <label htmlFor="address" className="form-label required">
+                    Address
+                    {errorFromAddressInput && <span className="ms-1 text-danger">{error.organization.address}</span>}
+                </label>
             </div>
 
             {/* BILLING ADDRESS */}
@@ -154,9 +138,9 @@ const EditContactForm = ({
                     name="billing"
                     placeholder="Billing Address"
                     id="billing"
-                    onChange={(e) => setBillingAddressInput(e.target.value)}
-                    value={billingAddressInput ?? ''}
-                />
+                    onChange={handleOnChangeRemoveExtraSpaces(setBillingAddressInput)}
+                    value={billingAddressInput}
+                    onBlur={handleOnBlurTrimInput(setBillingAddressInput)} />
                 <label htmlFor="address" className="form-label">Billing Address</label>
             </div>
 
@@ -164,43 +148,51 @@ const EditContactForm = ({
             <div className="form-floating mb-3">
                 <input
                     type="email"
-                    className={'form-control' + emailErrorClass}
+                    className={'form-control' + (errorFromEmailInput ? ' is-invalid' : '')}
                     id="email"
                     placeholder="name@example.com"
-                    value={emailInput ?? ''}
-                    onChange={(e) => setEmailInput(e.target.value)} />
+                    value={emailInput}
+                    onChange={handleOnChangeRemoveExtraSpaces(setEmailInput)}
+                    onBlur={handleOnBlurTrimInput(setEmailInput)} />
                 <label htmlFor="email">
                     Email
-                    {emailErrorMsg && <span className="ms-1 text-danger">{emailErrorMsg}</span>}
+                    {errorFromEmailInput && <span className="ms-1 text-danger">{error.email.message}</span>}
                 </label>
             </div>
 
             {/* PHONE NUMBER AND EXT */}
             <div className="d-flex gap-3 mb-3">
-                <div className="form-floating w-75">
+                <div className="form-floating w-50">
                     <input
                         type="text"
-                        className={'form-control' + phoneNumberErrorClass}
+                        className={'form-control' + (errorFromPhoneNumberInput ? ' is-invalid' : '')}
                         name="phoneNumber"
                         placeholder="Phone"
                         id="phoneNumber"
-                        onChange={(e) => setPhoneNumberInput(e.target.value)}
-                        value={phoneNumberInput ?? ''}
-                    />
-                    <label htmlFor="phoneNumber" className="form-label">{'Phone' + phoneNumberErrorMsg}</label>
+                        onChange={handleOnChangeRemoveExtraSpaces(setPhoneNumberInput)}
+                        onBlur={handleOnBlurTrimInput(setPhoneNumberInput)}
+                        value={phoneNumberInput} />
+                    <label htmlFor="phoneNumber" className="form-label">
+                        Phone
+                        {errorFromPhoneNumberInput && <span className="ms-1 text-danger">{error.phoneNumber.message}</span>}
+                    </label>
                 </div>
                 <div className="form-floating w-25">
                     <input
                         type="number"
                         min={0}
-                        className={'form-control' + phoneExtErrorClass}
+                        className={'form-control' + (errorFromPhoneExtInput ? ' is-invalid' : '')}
                         name="phoneExt"
                         placeholder="Ext"
                         id="phoneExt"
-                        onChange={(e) => setPhoneExtInput(e.target.value)}
-                        value={phoneExtInput ?? ''}
+                        onChange={handleOnChangeRemoveExtraSpaces(setPhoneExtInput)}
+                        onBlur={handleOnBlurTrimInput(setPhoneExtInput)}
+                        value={phoneExtInput}
                     />
-                    <label htmlFor="PhoneExt" className="form-label">{'Ext' + phoneExtErrorMsg}</label>
+                    <label htmlFor="PhoneExt" className="form-label">
+                        Ext
+                        {errorFromPhoneExtInput && <span className="ms-1 text-danger">{error.phoneExt.message}</span>}
+                    </label>
                 </div>
             </div>
 
@@ -212,8 +204,8 @@ const EditContactForm = ({
                     name="note"
                     placeholder="Note"
                     id="note"
-                    onChange={(e) => setNoteInput(e.target.value)}
-                    value={noteInput ?? ''}
+                    onChange={handleOnChangeRemoveExtraSpaces(setNoteInput)}
+                    value={noteInput}
                     style={{ height: '100px' }}
                 ></textarea>
                 <label htmlFor="note" className="form-label">Note</label>
@@ -226,12 +218,12 @@ const EditContactForm = ({
 
                 <button
                     type="submit"
-                    disabled={isLoading}
-                    className='btn btn-sm btn-success rounded-pill px-3'>Save</button>
+                    disabled={isLoading || noChanges}
+                    className='btn btn-sm btn-success rounded-pill px-3'>Update</button>
             </div>
 
-            {/* any errors other than name and description input validation */}
-            {(error && !error.errors) && <div className="text-danger mt-3">{error.name || error.message + ' Refresh page. If problem persists, contact developer.'}</div>}
+            {/* any errors other than input validation */}
+            {(error && error.server) && <div className="text-danger mt-3">{`${error.server.message} Refresh page. If problem persists, contact developer.`}</div>}
         </form>
     );
 };

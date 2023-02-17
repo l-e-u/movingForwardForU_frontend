@@ -3,7 +3,7 @@ import { useAuthContext } from "../hooks/useAuthContext.js";
 import { useStatusesContext } from "../hooks/useStatusesContext.js";
 
 // components
-import OverviewContainer from '../components/OverviewContainer.js';
+import CardContainer from '../components/CardContainer.js';
 import EditStatusForm from '../components/EditStatusForm.js';
 import CreateStatusForm from "../components/CreateStatusForm.js";
 import CreatedInfo from '../components/CreatedInfo.js';
@@ -65,6 +65,7 @@ const Statuses = () => {
         };
     };
 
+    // shows the create form and hides other forms
     const handleCreateClick = () => {
         setShowCreateForm(true);
         setShowEditForm(false);
@@ -79,7 +80,7 @@ const Statuses = () => {
                     type='button'
                     className={'rounded-pill btn btn-primary btn-sm px-3 d-block mx-auto'}
                     onClick={handleCreateClick}>
-                    Create Status
+                    Create A Status
                 </button>
             }
 
@@ -93,7 +94,7 @@ const Statuses = () => {
 
                 return (
                     <div key={_id} className='my-4'>
-                        <OverviewContainer >
+                        <CardContainer >
                             {/* Edit and Delete options */}
                             <div className="position-absolute top-0 end-0 pe-3 pt-2 d-flex">
                                 {!isEditingThisDoc && <EditDocIcon onClick={handleEditClick(status)} />}
@@ -105,7 +106,7 @@ const Statuses = () => {
 
                             {isEditingThisDoc ? <EditStatusForm {...editFormProps} /> : <StatusOverview {...status} />
                             }
-                        </OverviewContainer>
+                        </CardContainer>
                         <div className="mt-1 pe-2">
                             <CreatedInfo createdBy={createdBy} createdAt={createdAt} />
                         </div>

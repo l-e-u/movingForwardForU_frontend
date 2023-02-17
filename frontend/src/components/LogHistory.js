@@ -1,8 +1,8 @@
 const LogHistory = ({ logs }) => {
-
+    if (logs.length === 0) return null;
     return (
         <div>
-            <label>Log:</label>
+            <label><small className="text-secondary">Log</small></label>
             <ul>
                 {logs.map((log) => {
                     const date = new Date(log.createdAt);

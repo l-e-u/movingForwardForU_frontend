@@ -1,6 +1,5 @@
 // parent must have position set to relative
-const CreatedInfo = (props) => {
-    const { createdBy, createdAt } = props;
+const CreatedInfo = ({ createdBy, createdAt }) => {
     const date = new Date(createdAt);
     const firstName = createdBy.firstName.toLowerCase();
     const lastInitial = createdBy.lastName.charAt(0).toLowerCase();

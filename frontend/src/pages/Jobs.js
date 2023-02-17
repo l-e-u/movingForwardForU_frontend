@@ -1,10 +1,11 @@
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useJobsContext } from "../hooks/useJobsContext.js";
 import { useAuthContext } from '../hooks/useAuthContext.js';
 
 // components
 import CreatedInfo from "../components//CreatedInfo.js";
-import OverviewContainer from "../components/OverviewContainer.js";
+import CardContainer from "../components/CardContainer.js";
+import JobOverview from "../components/JobOverview.js";
 import TransportInfo from "../components/TransportInfo.js";
 import LogHistory from "../components/LogHistory.js";
 
@@ -15,6 +16,12 @@ const Jobs = () => {
     const { jobs, dispatch } = useJobsContext();
     const { user } = useAuthContext();
 
+    // local state
+    const [docToEdit, setDocToEdit] = useState(null);
+    const [showCreateForm, setShowCreateForm] = useState(false);
+    const [showEditForm, setShowEditForm] = useState(false);
+
+    // get jobs once
     useEffect(() => {
         const fetchJobs = async () => {
             const response = await fetch('/api/jobs', {
@@ -54,26 +61,35 @@ const Jobs = () => {
         };
     };
 
+    // shows the create form and hides other forms
+    const handleCreateClick = () => {
+        setShowCreateForm(true);
+        setShowEditForm(false);
+    };
+
     return (
         <div className='jobs'>
+            {!showCreateForm &&
+                <button
+                    type='button'
+                    className={'rounded-pill btn btn-primary btn-sm px-3 d-block mx-auto'}
+                    onClick={handleCreateClick}>
+                    Create A Job
+                </button>
+            }
+
             {jobs && jobs.map((job) => {
+                console.log(job)
+                const { _id, createdBy, createdAt } = job;
                 return (
-                    <OverviewContainer key={job._id}>
-                        <i className="bi bi-trash3-fill" onClick={handleDelete(job.id)} >  </i>
-                        <h5 className='text-primary'>{job.status.name}</h5>
-                        <h6>{job.customer.organization}</h6>
-                        <TransportInfo
-                            legend='From'
-                            {...job.pickup}
-                        />
-                        <TransportInfo
-                            legend='To'
-                            {...job.delivery}
-                        />
-                        <LogHistory logs={job.logs} />
-                        <p>{formatDistanceToNow(new Date(job.createdAt), { addSuffix: true })}</p>
-                        <CreatedInfo createdBy={job.createdBy} createdAt={job.createdAt} />
-                    </OverviewContainer>
+                    <div key={_id} className='my-4'>
+                        <CardContainer >
+                            <JobOverview {...job} />
+                        </CardContainer>
+                        <div className="mt-1 pe-2">
+                            <CreatedInfo createdBy={job.createdBy} createdAt={job.createdAt} />
+                        </div>
+                    </div>
                 );
             })}
         </div>
