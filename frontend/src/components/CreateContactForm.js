@@ -32,6 +32,8 @@ const CreateContactForm = ({ isShowing, setShow }) => {
         return () => stateSetter(input => input.trim());
     };
 
+
+    // POST a new contact
     const handleSubmit = async (e) => {
         e.preventDefault();
 
@@ -54,7 +56,7 @@ const CreateContactForm = ({ isShowing, setShow }) => {
             <p className="text-danger w-100 text-end"> <small>* Required fields</small></p>
 
             {/* ORGANIZATION */}
-            <div className="form-floating mb-3">
+            <div className="form-floating mb-2">
                 <input
                     type="text"
                     className={'required form-control' + (errorFromOrganizationInput ? ' is-invalid' : '')}
@@ -71,7 +73,7 @@ const CreateContactForm = ({ isShowing, setShow }) => {
             </div>
 
             {/* NAME */}
-            <div className="form-floating mb-3">
+            <div className="form-floating mb-2">
                 <input
                     type="text"
                     className='form-control'
@@ -86,7 +88,7 @@ const CreateContactForm = ({ isShowing, setShow }) => {
             </div>
 
             {/* ADDRESS */}
-            <div className="form-floating mb-3">
+            <div className="form-floating mb-2">
                 <input
                     type="text"
                     className={'form-control' + (errorFromAddressInput ? ' is-invalid' : '')}
@@ -104,7 +106,7 @@ const CreateContactForm = ({ isShowing, setShow }) => {
             </div>
 
             {/* BILLING ADDRESS */}
-            <div className="form-floating mb-3">
+            <div className="form-floating mb-2">
                 <input
                     type="text"
                     className='form-control'
@@ -118,7 +120,7 @@ const CreateContactForm = ({ isShowing, setShow }) => {
             </div>
 
             {/* EMAIL */}
-            <div className="form-floating mb-3">
+            <div className="form-floating mb-2">
                 <input
                     type="email"
                     className={'form-control' + (errorFromEmailInput ? ' is-invalid' : '')}
@@ -134,8 +136,8 @@ const CreateContactForm = ({ isShowing, setShow }) => {
             </div>
 
             {/* PHONE NUMBER AND EXT */}
-            <div className="d-flex gap-3 mb-3">
-                <div className="form-floating w-50">
+            <div className="d-sm-flex gap-sm-3 mb-2">
+                <div className="form-floating w-100 w-sm-75 mb-2 mb-sm-0">
                     <input
                         type="text"
                         className={'form-control' + (errorFromPhoneNumberInput ? ' is-invalid' : '')}
@@ -150,7 +152,7 @@ const CreateContactForm = ({ isShowing, setShow }) => {
                         {errorFromPhoneNumberInput && <span className="ms-1 text-danger">{error.phoneNumber.message}</span>}
                     </label>
                 </div>
-                <div className="form-floating w-50">
+                <div className="form-floating w-100 w-sm-25">
                     <input
                         type="number"
                         min={0}
@@ -169,7 +171,7 @@ const CreateContactForm = ({ isShowing, setShow }) => {
             </div>
 
             {/* NOTE */}
-            <div className="form-floating mb-3">
+            <div className="form-floating mb-2">
                 <textarea
                     type="text"
                     className='form-control'

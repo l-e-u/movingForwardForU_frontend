@@ -6,7 +6,6 @@ const docFieldsToPopulate = [
     'customer',
     'drivers',
     'createdBy',
-    'vehicle',
     'logs.createdBy'
 ];
 
@@ -37,31 +36,48 @@ const getJob = async (req, res) => {
 // create new job
 const createJob = async (req, res) => {
     const { _id: user_id } = req.user;
-
-    let emptyFields = [];
-
-    // DEV NOTE: ADD VALIDATION FOR STATUS_ID AND SEND OUT ERROR IF INVALID
-
-    // if (!customer_id) emptyFields.push('Customer');
-    // if (!status_id) emptyFields.push('Status');
-    // if (!from.street1) emptyFields.push('From');
-    // if (!to.street1) emptyFields.push('To');
-
-    if (emptyFields.length > 0) {
-        return res.status(400).json({ error: 'Please fill in all the fields', emptyFields });
-    };
+    const {
+        status,
+        customer,
+        reference,
+        parcel,
+        pickup,
+        delivery,
+        drivers,
+        logs
+    } = req.body;
 
     // add doc to db
     try {
-        let job = await Job.create({ ...req.body });
+        let job = await Job.create({
+            status,
+            customer,
+            reference,
+            parcel,
+            pickup,
+            delivery,
+            drivers,
+            logs,
+            createdBy: user_id
+        });
 
         // populate fields
         job = await job.populate(docFieldsToPopulate);
 
-        res.status(200).json(job);
+        return res.status(200).json(job);
     }
-    catch (error) {
-        res.status(400).json({ error: error.message });
+    catch (err) {
+        console.error(err);
+
+        // 'errors' contains any mongoose model-validation fails
+        const { errors } = err;
+
+        // if no input errors, then send back the err message as a server error
+        if (!errors) {
+            err.errors.server = err.message;
+        };
+
+        return res.status(400).json({ error: err.errors });
     };
 };
 

@@ -4,65 +4,74 @@ import { useStatusesContext } from "../hooks/useStatusesContext.js";
 import { useContactsContext } from "../hooks/useContactsContext.js";
 import { useAuthContext } from "../hooks/useAuthContext.js";
 import { useUsersContext } from "../hooks/useUsersContext.js";
+import { useCreateJob } from "../hooks/useCreateJob.js";
 
+// components
 import DateInput from './DateInput.js';
 import TimeInput from "./TimeInput.js";
 import AddressInput from "./AddressInput.js";
 
-const JobForm = () => {
+const CreateJobForm = () => {
+    const { createJob, error, isLoading } = useCreateJob();
+
     const { user } = useAuthContext();
     const { dispatch: jobsDispatch } = useJobsContext();
     const { contacts, dispatch: contactsDispatch } = useContactsContext();
     const { statuses, dispatch: statusesDispatch } = useStatusesContext();
     const { users, dispatch: usersDispatch } = useUsersContext();
 
-    // state for user input
-    const [selectedStatusName, setSelectedStatusName] = useState('');
-    const [selectedContactOrg, setSelectedContactOrg] = useState('');
-    const [fromTab_isActive, setFromTab_isActive] = useState(true);
+    // local state: user input
+    const [pickupAddress, setPickupAddress] = useState('');
+    const [pickupDate, setPickupDate] = useState(new Date());
+    const [deliveryAddress, setDeliveryAddress] = useState('');
+    const [deliveryDate, setDeliveryDate] = useState(new Date());
+    const [drivers, setDrivers] = useState([]);
+    const [parcel, setParcel] = useState('');
+    const [reference, setReference] = useState('');
+    const [customer, setCustomer] = useState('');
+    const [logs, setLogs] = useState([]);
 
-    // from address info
-    const [fromStreet1, setFromStreet1] = useState('');
-    const [fromStreet2, setFromStreet2] = useState('');
-    const [fromCity, setFromCity] = useState('');
-    const [fromState, setFromState] = useState('');
-    const [fromZipcode, setFromZipCode] = useState('');
-    const [fromAttn, setFromAttn] = useState('');
+    // selected options
+    const [selectedStatusId, setSelectedStatusId] = useState(null);
+    const [selectedContactId, setSelectedContactId] = useState(null);
+    const [selectedDriverIds, setSelectedDriverIds] = useState([]);
 
-    // to address info
-    const [toStreet1, setToStreet1] = useState('');
-    const [toStreet2, setToStreet2] = useState('');
-    const [toCity, setToCity] = useState('');
-    const [toState, setToState] = useState('');
-    const [toZipcode, setToZipCode] = useState('');
-    const [toAttn, setToAttn] = useState('');
+    // error identification for inputs with validators
+    const errorFromPickupAddressInput = (error && error['pickup.address']);
+    const errorFromDeliveryAddressInput = (error && error['delivery.address']);
+    const errorFromStatusInput = (error && error.status);
+    const errorFromCustomerInput = (error && error.customer);
 
-    const [hours, setHours] = useState(new Date().getHours());
-    const [minutes, setMinutes] = useState(new Date().getMinutes());
-    const [month, setMonth] = useState(new Date().getMonth());
-    const [day, setDate] = useState(new Date().getDate());
-    const [year, setYear] = useState(new Date().getFullYear());
-
-    // state for errors
-    const [error, setError] = useState(null);
-    const [emptyFields, setEmptyFields] = useState([]);
+    if (errorFromPickupAddressInput) console.log('pickup address ERROR')
 
     // fetch all statuses and contacts
     useEffect(() => {
         const fetchStatuses = async () => {
-            const response = await fetch('/api/statuses');
+            const response = await fetch('/api/statuses', {
+                headers: {
+                    'Authentication': `Bearer ${user.token}`
+                }
+            });
 
             if (response.ok) return await response.json();
         };
 
         const fetchContacts = async () => {
-            const response = await fetch('/api/contacts');
+            const response = await fetch('/api/contacts', {
+                headers: {
+                    'Authentication': `Bearer ${user.token}`
+                }
+            });
 
             if (response.ok) return await response.json();
         };
 
         const fetchUsers = async () => {
-            const response = await fetch('/api/users');
+            const response = await fetch('/api/users', {
+                headers: {
+                    'Authentication': `Bearer ${user.token}`
+                }
+            });
 
             if (response.ok) return await response.json();
         };
@@ -77,193 +86,180 @@ const JobForm = () => {
             .catch((reject) => console.log(reject));
     }, [statusesDispatch, contactsDispatch, usersDispatch]);
 
+    // input does not allow extra spaces
+    const handleOnChangeRemoveExtraSpaces = (stateSetter) => {
+        return (e) => stateSetter(e.target.value.replace(/\s+/g, ' '));
+    };
+
+    const handleOnChangeDataList = (e) => {
+        // remove extra spaces from input and set customer state
+        handleOnChangeRemoveExtraSpaces(setCustomer)(e);
+
+        // we can access the up to date value this way without having to depend on a rerender
+        setCustomer(customerName => {
+
+            // if the input matches a contact, set the selected contacts id
+            const customer = contacts.find(contact => contact.organization === customerName);
+            if (customer) {
+                setSelectedContactId(customer._id)
+            }
+            else {
+                setSelectedContactId(null);
+            };
+
+            // we're not changing the value so always return it
+            return customerName;
+        });
+    };
+
+    // user input is used to look up the id of the doc being selected
+    const handleOnChangeSelect = (e) => {
+        const value = e.target.value;
+        const doc = statuses.find(status => value === status.name);
+
+        if (doc) setSelectedStatusId(doc._id);
+    };
+
+    // when the input loses focus it trims the input to reflect the value sent to the backend
+    const handleOnBlurTrimInput = (stateSetter) => {
+        return () => stateSetter(input => input.trim());
+    };
+
     // POST a new job
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        if (!user) {
-            setError('You must be logged in');
-            return
-        };
-
-        const selectedStatus = statuses.find(s => s.name === selectedStatusName);
-        const selectedContact = contacts.find(c => c.organization === selectedContactOrg);
-
-        // user id is appended on server end
-        const job = {
-            status_id: selectedStatus._id,
-            customer_id: selectedContact._id,
-            from: {
-                street1: fromStreet1,
-                street2: fromStreet2,
-                city: fromCity,
-                state: fromState,
-                zipcode: fromZipcode,
-                attn: fromAttn
+        await createJob({
+            reference,
+            parcel,
+            status: selectedStatusId,
+            customer: selectedContactId,
+            pickup: {
+                address: pickupAddress
             },
-            to: {
-                street1: toStreet1,
-                street2: toStreet2,
-                city: toCity,
-                state: toState,
-                zipcode: toZipcode,
-                attn: toAttn
-            }
-        };
-
-        const response = await fetch('/api/jobs', {
-            method: 'POST',
-            body: JSON.stringify(job),
-            headers: {
-                'Content-Type': 'application/json',
-                'Authentication': `Bearer ${user.token}`
+            delivery: {
+                address: deliveryAddress
             }
         });
-        const json = await response.json();
-
-        if (!response.ok) {
-            setError(json.error);
-            setEmptyFields(json.emptyFields);
-        };
-
-        if (response.ok) {
-            // reset the form
-
-            // reset errors
-            setError(null);
-            setEmptyFields([]);
-
-            jobsDispatch({ type: 'CREATE_JOB', payload: json });
-        };
     };
-
-    const handleTabSwitch = (e) => setFromTab_isActive(!fromTab_isActive);
 
     return (
         <form className="create" onSubmit={handleSubmit}>
-            <h3>Add a New Job</h3>
+            <h3>New Job</h3>
 
-            {/* selection for job status */}
-            <div>
-                <label className="inline" htmlFor="status">Status:</label>
+            <p className="text-danger w-100 text-end"> <small>* Required fields</small></p>
+
+            {/* STATUS */}
+            <div className="form-floating mb-2">
                 <select
-                    className={emptyFields.includes('Status') ? 'error' : ''}
+                    className="form-select"
+                    type="text"
                     name="status"
                     id="status"
-                    onChange={(e) => setSelectedStatusName(e.target.value)}
-                >
-                    {/* user has to make a selection, once an option has been chosen, the first 'Select...' is disabled */}
-                    <option disabled={!!selectedStatusName}>Select...</option>
-                    {statuses && statuses.map((status) => {
+                    aria-label="Status"
+                    onChange={handleOnChangeSelect}>
+                    {!selectedStatusId && <option>Select...</option>}
+                    {statuses && statuses.map(status => {
+                        const { _id, name } = status;
                         return (
-                            <option key={status._id}>{status.name}</option>
+                            <option key={_id} value={name}>{name}</option>
                         )
                     })}
                 </select>
+                <label htmlFor="status" className="form-label required">Status</label>
             </div>
 
-            {/* selection for contact/customer */}
-            <div>
-                <label className="inline" htmlFor="contact">Contact:</label>
-                <select
-                    className={emptyFields.includes('Contact') ? 'error' : ''}
-                    name="contact"
-                    id="contact"
-                    onChange={(e) => setSelectedContactOrg(e.target.value)}
-                >
-                    {/* user has to make a selection, once an option has been chosen, the first 'Select...' is disabled */}
-                    <option disabled={!!selectedContactOrg}>Select...</option>
-                    {contacts && contacts.map((contact) => {
-                        return (
-                            <option key={contact._id}>{contact.organization}</option>
-                        )
+            {/* CUSTOMER */}
+            <div className="form-floating mb-2">
+                <input
+                    className="form-select"
+                    aria-label="Customer"
+                    list="customerDataList"
+                    type="text"
+                    name="customer"
+                    id="customer"
+                    placeholder="Type to search..."
+                    value={customer}
+                    onChange={handleOnChangeDataList} />
+                <label htmlFor="customer" className="form-label required">Customer</label>
+                <datalist id="customerDataList">
+                    {contacts && contacts.map(contact => {
+                        const { _id, organization } = contact;
+
+                        return <option key={_id} value={organization}>{organization}</option>
                     })}
-                </select>
+                </datalist>
             </div>
 
-            {/* selection for users */}
-            <div>
-                <label className="inline" htmlFor="drivers">Drivers:</label>
-                <select
-                    name="drivers"
-                    id="drivers"
-                >
-                    {users && users.map((driver) => {
-                        return (
-                            <option key={driver._id}>{driver.username}</option>
-                        )
-                    })}
-                </select>
+            {/* REFERENCE */}
+            <div className="form-floating mb-2">
+                <input
+                    className="form-control"
+                    type="text"
+                    name="reference"
+                    id="reference"
+                    placeholder="Reference #"
+                    value={reference}
+                    onChange={handleOnChangeRemoveExtraSpaces(setReference)}
+                    onBlur={handleOnBlurTrimInput(setReference)} />
+                <label htmlFor="reference" className="form-label">Reference #</label>
             </div>
 
-            {/* container for the tabs and its content */}
-            <div>
-                <div className="tabs flexContainer">
-                    <span
-                        className={fromTab_isActive ? 'selected' : ''}
-                        onClick={handleTabSwitch}
-                    >
-                        From
-                    </span>
-                    <span
-                        className={fromTab_isActive ? '' : 'selected'}
-
-                        onClick={handleTabSwitch}
-                    >
-                        To
-                    </span>
-                </div>
-                <div className="tabContent">
-                    <DateInput
-                        month={month}
-                        day={day}
-                        year={year}
-                        setMonth={setMonth}
-                        setDate={setDate}
-                        setYear={setYear}
-                    />
-
-                    <TimeInput
-                        hours={hours}
-                        minutes={minutes}
-                        setHours={setHours}
-                        setMinutes={setMinutes}
-                    />
-
-                    {/* input for job pick up from address */}
-                    <AddressInput
-                        id="job"
-                        street1={fromTab_isActive ? fromStreet1 : toStreet1}
-                        street2={fromTab_isActive ? fromStreet2 : toStreet2}
-                        city={fromTab_isActive ? fromCity : toCity}
-                        state={fromTab_isActive ? fromState : toState}
-                        zipcode={fromTab_isActive ? fromZipcode : toZipcode}
-                        setStreet1={fromTab_isActive ? setFromStreet1 : setToStreet1}
-                        setStreet2={fromTab_isActive ? setFromStreet2 : setToStreet2}
-                        setCity={fromTab_isActive ? setFromCity : setToCity}
-                        setState={fromTab_isActive ? setFromState : setToState}
-                        setZipcode={fromTab_isActive ? setFromZipCode : setToZipCode}
-                        emptyFields={emptyFields}
-                    />
-                </div>
+            {/* PARCEL */}
+            <div className="form-floating mb-2">
+                <input
+                    type="text"
+                    className="form-control"
+                    name="parcel"
+                    placeholder="Parcel"
+                    id="parcel"
+                    onChange={handleOnChangeRemoveExtraSpaces(setParcel)}
+                    value={parcel}
+                    onBlur={handleOnBlurTrimInput(setParcel)} />
+                <label htmlFor="parcel" className="form-label">Parcel</label>
             </div>
 
-            <label htmlFor="attn">Attn</label>
-            <input
-                type="text"
-                name="attn"
-                id="attn"
-                onChange={(e) => {
-                    const setStateSetter = fromTab_isActive ? setFromAttn : setToAttn;
-                    setStateSetter(e.target.value);
-                }}
-                value={fromTab_isActive ? fromAttn : toAttn}
-            />
+            {/* PICKUP ADDRESS */}
+            <div className="form-floating mb-2">
+                <input
+                    type="text"
+                    className="form-control"
+                    name="pickupAddress"
+                    placeholder="Pickup Address"
+                    id="pickupAddress"
+                    onChange={handleOnChangeRemoveExtraSpaces(setPickupAddress)}
+                    value={pickupAddress}
+                    onBlur={handleOnBlurTrimInput(setPickupAddress)} />
+                <label htmlFor="pickupAddress" className="form-label required">
+                    Pickup Address
+                </label>
+            </div>
 
-            <button>Add Job</button>
-            {error && <div className="error">{error}</div>}
-        </form>
+            {/* DELIVERY ADDRESS */}
+            <div className="form-floating">
+                <input
+                    type="text"
+                    className="form-control"
+                    name="deliveryAddress"
+                    placeholder="Delivery Address"
+                    id="deliveryAddress"
+                    onChange={handleOnChangeRemoveExtraSpaces(setDeliveryAddress)}
+                    value={deliveryAddress}
+                    onBlur={handleOnBlurTrimInput(setDeliveryAddress)} />
+                <label htmlFor="deliveryAddress" className="form-label required">
+                    Delivery Address
+                </label>
+            </div>
+
+            <button
+                type="submit"
+                disabled={false}
+                className='btn btn-sm btn-success rounded-pill d-block ms-auto mt-4 px-3'>Create</button>
+
+            {/* any errors other than input validation */}
+            {/* {(error && error.server) && <div className="text-danger mt-3">{`${error.server.message} Refresh page. If problem persists, contact developer.`}</div>} */}
+        </form >
     );
 };
 
-export default JobForm;
+export default CreateJobForm;

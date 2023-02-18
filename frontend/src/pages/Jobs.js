@@ -6,8 +6,7 @@ import { useAuthContext } from '../hooks/useAuthContext.js';
 import CreatedInfo from "../components//CreatedInfo.js";
 import CardContainer from "../components/CardContainer.js";
 import JobOverview from "../components/JobOverview.js";
-import TransportInfo from "../components/TransportInfo.js";
-import LogHistory from "../components/LogHistory.js";
+import CreateJobForm from "../components/CreateJobForm.js";
 
 // date fns
 import formatDistanceToNow from "date-fns/formatDistanceToNow";
@@ -69,6 +68,8 @@ const Jobs = () => {
 
     return (
         <div className='jobs'>
+            {showCreateForm && <CreateJobForm isShowing={showCreateForm} setShow={setShowCreateForm} />}
+
             {!showCreateForm &&
                 <button
                     type='button'
@@ -79,8 +80,9 @@ const Jobs = () => {
             }
 
             {jobs && jobs.map((job) => {
-                console.log(job)
                 const { _id, createdBy, createdAt } = job;
+                const isEditingThisDoc = showEditForm && (_id === docToEdit._id);
+
                 return (
                     <div key={_id} className='my-4'>
                         <CardContainer >

@@ -4,7 +4,7 @@ const transportSchema = new Schema({
     address: {
         type: String,
         trim: true,
-        require: [true, 'Cannot be empty.']
+        required: [true, 'Cannot be empty.']
     },
     date: Date,
 });
@@ -34,11 +34,6 @@ const jobSchema = new Schema(
             trim: true,
             set: i => !i ? null : i
         },
-        vehicle: {
-            type: Schema.Types.ObjectId,
-            ref: 'Vehicle',
-            set: i => !i ? null : i
-        },
         createdBy: {
             type: Schema.Types.ObjectId,
             ref: 'User',
@@ -61,7 +56,7 @@ const jobSchema = new Schema(
         customer: {
             type: Schema.Types.ObjectId,
             ref: 'Contact',
-            require: [true, 'Make a selection.']
+            required: [true, 'Make a selection.']
         },
         logs: [logSchema],
     },

@@ -6,14 +6,12 @@ const JobOverview = ({
     pickup,
     delivery,
     parcel,
-    vehicle,
     reference,
     status,
     drivers,
     customer,
     logs
 }) => {
-    const hasVehicle = !!vehicle;
     const hasDriver = drivers.length > 0;
 
     return (
@@ -26,16 +24,12 @@ const JobOverview = ({
 
             {!hasDriver && <div className="text-danger mb-2">No driver has been assigned.</div>}
 
-            {!hasVehicle && <div className="text-danger mb-2">No vehicle has been assigned.</div>}
+            {hasDriver &&
+                <div className="mb-2">
+                    <SmallHeader text={'Driver' + ((drivers.length > 1) ? 's' : '')} />
+                    <DriversList list={drivers} />
+                </div>}
 
-            {(hasVehicle || hasDriver) && <div className="d-flex justify-content-between mb-2">
-                {hasDriver && <DriversList list={drivers} />}
-                {hasVehicle &&
-                    <div>
-                        <SmallHeader text='Vehicle' />
-                        {vehicle.name}
-                    </div>}
-            </div>}
 
             <div className="mb-2">
                 <SmallHeader text='Pickup' />
