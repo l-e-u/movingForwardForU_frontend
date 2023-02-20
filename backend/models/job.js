@@ -47,7 +47,7 @@ const jobSchema = new Schema(
         status: {
             type: Schema.Types.ObjectId,
             ref: 'Status',
-            require: [true, 'Make a selection.']
+            required: [true, 'Make a selection.']
         },
         drivers: [{
             type: Schema.Types.ObjectId,

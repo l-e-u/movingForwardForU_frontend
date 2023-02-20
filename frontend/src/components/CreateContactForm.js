@@ -59,7 +59,7 @@ const CreateContactForm = ({ isShowing, setShow }) => {
             <div className="form-floating mb-2">
                 <input
                     type="text"
-                    className={'required form-control' + (errorFromOrganizationInput ? ' is-invalid' : '')}
+                    className={'form-control' + (errorFromOrganizationInput ? ' is-invalid' : '')}
                     name="organization"
                     id="organization"
                     placeholder="Organization"
@@ -68,7 +68,7 @@ const CreateContactForm = ({ isShowing, setShow }) => {
                     onBlur={handleOnBlurTrimInput(setOrganization)} />
                 <label htmlFor="organization" className="form-label required">
                     Organization
-                    {errorFromOrganizationInput && <span className="ms-1 text-danger">{error.organization.message}</span>}
+                    {errorFromOrganizationInput && <span className="inputError">{error.organization.message}</span>}
                 </label>
             </div>
 
@@ -101,7 +101,7 @@ const CreateContactForm = ({ isShowing, setShow }) => {
                 />
                 <label htmlFor="address" className="form-label required">
                     Address
-                    {errorFromAddressInput && <span className="ms-1 text-danger">{error.organization.address}</span>}
+                    {errorFromAddressInput && <span className="inputError">{error.address.message}</span>}
                 </label>
             </div>
 
@@ -131,7 +131,7 @@ const CreateContactForm = ({ isShowing, setShow }) => {
                     onBlur={handleOnBlurTrimInput(setEmail)} />
                 <label htmlFor="email">
                     Email
-                    {errorFromEmailInput && <span className="ms-1 text-danger">{error.email.message}</span>}
+                    {errorFromEmailInput && <span className="inputError">{error.email.message}</span>}
                 </label>
             </div>
 
@@ -149,7 +149,7 @@ const CreateContactForm = ({ isShowing, setShow }) => {
                         value={phoneNumber} />
                     <label htmlFor="phoneNumber" className="form-label">
                         Phone
-                        {errorFromPhoneNumberInput && <span className="ms-1 text-danger">{error.phoneNumber.message}</span>}
+                        {errorFromPhoneNumberInput && <span className="inputError">{error.phoneNumber.message}</span>}
                     </label>
                 </div>
                 <div className="form-floating w-100 w-sm-25">
@@ -165,7 +165,7 @@ const CreateContactForm = ({ isShowing, setShow }) => {
                         onBlur={handleOnBlurTrimInput(setPhoneExt)} />
                     <label htmlFor="PhoneExt" className="form-label">
                         Ext
-                        {errorFromPhoneExtInput && <span className="ms-1 text-danger">{error.phoneExt.message}</span>}
+                        {errorFromPhoneExtInput && <span className="inputError">{error.phoneExt.message}</span>}
                     </label>
                 </div>
             </div>

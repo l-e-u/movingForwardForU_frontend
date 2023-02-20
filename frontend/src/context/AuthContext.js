@@ -1,4 +1,5 @@
 import { createContext, useReducer, useEffect } from 'react';
+import { Navigate } from 'react-router';
 
 export const AuthContext = createContext();
 
@@ -43,6 +44,11 @@ export const AuthContextProvider = ({ children }) => {
 
             if (response.ok) {
                 dispatch({ type: 'LOGIN', payload: user });
+            };
+
+            // If JWT malformed or expired. navigate user to the login screen
+            if (!response.ok) {
+                <Navigate to='/login' />
             };
         };
 

@@ -68,7 +68,7 @@ const Jobs = () => {
 
     return (
         <div className='jobs'>
-            {showCreateForm && <CreateJobForm isShowing={showCreateForm} setShow={setShowCreateForm} />}
+            {showCreateForm && <CreateJobForm setShowThisForm={setShowCreateForm} />}
 
             {!showCreateForm &&
                 <button

@@ -51,7 +51,7 @@ const CreateStatusForm = ({ isShowing, setShow }) => {
                 />
                 <label htmlFor="name" className="form-label required">
                     Name
-                    {errorFromNameInput && <span className="ms-1 text-danger">{': ' + error.name.message}</span>}
+                    {errorFromNameInput && <span className="inputError">{error.name.message}</span>}
                 </label>
             </div>
 
@@ -69,7 +69,7 @@ const CreateStatusForm = ({ isShowing, setShow }) => {
                 ></textarea>
                 <label htmlFor="description" className="form-label required">
                     Description
-                    {errorFromDescriptionInput && <span className="ms-1 text-danger">{': ' + error.description.message}</span>}</label>
+                    {errorFromDescriptionInput && <span className="inputError">{error.description.message}</span>}</label>
             </div>
 
             <div className="d-flex justify-content-between">
