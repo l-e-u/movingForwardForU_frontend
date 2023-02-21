@@ -5,12 +5,7 @@ import { useUpdateStatus } from "../hooks/useUpdateStatus.js";
 import { noCharChanges } from "../utils/StringUtils.js";
 
 // Form to update a status
-const EditStatusForm = ({
-    setShowThisForm,
-    _id,
-    name,
-    description,
-}) => {
+const EditStatusForm = ({ status, setStatus }) => {
     const { updateStatus, error, isLoading } = useUpdateStatus();
 
     // local state
