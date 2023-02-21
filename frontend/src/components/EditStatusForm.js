@@ -3,99 +3,52 @@ import { useUpdateStatus } from "../hooks/useUpdateStatus.js";
 
 // functions
 import { noCharChanges } from "../utils/StringUtils.js";
+import CloseFormButton from './CloseFormButton.js';
+import FormHeader from './FormHeader.js';
+import StatusForm from './StatusForm.js';
 
 // Form to update a status
-const EditStatusForm = ({ status, setStatus }) => {
+const EditStatusForm = ({ prevStatus, setShowThisForm }) => {
     const { updateStatus, error, isLoading } = useUpdateStatus();
-
-    // local state
-    const [nameInput, setNameInput] = useState(name);
-    const [descriptionInput, setDescriptionInput] = useState(description);
-
-    // error identification
-    const errorFromNameInput = (error && error.name);
-    const errorFromDescriptionInput = (error && error.description);
+    const { name: prevName, description: prevDescription } = prevStatus;
+    const [status, setStatus] = useState({ name: prevName, description: prevDescription });
+    const { name, description } = status;
 
     // user cannot update a doc that has not character changes, this disables the update button
-    const noChanges = [[name, nameInput], [description, descriptionInput]].every(strings => noCharChanges(strings[0], strings[1]));
-
-    // every input doesn't allow extra spaces
-    const handleOnChangeRemoveExtraSpaces = (stateSetter) => {
-        return (e) => stateSetter(e.target.value.replace(/\s+/g, ' '));
-    };
-
-    // when the input loses focus it trims the input to reflect the value sent to the backend
-    const handleOnBlurTrimInput = (stateSetter) => {
-        return () => stateSetter(input => input.trim());
-    };
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-
-        await updateStatus({
-            _id,
-            name: nameInput,
-            description: descriptionInput
-        });
-    };
+    const nameHasChanged = !noCharChanges(prevName, name);
+    const descHasChanged = !noCharChanges(prevDescription, description);
+    const noInputChanges = !nameHasChanged && !descHasChanged;
 
     return (
-        <form className='position-relative' onSubmit={handleSubmit}>
-            <h4>Edit Status</h4>
+        <div>
+            <FormHeader text='Edit Status'>
+                <CloseFormButton handleOnClick={() => setShowThisForm(false)} />
+            </FormHeader>
 
             <p>
                 <i className="bi bi-exclamation-triangle-fill text-warning pe-2"></i>
                 Changes will also reflect on all jobs with the same status.
             </p>
 
-            <p className="text-danger w-100 text-end"> <small>* Required fields</small></p>
+            <StatusForm
+                status={status}
+                setStatus={setStatus}
+                error={error}
+                isDisabled={isLoading || noInputChanges}
+                handleSubmit={async (e) => {
+                    e.preventDefault();
 
-            <div className="form-floating mb-3">
-                <input
-                    type="text"
-                    className={'form-control' + (errorFromNameInput ? ' is-invalid' : '')}
-                    name="name"
-                    placeholder="Name"
-                    id="name"
-                    onChange={handleOnChangeRemoveExtraSpaces(setNameInput)}
-                    onBlur={handleOnBlurTrimInput(setNameInput)}
-                    value={nameInput} />
-                <label htmlFor="name" className="form-label required">
-                    Name
-                    {errorFromNameInput && <span className="ms-1 text-danger">{': ' + error.name.message}</span>}
-                </label>
-            </div>
-
-            <div className="form-floating mb-3">
-                <textarea
-                    type="text"
-                    className={'form-control' + (errorFromDescriptionInput ? ' is-invalid' : '')}
-                    name="description"
-                    placeholder="Description"
-                    id="description"
-                    onChange={handleOnChangeRemoveExtraSpaces(setDescriptionInput)}
-                    onBlur={handleOnBlurTrimInput(setDescriptionInput)}
-                    value={descriptionInput}
-                    style={{ height: '100px' }}
-                ></textarea>
-                <label htmlFor="description" className="form-label required">
-                    Description
-                    {errorFromDescriptionInput && <span className="ms-1 text-danger">{': ' + error.description.message}</span>}</label>
-            </div>
-
-            <div className="d-flex justify-content-between">
-                <button
-                    className="btn btn-sm btn-danger rounded-pill px-3"
-                    onClick={() => setShowThisForm(false)}>Cancel</button>
-                <button
-                    type="submit"
-                    disabled={isLoading || noChanges}
-                    className='btn btn-sm btn-success rounded-pill px-3'>Update</button>
-            </div>
-
-            {/* any errors other than name and description input validation */}
-            {(error && error.server) && <div className="text-danger mt-3">{`${error.server.message} Refresh page. If problem persists, contact developer.`}</div>}
-        </form>
+                    // when patching, only update the data that has been changed, any undefined values will be ignored in the backend
+                    await updateStatus({
+                        _id: prevStatus._id,
+                        name: nameHasChanged ? status.name : undefined,
+                        description: descHasChanged ? status.description : undefined
+                    })
+                        .then(isUpdated => {
+                            if (isUpdated) setShowThisForm(false);
+                        });
+                }} />
+        </div>
     );
 };
 

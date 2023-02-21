@@ -11,7 +11,7 @@ const getStatuses = async (req, res) => {
 // get a status
 const getStatus = async (req, res) => {
     const { id } = req.params;
-    const error = { server: { message: 'No such status' } };
+    const error = { server: { message: 'No such status.' } };
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
         return res.status(404).json({ error });
@@ -64,7 +64,7 @@ const createStatus = async (req, res) => {
 // delete a status
 const deleteStatus = async (req, res) => {
     const { id } = req.params;
-    const error = { server: { message: 'No such status' } };
+    const error = { server: { message: 'No such status.' } };
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
         return res.status(404).json({ error });
@@ -82,7 +82,7 @@ const deleteStatus = async (req, res) => {
 // update a status
 const updateStatus = async (req, res) => {
     const { id } = req.params;
-    const error = { server: { message: 'No such status' } };
+    const error = { server: { message: 'No such status.' } };
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
         return res.status(404).json({ error });

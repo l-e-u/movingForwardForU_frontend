@@ -31,12 +31,14 @@ export const useUpdateStatus = () => {
 
             setError(json.error);
             setIsLoading(false);
+            return false;
         };
 
         if (response.ok) {
             setError(null);
             setIsLoading(false);
             dispatch({ type: 'UPDATE_STATUS', payload: json });
+            return true;
         };
     };
     return { updateStatus, isLoading, error };

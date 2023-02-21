@@ -31,6 +31,7 @@ export const useCreateStatus = () => {
 
             setError(json.error);
             setIsLoading(false);
+            return false;
         };
 
         if (response.ok) {
@@ -38,6 +39,7 @@ export const useCreateStatus = () => {
             setIsLoading(false);
 
             dispatch({ type: 'CREATE_STATUS', payload: json });
+            return true;
         };
     };
 

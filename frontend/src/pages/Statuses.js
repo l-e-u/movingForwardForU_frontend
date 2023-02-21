@@ -73,7 +73,7 @@ const Statuses = () => {
 
     return (
         <div className='statuses'>
-            {showCreateForm && <CreateStatusForm isShowing={showCreateForm} setShow={setShowCreateForm} />}
+            {showCreateForm && <CreateStatusForm setShowThisForm={setShowCreateForm} />}
 
             {!showCreateForm &&
                 <button
@@ -88,7 +88,7 @@ const Statuses = () => {
                 const { _id, createdBy, createdAt } = status;
                 const isEditingThisDoc = showEditForm && (_id === docToEdit._id);
                 const editFormProps = {
-                    ...status,
+                    prevStatus: status,
                     setShowThisForm: setShowEditForm
                 };
 
@@ -96,13 +96,13 @@ const Statuses = () => {
                     <div key={_id} className='my-4'>
                         <CardContainer >
                             {/* Edit and Delete options */}
-                            <div className="position-absolute top-0 end-0 pe-3 pt-2 d-flex">
+                            {!isEditingThisDoc && <div className="position-absolute top-0 end-0 pe-3 pt-2 d-flex">
                                 {!isEditingThisDoc && <EditDocIcon onClick={handleEditClick(status)} />}
 
                                 <div className="ps-5">
                                     <DeleteDocIcon onClick={() => deleteById(_id)} />
                                 </div>
-                            </div>
+                            </div>}
 
                             {isEditingThisDoc ? <EditStatusForm {...editFormProps} /> : <StatusOverview {...status} />
                             }
