@@ -1,4 +1,4 @@
-const CloseFormButton = ({ handleOnClick }) => {
+const XButton = ({ handleOnClick }) => {
     return (
         <button
             type='button'
@@ -9,4 +9,4 @@ const CloseFormButton = ({ handleOnClick }) => {
     );
 };
 
-export default CloseFormButton;
+export default XButton;

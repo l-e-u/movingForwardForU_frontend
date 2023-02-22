@@ -1,12 +1,15 @@
 import { useAuthContext } from '../hooks/useAuthContext';
+
 // components
 import ContactDataList from './ContactDataList';
-import StatusSelect from './StatusSelect';
 import DriversInput from './DriversInput';
+import RequiredFieldsText from './RequiredFieldsText';
+import StatusSearchSelect from './StatusSearchSelect';
+import SelectedOption from './SelectedOption';
 
 // functions
 import { removeExtraSpaces } from '../utils/StringUtils';
-import RequiredFieldsText from './RequiredFieldsText';
+import { useStatusesContext } from '../hooks/useStatusesContext';
 
 const JobForm = ({ job, setJob, handleSubmit, error, isDisabled }) => {
     const { user } = useAuthContext();
@@ -19,12 +22,25 @@ const JobForm = ({ job, setJob, handleSubmit, error, isDisabled }) => {
     const errorFromLogInput = error?.['logs.note'];
     const errorOther = error?.server;
 
+    // nullifies the proptery on job
+    const nullPropertyValue = (property) => {
+        return () => {
+            setJob(prev => {
+                const updated = { ...prev };
+                updated[property] = null;
+                return updated;
+            });
+        };
+    };
+
+    console.log(job)
+
     return (
         <form onSubmit={handleSubmit}>
             <RequiredFieldsText />
 
             {/* STATUS */}
-            <StatusSelect value={status?.name ?? ''} hasSelected={!!status} setJob={setJob} error={error} token={token} />
+            {status ? <SelectedOption text={status.name} handleOnClick={nullPropertyValue('status')} /> : <StatusSearchSelect setJob={setJob} inputError={error} />}
 
             {/* CUSTOMER / CONTACT */}
             <ContactDataList value={customer?.organization ?? ''} setJob={setJob} error={error} token={token} />

@@ -4,7 +4,7 @@ import { useCreateJob } from '../hooks/useCreateJob.js';
 // components
 import JobForm from './JobForm.js';
 import FormHeader from './FormHeader.js';
-import CloseFormButton from './CloseFormButton.js';
+import CloseFormButton from './XButton.js';
 
 const CreateJobForm = ({ setShowThisForm }) => {
     const { createJob, error, isLoading } = useCreateJob();
@@ -33,7 +33,11 @@ const CreateJobForm = ({ setShowThisForm }) => {
                 handleSubmit={async (e) => {
                     e.preventDefault();
 
-                    await createJob(job)
+                    await createJob({
+                        ...job,
+                        status: job.status?._id,
+                        customer: job.customer?._id
+                    })
                         .then(isCreated => {
                             if (isCreated) setShowThisForm(false);
                         })

@@ -1,9 +1,9 @@
-import CloseFormButton from './CloseFormButton';
+import CloseFormButton from './XButton';
 
 const FormHeader = ({ text, children }) => {
     return (
         <div className='d-flex justify-content-between align-items-center'>
-            <h3 className='m-0' >{text}</h3>
+            <h2 className='m-0 fs-3' >{text}</h2>
             {children}
         </div>
     );

@@ -5,9 +5,9 @@ import { useUpdateStatus } from "../hooks/useUpdateStatus.js";
 import { noCharChanges } from "../utils/StringUtils.js";
 
 // components
-import CloseFormButton from './CloseFormButton.js';
 import FormHeader from './FormHeader.js';
 import StatusForm from './StatusForm.js';
+import XButton from './XButton.js';
 
 // Form to update a status
 const EditStatusForm = ({ prevStatus, setShowThisForm }) => {
@@ -24,7 +24,7 @@ const EditStatusForm = ({ prevStatus, setShowThisForm }) => {
     return (
         <div>
             <FormHeader text='Edit Status'>
-                <CloseFormButton handleOnClick={() => setShowThisForm(false)} />
+                <XButton handleOnClick={() => setShowThisForm(false)} />
             </FormHeader>
 
             <p className='mt-2 mb-0'>

@@ -71,6 +71,16 @@ nav.menu {
   color: var(--primary) !important;
 }
 
+.selectList {
+  position: absolute;
+  z-index: 100;
+  width: 100%;
+  top: 100%;
+  margin-top: .5rem;
+  overflow-y: scroll;
+  max-height: 300px;
+}
+
 @media only screen and (min-width: 576px) {
   .w-sm-75 {
     width: 75% !important;

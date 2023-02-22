@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useCreateContact } from "../hooks/useCreateContact.js";
 
 // components
-import CloseFormButton from './CloseFormButton.js';
+import CloseFormButton from './XButton.js';
 import ContactForm from './ContactForm.js';
 import FormHeader from './FormHeader.js';
 

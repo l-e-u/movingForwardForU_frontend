@@ -7,7 +7,7 @@ import { noCharChanges } from '../utils/StringUtils.js';
 // components
 import JobForm from './JobForm';
 import FormHeader from './FormHeader';
-import CloseFormButton from './CloseFormButton';
+import CloseFormButton from './XButton';
 
 const EditJobForm = ({ prevJob, setShowThisForm }) => {
     const { updateJob, error, isLoading } = useUpdateJob();

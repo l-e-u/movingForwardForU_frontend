@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { useCreateStatus } from "../hooks/useCreateStatus.js";
-import CloseFormButton from './CloseFormButton.js';
-import FormHeader from './FormHeader.js';
 
 // components
+import FormHeader from './FormHeader.js';
 import StatusForm from './StatusForm.js';
+import XButton from './XButton.js';
 
 // Form to create a status for a job and description of what the status means.
 const CreateStatusForm = ({ setShowThisForm }) => {
@@ -14,7 +14,7 @@ const CreateStatusForm = ({ setShowThisForm }) => {
     return (
         <div>
             <FormHeader text='New Status'>
-                <CloseFormButton handleOnClick={() => setShowThisForm(false)} />
+                <XButton handleOnClick={() => setShowThisForm(false)} />
             </FormHeader>
 
             <StatusForm

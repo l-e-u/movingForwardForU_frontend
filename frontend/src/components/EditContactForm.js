@@ -5,7 +5,7 @@ import { useUpdateContact } from "../hooks/useUpdateContact.js";
 import { noCharChanges } from "../utils/StringUtils.js";
 
 // components
-import CloseFormButton from './CloseFormButton.js';
+import CloseFormButton from './XButton.js';
 import ContactForm from './ContactForm.js';
 import FormHeader from './FormHeader.js';
 
