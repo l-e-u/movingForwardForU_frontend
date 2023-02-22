@@ -1,3 +1,6 @@
+// components
+import RequiredFieldsText from './RequiredFieldsText';
+
 // functions
 import { removeExtraSpaces } from '../utils/StringUtils';
 
@@ -11,8 +14,7 @@ const StatusForm = ({ status, setStatus, handleSubmit, error, isDisabled }) => {
 
     return (
         <form onSubmit={handleSubmit}>
-
-            <p className='text-danger w-100 text-end'> <small>* Required fields</small></p>
+            <RequiredFieldsText />
 
             <div className='form-floating mb-3'>
                 <input
@@ -81,7 +83,6 @@ const StatusForm = ({ status, setStatus, handleSubmit, error, isDisabled }) => {
                 className='btn btn-sm btn-success rounded-pill px-3 d-flex ms-auto'>
                 Save
             </button>
-
 
             {/* any errors other than name and description input validation */}
             {errorOther && <div className="text-danger mt-3">{`${error.server.message} Refresh page. If problem persists, contact developer.`}</div>}

@@ -7,9 +7,12 @@ import CreatedInfo from "../components//CreatedInfo.js";
 import CardContainer from "../components/CardContainer.js";
 import JobOverview from "../components/JobOverview.js";
 import CreateJobForm from "../components/CreateJobForm.js";
+import EditDocIcon from '../components/EditDocIcon.js';
+import DeleteDocIcon from '../components/DeleteDocIcon.js';
 
 // date fns
 import formatDistanceToNow from "date-fns/formatDistanceToNow";
+import EditJobForm from '../components/EditJobForm.js';
 
 const Jobs = () => {
     const { jobs, dispatch } = useJobsContext();
@@ -40,23 +43,19 @@ const Jobs = () => {
         if (user) fetchJobs();
     }, [dispatch, user]);
 
-    // function closure returns an async func that deletes the job
-    const handleDelete = (job_id) => {
-        return async () => {
-            if (!user) return;
+    // deletes contact by _id
+    const deleteById = async (_id) => {
+        const response = await fetch('/api/contacts/' + _id, {
+            method: 'DELETE',
+            headers: {
+                'Authentication': `Bearer ${user.token}`
+            }
+        });
 
-            const response = await fetch('/api/jobs/' + job_id, {
-                method: 'DELETE',
-                headers: {
-                    'Authentication': `Bearer ${user.token}`
-                }
-            });
+        const json = await response.json();
 
-            const json = await response.json();
-
-            if (response.ok) {
-                dispatch({ type: 'DELETE_JOB', payload: json })
-            };
+        if (response.ok) {
+            dispatch({ type: 'DELETE_CONTACT', payload: json })
         };
     };
 
@@ -64,6 +63,15 @@ const Jobs = () => {
     const handleCreateClick = () => {
         setShowCreateForm(true);
         setShowEditForm(false);
+    };
+
+    // function closure returns a func that sets the contact to be edited, hides the CreateStatusForm and shows EditStatusForm
+    const handleEditClick = (job) => {
+        return () => {
+            setDocToEdit(job);
+            setShowCreateForm(false);
+            setShowEditForm(true);
+        };
     };
 
     return (
@@ -82,11 +90,26 @@ const Jobs = () => {
             {jobs && jobs.map((job) => {
                 const { _id, createdBy, createdAt } = job;
                 const isEditingThisDoc = showEditForm && (_id === docToEdit._id);
+                const editFormProps = {
+                    prevJob: job,
+                    setShowThisForm: setShowEditForm
+                };
 
                 return (
                     <div key={_id} className='my-4'>
                         <CardContainer >
-                            <JobOverview {...job} />
+                            {/* Edit and Delete options */}
+                            <div className="position-absolute top-0 end-0 pe-3 pt-2 d-flex">
+                                {!isEditingThisDoc && <EditDocIcon onClick={handleEditClick(job)} />}
+                                <div className="ps-5">
+
+                                    <DeleteDocIcon onClick={() => deleteById(_id)} />
+                                </div>
+                            </div>
+                            {isEditingThisDoc ?
+                                <EditJobForm {...editFormProps} /> :
+                                <JobOverview {...job} />
+                            }
                         </CardContainer>
                         <div className="mt-1 pe-2">
                             <CreatedInfo createdBy={createdBy} createdAt={createdAt} />

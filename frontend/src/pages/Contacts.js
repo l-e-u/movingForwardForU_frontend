@@ -66,7 +66,7 @@ const Contacts = () => {
 
   return (
     <div className="contacts">
-      {showCreateForm && <CreateContactForm isShowing={showCreateForm} setShow={setShowCreateForm} />}
+      {showCreateForm && <CreateContactForm setShowThisForm={setShowCreateForm} />}
 
       {!showCreateForm &&
         <button
@@ -81,7 +81,7 @@ const Contacts = () => {
         const { _id, createdBy, createdAt } = contact;
         const isEditingThisDoc = showEditForm && (_id === docToEdit._id);
         const editFormProps = {
-          ...contact,
+          prevContact: contact,
           setShowThisForm: setShowEditForm
         };
 

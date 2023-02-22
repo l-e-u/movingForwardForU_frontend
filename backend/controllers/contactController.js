@@ -11,7 +11,7 @@ const getContacts = async (req, res) => {
 // get a single contact
 const getContact = async (req, res) => {
     const { id } = req.params;
-    const error = { server: { message: 'No such status' } };
+    const error = { server: { message: 'No such contact.' } };
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
         return res.status(404).json({ error });
@@ -76,7 +76,7 @@ const createContact = async (req, res) => {
 // delete a workout
 const deleteContact = async (req, res) => {
     const { id } = req.params;
-    const error = { server: { message: 'No such status' } };
+    const error = { server: { message: 'No such contact.' } };
 
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -95,7 +95,7 @@ const deleteContact = async (req, res) => {
 // update a workout
 const updateContact = async (req, res) => {
     const { id } = req.params;
-    const error = { server: { message: 'No such status' } };
+    const error = { server: { message: 'No such contact.' } };
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
         return res.status(404).json({ error });
@@ -116,7 +116,7 @@ const updateContact = async (req, res) => {
             return res.status(404).json({ error });
         };
 
-        res.status(200).json(contact);
+        return res.status(200).json(contact);
     }
     catch (err) {
         console.error(err);

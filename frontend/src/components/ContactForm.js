@@ -1,242 +1,275 @@
-import { useState } from "react";
-import { useContactsContext } from "../hooks/useContactsContext.js";
+// components
+import RequiredFieldsText from './RequiredFieldsText';
 
-// Form creates a contact card for a customer
-const ContactForm = () => {
-    const { contacts, dispatch } = useContactsContext();
+// functions
+import { removeExtraSpaces } from '../utils/StringUtils';
 
-    const [organization, setOrganization] = useState('');
-    const [firstName, setFirstName] = useState('');
-    const [lastName, setLastName] = useState('');
-    const [street1, setStreet1] = useState('');
-    const [street2, setStreet2] = useState('');
-    const [city, setCity] = useState('');
-    const [state, setState] = useState('');
-    const [zipcode, setZipcode] = useState('');
-    const [phone, setPhone] = useState('');
-    const [email, setEmail] = useState('');
-    const [note, setNote] = useState('');
+const ContactForm = ({ contact, setContact, handleSubmit, error, isDisabled }) => {
+    const { name, note, address, billingAddress, organization, email, phoneNumber, phoneExt } = contact;
 
-    // state for errors
-    const [error, setError] = useState(null);
-    const [emptyFields, setEmptyFields] = useState([]);
-
-    const states = new Map([
-        ["AL", "Alabama"],
-        ["AK", "Alaska"],
-        ["AZ", "Arizona"],
-        ["AR", "Arkansas"],
-        ["CA", "California"],
-        ["CO", "Colorado"],
-        ["CT", "Connecticut"],
-        ["DE", "Delaware"],
-        ["DC", "District Of Columbia"],
-        ["FL", "Florida"],
-        ["GA", "Georgia"],
-        ["HI", "Hawaii"],
-        ["ID", "Idaho"],
-        ["IL", "Illinois"],
-        ["IN", "Indiana"],
-        ["IA", "Iowa"],
-        ["KS", "Kansas"],
-        ["KY", "Kentucky"],
-        ["LA", "Louisiana"],
-        ["ME", "Maine"],
-        ["MD", "Maryland"],
-        ["MA", "Massachusetts"],
-        ["MI", "Michigan"],
-        ["MN", "Minnesota"],
-        ["MS", "Mississippi"],
-        ["MO", "Missouri"],
-        ["MT", "Montana"],
-        ["NE", "Nebraska"],
-        ["NV", "Nevada"],
-        ["NH", "New Hampshire"],
-        ["NJ", "New Jersey"],
-        ["NM", "New Mexico"],
-        ["NY", "New York"],
-        ["NC", "North Carolina"],
-        ["ND", "North Dakota"],
-        ["OH", "Ohio"],
-        ["OK", "Oklahoma"],
-        ["OR", "Oregon"],
-        ["PA", "Pennsylvania"],
-        ["RI", "Rhode Island"],
-        ["SC", "South Carolina"],
-        ["SD", "South Dakota"],
-        ["TN", "Tennessee"],
-        ["TX", "Texas"],
-        ["UT", "Utah"],
-        ["VT", "Vermont"],
-        ["VA", "Virginia"],
-        ["WA", "Washington"],
-        ["WV", "West Virginia"],
-        ["WI", "Wisconsin"],
-        ["WY", "Wyoming"]
-    ]);
-
-    // POST a new contact
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-
-        // DEV.. TEMP FROM AND TO VALUES
-        const contact = {
-            organization,
-            firstName,
-            lastName,
-            street1,
-            street2,
-            city,
-            state,
-            zipcode,
-            phone,
-            email,
-            note
-        };
-
-        const response = await fetch('/api/contacts', {
-            method: 'POST',
-            body: JSON.stringify(contact),
-            headers: { 'Content-Type': 'application/json' }
-        });
-        const json = await response.json();
-
-        if (!response.ok) {
-            setError(json.error);
-            setEmptyFields(json.emptyFields);
-        };
-
-        if (response.ok) {
-            // reset the form
-            [setOrganization,
-                setFirstName,
-                setLastName,
-                setStreet1,
-                setStreet2,
-                setCity,
-                setZipcode,
-                setPhone,
-                setEmail,
-                setNote
-            ].forEach((stateSetter) => stateSetter(''));
-
-            // reset errors
-            setError(null);
-            setEmptyFields([]);
-
-            dispatch({ type: 'CREATE_CONTACT', payload: json });
-        };
-    };
-
+    // error identification on fields with validation
+    const errorFromOrganizationInput = error?.organization;
+    const errorFromAddressInput = error?.address;
+    const errorFromEmailInput = error?.email;
+    const errorFromPhoneNumberInput = error?.phoneNumber;
+    const errorFromPhoneExtInput = error?.phoneExt;
+    const errorOther = error?.server;
 
     return (
-        <form className="create" onSubmit={handleSubmit}>
-            <h3>Add a New Contact:</h3>
-            <label htmlFor="organization">Organization:</label>
-            <input type="text"
-                name="organization"
-                id="organization"
-                onChange={(e) => setOrganization(e.target.value)}
-                value={organization}
-            />
+        <form onSubmit={handleSubmit}>
+            <RequiredFieldsText />
 
-            <h5>Name:</h5>
-            <label htmlFor="firstName">First:</label>
-            <input
-                type="text"
-                name="firstName"
-                id="firstName"
-                onChange={(e) => setFirstName(e.target.value)}
-                value={firstName}
-            />
+            {/* ORGANIZATION */}
+            <div className="form-floating mb-2">
+                <input
+                    type="text"
+                    className={'form-control' + (errorFromOrganizationInput ? ' is-invalid' : '')}
+                    name="organization"
+                    id="organization"
+                    placeholder="Organization"
+                    value={organization ?? ''}
+                    onChange={(e) => {
+                        setContact(prev => {
+                            return {
+                                ...prev,
+                                organization: removeExtraSpaces(e.target.value)
+                            }
+                        })
+                    }}
+                    onBlur={(e) => {
+                        setContact(prev => {
+                            return {
+                                ...prev,
+                                organization: e.target.value.trim()
+                            }
+                        })
+                    }} />
+                <label htmlFor="organization" className="form-label required">
+                    Organization
+                    {errorFromOrganizationInput && <span className="inputError">{error.organization.message}</span>}
+                </label>
+            </div>
 
-            <label htmlFor="lastName">Last:</label>
-            <input
-                type="text"
-                name="lastName"
-                id="lastName"
-                onChange={(e) => setLastName(e.target.value)}
-                value={lastName}
-            />
+            {/* NAME */}
+            <div className="form-floating mb-2">
+                <input
+                    type="text"
+                    className='form-control'
+                    name="name"
+                    id="name"
+                    placeholder="Name"
+                    value={name ?? ''}
+                    onChange={(e) => {
+                        setContact(prev => {
+                            return {
+                                ...prev,
+                                name: removeExtraSpaces(e.target.value)
+                            }
+                        })
+                    }}
+                    onBlur={(e) => {
+                        setContact(prev => {
+                            return {
+                                ...prev,
+                                name: e.target.value.trim()
+                            }
+                        })
+                    }} />
+                <label htmlFor="name" className="form-label">Name</label>
+            </div>
 
-            <h5>Address:</h5>
-            <label htmlFor="street1">Street 1:</label>
-            <input
-                type="text"
-                name="street1"
-                id="street1"
-                onChange={(e) => setStreet1(e.target.value)}
-                value={street1}
-            />
+            {/* ADDRESS */}
+            <div className="form-floating mb-2">
+                <input
+                    type="text"
+                    className={'form-control' + (errorFromAddressInput ? ' is-invalid' : '')}
+                    name="address"
+                    placeholder="Address"
+                    id="address"
+                    value={address ?? ''}
+                    onChange={(e) => {
+                        setContact(prev => {
+                            return {
+                                ...prev,
+                                address: removeExtraSpaces(e.target.value)
+                            }
+                        })
+                    }}
+                    onBlur={(e) => {
+                        setContact(prev => {
+                            return {
+                                ...prev,
+                                address: e.target.value.trim()
+                            }
+                        })
+                    }} />
+                <label htmlFor="address" className="form-label required">
+                    Address
+                    {errorFromAddressInput && <span className="inputError">{error.address.message}</span>}
+                </label>
+            </div>
 
-            <label htmlFor="street2">Street 2:</label>
-            <input
-                type="text"
-                name="street2"
-                id="street2"
-                onChange={(e) => setStreet2(e.target.value)}
-                value={street2}
-            />
+            {/* BILLING ADDRESS */}
+            <div className="form-floating mb-2">
+                <input
+                    type="text"
+                    className='form-control'
+                    name="billing"
+                    placeholder="Billing Address"
+                    id="billing"
+                    value={billingAddress ?? ''}
+                    onChange={(e) => {
+                        setContact(prev => {
+                            return {
+                                ...prev,
+                                billingAddress: removeExtraSpaces(e.target.value)
+                            }
+                        })
+                    }}
+                    onBlur={(e) => {
+                        setContact(prev => {
+                            return {
+                                ...prev,
+                                billingAddress: e.target.value.trim()
+                            }
+                        })
+                    }} />
+                <label htmlFor="address" className="form-label">Billing Address</label>
+            </div>
 
-            <label htmlFor="city">City:</label>
-            <input
-                type="text"
-                name="city"
-                id="city"
-                onChange={(e) => setCity(e.target.value)}
-                value={city}
-            />
+            {/* EMAIL */}
+            <div className="form-floating mb-2">
+                <input
+                    type="email"
+                    className={'form-control' + (errorFromEmailInput ? ' is-invalid' : '')}
+                    id="email"
+                    placeholder="name@example.com"
+                    value={email ?? ''}
+                    onChange={(e) => {
+                        setContact(prev => {
+                            return {
+                                ...prev,
+                                email: removeExtraSpaces(e.target.value)
+                            }
+                        })
+                    }}
+                    onBlur={(e) => {
+                        setContact(prev => {
+                            return {
+                                ...prev,
+                                email: e.target.value.trim()
+                            }
+                        })
+                    }} />
+                <label htmlFor="email">
+                    Email
+                    {errorFromEmailInput && <span className="inputError">{error.email.message}</span>}
+                </label>
+            </div>
 
-            <label className="inline" htmlFor="state">State:</label>
-            <select
-                name="state"
-                id="state"
-                onChange={(e) => setState(states.get(e.target.value))}
-            >
-                {[...states.entries()].map(([key, value]) => <option key={key}>{value}</option>)}
-            </select>
+            {/* PHONE NUMBER AND EXT */}
+            <div className="d-sm-flex gap-sm-3 mb-2">
+                <div className="form-floating w-100 w-sm-75 mb-2 mb-sm-0">
+                    <input
+                        type="text"
+                        className={'form-control' + (errorFromPhoneNumberInput ? ' is-invalid' : '')}
+                        name="phoneNumber"
+                        placeholder="Phone"
+                        id="phoneNumber"
+                        value={phoneNumber ?? ''}
+                        onChange={(e) => {
+                            setContact(prev => {
+                                return {
+                                    ...prev,
+                                    phoneNumber: removeExtraSpaces(e.target.value)
+                                }
+                            })
+                        }}
+                        onBlur={(e) => {
+                            setContact(prev => {
+                                return {
+                                    ...prev,
+                                    phoneNumber: e.target.value.trim()
+                                }
+                            })
+                        }} />
+                    <label htmlFor="phoneNumber" className="form-label">
+                        Phone
+                        {errorFromPhoneNumberInput && <span className="inputError">{error.phoneNumber.message}</span>}
+                    </label>
+                </div>
+                <div className="form-floating w-100 w-sm-25">
+                    <input
+                        type="number"
+                        min={0}
+                        className={'form-control' + (errorFromPhoneExtInput ? ' is-invalid' : '')}
+                        name="phoneExt"
+                        placeholder="Ext"
+                        id="phoneExt"
+                        value={phoneExt ?? ''}
+                        onChange={(e) => {
+                            setContact(prev => {
+                                return {
+                                    ...prev,
+                                    phoneExt: removeExtraSpaces(e.target.value)
+                                }
+                            })
+                        }}
+                        onBlur={(e) => {
+                            setContact(prev => {
+                                return {
+                                    ...prev,
+                                    phoneExt: e.target.value.trim()
+                                }
+                            })
+                        }} />
+                    <label htmlFor="PhoneExt" className="form-label">
+                        Ext
+                        {errorFromPhoneExtInput && <span className="inputError">{error.phoneExt.message}</span>}
+                    </label>
+                </div>
+            </div>
 
-            <label htmlFor="zipcode">Zipcode:</label>
-            <input
-                type="text"
-                name="zipcode"
-                id="zipcode"
-                onChange={(e) => setZipcode(e.target.value)}
-                value={zipcode}
-            />
+            {/* NOTE */}
+            <div className="form-floating mb-2">
+                <textarea
+                    type="text"
+                    className='form-control'
+                    name="note"
+                    placeholder="Note"
+                    id="note"
+                    value={note ?? ''}
+                    style={{ height: '100px' }}
+                    onChange={(e) => {
+                        setContact(prev => {
+                            return {
+                                ...prev,
+                                note: removeExtraSpaces(e.target.value)
+                            }
+                        })
+                    }}
+                    onBlur={(e) => {
+                        setContact(prev => {
+                            return {
+                                ...prev,
+                                note: e.target.value.trim()
+                            }
+                        })
+                    }}></textarea>
+                <label htmlFor="note" className="form-label">Note</label>
+            </div>
 
-            <label htmlFor="phone">Phone:</label>
-            <input
-                type="text"
-                name="phone"
-                id="phone"
-                onChange={(e) => setPhone(e.target.value)}
-                value={phone}
-            />
+            <button
+                type="submit"
+                disabled={isDisabled}
+                className='btn btn-sm btn-success rounded-pill px-3 d-flex ms-auto'>
+                Save
+            </button>
 
-            <label htmlFor="email">Email:</label>
-            <input
-                type="text"
-                name="email"
-                id="email"
-                onChange={(e) => setEmail(e.target.value)}
-                value={email}
-            />
-
-            <label htmlFor="note">Note:</label>
-            <textarea
-                name="note"
-                id="note"
-                cols="30"
-                rows="10"
-                onChange={(e) => setNote(e.target.value)}
-                value={note}
-            >
-            </textarea>
-            <button>Add Contact</button>
-            {error && <div className="error">{error}</div>}
+            {/* any errors other than input validation */}
+            {errorOther && <div className="text-danger mt-3">{`${error.server.message} Refresh page. If problem persists, contact developer.`}</div>}
         </form>
-    )
+    );
 };
 
 export default ContactForm;

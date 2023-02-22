@@ -1,29 +1,27 @@
-import { useState } from "react";
-import { useAuthContext } from "./useAuthContext";
-import { useContactsContext } from "./useContactsContext";
+import { useState } from 'react'
+import { useAuthContext } from './useAuthContext';
+import { useJobsContext } from './useJobsContext';
 
-export const useCreateContact = () => {
+export const useUpdateJob = () => {
     const [error, setError] = useState(null);
     const [isLoading, setIsLoading] = useState(null);
-    const { dispatch } = useContactsContext();
+    const { dispatch } = useJobsContext();
     const { user } = useAuthContext();
 
-    const createContact = async (contact) => {
+    const updateJob = async ({ _id, job }) => {
         setIsLoading(true);
-
-        // don't want to show the error if the user is trying to rectify, so null error at the start
         setError(null);
 
-        const response = await fetch('/api/contacts', {
-            method: 'POST',
-            body: JSON.stringify(contact),
+        const response = await fetch('/api/jobs' + _id, {
+            method: 'PATCH',
+            body: JSON.stringify(job),
             headers: {
                 'Content-Type': 'application/json',
                 'Authentication': `Bearer ${user.token}`
             }
         });
 
-        // expecting the newly created status
+        // expecting the updated job doc
         const json = await response.json();
 
         if (!response.ok) {
@@ -37,11 +35,9 @@ export const useCreateContact = () => {
         if (response.ok) {
             setError(null);
             setIsLoading(false);
-
-            dispatch({ type: 'CREATE_CONTACT', payload: json });
+            dispatch({ type: 'UPDATE_JOB', payload: json });
             return true;
         };
     };
-
-    return { createContact, isLoading, error };
+    return { updateJob, isLoading, error };
 };

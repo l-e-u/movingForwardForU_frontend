@@ -31,12 +31,14 @@ export const useUpdateContact = () => {
 
             setError(json.error);
             setIsLoading(false);
+            return false;
         };
 
         if (response.ok) {
             setError(null);
             setIsLoading(false);
             dispatch({ type: 'UPDATE_CONTACT', payload: json });
+            return true;
         };
     };
     return { updateContact, isLoading, error };

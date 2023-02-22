@@ -12,9 +12,10 @@ const ContactOverview = ({
 }) => {
     return (
         <div>
-            <h2 className='text-primary fs-5'>{organization}</h2>
+            <h2 className='text-primary fs-5 m-0'>{organization}</h2>
             <address className="m-0">
                 <div>{address}</div>
+                <hr className='text-secondary'></hr>
                 {billingAddress &&
                     <div className="mt-2">
                         <SmallHeader text='Billing Address' />

@@ -31,6 +31,7 @@ export const useCreateJob = () => {
 
             setError(json.error);
             setIsLoading(false);
+            return false;
         };
 
         if (response.ok) {
@@ -38,6 +39,7 @@ export const useCreateJob = () => {
             setIsLoading(false);
 
             dispatch({ type: 'CREATE_JOB', payload: json });
+            return true;
         };
     };
 

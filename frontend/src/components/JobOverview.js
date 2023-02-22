@@ -16,7 +16,7 @@ const JobOverview = ({
 
     return (
         <div>
-            <div className="mb-1">{status.name}</div>
+            <div className="mb-1">{status.name.toUpperCase()}</div>
             <div className="d-flex flex-wrap justify-content-between mb-2">
                 <h2 className='text-primary fs-5 m-0'>{customer.organization}</h2>
                 {reference && <small className="text-green text-end align-self-end flex-grow-1">{reference}</small>}

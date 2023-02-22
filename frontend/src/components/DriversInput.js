@@ -1,16 +1,36 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useUsersContext } from '../hooks/useUsersContext';
 
 // functions
 import { removeExtraSpaces } from '../utils/StringUtils';
 
 // datalist for drivers. added drivers aprear below the input and are unique. it has the option to remove them too.
-const DriversInput = ({ drivers, setDrivers }) => {
-    const { users } = useUsersContext();
-
-    // local state
+const DriversInput = ({ drivers, setJob, token }) => {
+    const { users, dispatch } = useUsersContext();
     const [error, setError] = useState(null);
-    const [driver, setDriver] = useState('');
+    const [input, setInput] = useState('');
+
+    useEffect(() => {
+        const fetchUsers = async () => {
+            const response = await fetch('/api/users', {
+                headers: {
+                    'Authentication': `Bearer ${token}`
+                }
+            });
+
+            const json = await response.json();
+
+            if (response.ok) {
+                dispatch({ type: 'SET_USERS', payload: json });
+            };
+
+            if (!response.ok) {
+                console.error(json);
+            };
+        };
+
+        fetchUsers();
+    }, [dispatch]);
 
     // checks for email in input or selected value from user. adds user to drivers
     const handleOnChange = (e) => {
@@ -23,7 +43,7 @@ const DriversInput = ({ drivers, setDrivers }) => {
 
         // set and return if input is not an email
         if (!email) {
-            setDriver(input);
+            setInput(input);
             return;
         };
 
@@ -31,7 +51,7 @@ const DriversInput = ({ drivers, setDrivers }) => {
         const user = users.find(u => u.email === email[0]);
 
         if (!user) {
-            setDriver(input);
+            setInput(input);
             return;
         };
 
@@ -40,13 +60,18 @@ const DriversInput = ({ drivers, setDrivers }) => {
         // same driver cannot be added twice for same job
         if (hasThisDriver) {
             setError('Already added.');
-            setDriver(input);
+            setInput(input);
             return;
         };
 
         if (user) {
-            setDrivers(prev => [...prev, user]);
-            setDriver('');
+            setJob(prev => {
+                return {
+                    ...prev,
+                    drivers: [...prev.drivers, user]
+                }
+            });
+            setInput('');
         };
     };
 
@@ -60,7 +85,7 @@ const DriversInput = ({ drivers, setDrivers }) => {
                 name='drivers'
                 id='drivers'
                 placeholder='Search or select...'
-                value={driver}
+                value={input}
                 onChange={handleOnChange} />
             <label htmlFor='drivers' className='form-label'>
                 Drivers
@@ -87,7 +112,14 @@ const DriversInput = ({ drivers, setDrivers }) => {
                                 <button
                                     type='button'
                                     className='btn border-0 py-0 ps-4 pe-1'
-                                    onClick={() => setDrivers(drivers.filter(d => d._id != _id))}>
+                                    onClick={() => {
+                                        setJob(prev => {
+                                            return {
+                                                ...prev,
+                                                drivers: drivers.filter(d => d._id != _id)
+                                            }
+                                        })
+                                    }}>
                                     < i className='bi bi-x'></i>
                                 </button>
                             </li>
