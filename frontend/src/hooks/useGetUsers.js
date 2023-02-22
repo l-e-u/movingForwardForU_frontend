@@ -1,30 +1,30 @@
 import { useState } from 'react'
 import { useAuthContext } from './useAuthContext';
-import { useStatusesContext } from './useStatusesContext';
+import { useUsersContext } from './useUsersContext';
 
-export const useGetStatuses = () => {
+export const useGetUsers = () => {
     const [error, setError] = useState(null);
     const [isLoading, setIsLoading] = useState(null);
-    const { dispatch } = useStatusesContext();
+    const { dispatch } = useUsersContext();
     const { user } = useAuthContext();
 
-    const getStatuses = async () => {
+    const getUsers = async () => {
         setIsLoading(true);
         setError(null);
 
-        const response = await fetch('/api/statuses', {
+        const response = await fetch('/api/users', {
             headers: {
                 'Authentication': `Bearer ${user.token}`
             }
         });
 
-        // expecting all statuses
+        // expecting all users
         const json = await response.json();
 
         if (response.ok) {
             setError(null)
             setIsLoading(false);
-            dispatch({ type: 'SET_STATUSES', payload: json });
+            dispatch({ type: 'SET_USERS', payload: json });
             return true;
         };
 
@@ -35,5 +35,5 @@ export const useGetStatuses = () => {
             return false;
         };
     };
-    return { getStatuses, error, isLoading };
+    return { getUsers, error, isLoading };
 };

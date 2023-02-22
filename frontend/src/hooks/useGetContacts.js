@@ -1,30 +1,30 @@
 import { useState } from 'react'
 import { useAuthContext } from './useAuthContext';
-import { useStatusesContext } from './useStatusesContext';
+import { useContactsContext } from './useContactsContext';
 
-export const useGetStatuses = () => {
+export const useGetContacts = () => {
     const [error, setError] = useState(null);
     const [isLoading, setIsLoading] = useState(null);
-    const { dispatch } = useStatusesContext();
+    const { dispatch } = useContactsContext();
     const { user } = useAuthContext();
 
-    const getStatuses = async () => {
+    const getContacts = async () => {
         setIsLoading(true);
         setError(null);
 
-        const response = await fetch('/api/statuses', {
+        const response = await fetch('/api/contacts', {
             headers: {
                 'Authentication': `Bearer ${user.token}`
             }
         });
 
-        // expecting all statuses
+        // expecting all contactses
         const json = await response.json();
 
         if (response.ok) {
             setError(null)
             setIsLoading(false);
-            dispatch({ type: 'SET_STATUSES', payload: json });
+            dispatch({ type: 'SET_CONTACTS', payload: json });
             return true;
         };
 
@@ -35,5 +35,5 @@ export const useGetStatuses = () => {
             return false;
         };
     };
-    return { getStatuses, error, isLoading };
+    return { getContacts, error, isLoading };
 };

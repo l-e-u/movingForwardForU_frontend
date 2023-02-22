@@ -1,18 +1,30 @@
+import { useEffect } from 'react';
+
+// contexts
 import { useAuthContext } from '../hooks/useAuthContext';
+import { useGetStatuses } from '../hooks/useGetStatuses';
+import { useGetContacts } from '../hooks/useGetContacts';
+import { useGetUsers } from '../hooks/useGetUsers';
+import { useStatusesContext } from '../hooks/useStatusesContext';
+import { useContactsContext } from '../hooks/useContactsContext';
 
 // components
-import ContactDataList from './ContactDataList';
 import DriversInput from './DriversInput';
 import RequiredFieldsText from './RequiredFieldsText';
-import StatusSearchSelect from './StatusSearchSelect';
 import SelectedOption from './SelectedOption';
+import AutoCompleteSelect from './AutoCompleteSelect';
+import SmallHeader from './SmallHeader';
 
 // functions
 import { removeExtraSpaces } from '../utils/StringUtils';
-import { useStatusesContext } from '../hooks/useStatusesContext';
 
 const JobForm = ({ job, setJob, handleSubmit, error, isDisabled }) => {
+    const { getStatuses, error: errorOnGetStatuses, isLoading: isLoadingStatuses } = useGetStatuses();
+    const { getContacts, error: errorOnGetContacts, isLoading: isLoadingContacts } = useGetContacts();
+    const { getUsers, error: errorOnGetUsers, isLoading: isLoadingUsers } = useGetUsers();
     const { user } = useAuthContext();
+    const { statuses } = useStatusesContext();
+    const { contacts } = useContactsContext();
     const { token } = user;
     const { status, customer, reference, parcel, drivers, pickup, delivery, logs } = job;
 
@@ -33,6 +45,48 @@ const JobForm = ({ job, setJob, handleSubmit, error, isDisabled }) => {
         };
     };
 
+    // sets the property the value will be saved to
+    const setPropertyValue = (property) => {
+        // sets the value that will be saved
+        return (value) => {
+            // will save the set value to set property when this function is called
+            return () => {
+                setJob(prev => {
+                    const updated = { ...prev };
+                    updated[property] = value;
+                    return updated;
+                });
+            };
+        };
+    };
+
+    // sets the property the value will be saved to
+    const pushValueToProperty = (property) => {
+        // sets the value that will be saved
+        return (value) => {
+            // will push the set value to set property when this function is called
+            setJob(prev => {
+                const updated = { ...prev };
+                updated[property] = [...prev[property], value];
+                return updated;
+            });
+        };
+    };
+
+    // on first mount only, get documents
+    useEffect(() => {
+        (async () => {
+            try {
+                await getStatuses();
+                await getContacts();
+                await getUsers();
+
+            } catch (error) {
+                console.log('Could not fetch, check your network.')
+            };
+        })();
+    }, []);
+
     console.log(job)
 
     return (
@@ -40,10 +94,42 @@ const JobForm = ({ job, setJob, handleSubmit, error, isDisabled }) => {
             <RequiredFieldsText />
 
             {/* STATUS */}
-            {status ? <SelectedOption text={status.name} handleOnClick={nullPropertyValue('status')} /> : <StatusSearchSelect setJob={setJob} inputError={error} />}
+            {status ?
+                <div className='ps-1'>
+                    <SmallHeader text='Status' />
+                    <SelectedOption text={status.name} handleOnClick={nullPropertyValue('status')} />
+                </div> :
+                <AutoCompleteSelect
+                    text='Status'
+                    setJob={setJob}
+                    handleOnClickListItem={setPropertyValue('status')}
+                    property='status'
+                    nestedProperty='name'
+                    inputError={error?.status}
+                    inputErrorMessage={error?.status?.message}
+                    documents={statuses ?? []}
+                    errorLoading={errorOnGetStatuses}
+                    isLoading={isLoadingStatuses}
+                    getDocuments={getStatuses} />}
 
             {/* CUSTOMER / CONTACT */}
-            <ContactDataList value={customer?.organization ?? ''} setJob={setJob} error={error} token={token} />
+            {customer ?
+                <div className='ps-1'>
+                    <SmallHeader text='Customer' />
+                    <SelectedOption text={customer.organization} handleOnClick={nullPropertyValue('customer')} />
+                </div> :
+                <AutoCompleteSelect
+                    text='Customer'
+                    setJob={setJob}
+                    handleOnClickListItem={setPropertyValue('customer')}
+                    property='customer'
+                    nestedProperty='organization'
+                    inputError={error?.customer}
+                    inputErrorMessage={error?.customer?.message}
+                    documents={contacts ?? []}
+                    errorLoading={errorOnGetContacts}
+                    isLoading={isLoadingContacts}
+                    getDocuments={getContacts} />}
 
             {/* REFERENCE */}
             <div className='form-floating mb-2'>
