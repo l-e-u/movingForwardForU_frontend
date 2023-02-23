@@ -8,11 +8,11 @@ import { removeExtraSpaces } from '../utils/StringUtils';
 
 
 const AutoCompleteSelect = ({
-    text,
-    setJob,
+    labelText,
+    isRequired,
+    getListedItemText,
     handleOnClickListItem,
-    property,
-    nestedProperty,
+    filterSuggestions,
     inputError,
     inputErrorMessage,
     documents,
@@ -20,7 +20,7 @@ const AutoCompleteSelect = ({
     errorLoading
 }) => {
     const [query, setQuery] = useState('');
-    const [suggestions, setSuggestions] = useState([]);
+    const [suggestions, setSuggestions] = useState(documents);
     const debounceQuery = useDebounceQuery(query);
 
     // executes on every debounceQuery change, sets suggestions based on query
@@ -30,7 +30,7 @@ const AutoCompleteSelect = ({
             const input = removeExtraSpaces(debounceQuery).trim().toLowerCase();
 
             if (input) {
-                const matches = documents.filter(doc => doc[nestedProperty].toLowerCase().includes(input));
+                const matches = documents.filter(doc => filterSuggestions(doc, input));
                 setSuggestions(matches);
             };
 
@@ -38,25 +38,24 @@ const AutoCompleteSelect = ({
         })();
     }, [debounceQuery]);
 
-
     // searches for matching status names based on query input, on focus, a space is set as a value to all available selections, on blur, query is emptied to hide suggestions
     return (
         <div className='position-relative mb-2'>
             <div className='form-floating'>
                 <input
                     className={'form-control' + (inputError ? ' is-invalid' : '')}
-                    aria-label={'autoComplete' + text}
                     type='text'
+                    aria-label={'autoComplete' + labelText}
                     disabled={isLoading}
-                    name={'autoComplete' + text}
-                    id={'autoComplete' + text}
+                    name={'autoComplete' + labelText}
+                    id={'autoComplete' + labelText}
                     placeholder='Search...'
                     value={query}
                     onBlur={() => setQuery('')}
                     onFocus={() => setQuery(' ')}
                     onChange={(e) => setQuery(e.target.value)} />
-                <label htmlFor={'autoComplete' + text} className='form-label required'>
-                    {isLoading ? 'Loading...' : text}
+                <label htmlFor={'autoComplete' + labelText} className={'form-label' + isRequired ? ' required' : ''}>
+                    {isLoading ? 'Loading...' : labelText}
                     {inputError && <span className='inputError'>{inputErrorMessage}</span>}
                 </label>
             </div>
@@ -65,14 +64,12 @@ const AutoCompleteSelect = ({
             {debounceQuery &&
                 <ul className='list-group shadow selectList'>
                     {suggestions.map(doc => {
-                        const { _id } = doc;
-                        const value = doc[nestedProperty];
                         return (
                             <li
-                                key={_id}
+                                key={doc._id}
                                 className='list-group-item'
                                 onClick={handleOnClickListItem(doc)}>
-                                {value}
+                                {getListedItemText(doc)}
                             </li>)
                     })
                     }
