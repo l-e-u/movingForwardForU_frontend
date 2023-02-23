@@ -12,7 +12,7 @@ export const useUpdateJob = () => {
         setIsLoading(true);
         setError(null);
 
-        const response = await fetch('/api/jobs' + _id, {
+        const response = await fetch('/api/jobs/' + _id, {
             method: 'PATCH',
             body: JSON.stringify(job),
             headers: {
@@ -35,6 +35,7 @@ export const useUpdateJob = () => {
         if (response.ok) {
             setError(null);
             setIsLoading(false);
+            console.log(json)
             dispatch({ type: 'UPDATE_JOB', payload: json });
             return true;
         };

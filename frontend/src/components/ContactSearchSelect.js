@@ -30,7 +30,7 @@ const ContactSearchSelect = ({ customer, setJob, inputError, inputErrorMessage }
         if (hasSelected) {
             return (
                 <div className='ps-1'>
-                    <SmallHeader text='Status' />
+                    <SmallHeader isRequired={true} text='Customer' />
                     <SelectedOption text={customer.organization} handleOnClick={() => {
                         setJob(prev => {
                             const updated = { ...prev };

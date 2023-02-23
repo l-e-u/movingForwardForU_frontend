@@ -1,24 +1,13 @@
-import { useEffect } from 'react';
-
-// hooks
-import { useAuthContext } from '../hooks/useAuthContext';
-import { useGetUsers } from '../hooks/useGetUsers';
-import { useUsersContext } from '../hooks/useUsersContext';
-
 // components
-import DriversInput from './DriversInput';
 import RequiredFieldsText from './RequiredFieldsText';
+import StatusSearchSelect from './StatusSearchSelect';
+import ContactSearchSelect from './ContactSearchSelect';
+import DriverSearchSelect from './UserSearchSelect';
 
 // functions
 import { removeExtraSpaces } from '../utils/StringUtils';
-import StatusSearchSelect from './StatusSearchSelect';
-import ContactSearchSelect from './ContactSearchSelect';
 
 const JobForm = ({ job, setJob, handleSubmit, error, isDisabled }) => {
-    const { getUsers, error: errorOnGetUsers, isLoading: isLoadingUsers } = useGetUsers();
-    const { user } = useAuthContext();
-    const { users } = useUsersContext();
-    const { token } = user;
     const { status, customer, reference, parcel, drivers, pickup, delivery, logs } = job;
 
     // error identification on fields with validation
@@ -26,33 +15,6 @@ const JobForm = ({ job, setJob, handleSubmit, error, isDisabled }) => {
     const errorFromDeliveryAddressInput = error?.['delivery.address'];
     const errorFromLogInput = error?.['logs.note'];
     const errorOther = error?.server;
-
-    // sets the property the value will be saved to
-    const pushValueToProperty = (property) => {
-        // sets the value that will be saved
-        return (value) => {
-            // will push the set value to set property when this function is called
-            setJob(prev => {
-                const updated = { ...prev };
-                updated[property] = [...prev[property], value];
-                return updated;
-            });
-        };
-    };
-
-    // on first mount only, get documents
-    useEffect(() => {
-        (async () => {
-            try {
-                await getUsers();
-
-            } catch (error) {
-                console.log('Could not fetch, check your network.')
-            };
-        })();
-    }, []);
-
-    console.log(job)
 
     return (
         <form onSubmit={handleSubmit}>
@@ -80,7 +42,7 @@ const JobForm = ({ job, setJob, handleSubmit, error, isDisabled }) => {
                     name='reference'
                     id='reference'
                     placeholder='Reference #'
-                    value={reference}
+                    value={reference ?? ''}
                     onChange={(e) => {
                         setJob(prev => {
                             return {
@@ -108,7 +70,7 @@ const JobForm = ({ job, setJob, handleSubmit, error, isDisabled }) => {
                     name='parcel'
                     placeholder='Parcel'
                     id='parcel'
-                    value={parcel}
+                    value={parcel ?? ''}
                     onChange={(e) => {
                         setJob(prev => {
                             return {
@@ -129,7 +91,7 @@ const JobForm = ({ job, setJob, handleSubmit, error, isDisabled }) => {
             </div>
 
             {/* DRIVERS */}
-            <DriversInput drivers={drivers} setJob={setJob} token={token} />
+            <DriverSearchSelect drivers={drivers} setJob={setJob} />
 
             {/* PICKUP ADDRESS */}
             <div className='form-floating my-2'>
@@ -209,7 +171,7 @@ const JobForm = ({ job, setJob, handleSubmit, error, isDisabled }) => {
                 type='submit'
                 disabled={isDisabled}
                 className='btn btn-sm btn-success rounded-pill d-block ms-auto mt-4 px-3'>
-                Create
+                Save
             </button>
 
             {/* any errors other than input validation */}

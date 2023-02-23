@@ -29,7 +29,7 @@ const StatusSearchSelect = ({ status, setJob, inputError, inputErrorMessage }) =
     if (hasSelected) {
         return (
             <div className='ps-1'>
-                <SmallHeader text='Status' />
+                <SmallHeader isRequired={true} text='Status' />
                 <SelectedOption text={status.name} handleOnClick={() => {
                     setJob(prev => {
                         const updated = { ...prev };

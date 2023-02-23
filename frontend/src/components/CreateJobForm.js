@@ -36,7 +36,8 @@ const CreateJobForm = ({ setShowThisForm }) => {
                     await createJob({
                         ...job,
                         status: job.status?._id,
-                        customer: job.customer?._id
+                        customer: job.customer?._id,
+                        drivers: job.drivers.map(d => d._id)
                     })
                         .then(isCreated => {
                             if (isCreated) setShowThisForm(false);

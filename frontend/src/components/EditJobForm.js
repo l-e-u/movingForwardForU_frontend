@@ -14,35 +14,21 @@ const EditJobForm = ({ prevJob, setShowThisForm }) => {
     const [job, setJob] = useState(prevJob);
     const updatedJob = {};
 
+    console.log(prevJob)
+
     // user cannot update a doc that has not character changes, this disables the update button
-    const statusHasChanged = !noCharChanges(prevJob.status._id, job.status._id);
-    const contactHasChanged = !noCharChanges(prevJob.customer._id, job.customer._id ?? '');
-    const referenceHasChanged = !noCharChanges(prevJob.reference, job.reference);
-    const parcelHasChanged = !noCharChanges(prevJob.parcel, job.parcel);
-    const pickupAddressHasChanged = !noCharChanges(prevJob.pickup.address, job.pickup.address);
-    const deliveryAddressHasChanged = !noCharChanges(prevJob.delivery.address, job.delivery.address);
+    const statusHasChanged = !noCharChanges(prevJob.status._id, job.status?._id ?? '');
+    const customerHasChanged = !noCharChanges(prevJob.customer._id, job.customer?._id ?? '');
+    const referenceHasChanged = !noCharChanges(prevJob.reference ?? '', job.reference ?? '');
+    const parcelHasChanged = !noCharChanges(prevJob.parcel ?? '', job.parcel ?? '');
+    const pickupAddressHasChanged = !noCharChanges(prevJob.pickup.address, job.pickup.address ?? '');
+    const deliveryAddressHasChanged = !noCharChanges(prevJob.delivery.address, job.delivery.address ?? '');
+    const driversHaveChanged = (prevJob.drivers.length != job.drivers.length) || !prevJob.drivers.every(driver => job.drivers.some(d => driver._id === d._id));
 
-    const noInputChanges = !statusHasChanged && !contactHasChanged && !referenceHasChanged && !parcelHasChanged && !pickupAddressHasChanged && !deliveryAddressHasChanged;
+    console.log('diff length', prevJob.drivers.length != job.drivers.length);
+    console.log('diff values', !prevJob.drivers.every(driver => job.drivers.some(d => driver._id === d._id)))
 
-    // function compareObjects(obj1, obj2) {
-    //     let diffs = {};
-
-    //     for (let prop in obj1) {
-    //         if (typeof obj1[prop] === 'object' && typeof obj2[prop] === 'object') {
-    //             let nestedDiffs = compareObjects(obj1[prop], obj2[prop]);
-    //             if (Object.keys(nestedDiffs).length > 0) {
-    //                 diffs[prop] = nestedDiffs;
-    //             }
-    //         } else if (obj1[prop] !== obj2[prop]) {
-    //             diffs[prop] = [obj1[prop], obj2[prop]];
-    //         }
-    //     }
-
-    //     return diffs;
-    // };
-
-    console.log('prev cust:', prevJob.customer._id)
-    console.log('curr cust:', job.customer._id)
+    const noInputChanges = !statusHasChanged && !customerHasChanged && !referenceHasChanged && !parcelHasChanged && !pickupAddressHasChanged && !deliveryAddressHasChanged && !driversHaveChanged;
 
     return (
         <div>
@@ -60,7 +46,15 @@ const EditJobForm = ({ prevJob, setShowThisForm }) => {
 
                     await updateJob({
                         _id: prevJob._id,
-                        job: undefined
+                        job: {
+                            status: statusHasChanged ? job.status : undefined,
+                            customer: customerHasChanged ? job.customer : undefined,
+                            reference: referenceHasChanged ? job.reference : undefined,
+                            parcel: parcelHasChanged ? job.parcel : undefined,
+                            pickup: pickupAddressHasChanged ? { address: job.pickup.address } : undefined,
+                            delivery: deliveryAddressHasChanged ? { address: job.delivery.address } : undefined,
+                            drivers: driversHaveChanged ? job.drivers : undefined
+                        },
                     })
                         .then(isCreated => {
                             if (isCreated) setShowThisForm(false);

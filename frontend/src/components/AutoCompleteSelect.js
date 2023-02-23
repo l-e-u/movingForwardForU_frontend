@@ -54,7 +54,7 @@ const AutoCompleteSelect = ({
                     onBlur={() => setQuery('')}
                     onFocus={() => setQuery(' ')}
                     onChange={(e) => setQuery(e.target.value)} />
-                <label htmlFor={'autoComplete' + labelText} className={'form-label' + isRequired ? ' required' : ''}>
+                <label htmlFor={'autoComplete' + labelText} className={'form-label' + (isRequired ? ' required' : '')}>
                     {isLoading ? 'Loading...' : labelText}
                     {inputError && <span className='inputError'>{inputErrorMessage}</span>}
                 </label>
