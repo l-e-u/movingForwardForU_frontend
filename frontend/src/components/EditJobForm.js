@@ -12,9 +12,6 @@ import CloseFormButton from './XButton';
 const EditJobForm = ({ prevJob, setShowThisForm }) => {
     const { updateJob, error, isLoading } = useUpdateJob();
     const [job, setJob] = useState(prevJob);
-    const updatedJob = {};
-
-    console.log(prevJob)
 
     // user cannot update a doc that has not character changes, this disables the update button
     const statusHasChanged = !noCharChanges(prevJob.status._id, job.status?._id ?? '');
@@ -23,10 +20,7 @@ const EditJobForm = ({ prevJob, setShowThisForm }) => {
     const parcelHasChanged = !noCharChanges(prevJob.parcel ?? '', job.parcel ?? '');
     const pickupAddressHasChanged = !noCharChanges(prevJob.pickup.address, job.pickup.address ?? '');
     const deliveryAddressHasChanged = !noCharChanges(prevJob.delivery.address, job.delivery.address ?? '');
-    const driversHaveChanged = (prevJob.drivers.length != job.drivers.length) || !prevJob.drivers.every(driver => job.drivers.some(d => driver._id === d._id));
-
-    console.log('diff length', prevJob.drivers.length != job.drivers.length);
-    console.log('diff values', !prevJob.drivers.every(driver => job.drivers.some(d => driver._id === d._id)))
+    const driversHaveChanged = (prevJob.drivers.length !== job.drivers.length) || !prevJob.drivers.every(driver => job.drivers.some(d => driver._id === d._id));
 
     const noInputChanges = !statusHasChanged && !customerHasChanged && !referenceHasChanged && !parcelHasChanged && !pickupAddressHasChanged && !deliveryAddressHasChanged && !driversHaveChanged;
 

@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useJobsContext } from "../hooks/useJobsContext.js";
 import { useAuthContext } from '../hooks/useAuthContext.js';
+import { useGetJobs } from '../hooks/useGetJobs.js';
 
 // components
 import CreatedInfo from "../components//CreatedInfo.js";
@@ -15,6 +16,7 @@ import formatDistanceToNow from "date-fns/formatDistanceToNow";
 import EditJobForm from '../components/EditJobForm.js';
 
 const Jobs = () => {
+    const { getJobs, error, isLoading } = useGetJobs();
     const { jobs, dispatch } = useJobsContext();
     const { user } = useAuthContext();
 
@@ -25,23 +27,10 @@ const Jobs = () => {
 
     // get jobs once
     useEffect(() => {
-        const fetchJobs = async () => {
-            const response = await fetch('/api/jobs', {
-                headers: {
-                    'Authentication': `Bearer ${user.token}`
-                }
-            });
-
-            // expecting all jobs
-            const json = await response.json();
-
-            if (response.ok) {
-                dispatch({ type: 'SET_JOBS', payload: json });
-            };
-        };
-
-        if (user) fetchJobs();
-    }, [dispatch, user]);
+        (async () => {
+            await getJobs();
+        })();
+    }, []);
 
     // deletes contact by _id
     const deleteById = async (_id) => {
@@ -74,6 +63,10 @@ const Jobs = () => {
         };
     };
 
+    if (error) {
+        return <p className='text-danger'>Could not load, check network and refresh.</p>
+    };
+
     return (
         <div className='jobs'>
             {showCreateForm && <CreateJobForm setShowThisForm={setShowCreateForm} />}
@@ -94,6 +87,8 @@ const Jobs = () => {
                     prevJob: job,
                     setShowThisForm: setShowEditForm
                 };
+
+                job.listDrivers = true;
 
                 return (
                     <div key={_id} className='my-4'>
@@ -121,4 +116,4 @@ const Jobs = () => {
     );
 };
 
-export default Jobs;
+export default Jobs; 

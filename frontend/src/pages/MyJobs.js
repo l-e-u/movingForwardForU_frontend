@@ -8,7 +8,7 @@ import formatDistanceToNow from "date-fns/formatDistanceToNow";
 // components
 import CardContainer from "../components/CardContainer.js";
 import LogHistory from "../components/LogHistory.js";
-import TransportInfo from "../components/TransportInfo.js";
+import JobOverview from '../components/JobOverview.js';
 
 const MyJobs = () => {
     const { myJobs, dispatch } = useMyJobsContext();
@@ -39,21 +39,16 @@ const MyJobs = () => {
     }, [dispatch, user]);
 
     return (
-        <div className='jobs'>
+        <div>
             {myJobs && myJobs.map((job) => {
                 return (
-                    <CardContainer key={job._id}>
-                        <TransportInfo
-                            legend='From'
-                            {...job.pickup}
-                        />
-                        <TransportInfo
-                            legend='To'
-                            {...job.delivery}
-                        />
-                        <LogHistory logs={job.logs} />
-                        <p>{formatDistanceToNow(new Date(job.createdAt), { addSuffix: true })}</p>
-                    </CardContainer>)
+                    <div className='my-4' key={job._id}>
+                        <CardContainer>
+                            <JobOverview {...job} />
+                            <LogHistory logs={job.logs} />
+                            {/* <p>{formatDistanceToNow(new Date(job.createdAt), { addSuffix: true })}</p> */}
+                        </CardContainer>
+                    </div>)
             })}
         </div>
     )

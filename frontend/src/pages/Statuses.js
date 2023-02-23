@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useAuthContext } from "../hooks/useAuthContext.js";
 import { useStatusesContext } from "../hooks/useStatusesContext.js";
+import { useGetStatuses } from '../hooks/useGetStatuses.js';
 
 // components
 import CardContainer from '../components/CardContainer.js';
@@ -12,6 +13,7 @@ import EditDocIcon from "../components/EditDocIcon.js";
 import StatusOverview from "../components/StatusOverview.js";
 
 const Statuses = () => {
+    const { getStatuses, error, isLoading } = useGetStatuses();
     const { statuses, dispatch } = useStatusesContext();
     const { user } = useAuthContext();
 
@@ -22,23 +24,10 @@ const Statuses = () => {
 
     // get statuses once
     useEffect(() => {
-        const fetchStatuses = async () => {
-            const response = await fetch('/api/statuses', {
-                headers: {
-                    'Authentication': `Bearer ${user.token}`
-                }
-            });
-
-            // expecting all the statuses
-            const json = await response.json();
-
-            if (response.ok) {
-                dispatch({ type: 'SET_STATUSES', payload: json });
-            };
-        };
-
-        if (user) fetchStatuses();
-    }, [dispatch, user]);
+        (async () => {
+            await getStatuses();
+        })();
+    }, []);
 
     // deletes status by _id
     const deleteById = async (_id) => {
@@ -69,6 +58,10 @@ const Statuses = () => {
     const handleCreateClick = () => {
         setShowCreateForm(true);
         setShowEditForm(false);
+    };
+
+    if (error) {
+        return <p className='text-danger'>Could not load, check network and refresh.</p>
     };
 
     return (

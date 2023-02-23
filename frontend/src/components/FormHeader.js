@@ -1,5 +1,3 @@
-import CloseFormButton from './XButton';
-
 const FormHeader = ({ text, children }) => {
     return (
         <div className='d-flex justify-content-between align-items-center'>

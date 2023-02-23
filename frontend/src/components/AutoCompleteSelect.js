@@ -36,7 +36,7 @@ const AutoCompleteSelect = ({
 
             if (!input) setSuggestions(documents);
         })();
-    }, [debounceQuery]);
+    }, [debounceQuery, documents, filterSuggestions]);
 
     // searches for matching status names based on query input, on focus, a space is set as a value to all available selections, on blur, query is emptied to hide suggestions
     return (

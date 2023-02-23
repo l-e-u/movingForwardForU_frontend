@@ -77,7 +77,7 @@ const UserSearchSelect = ({ drivers, setJob }) => {
                                 setInputError(null);
                                 setJob(prev => {
                                     const updated = { ...prev };
-                                    updated.drivers = drivers.filter(d => d._id != _id);
+                                    updated.drivers = drivers.filter(d => d._id !== _id);
                                     return updated;
                                 });
                             }} />

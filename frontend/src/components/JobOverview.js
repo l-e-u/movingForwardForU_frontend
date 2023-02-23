@@ -10,9 +10,11 @@ const JobOverview = ({
     status,
     drivers,
     customer,
-    logs
+    logs,
+    listDrivers = false
 }) => {
-    const hasDriver = drivers.length > 0;
+    const hasDrivers = drivers.length > 0;
+    const showDrivers = hasDrivers && listDrivers;
 
     return (
         <div>
@@ -22,9 +24,9 @@ const JobOverview = ({
                 {reference && <small className="text-green text-end align-self-end flex-grow-1">{reference}</small>}
             </div>
 
-            {!hasDriver && <div className="text-danger mb-2">No driver has been assigned.</div>}
+            {!hasDrivers && <div className="text-danger mb-2">No driver has been assigned.</div>}
 
-            {hasDriver &&
+            {showDrivers &&
                 <div className="mb-2">
                     <SmallHeader text={'Driver' + ((drivers.length > 1) ? 's' : '')} />
                     <DriversList list={drivers} />
