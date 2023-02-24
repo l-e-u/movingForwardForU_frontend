@@ -1,19 +1,21 @@
-import { useState, useEffect } from "react";
-import { useJobsContext } from "../hooks/useJobsContext.js";
+import { useState, useEffect } from 'react';
+import { useJobsContext } from '../hooks/useJobsContext.js';
 import { useAuthContext } from '../hooks/useAuthContext.js';
 import { useGetJobs } from '../hooks/useGetJobs.js';
 
 // components
-import CreatedInfo from "../components//CreatedInfo.js";
-import CardContainer from "../components/CardContainer.js";
-import JobOverview from "../components/JobOverview.js";
-import CreateJobForm from "../components/CreateJobForm.js";
+import CreatedInfo from '../components//CreatedInfo.js';
+import CardContainer from '../components/CardContainer.js';
+import JobOverview from '../components/JobOverview.js';
+import CreateJobForm from '../components/CreateJobForm.js';
 import EditDocIcon from '../components/EditDocIcon.js';
 import DeleteDocIcon from '../components/DeleteDocIcon.js';
+import FlexBoxWrapper from '../components/FlexBoxWrapper.js';
+import EditJobForm from '../components/EditJobForm.js';
+import PageContentWrapper from '../components/PageContentWrapper.js';
 
 // date fns
-import formatDistanceToNow from "date-fns/formatDistanceToNow";
-import EditJobForm from '../components/EditJobForm.js';
+import formatDistanceToNow from 'date-fns/formatDistanceToNow';
 
 const Jobs = () => {
     const { getJobs, error, isLoading } = useGetJobs();
@@ -68,35 +70,35 @@ const Jobs = () => {
     };
 
     return (
-        <div className='jobs'>
-            {showCreateForm && <CreateJobForm setShowThisForm={setShowCreateForm} />}
+        <PageContentWrapper>
+            <div className='mb-3'>
+                {showCreateForm ? <CreateJobForm setShowThisForm={setShowCreateForm} /> :
+                    <button
+                        type='button'
+                        className={'rounded-pill btn btn-primary btn-sm px-3 d-block mx-auto'}
+                        onClick={handleCreateClick}>
+                        Create A Job
+                    </button>
+                }
+            </div>
 
-            {!showCreateForm &&
-                <button
-                    type='button'
-                    className={'rounded-pill btn btn-primary btn-sm px-3 d-block mx-auto'}
-                    onClick={handleCreateClick}>
-                    Create A Job
-                </button>
-            }
+            <FlexBoxWrapper>
+                {jobs && jobs.map((job) => {
+                    const { _id, createdBy, createdAt } = job;
+                    const isEditingThisDoc = showEditForm && (_id === docToEdit._id);
+                    const editFormProps = {
+                        prevJob: job,
+                        setShowThisForm: setShowEditForm
+                    };
 
-            {jobs && jobs.map((job) => {
-                const { _id, createdBy, createdAt } = job;
-                const isEditingThisDoc = showEditForm && (_id === docToEdit._id);
-                const editFormProps = {
-                    prevJob: job,
-                    setShowThisForm: setShowEditForm
-                };
+                    job.listDrivers = true;
 
-                job.listDrivers = true;
-
-                return (
-                    <div key={_id} className='my-4'>
-                        <CardContainer >
+                    return (
+                        <CardContainer key={_id} hasCreatedInfo={true}>
                             {/* Edit and Delete options */}
-                            <div className="position-absolute top-0 end-0 pe-3 pt-2 d-flex">
+                            <div className='position-absolute top-0 end-0 pe-3 pt-2 d-flex'>
                                 {!isEditingThisDoc && <EditDocIcon onClick={handleEditClick(job)} />}
-                                <div className="ps-5">
+                                <div className='ps-5'>
 
                                     <DeleteDocIcon onClick={() => deleteById(_id)} />
                                 </div>
@@ -105,14 +107,12 @@ const Jobs = () => {
                                 <EditJobForm {...editFormProps} /> :
                                 <JobOverview {...job} />
                             }
-                        </CardContainer>
-                        <div className="mt-1 pe-2">
                             <CreatedInfo createdBy={createdBy} createdAt={createdAt} />
-                        </div>
-                    </div>
-                );
-            })}
-        </div>
+                        </CardContainer>
+                    );
+                })}
+            </FlexBoxWrapper>
+        </PageContentWrapper>
     );
 };
 

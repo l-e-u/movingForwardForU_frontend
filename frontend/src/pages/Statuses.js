@@ -1,19 +1,21 @@
-import { useEffect, useState } from "react";
-import { useAuthContext } from "../hooks/useAuthContext.js";
-import { useStatusesContext } from "../hooks/useStatusesContext.js";
+import { useEffect, useState } from 'react';
+import { useAuthContext } from '../hooks/useAuthContext.js';
+import { useStatusesContext } from '../hooks/useStatusesContext.js';
 import { useGetStatuses } from '../hooks/useGetStatuses.js';
 
 // components
 import CardContainer from '../components/CardContainer.js';
 import EditStatusForm from '../components/EditStatusForm.js';
-import CreateStatusForm from "../components/CreateStatusForm.js";
+import CreateStatusForm from '../components/CreateStatusForm.js';
 import CreatedInfo from '../components/CreatedInfo.js';
-import DeleteDocIcon from "../components/DeleteDocIcon.js";
-import EditDocIcon from "../components/EditDocIcon.js";
-import StatusOverview from "../components/StatusOverview.js";
+import DeleteDocIcon from '../components/DeleteDocIcon.js';
+import EditDocIcon from '../components/EditDocIcon.js';
+import StatusOverview from '../components/StatusOverview.js';
+import FlexBoxWrapper from '../components/FlexBoxWrapper.js';
+import PageContentWrapper from '../components/PageContentWrapper.js';
 
 const Statuses = () => {
-    const { getStatuses, error, isLoading } = useGetStatuses();
+    const { getStatuses, error } = useGetStatuses();
     const { statuses, dispatch } = useStatusesContext();
     const { user } = useAuthContext();
 
@@ -65,48 +67,48 @@ const Statuses = () => {
     };
 
     return (
-        <div className='statuses'>
-            {showCreateForm && <CreateStatusForm setShowThisForm={setShowCreateForm} />}
+        <PageContentWrapper>
+            <div className='mb-3'>
+                {showCreateForm ?
+                    <CreateStatusForm setShowThisForm={setShowCreateForm} /> :
+                    <button
+                        type='button'
+                        className={'rounded-pill btn btn-primary btn-sm px-3 d-block mx-auto'}
+                        onClick={handleCreateClick}>
+                        Create A Status
+                    </button>
+                }
 
-            {!showCreateForm &&
-                <button
-                    type='button'
-                    className={'rounded-pill btn btn-primary btn-sm px-3 d-block mx-auto'}
-                    onClick={handleCreateClick}>
-                    Create A Status
-                </button>
-            }
+            </div>
 
-            {statuses && statuses.map((status) => {
-                const { _id, createdBy, createdAt } = status;
-                const isEditingThisDoc = showEditForm && (_id === docToEdit._id);
-                const editFormProps = {
-                    prevStatus: status,
-                    setShowThisForm: setShowEditForm
-                };
+            <FlexBoxWrapper>
+                {statuses && statuses.map((status) => {
+                    const { _id, createdBy, createdAt } = status;
+                    const isEditingThisDoc = showEditForm && (_id === docToEdit._id);
+                    const editFormProps = {
+                        prevStatus: status,
+                        setShowThisForm: setShowEditForm
+                    };
 
-                return (
-                    <div key={_id} className='my-4'>
-                        <CardContainer >
+                    return (
+                        <CardContainer key={_id} hasCreatedInfo={true}>
                             {/* Edit and Delete options */}
-                            {!isEditingThisDoc && <div className="position-absolute top-0 end-0 pe-3 pt-2 d-flex">
+                            {!isEditingThisDoc && <div className='position-absolute top-0 end-0 pe-3 pt-2 d-flex'>
                                 {!isEditingThisDoc && <EditDocIcon onClick={handleEditClick(status)} />}
 
-                                <div className="ps-5">
+                                <div className='ps-5'>
                                     <DeleteDocIcon onClick={() => deleteById(_id)} />
                                 </div>
                             </div>}
 
                             {isEditingThisDoc ? <EditStatusForm {...editFormProps} /> : <StatusOverview {...status} />
                             }
-                        </CardContainer>
-                        <div className="mt-1 pe-2">
                             <CreatedInfo createdBy={createdBy} createdAt={createdAt} />
-                        </div>
-                    </div>
-                )
-            })}
-        </div>
+                        </CardContainer>
+                    )
+                })}
+            </FlexBoxWrapper>
+        </PageContentWrapper>
     );
 };
 

@@ -30,9 +30,13 @@ const userSchema = new Schema({
     lastName: String,
     avatar: String,
     address: String,
-    active: {
+    isActive: {
         type: Boolean,
         default: true
+    },
+    isVerified: {
+        type: Boolean,
+        default: false
     }
 }, {
     timestamps: true,

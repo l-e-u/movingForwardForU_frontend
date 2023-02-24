@@ -6,10 +6,12 @@ import { useContactsContext } from '../hooks/useContactsContext.js'
 import CardContainer from '../components/CardContainer.js'
 import CreateContactForm from '../components/CreateContactForm.js';
 import CreatedInfo from '../components/CreatedInfo.js';
-import DeleteDocIcon from "../components/DeleteDocIcon.js";
-import EditDocIcon from "../components/EditDocIcon.js";
+import DeleteDocIcon from '../components/DeleteDocIcon.js';
+import EditDocIcon from '../components/EditDocIcon.js';
 import EditContactForm from '../components/EditContactForm.js';
 import ContactOverview from '../components/ContactOverview.js';
+import FlexBoxWrapper from '../components/FlexBoxWrapper.js';
+import PageContentWrapper from '../components/PageContentWrapper.js';
 
 const Contacts = () => {
   const { contacts, dispatch } = useContactsContext();
@@ -65,33 +67,34 @@ const Contacts = () => {
   };
 
   return (
-    <div className="contacts">
-      {showCreateForm && <CreateContactForm setShowThisForm={setShowCreateForm} />}
+    <PageContentWrapper>
+      <div className="mb-3">
+        {showCreateForm ?
+          <CreateContactForm setShowThisForm={setShowCreateForm} /> :
+          <button
+            type='button'
+            className={'rounded-pill btn btn-primary btn-sm px-3 d-block mx-auto'}
+            onClick={() => setShowCreateForm(true)}>
+            Create A Contact
+          </button>
+        }
+      </div>
 
-      {!showCreateForm &&
-        <button
-          type='button'
-          className={'rounded-pill btn btn-primary btn-sm px-3 d-block mx-auto'}
-          onClick={() => setShowCreateForm(true)}>
-          Create A Contact
-        </button>
-      }
+      <FlexBoxWrapper>
+        {contacts && contacts.map((contact) => {
+          const { _id, createdBy, createdAt } = contact;
+          const isEditingThisDoc = showEditForm && (_id === docToEdit._id);
+          const editFormProps = {
+            prevContact: contact,
+            setShowThisForm: setShowEditForm
+          };
 
-      {contacts && contacts.map((contact) => {
-        const { _id, createdBy, createdAt } = contact;
-        const isEditingThisDoc = showEditForm && (_id === docToEdit._id);
-        const editFormProps = {
-          prevContact: contact,
-          setShowThisForm: setShowEditForm
-        };
-
-        return (
-          <div key={_id} className='my-4'>
-            <CardContainer>
+          return (
+            <CardContainer key={_id} hasCreatedInfo={true}>
               {/* Edit and Delete options */}
-              <div className="position-absolute top-0 end-0 pe-3 pt-2 d-flex">
+              <div className='position-absolute top-0 end-0 pe-3 pt-2 d-flex'>
                 {!isEditingThisDoc && <EditDocIcon onClick={handleEditClick(contact)} />}
-                <div className="ps-5">
+                <div className='ps-5'>
 
                   <DeleteDocIcon onClick={() => deleteById(_id)} />
                 </div>
@@ -101,14 +104,12 @@ const Contacts = () => {
                 <EditContactForm {...editFormProps} /> :
                 <ContactOverview {...contact} />
               }
-            </CardContainer>
-            <div className="mt-1 pe-2">
               <CreatedInfo createdBy={createdBy} createdAt={createdAt} />
-            </div>
-          </div>
-        )
-      })}
-    </div>
+            </CardContainer>
+          );
+        })}
+      </FlexBoxWrapper>
+    </PageContentWrapper>
   );
 };
 

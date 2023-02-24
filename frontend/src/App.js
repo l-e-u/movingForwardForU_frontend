@@ -14,10 +14,12 @@ function App() {
   const { user } = useAuthContext();
 
   return (
-    <div className="App">
+    <div className='App'>
       <BrowserRouter>
         <Navbar />
-        <div className='p-4 mx-auto my-0 maxWidth1400px'>
+        <div className='mx-auto my-0 maxWidth1400px d-flex'>
+          <div className='navWillGoHere'>
+          </div>
           <Routes>
             <Route
               path='/'
@@ -46,6 +48,9 @@ function App() {
           </Routes>
         </div>
       </BrowserRouter>
+      <footer className='d-flex flex-wrap justify-content-center text-center text-secondary pb-3 w-100 smallPrint'>
+        <span className='mx-1'>Copyright <i className='bi bi-c-circle'></i> {new Date().getFullYear()} Moving Forward, LLC.</span><span>All Rights Reserved</span>
+      </footer>
     </div>
   );
 }

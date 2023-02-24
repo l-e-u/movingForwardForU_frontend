@@ -21,7 +21,7 @@ const StatusSearchSelect = ({ status, setJob, inputError, inputErrorMessage }) =
                 await getStatuses();
 
             } catch (error) {
-                console.log('Could not fetch, check your network.')
+                console.log('Could not fetch, check your network.');
             };
         })();
     }, []);

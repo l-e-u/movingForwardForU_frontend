@@ -22,10 +22,6 @@ body {
   color: var(--bs-gray-900);
 }
 
-fieldset {
-  border: 1px solid black;
-}
-
 nav .selected {
   background-color: var(--bs-primary) !important;
   color: var(--bs-white) !important;
@@ -71,6 +67,10 @@ nav.menu {
   color: var(--primary) !important;
 }
 
+.smallPrint {
+  font-size: .75rem;
+}
+
 .selectList {
   position: absolute;
   z-index: 100;
@@ -82,8 +82,8 @@ nav.menu {
 }
 
 @media only screen and (min-width: 576px) {
-  .w-sm-75 {
-    width: 75% !important;
+  .w-sm-50 {
+    width: 50% !important;
   }
 
   .w-sm-25 {

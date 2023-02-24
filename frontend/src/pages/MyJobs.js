@@ -9,6 +9,8 @@ import formatDistanceToNow from "date-fns/formatDistanceToNow";
 import CardContainer from "../components/CardContainer.js";
 import LogHistory from "../components/LogHistory.js";
 import JobOverview from '../components/JobOverview.js';
+import FlexBoxWrapper from '../components/FlexBoxWrapper.js';
+import PageContentWrapper from '../components/PageContentWrapper.js';
 
 const MyJobs = () => {
     const { myJobs, dispatch } = useMyJobsContext();
@@ -39,18 +41,19 @@ const MyJobs = () => {
     }, [dispatch, user]);
 
     return (
-        <div>
-            {myJobs && myJobs.map((job) => {
-                return (
-                    <div className='my-4' key={job._id}>
-                        <CardContainer>
+        <PageContentWrapper>
+            <FlexBoxWrapper>
+                {myJobs && myJobs.map((job) => {
+                    return (
+                        <CardContainer key={job._id}>
                             <JobOverview {...job} />
                             <LogHistory logs={job.logs} />
                             {/* <p>{formatDistanceToNow(new Date(job.createdAt), { addSuffix: true })}</p> */}
                         </CardContainer>
-                    </div>)
-            })}
-        </div>
+                    )
+                })}
+            </FlexBoxWrapper>
+        </PageContentWrapper>
     )
 };
 
