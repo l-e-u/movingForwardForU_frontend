@@ -4,7 +4,7 @@ const CardContainer = ({ children, hasCreatedInfo = false }) => {
 
     return (
         <div className={'shadow-sm theme-light rounded-2 position-relative flex-grow-1 ' + padding}
-            style={{ flex: '1 1 325px' }}>
+            style={{ flex: '1 1 325px', maxWidth: '500px' }}>
             {children}
         </div>
     );

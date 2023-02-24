@@ -1,25 +1,32 @@
+import { useState } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+
+// hooks
 import { useAuthContext } from './hooks/useAuthContext.js';
+
+// components
+import NavMenu from './components/NavMenu.js';
+import Banner from './components/Banner.js'
 
 // pages
 import MyJobs from './pages/MyJobs.js';
 import Jobs from './pages/Jobs.js'
 import Login from './pages/Login.js';
-import Navbar from './components/Navbar.js'
 import Statuses from './pages/Statuses.js';
 import Contacts from './pages/Contacts.js';
 import Users from './pages/Users.js';
 
 function App() {
+  const [showNavMenu, setShowNavMenu] = useState(false);
+  const [selectedLink, setSelectedLink] = useState(0)
   const { user } = useAuthContext();
 
   return (
     <div className='App'>
       <BrowserRouter>
-        <Navbar />
+        <Banner setShowNavMenu={setShowNavMenu} setSelectedLink={setSelectedLink} user={user} />
         <div className='mx-auto my-0 maxWidth1400px d-flex'>
-          <div className='navWillGoHere'>
-          </div>
+          {showNavMenu && <NavMenu selectedLink={selectedLink} setSelectedLink={setSelectedLink} setShowThisNav={setShowNavMenu} user={user} />}
           <Routes>
             <Route
               path='/'
@@ -48,7 +55,7 @@ function App() {
           </Routes>
         </div>
       </BrowserRouter>
-      <footer className='d-flex flex-wrap justify-content-center text-center text-secondary pb-3 w-100 smallPrint'>
+      <footer className='d-flex flex-wrap justify-content-center text-center text-secondary px-4 pb-3 w-100 smallPrint'>
         <span className='mx-1'>Copyright <i className='bi bi-c-circle'></i> {new Date().getFullYear()} Moving Forward, LLC.</span><span>All Rights Reserved</span>
       </footer>
     </div>

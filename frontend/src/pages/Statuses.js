@@ -68,7 +68,7 @@ const Statuses = () => {
 
     return (
         <PageContentWrapper>
-            <div className='mb-3'>
+            <div className='mb-4'>
                 {showCreateForm ?
                     <CreateStatusForm setShowThisForm={setShowCreateForm} /> :
                     <button

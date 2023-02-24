@@ -1,46 +1,25 @@
-import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { useAuthContext } from '../hooks/useAuthContext.js';
-import { useLogout } from '../hooks/useLogout.js';
 
-const Navbar = () => {
-    const [selected, setSelected] = useState(0);
-    const links = [
-        { name: 'My Jobs', path: '/', icon: 'bi-list-check' },
-        { name: 'Jobs', path: '/jobs', icon: 'bi-view-list' },
-        { name: 'Contacts', path: '/contacts', icon: 'bi-person-vcard-fill' },
-        { name: 'Statuses', path: '/statuses', icon: 'bi-tags-fill' },
-        { name: 'Users', path: '/users', icon: 'bi-people-fill' },
-    ];
-    const { logout } = useLogout();
-    const { user } = useAuthContext();
-    const isAdmin = user ? user.isAdmin : null;
-
-    // local state
-    const [showMenu, setShowMenu] = useState(false);
-
-    const handleLogoutClick = () => {
-        setShowMenu(false);
-        logout();
-    }
-
+const Navbar = ({ user, setShowNavMenu, setSelectedLink }) => {
     return (
-        <header className='mx-auto maxWidth1400px px-4'>
-            <div className='d-flex py-3 px-4 theme-light align-items-center justify-content-between'>
+        <header className='mx-auto maxWidth1400px px-lg-4'>
+            <div
+                className='d-flex py-3 px-4 theme-light align-items-center justify-content-between'
+                style={{ borderBottomRightRadius: 'var(--bs-border-radius', borderBottomLeftRadius: 'var(--bs-border-radius' }}>
                 {user &&
                     <h1 className='m-0'>
                         <i className='bi bi-list' onClick={() => {
-                            setShowMenu(true);
+                            setShowNavMenu(true);
                         }}></i>
                     </h1>
                 }
-                <Link to='/' className='text-reset text-decoration-none ms-auto' onClick={() => setSelected(0)}>
+                <Link to='/' className='text-reset text-decoration-none ms-auto' onClick={() => setSelectedLink(0)}>
                     <h1 className='m-0'>Moving Forward</h1>
                 </Link>
             </div>
 
             {/* new menu dev */}
-            <nav className={'position-fixed d-flex top-0 start-0 w-100 h-100 menu' + (showMenu ? ' show' : ' d-none')}>
+            {/* <nav className={'position-fixed position-lg-relative d-flex top-0 start-0 w-100 h-100 menu' + (showMenu ? ' show' : ' d-none')}>
                 <div className='theme-light d-flex flex-column w-75 w-sm-50 p-4 overflow-auto'>
                     {user &&
                         <div className='border-bottom py-3'>
@@ -54,7 +33,10 @@ const Navbar = () => {
                                 key={index}
                                 to={link.path}
                                 className={(selected === index ? 'selected' : '') + ' text-decoration-none text-reset my-4 py-2 px-4'}
-                                onClick={() => setSelected(index)}>
+                                onClick={() => {
+                                    setSelected(index);
+                                    setShowMenu(false);
+                                }}>
                                 <i className={'pe-3 bi ' + link.icon}></i><span>{link.name}</span>
                             </Link>
                         )
@@ -69,7 +51,7 @@ const Navbar = () => {
                     </button>
                 </div>
                 <div className='w-25 w-sm-50 h-100 background' onClick={() => setShowMenu(false)}></div>
-            </nav>
+            </nav> */}
         </header>
     )
 }

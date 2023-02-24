@@ -81,12 +81,26 @@ nav.menu {
   max-height: 300px;
 }
 
-@media only screen and (min-width: 576px) {
+@media screen and (min-width: 576px) {
   .w-sm-50 {
     width: 50% !important;
   }
 
   .w-sm-25 {
     width: 25% !important;
+  }
+}
+
+@media screen and (min-width: 992px) {
+  .w-lg-25 {
+    width: 25% !important;
+  }
+
+  .w-lg-75 {
+    width: 75% !important;
+  }
+
+  .w-lg-100 {
+    width: 100% !important;
   }
 }

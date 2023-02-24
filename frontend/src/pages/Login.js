@@ -14,7 +14,7 @@ const Login = () => {
     };
 
     return (
-        <div className='mx-auto mt-5' style={{ maxWidth: '300px' }}>
+        <div className='flex-grow-1 mx-auto mt-5 mb-3' style={{ maxWidth: '350px' }}>
             <CardContainer>
                 <form className='login' onSubmit={handleSubmit}>
                     <h2 className='fs-3 mb-4'>Login</h2>

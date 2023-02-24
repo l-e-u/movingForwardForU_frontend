@@ -71,7 +71,7 @@ const Jobs = () => {
 
     return (
         <PageContentWrapper>
-            <div className='mb-3'>
+            <div className='mb-4'>
                 {showCreateForm ? <CreateJobForm setShowThisForm={setShowCreateForm} /> :
                     <button
                         type='button'

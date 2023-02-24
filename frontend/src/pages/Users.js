@@ -24,7 +24,7 @@ const Users = () => {
 
     return (
         <PageContentWrapper>
-            <div className='mb-3'>
+            <div className='mb-4'>
                 <ShowCreateFormButton text='Create A User' handleOnClick={() => console.log('under construction...')} />
             </div>
 

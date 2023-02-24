@@ -68,7 +68,7 @@ const Contacts = () => {
 
   return (
     <PageContentWrapper>
-      <div className="mb-3">
+      <div className='mb-4'>
         {showCreateForm ?
           <CreateContactForm setShowThisForm={setShowCreateForm} /> :
           <button
