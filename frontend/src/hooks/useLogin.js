@@ -6,7 +6,7 @@ export const useLogin = () => {
     const [isLoading, setIsLoading] = useState(null);
     const { dispatch } = useAuthContext();
 
-    const login = async (username, password) => {
+    const login = async (email, password) => {
         setIsLoading(true);
 
         // don't want to show the error if user is trying to rectify, so null error at the start
@@ -15,7 +15,7 @@ export const useLogin = () => {
         const response = await fetch('/api/users/login', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ username, password })
+            body: JSON.stringify({ email, password })
         });
 
         // expecting user (w/o password) and token

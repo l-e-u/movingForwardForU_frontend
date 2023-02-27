@@ -10,6 +10,8 @@ const createToken = (_id) => {
 // once the token is verified, user is granted access.
 // else, no token or malformed token, redirects to login
 const loginUser = async (req, res) => {
+    const error = { server: { message: 'Request denied.' } };
+
     // verify authentication if a token is present
     const { authentication } = req.headers;
 
@@ -24,24 +26,34 @@ const loginUser = async (req, res) => {
             // user model will remove password when sending json
             return res.status(200).json(user);
         }
-        catch (error) {
-            console.log(error);
-            return res.status(401).json({ error: 'Request denied' });
+        catch (err) {
+            console.log(err);
+            return res.status(401).json({ error });
         };
     };
 
-    const { username, password } = req.body;
+    const { email, password } = req.body;
 
     try {
-        const user = await User.login(username, password);
+        const user = await User.login(email, password);
 
         // create a token
         const token = createToken(user._id);
 
         return res.status(200).json({ user, token });
     }
-    catch (error) {
-        return res.status(400).json({ error: error.message });
+    catch (err) {
+        console.error(err);
+
+        // 'errors' contains any mongoose model-validation fails
+        const { errors } = err;
+
+        // if no input errors, then send back the err message as a server error
+        if (!errors) {
+            err.errors.server = err.message;
+        };
+
+        return res.status(400).json({ error: err.errors });
     };
 };
 

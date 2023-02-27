@@ -1,4 +1,5 @@
 import { Schema, model as Model } from 'mongoose';
+import uniqueValidator from 'mongoose-unique-validator';
 import bcrypt from 'bcrypt';
 import validator from 'validator';
 
@@ -17,7 +18,8 @@ const userSchema = new Schema({
     //Our password is hashed with bcrypt
     password: {
         type: String,
-        required: true
+        trim: true,
+        required: [true, 'Cannot be empty.']
     },
     email: {
         type: String,
@@ -48,6 +50,8 @@ const userSchema = new Schema({
 }
 );
 
+userSchema.plugin(uniqueValidator, { message: 'Is already in use.' });
+
 // static signup method
 userSchema.statics.signup = async function (username, email, password) {
     // validation
@@ -76,16 +80,33 @@ userSchema.statics.signup = async function (username, email, password) {
 
 // static login method
 
-userSchema.statics.login = async function (username, password) {
-    if (!username || !password) throw Error('All fields must be filled');
+userSchema.statics.login = async function (email, password) {
+    const errInputMsg = 'Cannot be empty.'
+    const errMsg = 'Incorrect credentials.';
+    const errors = {}
 
-    const user = await this.findOne({ username });
+    if (!email) {
+        errors.email = { message: errInputMsg };
+    };
 
-    if (!user) throw Error('Incorrect username');
+    if (!password) {
+        errors.password = { message: errInputMsg };
+    };
+
+    // all fields are required, send error if any missing
+    if (Object.keys(errors).length > 0) throw { errors };
+
+    // getting either field wrong sends the same error to both fields to avoid alerting the user if an email exists on the database
+    errors.email = { message: errMsg };
+    errors.password = { message: errMsg };
+
+    const user = await this.findOne({ email });
+
+    if (!user) throw { errors };
 
     const match = await bcrypt.compare(password, user.password);
 
-    if (!match) throw Error('Incorrect password');
+    if (!match) throw { errors };
 
     return user;
 };

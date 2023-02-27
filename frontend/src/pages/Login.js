@@ -3,14 +3,14 @@ import CardContainer from '../components/CardContainer.js';
 import { useLogin } from '../hooks/useLogin.js';
 
 const Login = () => {
-    const [username, setUsername] = useState('');
+    const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const { login, error, isLoading } = useLogin();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        await login(username, password);
+        await login(email, password);
     };
 
     return (
@@ -22,14 +22,16 @@ const Login = () => {
                     <div className='form-floating mb-2'>
                         <input
                             className='form-control'
-                            placeholder='Username'
-                            type='text'
-                            name='username'
-                            id='username'
-                            onChange={(e) => setUsername(e.target.value)}
-                            value={username}
-                        />
-                        <label htmlFor='username'>Username</label>
+                            placeholder='Email'
+                            type='email'
+                            name='email'
+                            id='email'
+                            onChange={(e) => setEmail(e.target.value)}
+                            value={email} />
+                        <label htmlFor='email'>
+                            Email
+                            {error?.email && <span className='ms-1 text-danger'>{': ' + error.email.message}</span>}
+                        </label>
                     </div>
 
                     <div className='form-floating mb-2'>
@@ -42,7 +44,10 @@ const Login = () => {
                             onChange={(e) => setPassword(e.target.value)}
                             value={password}
                         />
-                        <label htmlFor='password'>Password</label>
+                        <label htmlFor='password'>
+                            Password
+                            {error?.password && <span className='ms-1 text-danger'>{': ' + error.password.message}</span>}
+                        </label>
                     </div>
 
                     <button
@@ -51,7 +56,6 @@ const Login = () => {
                         className='btn btn-sm btn-success rounded-pill d-block ms-auto mt-4 px-3'>
                         Login
                     </button>
-                    {error && <div className='error'>{error}</div>}
                 </form>
             </CardContainer>
         </div>
