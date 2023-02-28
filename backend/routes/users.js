@@ -1,10 +1,11 @@
 import { Router } from "express";
+import { requireAuth } from '../middleware/requireAuth.js';
 
 // controller functions
 import {
     loginUser,
-    signupUser,
-    createUser,
+    verifyUserEmailAndSetPassword,
+    registerUser,
     getUser,
     getUsers,
     deleteUser,
@@ -16,8 +17,11 @@ const router = Router();
 // login route
 router.post('/login', loginUser);
 
-// signup route
-router.post('/signup', signupUser);
+// verify route
+router.post('/verify/:token', verifyUserEmailAndSetPassword);
+
+// authenticates user is valid and logged in to access further end points
+// router.use(requireAuth);
 
 // GET all users
 router.get('/', getUsers);
@@ -26,7 +30,7 @@ router.get('/', getUsers);
 router.get('/:id', getUser);
 
 // POST a new user
-router.post('/', createUser);
+router.post('/', registerUser);
 
 // DELETE a user
 router.delete('/:id', deleteUser);

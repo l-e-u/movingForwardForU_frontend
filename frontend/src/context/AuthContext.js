@@ -29,7 +29,7 @@ export const AuthContextProvider = ({ children }) => {
 
         const { token } = JSON.parse(item);
 
-        const fetchPermission = async () => {
+        const autoLogin = async () => {
             const response = await fetch('/api/users/login', {
                 method: 'POST',
                 headers: {
@@ -48,11 +48,13 @@ export const AuthContextProvider = ({ children }) => {
 
             // If JWT malformed or expired. navigate user to the login screen
             if (!response.ok) {
+                // remove user form storage
+                localStorage.removeItem('token');
                 <Navigate to='/login' />
             };
         };
 
-        if (token) fetchPermission();
+        if (token) autoLogin();
     }, []);
 
     return (

@@ -15,6 +15,7 @@ import Login from './pages/Login.js';
 import Statuses from './pages/Statuses.js';
 import Contacts from './pages/Contacts.js';
 import Users from './pages/Users.js';
+import Verify from './pages/Verify.js';
 
 function App() {
   const [showNavMenu, setShowNavMenu] = useState(false);
@@ -51,6 +52,10 @@ function App() {
             <Route
               path='/login'
               element={!user ? <Login /> : <Navigate to='/' />}
+            />
+            <Route
+              path='/verify/:token/:name'
+              element={!user ? <Verify /> : <Navigate to='/login' />}
             />
           </Routes>
         </div>

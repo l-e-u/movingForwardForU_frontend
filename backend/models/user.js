@@ -5,22 +5,21 @@ import validator from 'validator';
 
 const userSchema = new Schema({
 
-    username: {
+    password: String,
+    firstName: String,
+    lastName: String,
+    avatar: String,
+    address: String,
+    note: {
         type: String,
-        unique: true,
-        required: [true, 'Cannot be empty.'],
-        match: [/^[a-zA-Z0-9]+$/, 'is invalid'],
+        trim: true,
+        set: i => !i ? null : i
     },
     isAdmin: {
         type: Boolean,
         default: false
     },
     //Our password is hashed with bcrypt
-    password: {
-        type: String,
-        trim: true,
-        required: [true, 'Cannot be empty.']
-    },
     email: {
         type: String,
         lowercase: true,
@@ -28,10 +27,6 @@ const userSchema = new Schema({
         required: [true, 'Cannot be empty.'],
         match: [/\S+@\S+\.\S+/, 'is invalid'],
     },
-    firstName: String,
-    lastName: String,
-    avatar: String,
-    address: String,
     isActive: {
         type: Boolean,
         default: true
@@ -51,32 +46,6 @@ const userSchema = new Schema({
 );
 
 userSchema.plugin(uniqueValidator, { message: 'Is already in use.' });
-
-// static signup method
-userSchema.statics.signup = async function (username, email, password) {
-    // validation
-    // if (!username || !email || !password) throw Error('All fields must be filled');
-    if (!validator.isEmail(email)) throw Error('Email is not valid');
-    if (!validator.isStrongPassword(password)) throw Error('Password not strong enough');
-
-    const userQuery = await this.findOne({ username });
-    const emailQuery = await this.findOne({ email });
-
-    // throw error if any queries have results
-    if (userQuery) throw { username: 'Username already in use' };
-    if (emailQuery) throw Error('Email already in use');
-
-    const salt = await bcrypt.genSalt(10);
-    const hash = await bcrypt.hash(password, salt);
-
-    const user = await this.create({
-        username,
-        email,
-        password: hash
-    });
-
-    return user;
-};
 
 // static login method
 
@@ -102,6 +71,11 @@ userSchema.statics.login = async function (email, password) {
 
     const user = await this.findOne({ email });
 
+    if (!user.isVerified) {
+        errors.email.message = 'Not verified.';
+        throw { errors };
+    };
+
     if (!user) throw { errors };
 
     const match = await bcrypt.compare(password, user.password);
@@ -110,6 +84,49 @@ userSchema.statics.login = async function (email, password) {
 
     return user;
 };
+
+userSchema.statics.verify = async function ({ _id, password, confirmPassword }) {
+    const u = await this.findById(_id);
+
+    if (u.isVerified) {
+        throw {
+            errors: {
+                token: { message: 'You have already been verified, please login.' }
+            }
+        }
+    };
+
+    if (password !== confirmPassword) {
+        throw {
+            errors: {
+                password: { message: 'Passwords do not match.' },
+                confirmPassword: { message: 'Passwords do not match.' }
+            }
+        };
+    };
+
+    if (!validator.isStrongPassword(password)) {
+        throw {
+            errors: {
+                password: { message: 'Password is not strong enough.' }
+            }
+        };
+    };
+
+    const salt = await bcrypt.genSalt(10);
+    const hash = await bcrypt.hash(password, salt);
+
+    const user = await this.findByIdAndUpdate(
+        { _id },
+        {
+            password: hash,
+            isVerified: true
+        },
+        { returnDocument: 'after' }
+    );
+
+    return user;
+}
 
 const User = Model('User', userSchema);
 
