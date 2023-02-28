@@ -23,7 +23,7 @@ const Verify = () => {
     };
 
     return (
-        <div className='flex-grow-1 mx-auto mt-5 mb-3' style={{ maxWidth: '350px' }}>
+        <div className='flex-grow-1 mx-auto my-3' style={{ maxWidth: '350px' }}>
             <CardContainer>
                 <form className='verify' onSubmit={handleSubmit}>
                     <h2 className='fs-3 mb-0'>
@@ -84,7 +84,7 @@ const Verify = () => {
                                 type='submit'
                                 disabled={isLoading || !passwordIsValid}
                                 className='btn btn-sm btn-success rounded-pill d-block ms-auto mt-4 px-3'>
-                                Submit
+                                {(isLoading ? 'Saving...' : 'Submit')}
                             </button>
                         </>
                     }

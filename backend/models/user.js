@@ -6,10 +6,18 @@ import validator from 'validator';
 const userSchema = new Schema({
 
     password: String,
-    firstName: String,
-    lastName: String,
     avatar: String,
     address: String,
+    firstName: {
+        type: String,
+        trim: true,
+        required: [true, 'Cannot be empty.']
+    },
+    lastName: {
+        type: String,
+        trim: true,
+        required: [true, 'Cannot be empty.']
+    },
     note: {
         type: String,
         trim: true,
@@ -71,12 +79,12 @@ userSchema.statics.login = async function (email, password) {
 
     const user = await this.findOne({ email });
 
+    if (!user) throw { errors };
+
     if (!user.isVerified) {
         errors.email.message = 'Not verified.';
         throw { errors };
     };
-
-    if (!user) throw { errors };
 
     const match = await bcrypt.compare(password, user.password);
 

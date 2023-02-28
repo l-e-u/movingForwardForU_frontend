@@ -67,6 +67,18 @@ nav.menu {
   color: var(--primary) !important;
 }
 
+.scrollBar::-webkit-scrollbar {
+  width: 3px;
+}
+
+.scrollBar::-webkit-scrollbar-track {
+  background: var(--bs-gray-200);
+}
+
+.scrollBar::-webkit-scrollbar-thumb {
+  background: var(--bs-primary) !important;
+}
+
 .smallPrint {
   font-size: .75rem;
 }

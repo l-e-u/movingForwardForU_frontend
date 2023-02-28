@@ -34,7 +34,11 @@ const ContactOverview = ({
             {note &&
                 <div className="mt-2">
                     <SmallHeader text='Note' />
-                    <div>{note}</div>
+                    <div
+                        className='overflow-auto scrollBar'
+                        style={{ maxHeight: '200px' }} >
+                        {note}
+                    </div>
                 </div>
             }
         </div>

@@ -108,13 +108,11 @@ const verifyUserEmailAndSetPassword = async (req, res) => {
 
 // register user
 const registerUser = async (req, res) => {
-    const { email, firstName, lastName } = req.body;
+    const { email, firstName } = req.body;
 
     try {
         const user = await User.create({
-            email,
-            firstName,
-            lastName
+            ...req.body
         });
 
         const token = registerToken(user._id);

@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 // components
 import PageContentWrapper from '../components/PageContentWrapper.js';
@@ -11,10 +11,16 @@ import SmallHeader from '../components/SmallHeader.js';
 // hooks
 import { useGetUsers } from '../hooks/useGetUsers.js';
 import { useUsersContext } from '../hooks/useUsersContext.js';
+import CreateUserForm from '../components/CreateUserForm.js';
 
 const Users = () => {
     const { getUsers } = useGetUsers();
     const { users } = useUsersContext();
+
+    // local state
+    const [docToEdit, setDocToEdit] = useState(null);
+    const [showCreateForm, setShowCreateForm] = useState(false);
+    const [showEditForm, setShowEditForm] = useState(false);
 
     useEffect(() => {
         (async () => {
@@ -25,7 +31,10 @@ const Users = () => {
     return (
         <PageContentWrapper>
             <div className='mb-4'>
-                <ShowCreateFormButton text='Create A User' handleOnClick={() => console.log('under construction...')} />
+                {showCreateForm ?
+                    <CreateUserForm setShowThisForm={setShowCreateForm} /> :
+                    <ShowCreateFormButton text='Create A User' handleOnClick={() => setShowCreateForm(true)} />
+                }
             </div>
 
             <FlexBoxWrapper>
@@ -40,7 +49,7 @@ const Users = () => {
                             </div>
 
                             <address className='m-0'>
-                                <SmallHeader text='Emal' />
+                                <SmallHeader text='Email' />
                                 {u.email}
                             </address>
                             <CreatedInfo createdAt={u.createdAt} createdBy={u.createdBy} />
