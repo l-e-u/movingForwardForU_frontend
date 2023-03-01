@@ -7,7 +7,7 @@ import FormHeader from './FormHeader.js';
 import CloseFormButton from './XButton.js';
 
 const CreateJobForm = ({ setShowThisForm }) => {
-    const { createJob, error, isLoading } = useCreateJob();
+    const { createJob, error, setError, isLoading } = useCreateJob();
     const [job, setJob] = useState({
         pickup: { address: '' },
         delivery: { address: '' },
@@ -28,6 +28,7 @@ const CreateJobForm = ({ setShowThisForm }) => {
             <JobForm
                 job={job}
                 setJob={setJob}
+                setError={setError}
                 error={error}
                 isDisabled={isLoading}
                 handleSubmit={async (e) => {

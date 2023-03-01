@@ -86,10 +86,6 @@ const Jobs = () => {
                 {jobs && jobs.map((job) => {
                     const { _id, createdBy, createdAt } = job;
                     const isEditingThisDoc = showEditForm && (_id === docToEdit._id);
-                    const editFormProps = {
-                        prevJob: job,
-                        setShowThisForm: setShowEditForm
-                    };
 
                     job.listDrivers = true;
 
@@ -98,13 +94,9 @@ const Jobs = () => {
                             {/* Edit and Delete options */}
                             <div className='position-absolute top-0 end-0 pe-3 pt-2 d-flex'>
                                 {!isEditingThisDoc && <EditDocIcon onClick={handleEditClick(job)} />}
-                                <div className='ps-5'>
-
-                                    <DeleteDocIcon onClick={() => deleteById(_id)} />
-                                </div>
                             </div>
                             {isEditingThisDoc ?
-                                <EditJobForm {...editFormProps} /> :
+                                <EditJobForm prevJob={job} setShowThisForm={setShowEditForm} /> :
                                 <JobOverview {...job} />
                             }
                             <CreatedInfo createdBy={createdBy} createdAt={createdAt} />

@@ -3,17 +3,21 @@ import RequiredFieldsText from './RequiredFieldsText';
 import StatusSearchSelect from './StatusSearchSelect';
 import ContactSearchSelect from './ContactSearchSelect';
 import DriverSearchSelect from './UserSearchSelect';
+import LogInput from './LogInput';
 
 // functions
 import { removeExtraSpaces } from '../utils/StringUtils';
 
-const JobForm = ({ job, setJob, handleSubmit, error, isDisabled }) => {
+// hooks
+import { useAuthContext } from '../hooks/useAuthContext';
+
+const JobForm = ({ job, setJob, handleSubmit, error, setError, isDisabled }) => {
+    const { user } = useAuthContext();
     const { status, customer, reference, parcel, drivers, pickup, delivery, logs } = job;
 
     // error identification on fields with validation
     const errorFromPickupAddressInput = error?.['pickup.address'];
     const errorFromDeliveryAddressInput = error?.['delivery.address'];
-    const errorFromLogInput = error?.['logs.note'];
     const errorOther = error?.server;
 
     return (
@@ -131,7 +135,7 @@ const JobForm = ({ job, setJob, handleSubmit, error, isDisabled }) => {
             </div>
 
             {/* DELIVERY ADDRESS */}
-            <div className='form-floating'>
+            <div className='form-floating mb-2'>
                 <input
                     type='text'
                     className={'form-control' + (errorFromDeliveryAddressInput ? ' is-invalid' : '')}
@@ -166,6 +170,22 @@ const JobForm = ({ job, setJob, handleSubmit, error, isDisabled }) => {
                     {errorFromDeliveryAddressInput && <span className='inputError'>{error['delivery.address'].message}</span>}
                 </label>
             </div>
+
+            <LogInput logs={logs} setJob={setJob} error={error} setError={setError} />
+
+            <button
+                type='button'
+                className='btn btn-sm btn-primary rounded-pill px-3 d-flex mt-2 mx-auto'
+                onClick={() => {
+                    setJob(prev => {
+                        return {
+                            ...prev,
+                            logs: [...prev.logs, { note: '', createdBy: user._id }]
+                        }
+                    })
+                }}>
+                Add A Note
+            </button>
 
             <button
                 type='submit'

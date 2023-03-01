@@ -35,10 +35,10 @@ export const useUpdateJob = () => {
         if (response.ok) {
             setError(null);
             setIsLoading(false);
-            console.log(json)
+
             dispatch({ type: 'UPDATE_JOB', payload: json });
             return true;
         };
     };
-    return { updateJob, isLoading, error };
+    return { updateJob, isLoading, error, setError };
 };

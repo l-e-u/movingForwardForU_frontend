@@ -3,6 +3,7 @@ import RequiredFieldsText from './RequiredFieldsText';
 
 // functions
 import { removeExtraSpaces } from '../utils/StringUtils';
+import NoteInput from './NoteInput';
 
 const ContactForm = ({ contact, setContact, handleSubmit, error, isDisabled }) => {
     const { name, note, address, billingAddress, organization, email, phoneNumber, phoneExt } = contact;
@@ -231,7 +232,7 @@ const ContactForm = ({ contact, setContact, handleSubmit, error, isDisabled }) =
             </div>
 
             {/* NOTE */}
-            <div className='form-floating mb-2'>
+            {/* <div className='form-floating mb-2'>
                 <textarea
                     type='text'
                     className='form-control'
@@ -244,7 +245,7 @@ const ContactForm = ({ contact, setContact, handleSubmit, error, isDisabled }) =
                         setContact(prev => {
                             return {
                                 ...prev,
-                                note: removeExtraSpaces(e.target.value)
+                                note: e.target.value
                             }
                         })
                     }}
@@ -257,12 +258,23 @@ const ContactForm = ({ contact, setContact, handleSubmit, error, isDisabled }) =
                         })
                     }}></textarea>
                 <label htmlFor='note' className='form-label'>Note</label>
-            </div>
+            </div> */}
+
+            <NoteInput
+                input={note}
+                handleOnChange={e => {
+                    setContact(prev => {
+                        return {
+                            ...prev,
+                            note: e.target.value
+                        }
+                    })
+                }} />
 
             <button
                 type='submit'
                 disabled={isDisabled}
-                className='btn btn-sm btn-success rounded-pill px-3 d-flex ms-auto'>
+                className='btn btn-sm btn-success rounded-pill px-3 d-flex mt-4 ms-auto'>
                 Save
             </button>
 

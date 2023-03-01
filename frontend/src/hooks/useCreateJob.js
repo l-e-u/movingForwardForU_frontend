@@ -43,5 +43,5 @@ export const useCreateJob = () => {
         };
     };
 
-    return { createJob, isLoading, error };
+    return { createJob, isLoading, error, setError };
 };

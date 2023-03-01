@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 
 // hooks
@@ -21,6 +21,10 @@ function App() {
   const [showNavMenu, setShowNavMenu] = useState(false);
   const [selectedLink, setSelectedLink] = useState(0)
   const { user } = useAuthContext();
+
+  useEffect(() => {
+    setSelectedLink(0);
+  }, [user])
 
   return (
     <div className='App'>

@@ -10,8 +10,8 @@ import FormHeader from './FormHeader';
 import CloseFormButton from './XButton';
 
 const EditJobForm = ({ prevJob, setShowThisForm }) => {
-    const { updateJob, error, isLoading } = useUpdateJob();
-    const [job, setJob] = useState(prevJob);
+    const { updateJob, error, isLoading, setError } = useUpdateJob();
+    const [job, setJob] = useState({ ...prevJob, logs: [...prevJob.logs] });
 
     // user cannot update a doc that has not character changes, this disables the update button
     const statusHasChanged = !noCharChanges(prevJob.status._id, job.status?._id ?? '');
@@ -21,8 +21,9 @@ const EditJobForm = ({ prevJob, setShowThisForm }) => {
     const pickupAddressHasChanged = !noCharChanges(prevJob.pickup.address, job.pickup.address ?? '');
     const deliveryAddressHasChanged = !noCharChanges(prevJob.delivery.address, job.delivery.address ?? '');
     const driversHaveChanged = (prevJob.drivers.length !== job.drivers.length) || !prevJob.drivers.every(driver => job.drivers.some(d => driver._id === d._id));
+    const logHasChanged = (prevJob.logs.length !== job.logs.length) || !prevJob.logs.every(log => job.logs.some(l => log._id === l._id));
 
-    const noInputChanges = !statusHasChanged && !customerHasChanged && !referenceHasChanged && !parcelHasChanged && !pickupAddressHasChanged && !deliveryAddressHasChanged && !driversHaveChanged;
+    const noInputChanges = !statusHasChanged && !customerHasChanged && !referenceHasChanged && !parcelHasChanged && !pickupAddressHasChanged && !deliveryAddressHasChanged && !driversHaveChanged && !logHasChanged;
 
     return (
         <div>
@@ -33,6 +34,7 @@ const EditJobForm = ({ prevJob, setShowThisForm }) => {
             <JobForm
                 job={job}
                 setJob={setJob}
+                setError={setError}
                 error={error}
                 isDisabled={isLoading || noInputChanges}
                 handleSubmit={async (e) => {
@@ -47,7 +49,8 @@ const EditJobForm = ({ prevJob, setShowThisForm }) => {
                             parcel: parcelHasChanged ? job.parcel : undefined,
                             pickup: pickupAddressHasChanged ? { address: job.pickup.address } : undefined,
                             delivery: deliveryAddressHasChanged ? { address: job.delivery.address } : undefined,
-                            drivers: driversHaveChanged ? job.drivers : undefined
+                            drivers: driversHaveChanged ? job.drivers : undefined,
+                            logs: logHasChanged ? job.logs : undefined
                         },
                     })
                         .then(isCreated => {

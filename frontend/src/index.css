@@ -36,6 +36,10 @@ nav.menu {
   background-color: rgba(0 0 0 / .75) !important;
 }
 
+.list-group li {
+  list-style: none;
+}
+
 .maxWidth1400px {
   max-width: 1400px;
 }
@@ -61,6 +65,7 @@ nav.menu {
 
 .outline {
   outline: var(--bs-border-width) var(--bs-border-style) var(--bs-border-color);
+  border-radius: var(--bs-border-radius) !important;
 }
 
 .text-green {
