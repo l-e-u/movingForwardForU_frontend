@@ -5,9 +5,8 @@ import { useContactsContext } from '../hooks/useContactsContext';
 import { useGetContacts } from '../hooks/useGetContacts';
 
 // components
-import SmallHeader from './SmallHeader';
-import SelectedOption from './SelectedOption';
 import AutoCompleteSelect from './AutoCompleteSelect';
+import CancellableOption from './CancellableOption';
 
 const ContactSearchSelect = ({ customer, setJob, inputError, inputErrorMessage }) => {
     const { getContacts, error, isLoading } = useGetContacts();
@@ -29,16 +28,17 @@ const ContactSearchSelect = ({ customer, setJob, inputError, inputErrorMessage }
     if (hasSelected) {
         if (hasSelected) {
             return (
-                <div className='ps-1'>
-                    <SmallHeader isRequired={true} text='Customer' />
-                    <SelectedOption text={customer.organization} handleOnClick={() => {
+                <CancellableOption
+                    value={customer.organization}
+                    required={true}
+                    label='Customer'
+                    handleCancelOnClick={() => {
                         setJob(prev => {
                             const updated = { ...prev };
                             updated.customer = null;
                             return updated;
                         });
                     }} />
-                </div>
             );
         };
     };
@@ -48,6 +48,13 @@ const ContactSearchSelect = ({ customer, setJob, inputError, inputErrorMessage }
             labelText='Customer'
             isRequired={true}
             setJob={setJob}
+            getListedItemText={value => value.organization}
+            filterSuggestions={(contactDoc, text) => contactDoc.organization.toLowerCase().includes(text)}
+            inputError={inputError}
+            inputErrorMessage={inputErrorMessage}
+            documents={contacts ?? []}
+            errorLoading={error}
+            isLoading={isLoading}
             handleOnClickListItem={doc => {
                 return () => {
                     setJob(prev => {
@@ -56,14 +63,7 @@ const ContactSearchSelect = ({ customer, setJob, inputError, inputErrorMessage }
                         return updated;
                     });
                 };
-            }}
-            getListedItemText={value => value.organization}
-            filterSuggestions={(contactDoc, text) => contactDoc.organization.toLowerCase().includes(text)}
-            inputError={inputError}
-            inputErrorMessage={inputErrorMessage}
-            documents={contacts ?? []}
-            errorLoading={error}
-            isLoading={isLoading} />
+            }} ß />
     );
 };
 

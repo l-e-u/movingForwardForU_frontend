@@ -5,7 +5,7 @@ import { useUsersContext } from '../hooks/useUsersContext';
 // components
 import AutoCompleteSelect from './AutoCompleteSelect';
 import SmallHeader from './SmallHeader';
-import SelectedOption from './SelectedOption';
+import CancellableOption from './CancellableOption';
 
 const UserSearchSelect = ({ drivers, setJob }) => {
     const { getUsers, error, isLoading } = useGetUsers();
@@ -54,9 +54,6 @@ const UserSearchSelect = ({ drivers, setJob }) => {
                 getListedItemText={value => value.firstName + ' ' + value.lastName}
                 filterSuggestions={(userDoc, text) => {
                     const fullName = (userDoc.firstName + ' ' + userDoc.lastName).toLowerCase();
-                    console.log('name:', fullName);
-                    console.log('input:', text)
-                    console.log(fullName.includes(text))
                     return fullName.includes(text);
                 }}
                 inputError={inputError}
@@ -66,24 +63,31 @@ const UserSearchSelect = ({ drivers, setJob }) => {
                 isLoading={isLoading} />
 
             {hasAddedDrivers &&
-                <div className='ps-1'>
+                <>
                     <SmallHeader text={'Driver' + (drivers.length > 1 ? 's' : '')} />
-                    {drivers.map(driver => {
+                    {drivers.map((driver, index) => {
                         const { _id, firstName, lastName } = driver;
                         const fullName = firstName + ' ' + lastName;
 
                         return (
-                            <SelectedOption key={_id} text={fullName} handleOnClick={() => {
-                                setInputError(null);
-                                setJob(prev => {
-                                    const updated = { ...prev };
-                                    updated.drivers = drivers.filter(d => d._id !== _id);
-                                    return updated;
-                                });
-                            }} />
+                            <div className='mt-2'>
+                                <CancellableOption key={_id}
+                                    value={fullName}
+                                    label={driver.email}
+                                    labelAlt={'Driver' + index}
+                                    required={false}
+                                    handleCancelOnClick={() => {
+                                        setInputError(null);
+                                        setJob(prev => {
+                                            const updated = { ...prev };
+                                            updated.drivers = drivers.filter(d => d._id !== _id);
+                                            return updated;
+                                        });
+                                    }} />
+                            </div>
                         );
                     })}
-                </div>}
+                </>}
         </div>
     );
 };

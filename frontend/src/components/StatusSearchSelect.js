@@ -2,8 +2,7 @@ import { useEffect } from 'react';
 
 // components
 import AutoCompleteSelect from './AutoCompleteSelect';
-import SmallHeader from './SmallHeader';
-import SelectedOption from './SelectedOption';
+import CancellableOption from './CancellableOption';
 
 // hooks
 import { useGetStatuses } from '../hooks/useGetStatuses';
@@ -28,16 +27,18 @@ const StatusSearchSelect = ({ status, setJob, inputError, inputErrorMessage }) =
 
     if (hasSelected) {
         return (
-            <div className='ps-1'>
-                <SmallHeader isRequired={true} text='Status' />
-                <SelectedOption text={status.name} handleOnClick={() => {
+            <CancellableOption
+                value={status.name}
+                required={true}
+                label='Status'
+                handleCancelOnClick={() => {
                     setJob(prev => {
                         const updated = { ...prev };
                         updated.status = null;
                         return updated;
                     });
                 }} />
-            </div>
+
         );
     };
 

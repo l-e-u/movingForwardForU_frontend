@@ -4,6 +4,7 @@ import StatusSearchSelect from './StatusSearchSelect';
 import ContactSearchSelect from './ContactSearchSelect';
 import DriverSearchSelect from './UserSearchSelect';
 import LogInput from './LogInput';
+import DateInput from './DateInput';
 
 // functions
 import { removeExtraSpaces } from '../utils/StringUtils';
@@ -19,6 +20,8 @@ const JobForm = ({ job, setJob, handleSubmit, error, setError, isDisabled }) => 
     const errorFromPickupAddressInput = error?.['pickup.address'];
     const errorFromDeliveryAddressInput = error?.['delivery.address'];
     const errorOther = error?.server;
+
+    console.log(pickup)
 
     return (
         <form onSubmit={handleSubmit}>
@@ -97,6 +100,71 @@ const JobForm = ({ job, setJob, handleSubmit, error, setError, isDisabled }) => 
             {/* DRIVERS */}
             <DriverSearchSelect drivers={drivers} setJob={setJob} />
 
+            {/* CHECKBOXES TO INCLUDE DATE/TIME FOR PICKUP ADDRESS */}
+            <div className='d-flex justify-content-around my-1'>
+                <div className='form-check'>
+                    <input
+                        type='checkbox'
+                        className='form-check-input'
+                        name='pickupDateCheckbox'
+                        id='pickupDateCheckbox'
+                        checked={pickup.date ? true : false}
+                        onChange={(e) => {
+                            const isChecked = e.target.checked;
+
+                            setJob(prev => {
+                                return {
+                                    ...prev,
+                                    pickup: {
+                                        ...prev.pickup,
+                                        date: isChecked ? new Date() : null,
+                                        includeTime: isChecked ? prev.pickup.includeTime : false
+                                    }
+                                }
+                            });
+                        }} />
+                    <label className='form-check-label' htmlFor='pickupDateCheckbox'>Set Date</label>
+                </div>
+
+                {/* USER CANNOT INCLUDE TIME IF THEY HAVE NOT SET A DATE */}
+                <div className='form-check'>
+                    <input
+                        type='checkbox'
+                        className='form-check-input'
+                        name='pickupTimeCheckbox'
+                        id='pickupTimeCheckbox'
+                        disabled={pickup.date ? false : true}
+                        checked={pickup.includeTime}
+                        onChange={(e) => {
+                            const checked = pickup.date && e.target.checked;
+
+                            setJob(prev => {
+                                return {
+                                    ...prev,
+                                    pickup: {
+                                        ...prev.pickup,
+                                        includeTime: checked
+                                    }
+                                }
+                            });
+                        }} />
+                    <label className='form-check-label' htmlFor='pickupTimeCheckbox'>Set Time</label>
+                </div>
+            </div>
+
+            {pickup.date && <DateInput saveTheDate={date => {
+                setJob(prev => {
+                    return {
+                        ...prev,
+                        pickup: {
+                            ...prev.pickup,
+                            date
+                        }
+                    }
+                })
+            }} />
+            }
+
             {/* PICKUP ADDRESS */}
             <div className='form-floating my-2'>
                 <input
@@ -171,21 +239,8 @@ const JobForm = ({ job, setJob, handleSubmit, error, setError, isDisabled }) => 
                 </label>
             </div>
 
-            <LogInput logs={logs} setJob={setJob} error={error} setError={setError} />
-
-            <button
-                type='button'
-                className='btn btn-sm btn-primary rounded-pill px-3 d-flex mt-2 mx-auto'
-                onClick={() => {
-                    setJob(prev => {
-                        return {
-                            ...prev,
-                            logs: [...prev.logs, { note: '', createdBy: user._id }]
-                        }
-                    })
-                }}>
-                Add A Note
-            </button>
+            {/* user can added a list of note with text and optional attachment */}
+            <LogInput logs={logs} setJob={setJob} error={error} setError={setError} userId={user._id} />
 
             <button
                 type='submit'

@@ -9,8 +9,8 @@ import CloseFormButton from './XButton.js';
 const CreateJobForm = ({ setShowThisForm }) => {
     const { createJob, error, setError, isLoading } = useCreateJob();
     const [job, setJob] = useState({
-        pickup: { address: '' },
-        delivery: { address: '' },
+        pickup: { address: '', date: null, includeTime: false },
+        delivery: { address: '', date: null, includeTime: false },
         drivers: [],
         parcel: '',
         reference: '',
