@@ -15,6 +15,15 @@ const JobOverview = ({
 }) => {
     const hasDrivers = drivers.length > 0;
     const showDrivers = hasDrivers && listDrivers;
+    const dueDateAndTimeString = (date) => {
+        const day = date.getDate();
+        const month = date.getMonth();
+        const year = date.getFullYear();
+
+        const hour = date.getHours();
+        const minute = date.getMinutes();
+        return ``;
+    };
 
     return (
         <div>
@@ -35,6 +44,8 @@ const JobOverview = ({
 
             <div className="mb-2">
                 <SmallHeader text='Pickup' />
+                {pickup.date && <SmallHeader text={new Date(pickup.date).toString()} />}
+                {pickup.includeTime && <SmallHeader text='has a time limit' />}
                 {pickup.address}
             </div>
 

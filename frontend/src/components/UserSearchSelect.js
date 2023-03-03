@@ -70,8 +70,8 @@ const UserSearchSelect = ({ drivers, setJob }) => {
                         const fullName = firstName + ' ' + lastName;
 
                         return (
-                            <div className='mt-2'>
-                                <CancellableOption key={_id}
+                            <div className='mt-2' key={_id}>
+                                <CancellableOption
                                     value={fullName}
                                     label={driver.email}
                                     labelAlt={'Driver' + index}

@@ -1,6 +1,4 @@
-import { useEffect, useState } from 'react';
-
-const DateInput = ({ saveTheDate }) => {
+const DateInput = ({ date, setDate }) => {
     const monthNames = [
         { abbr: 'jan', full: 'january' },
         { abbr: 'feb', full: 'february' },
@@ -15,11 +13,6 @@ const DateInput = ({ saveTheDate }) => {
         { abbr: 'nov', full: 'november' },
         { abbr: 'dec', full: 'december' }
     ];
-    const [date, setDate] = useState(new Date());
-
-    useEffect(() => {
-        saveTheDate(date)
-    }, [date]);
 
     // go to the first of next month and set date to 0 to have it roll back one day
     const lastDayoftheMonth = new Date(date.getFullYear(), (date.getMonth() + 1), 0).getDate();
@@ -45,12 +38,7 @@ const DateInput = ({ saveTheDate }) => {
                     min={1}
                     max={lastDayoftheMonth}
                     value={date.getDate()}
-                    onChange={(e) => setDate(prev => {
-                        const updateDate = new Date(prev);
-
-                        updateDate.setDate(Number(e.target.value));
-                        return updateDate;
-                    })}>
+                    onChange={(e) => setDate({ day: e.target.selectedIndex + 1 })}>
                     {optionsNumbersJSX(1, lastDayoftheMonth)}
                 </select>
                 <label htmlFor='dateSelect' className='form-label'>Day</label>
@@ -62,14 +50,7 @@ const DateInput = ({ saveTheDate }) => {
                     name='monthSelect'
                     id='monthSelect'
                     value={monthNames[date.getMonth()].abbr}
-                    onChange={(e) => setDate(prev => {
-                        const updateDate = new Date(prev);
-
-                        updateDate.setDate(1);
-                        updateDate.setMonth(e.target.selectedIndex);
-
-                        return updateDate;
-                    })} >
+                    onChange={(e) => setDate({ day: 1, month: e.target.selectedIndex })} >
                     {monthNames.map(month => {
                         const { abbr } = month;
                         return (
@@ -89,17 +70,12 @@ const DateInput = ({ saveTheDate }) => {
                     min={1990}
                     max={2050}
                     value={date.getFullYear()}
-                    onChange={(e) => setDate(prev => {
-                        const updateDate = new Date(prev);
-
-                        updateDate.setFullYear(Number(e.target.value));
-                        return updateDate;
-                    })}>
+                    onChange={(e) => setDate({ day: (date.getDate() === 29 && date.getMonth() === 1) ? 28 : null, year: Number(e.target.value) })}>
                     {optionsNumbersJSX(2020, 2037)}
                 </select>
                 <label htmlFor='yearSelect' className='form-label'>Year</label>
             </div>
-        </div>
+        </div >
     );
 };
 

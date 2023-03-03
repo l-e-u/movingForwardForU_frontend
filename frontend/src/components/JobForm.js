@@ -5,6 +5,7 @@ import ContactSearchSelect from './ContactSearchSelect';
 import DriverSearchSelect from './UserSearchSelect';
 import LogInput from './LogInput';
 import DateInput from './DateInput';
+import TimeInput from './TimeInput';
 
 // functions
 import { removeExtraSpaces } from '../utils/StringUtils';
@@ -20,8 +21,6 @@ const JobForm = ({ job, setJob, handleSubmit, error, setError, isDisabled }) => 
     const errorFromPickupAddressInput = error?.['pickup.address'];
     const errorFromDeliveryAddressInput = error?.['delivery.address'];
     const errorOther = error?.server;
-
-    console.log(pickup)
 
     return (
         <form onSubmit={handleSubmit}>
@@ -118,7 +117,7 @@ const JobForm = ({ job, setJob, handleSubmit, error, setError, isDisabled }) => 
                                     pickup: {
                                         ...prev.pickup,
                                         date: isChecked ? new Date() : null,
-                                        includeTime: isChecked ? prev.pickup.includeTime : false
+                                        includeTime: false
                                     }
                                 }
                             });
@@ -135,8 +134,8 @@ const JobForm = ({ job, setJob, handleSubmit, error, setError, isDisabled }) => 
                         id='pickupTimeCheckbox'
                         disabled={pickup.date ? false : true}
                         checked={pickup.includeTime}
-                        onChange={(e) => {
-                            const checked = pickup.date && e.target.checked;
+                        onChange={e => {
+                            const checked = (pickup.date && e.target.checked) || false;
 
                             setJob(prev => {
                                 return {
@@ -152,18 +151,40 @@ const JobForm = ({ job, setJob, handleSubmit, error, setError, isDisabled }) => 
                 </div>
             </div>
 
-            {pickup.date && <DateInput saveTheDate={date => {
+            {console.log(pickup.date)}
+            {pickup.date && <DateInput date={new Date(pickup.date)} setDate={({ day = null, month = null, year = null }) => {
                 setJob(prev => {
+                    const date = new Date(prev.pickup.date);
+                    if (day !== null) date.setDate(day);
+                    if (month !== null) date.setMonth(month);
+                    if (year !== null) date.setFullYear(year);
+                    console.log('date to be saved:', date)
                     return {
                         ...prev,
                         pickup: {
                             ...prev.pickup,
                             date
                         }
-                    }
-                })
+                    };
+                });
             }} />
             }
+
+            {pickup.includeTime && <TimeInput date={new Date(pickup.date)} setTime={({ hours = null, minutes = null }) => {
+                setJob(prev => {
+                    const date = new Date(prev.pickup.date);
+                    if (hours !== null) date.setHours(hours);
+                    if (minutes !== null) date.setMinutes(minutes);
+
+                    return {
+                        ...prev,
+                        pickup: {
+                            ...prev.pickup,
+                            date
+                        }
+                    };
+                });
+            }} />}
 
             {/* PICKUP ADDRESS */}
             <div className='form-floating my-2'>

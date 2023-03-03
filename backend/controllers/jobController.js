@@ -105,6 +105,8 @@ const updateJob = async (req, res) => {
     const { id } = req.params;
     const error = { server: { message: 'No such job.' } };
 
+    console.log({ ...req.body })
+
     if (!mongoose.Types.ObjectId.isValid(id)) {
         return res.status(404).json({ error });
     };
