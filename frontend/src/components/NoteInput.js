@@ -19,6 +19,7 @@ const NoteInput = ({ input, handleOnChange, hasError, error }) => {
     return (
         <div className='form-floating'>
             <textarea
+                style={{ resize: 'none' }}
                 ref={textAreaRef}
                 name='note'
                 className={'form-control' + (error ? ' is-invalid' : '')}

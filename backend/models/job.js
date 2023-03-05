@@ -24,9 +24,19 @@ const logSchema = new Schema(
             type: Schema.Types.ObjectId,
             ref: 'User',
             required: true
+        },
+        createdAt: {
+            type: Date,
+            default: new Date(),
+            required: true
+        },
+        updatedAt: {
+            type: Date,
+            default: new Date(),
+            required: true
         }
     },
-    { timestamps: true }
+    { timestamps: false }
 );
 
 const jobSchema = new Schema(

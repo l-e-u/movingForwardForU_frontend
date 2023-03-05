@@ -8,36 +8,41 @@ import { noCharChanges } from '../utils/StringUtils.js';
 import JobForm from './JobForm';
 import FormHeader from './FormHeader';
 import CloseFormButton from './XButton';
+import { parseJSON } from 'date-fns';
 
 const EditJobForm = ({ prevJob, setShowThisForm }) => {
     const { updateJob, error, isLoading, setError } = useUpdateJob();
     const [job, setJob] = useState(prevJob);
+    const updatedProperties = {};
 
-    // user cannot update a doc that has not character changes, this disables the update button
-    const statusHasChanged = !noCharChanges(prevJob.status._id, job.status?._id ?? '');
-    const customerHasChanged = !noCharChanges(prevJob.customer._id, job.customer?._id ?? '');
-    const referenceHasChanged = !noCharChanges(prevJob.reference ?? '', job.reference ?? '');
-    const parcelHasChanged = !noCharChanges(prevJob.parcel ?? '', job.parcel ?? '');
-    const pickupAddressHasChanged = !noCharChanges(prevJob.pickup.address, job.pickup.address ?? '');
-    const deliveryAddressHasChanged = !noCharChanges(prevJob.delivery.address, job.delivery.address ?? '');
-    const driversHaveChanged = (prevJob.drivers.length !== job.drivers.length) || !prevJob.drivers.every(driver => job.drivers.some(d => driver._id === d._id));
-    const logHasChanged = (prevJob.logs.length !== job.logs.length) || !prevJob.logs.every(log => job.logs.some(l => log._id === l._id));
+    // check if there has been any changes in the inputs, other than extra white space
+    // if an input value has character changes, add it to the updatedProperties that will be used to update the document
+    if (prevJob.status._id !== job.status?._id) updatedProperties.status = job.status?._id;
+    if (prevJob.customer._id !== job.customer?._id) updatedProperties.customer = job.customer?._id;
+    if (!noCharChanges(prevJob.reference ?? '', job.reference ?? '')) updatedProperties.reference = job.reference;
+    if (!noCharChanges(prevJob.parcel ?? '', job.parcel ?? '')) updatedProperties.parcel = job.parcel;
+    if (JSON.stringify(prevJob.pickup) !== JSON.stringify(job.pickup)) updatedProperties.pickup = job.pickup;
+    if (JSON.stringify(prevJob.delivery) !== JSON.stringify(job.delivery)) updatedProperties.delivery = job.delivery;
+    if ((prevJob.drivers.length !== job.drivers.length) || !prevJob.drivers.every(driver => job.drivers.some(d => driver._id === d._id))) updatedProperties.drivers = job.drivers;
 
-    let pickupInfoHasChanged = false;
-    let pickupTimeHasChanged = false;
-    let pickupDateHasChanged = false;
+    const differentNumberOfNotes = prevJob.logs?.length !== job.logs?.length;
 
-    if ((!prevJob.pickup.date && job.pickup.date) || (prevJob.pickup.date && !job.pickup.date)) pickupDateHasChanged = true;
-    if ((!prevJob.pickup.includeTime && job.pickup.includeTime) || (prevJob.pickup.includeTime && !job.pickup.includeTime)) pickupTimeHasChanged = true;
+    // when both previous job and current job have the same length, go through each one to see if they've changed
+    const notesChange = !prevJob.logs.every((log, index) => {
 
+        // different ids are a clear change, fail the check
+        if (log._id !== job.logs[index]?._id) return false;
 
-    if (prevJob.pickup.date && job.pickup.date) {
-        if (prevJob.pickup.date.toString() !== job.pickup.date.toString()) pickupDateHasChanged = true;
-    };
+        // if it's the same note, check for changes in its content
+        return noCharChanges(log.note ?? '', job.logs[index]?.note ?? '');
+    }
+    );
 
-    if (pickupDateHasChanged || pickupTimeHasChanged) pickupInfoHasChanged = true;
+    // if theres different lengths of notes, or any note content has character changes, update the notes array
+    if (differentNumberOfNotes || notesChange) updatedProperties.logs = job.logs;
 
-    const noInputChanges = !statusHasChanged && !customerHasChanged && !referenceHasChanged && !parcelHasChanged && !pickupAddressHasChanged && !deliveryAddressHasChanged && !driversHaveChanged && !logHasChanged && !pickupInfoHasChanged;
+    // any empty object means there has been no character changes on any inputs
+    const noInputChanges = Object.keys(updatedProperties).length === 0;
 
     return (
         <div>
@@ -56,16 +61,7 @@ const EditJobForm = ({ prevJob, setShowThisForm }) => {
 
                     await updateJob({
                         _id: prevJob._id,
-                        job: {
-                            status: statusHasChanged ? job.status : undefined,
-                            customer: customerHasChanged ? job.customer : undefined,
-                            reference: referenceHasChanged ? job.reference : undefined,
-                            parcel: parcelHasChanged ? job.parcel : undefined,
-                            pickup: pickupInfoHasChanged ? job.pickup : undefined,
-                            delivery: deliveryAddressHasChanged ? { address: job.delivery.address } : undefined,
-                            drivers: driversHaveChanged ? job.drivers : undefined,
-                            logs: logHasChanged ? job.logs : undefined
-                        },
+                        job: { ...updatedProperties },
                     })
                         .then(isCreated => {
                             if (isCreated) setShowThisForm(false);

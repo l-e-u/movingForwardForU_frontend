@@ -30,7 +30,8 @@ const LogInput = ({ logs, setJob, error, setError, userId }) => {
                                                 // save user input only to the note being changed
                                                 updatedLogs[index] = {
                                                     ...updatedLogs[index],
-                                                    note: e.target.value
+                                                    note: e.target.value,
+                                                    updatedAt: new Date()
                                                 };
 
                                                 // send back the updated version on the log

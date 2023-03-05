@@ -104,8 +104,11 @@ const deleteJob = async (req, res) => {
 const updateJob = async (req, res) => {
     const { id } = req.params;
     const error = { server: { message: 'No such job.' } };
+    const updatedFields = { ...req.body };
 
-    console.log({ ...req.body })
+    console.log(updatedFields);
+
+    // if (updatedFields.logs) console.log('up to date logs:', updatedFields.logs);
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
         return res.status(404).json({ error });
@@ -114,7 +117,7 @@ const updateJob = async (req, res) => {
     try {
         const job = await Job.findByIdAndUpdate(
             { _id: id },
-            { ...req.body },
+            { ...updatedFields },
             {
                 returnDocument: 'after',
                 runValidators: true
@@ -124,6 +127,8 @@ const updateJob = async (req, res) => {
         if (!job) {
             return res.status(404).json({ error });
         };
+
+        console.log(job.logs);
 
         return res.status(200).json(job);
     }

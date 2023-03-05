@@ -53,7 +53,7 @@ const JobForm = ({ job, setJob, handleSubmit, error, setError, isDisabled }) => 
                         setJob(prev => {
                             return {
                                 ...prev,
-                                reference: removeExtraSpaces(e.target.value)
+                                reference: e.target.value
                             }
                         })
                     }}
@@ -61,7 +61,7 @@ const JobForm = ({ job, setJob, handleSubmit, error, setError, isDisabled }) => 
                         setJob(prev => {
                             return {
                                 ...prev,
-                                reference: e.target.value.trim()
+                                reference: removeExtraSpaces(e.target.value.trim())
                             }
                         })
                     }} />
@@ -81,7 +81,7 @@ const JobForm = ({ job, setJob, handleSubmit, error, setError, isDisabled }) => 
                         setJob(prev => {
                             return {
                                 ...prev,
-                                parcel: removeExtraSpaces(e.target.value)
+                                parcel: e.target.value
                             }
                         })
                     }}
@@ -89,7 +89,7 @@ const JobForm = ({ job, setJob, handleSubmit, error, setError, isDisabled }) => 
                         setJob(prev => {
                             return {
                                 ...prev,
-                                parcel: e.target.value.trim()
+                                parcel: removeExtraSpaces(e.target.value.trim())
                             }
                         })
                     }} />
@@ -151,7 +151,6 @@ const JobForm = ({ job, setJob, handleSubmit, error, setError, isDisabled }) => 
                 </div>
             </div>
 
-            {console.log(pickup.date)}
             {pickup.date && <DateInput date={new Date(pickup.date)} setDate={({ day = null, month = null, year = null }) => {
                 setJob(prev => {
                     const date = new Date(prev.pickup.date);
