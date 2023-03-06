@@ -33,7 +33,7 @@ const CreateJobForm = ({ setShowThisForm }) => {
                 isDisabled={isLoading}
                 handleSubmit={async (e) => {
                     e.preventDefault();
-
+                    return console.log(job);
                     await createJob({
                         ...job,
                         status: job.status?._id,

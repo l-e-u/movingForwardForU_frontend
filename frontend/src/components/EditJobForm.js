@@ -8,7 +8,6 @@ import { noCharChanges } from '../utils/StringUtils.js';
 import JobForm from './JobForm';
 import FormHeader from './FormHeader';
 import CloseFormButton from './XButton';
-import { parseJSON } from 'date-fns';
 
 const EditJobForm = ({ prevJob, setShowThisForm }) => {
     const { updateJob, error, isLoading, setError } = useUpdateJob();

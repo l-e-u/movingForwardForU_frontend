@@ -108,8 +108,6 @@ const updateJob = async (req, res) => {
 
     console.log(updatedFields);
 
-    // if (updatedFields.logs) console.log('up to date logs:', updatedFields.logs);
-
     if (!mongoose.Types.ObjectId.isValid(id)) {
         return res.status(404).json({ error });
     };

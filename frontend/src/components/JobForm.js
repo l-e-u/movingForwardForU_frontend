@@ -6,6 +6,7 @@ import DriverSearchSelect from './UserSearchSelect';
 import LogInput from './LogInput';
 import DateInput from './DateInput';
 import TimeInput from './TimeInput';
+import PickupOrDeliveryInput from './PickupOrDeliveryInput';
 
 // functions
 import { removeExtraSpaces } from '../utils/StringUtils';
@@ -221,6 +222,23 @@ const JobForm = ({ job, setJob, handleSubmit, error, setError, isDisabled }) => 
                     {errorFromPickupAddressInput && <span className='inputError'>{error['pickup.address'].message}</span>}
                 </label>
             </div>
+
+            <PickupOrDeliveryInput
+                isPickup={true}
+                isRequired={true}
+                error={error?.['pickup.address']}
+                address={pickup.address}
+                setAddress={value => {
+                    setJob(prev => {
+                        return {
+                            ...prev,
+                            pickup: {
+                                ...prev.pickup,
+                                address: value
+                            }
+                        }
+                    })
+                }} />
 
             {/* DELIVERY ADDRESS */}
             <div className='form-floating mb-2'>
