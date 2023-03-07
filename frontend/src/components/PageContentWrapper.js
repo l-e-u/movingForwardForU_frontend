@@ -1,3 +1,3 @@
-const PageContentWrapper = ({ children }) => <div className='flex-grow-1 p-4'>{children}</div>;
+const PageContentWrapper = ({ children }) => <div className='flex-grow-1 px-3'>{children}</div>;
 
 export default PageContentWrapper;

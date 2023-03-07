@@ -47,7 +47,11 @@ const JobOverview = ({
             </div>
 
             <div className='mb-2'>
-                <SmallHeader text='Delivery' />
+                <div className='d-flex gap-2'>
+                    <SmallHeader text='Delivery' />
+                    {delivery.date && <SmallHeader text={dateStringFormat(new Date(delivery.date))} />}
+                    {delivery.includeTime && <SmallHeader text={timeStringFormat(new Date(delivery.date))} />}
+                </div>
                 {delivery.address}
             </div>
 

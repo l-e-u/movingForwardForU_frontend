@@ -2,9 +2,12 @@ import { useState } from 'react';
 
 const TimeInput = ({ date, setTime }) => {
     const [isMilitaryTime, setIsMilitaryTime] = useState(true);
+    // date object is 0 - 23
     const hours = date.getHours();
     const minutes = date.getMinutes();
     const meridiem = hours < 12 ? 'am' : 'pm';
+
+    // returns number of select input options for range used
     const numberedOptionsJSX = (start, end) => {
         return () => {
             const jsx = [];
@@ -16,7 +19,11 @@ const TimeInput = ({ date, setTime }) => {
             return jsx;
         };
     };
+
+    // for 12hr format it returns options 1 - 12, for 24hr format it returns 0 - 23
     const hourOptionsJSX = numberedOptionsJSX((isMilitaryTime ? 0 : 1), (isMilitaryTime ? 23 : 12));
+
+    // for minutes, it always returns options 0 - 59
     const minuteOptionsJSX = numberedOptionsJSX(0, 59);
     const hoursToDisplay = () => {
         let value = hours;
@@ -32,8 +39,16 @@ const TimeInput = ({ date, setTime }) => {
         return value;
     };
 
+    const handleOnChange = ({ hours = null, minutes = null }) => {
+        const newDate = new Date(date);
+        if (hours !== null) newDate.setHours(hours);
+        if (minutes !== null) newDate.setMinutes(minutes);
+
+        setTime({ date: newDate });
+    };
+
     return (
-        <div className='d-flex gap-2 mt-2'>
+        <div className='d-flex gap-2'>
             <div className='input-group'>
                 <span
                     className='input-group-text text-uppercase font-monospace'
@@ -59,7 +74,7 @@ const TimeInput = ({ date, setTime }) => {
                                 if ((meridiem === 'pm') && (selectedNumber < 12)) actualHour += 12;
                             };
 
-                            setTime({ hours: actualHour });
+                            handleOnChange({ hours: actualHour });
                         }} >
                         {hourOptionsJSX()}
                     </select>
@@ -78,7 +93,7 @@ const TimeInput = ({ date, setTime }) => {
                         id='minuteSelect'
                         className='form-select'
                         value={minutes}
-                        onChange={e => setTime({ minutes: Number(e.target.value) })}>
+                        onChange={e => handleOnChange({ minutes: Number(e.target.value) })}>
                         {minuteOptionsJSX()}
                     </select>
                     <label htmlFor='minuteSelect' className='form-label'>Minute</label>
@@ -95,7 +110,7 @@ const TimeInput = ({ date, setTime }) => {
                             // from pm to am
                             if (meridiem === 'pm') actualHour -= 12;
 
-                            setTime({ hours: actualHour });
+                            handleOnChange({ hours: actualHour });
                         }}>
                         {meridiem}
                     </span>

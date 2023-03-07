@@ -16,12 +16,9 @@ const ContactSearchSelect = ({ customer, setJob, inputError, inputErrorMessage }
     // on first mount only, get documents
     useEffect(() => {
         (async () => {
-            try {
-                await getContacts();
 
-            } catch (error) {
-                console.log('Could not fetch, check your network.')
-            };
+            await getContacts();
+
         })();
     }, []);
 

@@ -27,9 +27,16 @@ const DateInput = ({ date, setDate }) => {
 
         return JSX;
     };
+    const handleOnChange = ({ day = null, month = null, year = null }) => {
+        const newDate = new Date(date);
+        if (day !== null) newDate.setDate(day);
+        if (month !== null) newDate.setMonth(month);
+        if (year !== null) newDate.setFullYear(year);
+        setDate({ date: newDate });
+    };
 
     return (
-        <div className='d-flex mt-2 gap-2'>
+        <div className='d-flex gap-2'>
             <div className='form-floating' style={{ flex: '1 1 0' }}>
                 <select
                     className='form-select'
@@ -38,7 +45,7 @@ const DateInput = ({ date, setDate }) => {
                     min={1}
                     max={lastDayoftheMonth}
                     value={date.getDate()}
-                    onChange={(e) => setDate({ day: e.target.selectedIndex + 1 })}>
+                    onChange={(e) => handleOnChange({ day: e.target.selectedIndex + 1 })}>
                     {optionsNumbersJSX(1, lastDayoftheMonth)}
                 </select>
                 <label htmlFor='dateSelect' className='form-label'>Day</label>
@@ -50,7 +57,7 @@ const DateInput = ({ date, setDate }) => {
                     name='monthSelect'
                     id='monthSelect'
                     value={monthNames[date.getMonth()].abbr}
-                    onChange={(e) => setDate({ day: 1, month: e.target.selectedIndex })} >
+                    onChange={(e) => handleOnChange({ day: 1, month: e.target.selectedIndex })} >
                     {monthNames.map(month => {
                         const { abbr } = month;
                         return (
@@ -70,7 +77,7 @@ const DateInput = ({ date, setDate }) => {
                     min={1990}
                     max={2050}
                     value={date.getFullYear()}
-                    onChange={(e) => setDate({ day: (date.getDate() === 29 && date.getMonth() === 1) ? 28 : null, year: Number(e.target.value) })}>
+                    onChange={(e) => handleOnChange({ day: (date.getDate() === 29 && date.getMonth() === 1) ? 28 : null, year: Number(e.target.value) })}>
                     {optionsNumbersJSX(2020, 2037)}
                 </select>
                 <label htmlFor='yearSelect' className='form-label'>Year</label>

@@ -75,7 +75,7 @@ const AutoCompleteSelect = ({
                     }
                 </ul>
             }
-            {errorLoading && <p className='text-danger'>Could not load. Check your network.</p>}
+            {errorLoading && <p className='text-danger ms-1 mt-1'>Could not load. Check your network and refresh the page.</p>}
         </div>
     );
 };
