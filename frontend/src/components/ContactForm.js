@@ -1,12 +1,12 @@
 // components
 import RequiredFieldsText from './RequiredFieldsText';
+import GrowingTextArea from './GrowingTextArea';
 
 // functions
 import { removeExtraSpaces } from '../utils/StringUtils';
-import NoteInput from './NoteInput';
 
 const ContactForm = ({ contact, setContact, handleSubmit, error, isDisabled }) => {
-    const { name, note, address, billingAddress, organization, email, phoneNumber, phoneExt } = contact;
+    const { name, misc, address, billingAddress, organization, email, phoneNumber, phoneExt } = contact;
 
     // error identification on fields with validation
     const errorFromOrganizationInput = error?.organization;
@@ -231,45 +231,19 @@ const ContactForm = ({ contact, setContact, handleSubmit, error, isDisabled }) =
                 </div>
             </div>
 
-            {/* NOTE */}
-            {/* <div className='form-floating mb-2'>
-                <textarea
-                    type='text'
+            {/* MISC */}
+            <div className='form-floating'>
+                <GrowingTextArea
                     className='form-control'
-                    name='note'
-                    placeholder='Note'
-                    id='note'
-                    value={note ?? ''}
-                    style={{ height: '100px' }}
-                    onChange={(e) => {
-                        setContact(prev => {
-                            return {
-                                ...prev,
-                                note: e.target.value
-                            }
-                        })
-                    }}
-                    onBlur={(e) => {
-                        setContact(prev => {
-                            return {
-                                ...prev,
-                                note: e.target.value.trim()
-                            }
-                        })
-                    }}></textarea>
-                <label htmlFor='note' className='form-label'>Note</label>
-            </div> */}
-
-            <NoteInput
-                input={note}
-                handleOnChange={e => {
-                    setContact(prev => {
-                        return {
-                            ...prev,
-                            note: e.target.value
-                        }
-                    })
-                }} />
+                    name='miscTextarea'
+                    onChange={e => setContact(prev => {
+                        return { ...prev, misc: e.target.value };
+                    })}
+                    placeholder='Miscellaneous'
+                    value={misc}
+                />
+                <label htmlFor='miscTextarea' className='form-label'>Miscellaneous</label>
+            </div>
 
             <button
                 type='submit'

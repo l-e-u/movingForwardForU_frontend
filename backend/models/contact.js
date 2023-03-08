@@ -3,16 +3,6 @@ import uniqueValidator from 'mongoose-unique-validator';
 
 const contactSchema = new Schema(
     {
-        name: {
-            type: String,
-            trim: true,
-            set: i => !i ? null : i
-        },
-        note: {
-            type: String,
-            trim: true,
-            set: i => !i ? null : i
-        },
         address: {
             type: String,
             trim: true,
@@ -23,11 +13,10 @@ const contactSchema = new Schema(
             trim: true,
             set: i => !i ? null : i
         },
-        organization: {
-            type: String,
-            required: [true, 'Cannot be empty.'],
-            trim: true,
-            unique: true
+        createdBy: {
+            type: Schema.Types.ObjectId,
+            ref: 'User',
+            require: true
         },
         email: {
             type: String,
@@ -35,6 +24,22 @@ const contactSchema = new Schema(
             trim: true,
             set: i => !i ? null : i,
             match: [/\S+@\S+\.\S+/, 'is invalid'],
+        },
+        misc: {
+            type: String,
+            trim: true,
+            set: i => !i ? null : i
+        },
+        name: {
+            type: String,
+            trim: true,
+            set: i => !i ? null : i
+        },
+        organization: {
+            type: String,
+            required: [true, 'Cannot be empty.'],
+            trim: true,
+            unique: true
         },
         phoneNumber: {
             type: String,
@@ -47,11 +52,6 @@ const contactSchema = new Schema(
             trim: true,
             set: i => !i ? null : i.match(/\d/g).join(''),
         },
-        createdBy: {
-            type: Schema.Types.ObjectId,
-            ref: 'User',
-            require: true
-        }
     },
     { timestamps: true }
 );

@@ -6,7 +6,7 @@ const ContactOverview = ({
     address,
     billingAddress,
     email,
-    note,
+    misc,
     phoneNumber,
     phoneExt
 }) => {
@@ -31,10 +31,10 @@ const ContactOverview = ({
                     </div>
                 }
             </address>
-            {note &&
+            {misc &&
                 <div className='mt-2'>
-                    <SmallHeader text='Note' />
-                    <p className='m-0' style={{ whiteSpace: 'pre-wrap' }}>{note}</p>
+                    <SmallHeader text='Miscellaneous' />
+                    <p className='m-0' style={{ whiteSpace: 'pre-wrap' }}>{misc}</p>
                 </div>
             }
         </div>

@@ -3,6 +3,7 @@ import { removeExtraSpaces } from '../utils/StringUtils';
 
 // components
 import RequiredFieldsText from './RequiredFieldsText';
+import GrowingTextArea from './GrowingTextArea';
 
 const UserForm = ({ user, setUser, handleSubmit, error, isDisabled, isEditing = false }) => {
     const errorFromEmailInput = error?.email;
@@ -142,7 +143,20 @@ const UserForm = ({ user, setUser, handleSubmit, error, isDisabled, isEditing = 
                 </label>
             </div>
 
-            {/* NOTE */}
+            {/* COMMENTS */}
+            <div className='form-floating'>
+                <GrowingTextArea
+                    className='form-control'
+                    name='commentsTextarea'
+                    onChange={e => setUser(prev => {
+                        return { ...prev, comments: e.target.value };
+                    })}
+                    placeholder='Comments'
+                    value={user.comments}
+                />
+                <label htmlFor='commentsTextarea' className='form-label'>Comments</label>
+            </div>
+
             <button
                 type='submit'
                 disabled={isDisabled}

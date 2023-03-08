@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 // hooks
-import { useCreateUser } from '../hooks/useCreateUser';
+import { useRegisterUser } from '../hooks/useRegisterUser';
 
 // components
 import FormHeader from './FormHeader';
@@ -9,7 +9,7 @@ import UserForm from './UserForm';
 import CloseFormButton from './XButton';
 
 const CreateUserForm = ({ setShowThisForm }) => {
-    const { createUser, error, isLoading } = useCreateUser();
+    const { registerUser, error, isLoading } = useRegisterUser();
     const [user, setUser] = useState({
         firstName: '',
         lastName: '',
@@ -32,7 +32,7 @@ const CreateUserForm = ({ setShowThisForm }) => {
                 handleSubmit={async (e) => {
                     e.preventDefault();
 
-                    await createUser(user)
+                    await registerUser(user)
                         .then(isCreated => {
                             if (isCreated) setShowThisForm(false);
                         })

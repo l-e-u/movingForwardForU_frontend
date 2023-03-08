@@ -13,21 +13,11 @@ const userSchema = new Schema({
         trim: true,
         required: [true, 'Cannot be empty.']
     },
-    lastName: {
-        type: String,
-        trim: true,
-        required: [true, 'Cannot be empty.']
-    },
-    note: {
+    comments: {
         type: String,
         trim: true,
         set: i => !i ? null : i
     },
-    isAdmin: {
-        type: Boolean,
-        default: false
-    },
-    //Our password is hashed with bcrypt
     email: {
         type: String,
         lowercase: true,
@@ -35,14 +25,24 @@ const userSchema = new Schema({
         required: [true, 'Cannot be empty.'],
         match: [/\S+@\S+\.\S+/, 'is invalid'],
     },
+    //Our password is hashed with bcrypt
     isActive: {
         type: Boolean,
         default: true
     },
+    isAdmin: {
+        type: Boolean,
+        default: false
+    },
     isVerified: {
         type: Boolean,
         default: false
-    }
+    },
+    lastName: {
+        type: String,
+        trim: true,
+        required: [true, 'Cannot be empty.']
+    },
 }, {
     timestamps: true,
     toJSON: {

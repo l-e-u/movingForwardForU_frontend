@@ -106,7 +106,7 @@ const verifyUserEmailAndSetPassword = async (req, res) => {
     };
 };
 
-// register user
+// create a new user
 const registerUser = async (req, res) => {
     const { email, firstName } = req.body;
 
@@ -162,25 +162,6 @@ const getUser = async (req, res) => {
     res.status(200).json(user);
 };
 
-// create a new user
-const createUser = async (req, res) => {
-    const { username, password, email } = req.body;
-
-    // add user doc to db
-    try {
-        const user = await User.create({
-            username,
-            password,
-            email,
-        });
-
-        return res.status(200).json(user);
-    }
-    catch (error) {
-        return res.status(400).json({ error: error.message })
-    };
-};
-
 // delete a user
 const deleteUser = async (req, res) => {
     const { id } = req.params;
@@ -209,7 +190,10 @@ const updateUser = async (req, res) => {
     const user = await User.findByIdAndUpdate(
         { _id: id },
         { ...req.body },
-        { returnDocument: 'after' }
+        {
+            returnDocument: 'after',
+            runValidators: true
+        }
     );
 
     if (!user) {

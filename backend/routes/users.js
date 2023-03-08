@@ -21,7 +21,7 @@ router.post('/login', loginUser);
 router.post('/verify/:token', verifyUserEmailAndSetPassword);
 
 // authenticates user is valid and logged in to access further end points
-// router.use(requireAuth);
+router.use(requireAuth);
 
 // GET all users
 router.get('/', getUsers);

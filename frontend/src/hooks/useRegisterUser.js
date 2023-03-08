@@ -3,13 +3,13 @@ import { useState } from 'react';
 import { useAuthContext } from './useAuthContext';
 import { useUsersContext } from './useUsersContext';
 
-export const useCreateUser = () => {
+export const useRegisterUser = () => {
     const [error, setError] = useState(null);
     const [isLoading, setIsLoading] = useState(null);
     const { dispatch } = useUsersContext();
     const { user } = useAuthContext();
 
-    const createUser = async (newUser) => {
+    const registerUser = async (newUser) => {
         setIsLoading(true);
 
         // don't want to show the error if the user is trying to rectify, so null error at the start
@@ -24,7 +24,7 @@ export const useCreateUser = () => {
             }
         });
 
-        // expecting the newly created user
+        // expecting the newly registerd user
         const json = await response.json();
 
         if (!response.ok) {
@@ -44,5 +44,5 @@ export const useCreateUser = () => {
         };
     };
 
-    return { createUser, isLoading, error };
+    return { registerUser, isLoading, error };
 };

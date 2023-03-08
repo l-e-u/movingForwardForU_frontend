@@ -1,8 +1,8 @@
-import { useState } from "react";
-import { useUpdateContact } from "../hooks/useUpdateContact.js";
+import { useState } from 'react';
+import { useUpdateContact } from '../hooks/useUpdateContact.js';
 
 // functions
-import { noCharChanges } from "../utils/StringUtils.js";
+import { noCharChanges } from '../utils/StringUtils.js';
 
 // components
 import CloseFormButton from './XButton.js';
@@ -21,7 +21,7 @@ const EditContactForm = ({ prevContact, setShowThisForm }) => {
         email,
         phoneNumber,
         phoneExt,
-        note
+        misc
     } = contact;
     const {
         organization: prevOrganization,
@@ -31,7 +31,7 @@ const EditContactForm = ({ prevContact, setShowThisForm }) => {
         email: prevEmail,
         phoneNumber: prevPhoneNumber,
         phoneExt: prevPhoneExt,
-        note: prevNote
+        misc: prevNote
     } = prevContact;
 
     // user cannot update a doc that has not character changes, this disables the update button
@@ -42,8 +42,8 @@ const EditContactForm = ({ prevContact, setShowThisForm }) => {
     const emailHasChanged = !noCharChanges(prevEmail ?? '', email ?? '');
     const phoneNumberHasChanged = !noCharChanges(prevPhoneNumber ?? '', phoneNumber ?? '');
     const phoneExtHasChanged = !noCharChanges(prevPhoneExt ?? '', phoneExt ?? '');
-    const noteHasChanged = !noCharChanges(prevNote ?? '', note ?? '');
-    const noInputChanges = !organizationHasChanged && !nameHasChanged && !addressHasChanged && !billingAddressHasChanged && !emailHasChanged && !phoneNumberHasChanged && !phoneExtHasChanged && !noteHasChanged;
+    const miscHasChanged = !noCharChanges(prevNote ?? '', misc ?? '');
+    const noInputChanges = !organizationHasChanged && !nameHasChanged && !addressHasChanged && !billingAddressHasChanged && !emailHasChanged && !phoneNumberHasChanged && !phoneExtHasChanged && !miscHasChanged;
 
     return (
         <div>
@@ -52,8 +52,8 @@ const EditContactForm = ({ prevContact, setShowThisForm }) => {
             </FormHeader>
 
             <p className='mt-2 mb-0'>
-                <i className="bi bi-exclamation-triangle-fill text-warning pe-2"></i>
-                Changes will also reflect on all jobs with the same status.
+                <i className='bi bi-exclamation-triangle-fill text-warning pe-2'></i>
+                Changes will be reflected on jobs with this contact set as customer.
             </p>
 
             <ContactForm
@@ -75,7 +75,7 @@ const EditContactForm = ({ prevContact, setShowThisForm }) => {
                             email: emailHasChanged ? email : undefined,
                             phoneNumber: phoneNumberHasChanged ? phoneNumber : undefined,
                             phoneExt: phoneExtHasChanged ? phoneExt : undefined,
-                            note: noteHasChanged ? note : undefined
+                            misc: miscHasChanged ? misc : undefined
                         }
                     })
                         .then(isUpdated => {

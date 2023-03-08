@@ -16,7 +16,7 @@ const CreateContactForm = ({ setShowThisForm }) => {
         billingAddress: '',
         phoneNumber: '',
         phoneExt: '',
-        note: '',
+        misc: '',
         email: ''
     });
 

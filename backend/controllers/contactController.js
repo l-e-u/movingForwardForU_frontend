@@ -30,26 +30,11 @@ const getContact = async (req, res) => {
 const createContact = async (req, res) => {
     // user added to req after status route authenticates the user
     const { _id: user_id } = req.user;
-    const {
-        organization,
-        name,
-        address,
-        phoneNumber,
-        phoneExt,
-        email,
-        note
-    } = req.body;
 
     // add doc to db
     try {
         let contact = await Contact.create({
-            organization,
-            name,
-            address,
-            phoneNumber,
-            phoneExt,
-            email,
-            note,
+            ...req.body,
             createdBy: user_id
         });
 
@@ -62,14 +47,12 @@ const createContact = async (req, res) => {
         console.error(err);
 
         // 'errors' contains any mongoose model-validation fails
-        const { errors } = err;
+        const error = err.errors;
 
         // if no input errors, then send back the err message as a server error
-        if (!errors) {
-            err.errors.server = err.message;
-        };
+        if (!error) error = { server: { message: err.message } };
 
-        return res.status(400).json({ error: err.errors });
+        return res.status(400).json({ error });
     };
 };
 
@@ -122,14 +105,12 @@ const updateContact = async (req, res) => {
         console.error(err);
 
         // 'errors' contains any mongoose model-validation fails
-        const { errors } = err;
+        const error = err.errors;
 
         // if no input errors, then send back the err message as a server error
-        if (!errors) {
-            err.errors.server = err.message;
-        };
+        if (!error) error = { server: { message: err.message } };
 
-        return res.status(400).json({ error: err.errors });
+        return res.status(400).json({ error });
     };
 };
 
