@@ -4,25 +4,25 @@ import uniqueValidator from 'mongoose-unique-validator';
 const statusSchema = new Schema(
     {
         name: {
+            match: [/^[A-Za-z0-9 ]*$/, 'Only letters, numbers, and spaces.'],
+            required: [true, 'Cannot be empty.'],
+            trim: true,
             type: String,
             unique: true,
-            trim: true,
-            match: [/^[A-Za-z0-9 ]*$/, 'Only letters, numbers, and spaces.'],
-            required: [true, 'Cannot be empty.']
         },
         description: {
-            type: String,
+            required: [true, 'Cannot be empty.'],
             trim: true,
-            required: [true, 'Cannot be empty.']
+            type: String,
         },
         createdBy: {
-            type: Schema.Types.ObjectId,
             ref: 'User',
-            require: true
+            require: true,
+            type: Schema.Types.ObjectId,
         },
         isDefault: {
+            default: false,
             type: Boolean,
-            default: false
         },
     },
     { timestamps: true }

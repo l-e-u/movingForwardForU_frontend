@@ -119,4 +119,10 @@ const updateStatus = async (req, res) => {
     };
 };
 
-export { createStatus, getStatus, getStatuses, deleteStatus, updateStatus };
+export {
+    createStatus,
+    deleteStatus,
+    getStatus,
+    getStatuses,
+    updateStatus
+};

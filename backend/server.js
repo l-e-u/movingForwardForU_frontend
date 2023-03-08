@@ -8,8 +8,7 @@ import jobRoutes from './routes/jobs.js';
 import statusRoutes from './routes/statuses.js';
 import contactRoutes from './routes/contacts.js';
 import userRoutes from './routes/users.js';
-import vehicleRoutes from './routes/vehicles.js';
-import actionRoutes from './routes/actions.js';
+import feeRoutes from './routes/fees.js';
 
 const PORT = process.env.PORT;
 const URI = process.env.MONGO_URI;
@@ -31,8 +30,7 @@ app.use('/api/jobs', jobRoutes);
 app.use('/api/statuses', statusRoutes);
 app.use('/api/contacts', contactRoutes);
 app.use('/api/users', userRoutes);
-app.use('/api/vehicles', vehicleRoutes);
-app.use('/api/actions', actionRoutes);
+app.use('api/fees', feeRoutes);
 
 // connect to db
 connectToDatabase(URI)
