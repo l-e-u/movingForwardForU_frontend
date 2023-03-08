@@ -5,6 +5,7 @@ const transportSchema = new Schema({
     address: {
         type: String,
         trim: true,
+        index: true,
         required: [true, 'Cannot be empty.']
     },
     includeTime: {
@@ -13,22 +14,29 @@ const transportSchema = new Schema({
     }
 });
 
-const logSchema = new Schema(
+const noteSchema = new Schema(
     {
-        note: {
-            type: String,
-            trim: true,
-            required: [true, 'Cannot be empty.']
+        createdAt: {
+            type: Date,
+            default: new Date(),
+            required: true
         },
         createdBy: {
             type: Schema.Types.ObjectId,
             ref: 'User',
             required: true
         },
-        createdAt: {
-            type: Date,
-            default: new Date(),
-            required: true
+        message: {
+            type: String,
+            trim: true,
+            index: true,
+            required: [true, 'Cannot be empty.']
+        },
+        subject: {
+            type: String,
+            trim: true,
+            index: true,
+            required: [true, 'Cannot be empty.']
         },
         updatedAt: {
             type: Date,
@@ -41,17 +49,27 @@ const logSchema = new Schema(
 
 const jobSchema = new Schema(
     {
-        pickup: transportSchema,
         delivery: transportSchema,
-        parcel: {
-            type: String,
-            trim: true,
-            set: i => !i ? null : i
-        },
+        notes: [noteSchema],
+        pickup: transportSchema,
         createdBy: {
             type: Schema.Types.ObjectId,
             ref: 'User',
             required: true
+        },
+        customer: {
+            type: Schema.Types.ObjectId,
+            ref: 'Contact',
+            required: [true, 'Make a selection.']
+        },
+        drivers: [{
+            type: Schema.Types.ObjectId,
+            ref: 'User'
+        }],
+        parcel: {
+            type: String,
+            trim: true,
+            set: i => !i ? null : i
         },
         reference: {
             type: String,
@@ -63,16 +81,6 @@ const jobSchema = new Schema(
             ref: 'Status',
             required: [true, 'Make a selection.']
         },
-        drivers: [{
-            type: Schema.Types.ObjectId,
-            ref: 'User'
-        }],
-        customer: {
-            type: Schema.Types.ObjectId,
-            ref: 'Contact',
-            required: [true, 'Make a selection.']
-        },
-        logs: [logSchema],
     },
     { timestamps: true }
 );

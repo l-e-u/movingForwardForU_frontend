@@ -40,7 +40,7 @@ const AutoCompleteSelect = ({
 
     // searches for matching status names based on query input, on focus, a space is set as a value to all available selections, on blur, query is emptied to hide suggestions
     return (
-        <div className='position-relative mb-2'>
+        <div className='position-relative'>
             <div className='form-floating'>
                 <input
                     className={'form-control' + (inputError ? ' is-invalid' : '')}

@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
+import XButton from './XButton';
 
-const NoteInput = ({ input, handleOnChange, hasError, error }) => {
+const NoteInput = ({ input, handleOnChange, error }) => {
     const textAreaRef = useRef(null);
 
     useEffect(() => {
@@ -17,23 +18,29 @@ const NoteInput = ({ input, handleOnChange, hasError, error }) => {
     });
 
     return (
-        <div className='form-floating'>
-            <textarea
-                style={{ resize: 'none' }}
-                ref={textAreaRef}
-                name='note'
-                className={'form-control' + (error ? ' is-invalid' : '')}
-                id='note'
-                placeholder='Note'
-                rows={1}
-                value={input ?? ''}
-                onBlur={e => e.target.value.trim()}
-                onChange={handleOnChange}
-            />
-            <label htmlFor='note' className='form-label'>
-                Note
-                {error && <span className='inputError'>{error.message}</span>}
-            </label>
+        <div className='theme-light outline position-relative'>
+            <div className="position-absolute top-0 end-0">
+                <XButton handleOnClick={e => console.log('tesing closing')} />
+            </div>
+            tester
+            <div className='form-floating'>
+                <textarea
+                    style={{ resize: 'none' }}
+                    ref={textAreaRef}
+                    name='note'
+                    className={'form-control' + (error ? ' is-invalid' : '')}
+                    id='note'
+                    placeholder='Note'
+                    rows={1}
+                    value={input ?? ''}
+                    onBlur={e => e.target.value.trim()}
+                    onChange={handleOnChange}
+                />
+                <label htmlFor='note' className='form-label'>
+                    Note
+                    {error && <span className='inputError'>{error.message}</span>}
+                </label>
+            </div>
         </div>
     );
 };

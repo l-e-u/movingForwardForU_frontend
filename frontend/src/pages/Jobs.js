@@ -71,16 +71,14 @@ const Jobs = () => {
 
     return (
         <PageContentWrapper>
-            <div className='mb-4'>
-                {showCreateForm ? <CreateJobForm setShowThisForm={setShowCreateForm} /> :
-                    <button
-                        type='button'
-                        className={'rounded-pill btn btn-primary btn-sm px-3 d-block mx-auto'}
-                        onClick={handleCreateClick}>
-                        Create A Job
-                    </button>
-                }
-            </div>
+            {showCreateForm ? <CreateJobForm setShowThisForm={setShowCreateForm} /> :
+                <button
+                    type='button'
+                    className={'rounded-pill btn btn-primary btn-sm px-3 d-block mx-auto'}
+                    onClick={handleCreateClick}>
+                    Create A Job
+                </button>
+            }
 
             <FlexBoxWrapper>
                 {jobs && jobs.map((job) => {

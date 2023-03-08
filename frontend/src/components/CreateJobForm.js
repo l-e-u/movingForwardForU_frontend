@@ -16,11 +16,11 @@ const CreateJobForm = ({ setShowThisForm }) => {
         reference: '',
         customer: null,
         status: null,
-        logs: []
+        notes: []
     });
 
     return (
-        <div>
+        <>
             <FormHeader text='New Job'>
                 <CloseFormButton handleOnClick={() => setShowThisForm(false)} />
             </FormHeader>
@@ -33,7 +33,7 @@ const CreateJobForm = ({ setShowThisForm }) => {
                 isDisabled={isLoading}
                 handleSubmit={async (e) => {
                     e.preventDefault();
-                    return console.log(job);
+                    // return console.log(job);
                     await createJob({
                         ...job,
                         status: job.status?._id,
@@ -44,7 +44,7 @@ const CreateJobForm = ({ setShowThisForm }) => {
                             if (isCreated) setShowThisForm(false);
                         })
                 }} />
-        </div>
+        </>
     );
 };
 

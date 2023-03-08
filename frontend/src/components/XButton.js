@@ -4,7 +4,7 @@ const XButton = ({ handleOnClick }) => {
             type='button'
             className='btn border-0'
             onClick={handleOnClick} >
-            <i className='bi bi-x-lg'></i>
+            <i className='bi bi-x'></i>
         </button>
     );
 };

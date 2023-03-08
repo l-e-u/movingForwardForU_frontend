@@ -102,7 +102,6 @@ const PickupOrDeliveryInput = ({
                                 </label>
                             </div>
                             <ul className='list-group shadow selectList'>
-                                {console.log(suggestions)}
                                 {suggestions.map(suggestion => {
                                     return (
                                         <li key={suggestion.placeId} className='list-group-item' {...getSuggestionItemProps(suggestion)}>

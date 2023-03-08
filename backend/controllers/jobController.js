@@ -6,7 +6,7 @@ const docFieldsToPopulate = [
     'customer',
     'drivers',
     'createdBy',
-    'logs.createdBy'
+    'notes.createdBy'
 ];
 
 // get all jobs
@@ -37,28 +37,11 @@ const getJob = async (req, res) => {
 // create new job
 const createJob = async (req, res) => {
     const { _id: user_id } = req.user;
-    const {
-        status,
-        customer,
-        reference,
-        parcel,
-        pickup,
-        delivery,
-        drivers,
-        logs
-    } = req.body;
 
     // add doc to db
     try {
         let job = await Job.create({
-            status,
-            customer,
-            reference,
-            parcel,
-            pickup,
-            delivery,
-            drivers,
-            logs,
+            ...req.body,
             createdBy: user_id
         });
 
@@ -70,15 +53,44 @@ const createJob = async (req, res) => {
     catch (err) {
         console.error(err);
 
-        // 'errors' contains any mongoose model-validation fails
-        const { errors } = err;
+        // 'errors' contains any mongoose model-validation fails, rename to error
+        const { errors: error } = err;
 
-        // if no input errors, then send back the err message as a server error
-        if (!errors) {
-            err.errors.server = err.message;
+        // go through the properties and seek out note errors, format them in an array
+        for (const key in error) {
+            const propStringArr = key.split('.');
+            const propName = propStringArr[0];
+
+            // having an error with the first note's subject, mongoose will return an error object with a key named 'note.0.subject'
+            // cycle through the props, and with note errors, format them into an array so it'll be error.notes[index] = {subject;}
+            if (propName === 'notes') {
+                const index = propStringArr[1];
+
+                // note schema has subject or message properties
+                const noteProp = propStringArr[2];
+
+                // this is the actual error message
+                const message = error[key].message;
+
+                // create the array if it doesn't exist
+                if (!error.notes) error.notes = [];
+
+                error.notes[index] = {
+                    ...error.notes[index],
+                    [noteProp]: message
+                };
+
+                // delete the old key
+                delete error[key];
+            };
         };
 
-        return res.status(400).json({ error: err.errors });
+        // if no input errors, then send back the err message as a server error
+        if (!error) {
+            error.server = err.message;
+        };
+
+        return res.status(400).json({ error });
     };
 };
 
@@ -126,22 +138,51 @@ const updateJob = async (req, res) => {
             return res.status(404).json({ error });
         };
 
-        console.log(job.logs);
+        console.log('to client:', job.notes);
 
         return res.status(200).json(job);
     }
     catch (err) {
         console.error(err);
 
-        // 'errors' contains any mongoose model-validation fails
-        const { errors } = err;
+        // 'errors' contains any mongoose model-validation fails, rename to error
+        const { errors: error } = err;
 
-        // if no input errors, then send back the err message as a server error
-        if (!errors) {
-            err.errors.server = err.message;
+        // go through the properties and seek out note errors, format them in an array
+        for (const key in error) {
+            const propStringArr = key.split('.');
+            const propName = propStringArr[0];
+
+            // having an error with the first note's subject, mongoose will return an error object with a key named 'note.0.subject'
+            // cycle through the props, and with note errors, format them into an array so it'll be error.notes[index] = {subject;}
+            if (propName === 'notes') {
+                const index = propStringArr[1];
+
+                // note schema has subject or message properties
+                const noteProp = propStringArr[2];
+
+                // this is the actual error message
+                const message = error[key].message;
+
+                // create the array if it doesn't exist
+                if (!error.notes) error.notes = [];
+
+                error.notes[index] = {
+                    ...error.notes[index],
+                    [noteProp]: message
+                };
+
+                // delete the old key
+                delete error[key];
+            };
         };
 
-        return res.status(400).json({ error: err.errors });
+        // if no input errors, then send back the err message as a server error
+        if (!error) {
+            error.server = err.message;
+        };
+
+        return res.status(400).json({ error });
     }
 };
 

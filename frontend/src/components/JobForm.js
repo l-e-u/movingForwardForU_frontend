@@ -3,25 +3,19 @@ import RequiredFieldsText from './RequiredFieldsText';
 import StatusSearchSelect from './StatusSearchSelect';
 import ContactSearchSelect from './ContactSearchSelect';
 import DriverSearchSelect from './UserSearchSelect';
-import LogInput from './LogInput';
 import PickupOrDeliveryInput from './PickupOrDeliveryInput';
+import NotesInput from './NotesInput';
 
 // functions
 import { removeExtraSpaces } from '../utils/StringUtils';
 
-// hooks
-import { useAuthContext } from '../hooks/useAuthContext';
-
 const JobForm = ({ job, setJob, handleSubmit, error, setError, isDisabled }) => {
-    const { user } = useAuthContext();
-    const { status, customer, reference, parcel, drivers, logs } = job;
+    const { status, customer, reference, parcel, drivers, notes } = job;
 
     const errorOther = error?.server;
 
-    console.log(error)
-
     return (
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} className='d-flex flex-column gap-2'>
             <RequiredFieldsText />
 
             {/* STATUS */}
@@ -39,7 +33,7 @@ const JobForm = ({ job, setJob, handleSubmit, error, setError, isDisabled }) => 
                 inputErrorMessage={error?.customer?.message} />
 
             {/* REFERENCE */}
-            <div className='form-floating mb-2'>
+            <div className='form-floating'>
                 <input
                     className='form-control'
                     type='text'
@@ -67,7 +61,7 @@ const JobForm = ({ job, setJob, handleSubmit, error, setError, isDisabled }) => 
             </div>
 
             {/* PARCEL */}
-            <div className='form-floating mb-2'>
+            <div className='form-floating'>
                 <input
                     type='text'
                     className='form-control'
@@ -111,8 +105,7 @@ const JobForm = ({ job, setJob, handleSubmit, error, setError, isDisabled }) => 
                 job={job}
                 setJob={setJob} />
 
-            {/* user can added a list of note with text and optional attachment */}
-            <LogInput logs={logs} setJob={setJob} error={error} setError={setError} userId={user._id} />
+            <NotesInput notes={notes} setJob={setJob} error={error} setError={setError} />
 
             <button
                 type='submit'

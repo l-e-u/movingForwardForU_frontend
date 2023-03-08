@@ -36,6 +36,17 @@ nav.menu {
   background-color: rgba(0 0 0 / .75) !important;
 }
 
+.btn-secondary {
+  color: #41464b !important;
+  background-color: #e2e3e5 !important;
+}
+
+/* targets job form notes input, subject and message fields */
+.form-control.is-invalid .form-control-plaintext::placeholder,
+.form-control.is-invalid .form-control-plaintext::-webkit-input-placeholder {
+  color: var(--bs-danger) !important;
+}
+
 .list-group li {
   list-style: none;
 }

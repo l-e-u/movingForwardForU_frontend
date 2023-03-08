@@ -4,8 +4,8 @@ import SmallHeader from './SmallHeader';
 import XButton from './XButton';
 
 // list inputs that user can log notes, each handle their own errors and can individually removed
-const LogInput = ({ logs, setJob, error, setError, userId }) => {
-    const hasDrivers = logs.length > 0;
+const LogInput = ({ notes, setJob, error, setError, userId }) => {
+    const hasDrivers = notes.length > 0;
 
     return (
         <>
@@ -13,9 +13,9 @@ const LogInput = ({ logs, setJob, error, setError, userId }) => {
                 <>
                     <SmallHeader text='Logs' />
                     <ul className='list-group mt-2 gap-2'>
-                        {logs.map((log, index) => {
+                        {notes.map((log, index) => {
                             const { _id } = log;
-                            const errorProperty = `logs.${index}.note`;
+                            const errorProperty = `notes.${index}.note`;
                             const inputError = error?.[errorProperty];
                             return (
                                 <li key={_id || index}>
@@ -24,8 +24,8 @@ const LogInput = ({ logs, setJob, error, setError, userId }) => {
                                             input={log.note}
                                             error={inputError}
                                             handleOnChange={e => {
-                                                // make a copy of the logs
-                                                const updatedLogs = [...logs];
+                                                // make a copy of the notes
+                                                const updatedLogs = [...notes];
 
                                                 // save user input only to the note being changed
                                                 updatedLogs[index] = {
@@ -38,7 +38,7 @@ const LogInput = ({ logs, setJob, error, setError, userId }) => {
                                                 setJob(prev => {
                                                     return ({
                                                         ...prev,
-                                                        logs: updatedLogs
+                                                        notes: updatedLogs
                                                     })
                                                 })
                                             }} />
@@ -56,7 +56,7 @@ const LogInput = ({ logs, setJob, error, setError, userId }) => {
                                                 setJob(prev => {
                                                     return {
                                                         ...prev,
-                                                        logs: prev.logs.filter((l, i) => {
+                                                        notes: prev.notes.filter((l, i) => {
                                                             if (_id) return l._id !== _id;
                                                             return i !== index;
                                                         })
@@ -79,7 +79,7 @@ const LogInput = ({ logs, setJob, error, setError, userId }) => {
                     setJob(prev => {
                         return {
                             ...prev,
-                            logs: [...prev.logs, { note: '', createdBy: userId }]
+                            notes: [...prev.notes, { note: '', createdBy: userId }]
                         }
                     })
                 }}>

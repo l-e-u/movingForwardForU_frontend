@@ -63,14 +63,14 @@ const UserSearchSelect = ({ drivers, setJob }) => {
                 isLoading={isLoading} />
 
             {hasAddedDrivers &&
-                <>
-                    <SmallHeader text={'Driver' + (drivers.length > 1 ? 's' : '')} />
+                <div className='mt-2 d-flex flex-column gap-1'>
+                    <SmallHeader text={'DRIVER' + (drivers.length > 1 ? 'S' : '')} />
                     {drivers.map((driver, index) => {
                         const { _id, firstName, lastName } = driver;
                         const fullName = firstName + ' ' + lastName;
 
                         return (
-                            <div className='mt-2' key={_id}>
+                            <div key={_id}>
                                 <CancellableOption
                                     value={fullName}
                                     label={driver.email}
@@ -87,7 +87,7 @@ const UserSearchSelect = ({ drivers, setJob }) => {
                             </div>
                         );
                     })}
-                </>}
+                </div>}
         </div>
     );
 };
