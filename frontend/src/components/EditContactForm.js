@@ -8,6 +8,7 @@ import { noCharChanges } from '../utils/StringUtils.js';
 import CloseFormButton from './XButton.js';
 import ContactForm from './ContactForm.js';
 import FormHeader from './FormHeader.js';
+import CautionNotice from './CautionNotice.js';
 
 // Form to create a contact for a job and description of what the contact means.
 const EditContactForm = ({ prevContact, setShowThisForm }) => {
@@ -51,10 +52,7 @@ const EditContactForm = ({ prevContact, setShowThisForm }) => {
                 <CloseFormButton handleOnClick={() => setShowThisForm(false)} />
             </FormHeader>
 
-            <p className='mt-2 mb-0'>
-                <i className='bi bi-exclamation-triangle-fill text-warning pe-2'></i>
-                Changes will be reflected on jobs with this contact set as customer.
-            </p>
+            <CautionNotice text='Changes will be reflected on jobs with this contact set as customer.' />
 
             <ContactForm
                 contact={contact}

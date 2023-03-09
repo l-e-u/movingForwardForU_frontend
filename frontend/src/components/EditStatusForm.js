@@ -6,6 +6,7 @@ import { noCharChanges } from "../utils/StringUtils.js";
 
 // components
 import FormHeader from './FormHeader.js';
+import CautionNotice from './CautionNotice.js';
 import StatusForm from './StatusForm.js';
 import XButton from './XButton.js';
 
@@ -27,10 +28,7 @@ const EditStatusForm = ({ prevStatus, setShowThisForm }) => {
                 <XButton handleOnClick={() => setShowThisForm(false)} />
             </FormHeader>
 
-            <p className='mt-2 mb-0'>
-                <i className="bi bi-exclamation-triangle-fill text-warning pe-2"></i>
-                Changes will also reflect on all jobs with the same status.
-            </p>
+            <CautionNotice text='Changes will also reflect on all jobs with the same status.' />
 
             <StatusForm
                 status={status}

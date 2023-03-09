@@ -5,7 +5,14 @@ import { removeExtraSpaces } from '../utils/StringUtils';
 import RequiredFieldsText from './RequiredFieldsText';
 import GrowingTextArea from './GrowingTextArea';
 
-const UserForm = ({ user, setUser, handleSubmit, error, isDisabled, isEditing = false }) => {
+const UserForm = ({
+    error,
+    handleSubmit,
+    isDisabled,
+    setUser,
+    user,
+    isEditing = false,
+}) => {
     const errorFromEmailInput = error?.email;
     const errorFromFirstNameInput = error?.firstName;
     const errorFromLastNameInput = error?.lastName;
@@ -15,7 +22,7 @@ const UserForm = ({ user, setUser, handleSubmit, error, isDisabled, isEditing = 
             <RequiredFieldsText />
 
             {/* Deactivating a user only happens when editing the doc */}
-            {isEditing && <div className='form-check mb-2'>
+            {isEditing && <div className='form-check'>
                 <input
                     type='checkbox'
                     className='form-check-input'
@@ -32,7 +39,7 @@ const UserForm = ({ user, setUser, handleSubmit, error, isDisabled, isEditing = 
                 <label className='form-check-label' htmlFor='activeCheck'>Active</label>
             </div>}
 
-            <div className='form-check mb-2'>
+            <div className='form-check'>
                 <input
                     type='checkbox'
                     className='form-check-input'
@@ -53,7 +60,7 @@ const UserForm = ({ user, setUser, handleSubmit, error, isDisabled, isEditing = 
 
 
             {/* NAME */}
-            <div className='form-floating mb-2'>
+            <div className='form-floating'>
                 <input
                     type='text'
                     className={'form-control' + (errorFromFirstNameInput ? ' is-invalid' : '')}
@@ -83,7 +90,7 @@ const UserForm = ({ user, setUser, handleSubmit, error, isDisabled, isEditing = 
                 </label>
             </div>
 
-            <div className='form-floating mb-2'>
+            <div className='form-floating'>
                 <input
                     type='text'
                     className={'form-control' + (errorFromLastNameInput ? ' is-invalid' : '')}
@@ -114,7 +121,7 @@ const UserForm = ({ user, setUser, handleSubmit, error, isDisabled, isEditing = 
             </div>
 
             {/* EMAIL */}
-            <div className='form-floating mb-2'>
+            <div className='form-floating'>
                 <input
                     type='email'
                     className={'form-control' + (errorFromEmailInput ? ' is-invalid' : '')}

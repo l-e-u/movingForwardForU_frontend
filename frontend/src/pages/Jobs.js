@@ -13,6 +13,7 @@ import DeleteDocIcon from '../components/DeleteDocIcon.js';
 import FlexBoxWrapper from '../components/FlexBoxWrapper.js';
 import EditJobForm from '../components/EditJobForm.js';
 import PageContentWrapper from '../components/PageContentWrapper.js';
+import ShowCreateFormButton from '../components/ShowCreateFormButton.js';
 
 // date fns
 import formatDistanceToNow from 'date-fns/formatDistanceToNow';
@@ -50,12 +51,6 @@ const Jobs = () => {
         };
     };
 
-    // shows the create form and hides other forms
-    const handleCreateClick = () => {
-        setShowCreateForm(true);
-        setShowEditForm(false);
-    };
-
     // function closure returns a func that sets the contact to be edited, hides the CreateStatusForm and shows EditStatusForm
     const handleEditClick = (job) => {
         return () => {
@@ -71,13 +66,13 @@ const Jobs = () => {
 
     return (
         <PageContentWrapper>
-            {showCreateForm ? <CreateJobForm setShowThisForm={setShowCreateForm} /> :
-                <button
-                    type='button'
-                    className={'rounded-pill btn btn-primary btn-sm px-3 d-block mx-auto'}
-                    onClick={handleCreateClick}>
-                    Create A Job
-                </button>
+            {showCreateForm ?
+                <CreateJobForm setShowThisForm={setShowCreateForm} /> :
+                <ShowCreateFormButton text='Create a Job' handleOnClick={() => {
+                    setShowCreateForm(true);
+                    setShowEditForm(false);
+                }}
+                />
             }
 
             <FlexBoxWrapper>
@@ -85,17 +80,16 @@ const Jobs = () => {
                     const { _id, createdBy, createdAt } = job;
                     const isEditingThisDoc = showEditForm && (_id === docToEdit._id);
 
-                    job.listDrivers = true;
-
                     return (
                         <CardContainer key={_id} hasCreatedInfo={true}>
                             {/* Edit and Delete options */}
                             <div className='position-absolute top-0 end-0 pe-3 pt-2 d-flex'>
                                 {!isEditingThisDoc && <EditDocIcon onClick={handleEditClick(job)} />}
                             </div>
+
                             {isEditingThisDoc ?
                                 <EditJobForm prevJob={job} setShowThisForm={setShowEditForm} /> :
-                                <JobOverview {...job} />
+                                <JobOverview {...job} listDrivers={false} />
                             }
                             <CreatedInfo createdBy={createdBy} createdAt={createdAt} />
                         </CardContainer>

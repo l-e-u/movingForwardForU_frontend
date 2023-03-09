@@ -14,7 +14,7 @@ const CreateUserForm = ({ setShowThisForm }) => {
         firstName: '',
         lastName: '',
         email: '',
-        note: '',
+        comments: '',
         isAdmin: false,
     });
 
@@ -25,8 +25,6 @@ const CreateUserForm = ({ setShowThisForm }) => {
             </FormHeader>
 
             <UserForm
-                user={user}
-                setUser={setUser}
                 error={error}
                 isDisabled={isLoading}
                 handleSubmit={async (e) => {
@@ -36,7 +34,10 @@ const CreateUserForm = ({ setShowThisForm }) => {
                         .then(isCreated => {
                             if (isCreated) setShowThisForm(false);
                         })
-                }} />
+                }}
+                setUser={setUser}
+                user={user}
+            />
         </>
     );
 };
