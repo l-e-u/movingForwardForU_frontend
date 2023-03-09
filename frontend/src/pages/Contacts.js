@@ -12,6 +12,7 @@ import EditContactForm from '../components/EditContactForm.js';
 import ContactOverview from '../components/ContactOverview.js';
 import FlexBoxWrapper from '../components/FlexBoxWrapper.js';
 import PageContentWrapper from '../components/PageContentWrapper.js';
+import ShowCreateFormButton from '../components/ShowCreateFormButton.js';
 
 const Contacts = () => {
   const { contacts, dispatch } = useContactsContext();
@@ -68,15 +69,16 @@ const Contacts = () => {
 
   return (
     <PageContentWrapper>
-      <div className='mb-4'>
+      <div className='mb-3'>
         {showCreateForm ?
           <CreateContactForm setShowThisForm={setShowCreateForm} /> :
-          <button
-            type='button'
-            className={'rounded-pill btn btn-primary btn-sm px-3 d-block mx-auto'}
-            onClick={() => setShowCreateForm(true)}>
-            Create A Contact
-          </button>
+          <ShowCreateFormButton
+            handleOnClick={() => {
+              setShowCreateForm(true);
+              setShowEditForm(false);
+            }}
+            text='Create a Contact'
+          />
         }
       </div>
 

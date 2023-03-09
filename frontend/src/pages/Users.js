@@ -40,7 +40,7 @@ const Users = () => {
 
     return (
         <PageContentWrapper>
-            <div className='mb-4'>
+            <div className='mb-3'>
                 {showCreateForm ?
                     <CreateUserForm setShowThisForm={setShowCreateForm} /> :
                     <ShowCreateFormButton text='Create A User' handleOnClick={() => {

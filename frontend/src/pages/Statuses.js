@@ -13,6 +13,7 @@ import EditDocIcon from '../components/EditDocIcon.js';
 import StatusOverview from '../components/StatusOverview.js';
 import FlexBoxWrapper from '../components/FlexBoxWrapper.js';
 import PageContentWrapper from '../components/PageContentWrapper.js';
+import ShowCreateFormButton from '../components/ShowCreateFormButton.js';
 
 const Statuses = () => {
     const { getStatuses, error } = useGetStatuses();
@@ -68,17 +69,17 @@ const Statuses = () => {
 
     return (
         <PageContentWrapper>
-            <div className='mb-4'>
+            <div className='mb-3'>
                 {showCreateForm ?
                     <CreateStatusForm setShowThisForm={setShowCreateForm} /> :
-                    <button
-                        type='button'
-                        className={'rounded-pill btn btn-primary btn-sm px-3 d-block mx-auto'}
-                        onClick={handleCreateClick}>
-                        Create A Status
-                    </button>
+                    <ShowCreateFormButton
+                        handleOnClick={() => {
+                            setShowCreateForm(true);
+                            setShowEditForm(false);
+                        }}
+                        text='Create a Status'
+                    />
                 }
-
             </div>
 
             <FlexBoxWrapper>

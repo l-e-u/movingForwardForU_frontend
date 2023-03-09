@@ -9,7 +9,6 @@ import CardContainer from '../components/CardContainer.js';
 import JobOverview from '../components/JobOverview.js';
 import CreateJobForm from '../components/CreateJobForm.js';
 import EditDocIcon from '../components/EditDocIcon.js';
-import DeleteDocIcon from '../components/DeleteDocIcon.js';
 import FlexBoxWrapper from '../components/FlexBoxWrapper.js';
 import EditJobForm from '../components/EditJobForm.js';
 import PageContentWrapper from '../components/PageContentWrapper.js';
@@ -20,8 +19,7 @@ import formatDistanceToNow from 'date-fns/formatDistanceToNow';
 
 const Jobs = () => {
     const { getJobs, error, isLoading } = useGetJobs();
-    const { jobs, dispatch } = useJobsContext();
-    const { user } = useAuthContext();
+    const { jobs } = useJobsContext();
 
     // local state
     const [docToEdit, setDocToEdit] = useState(null);
@@ -34,22 +32,6 @@ const Jobs = () => {
             await getJobs();
         })();
     }, []);
-
-    // deletes contact by _id
-    const deleteById = async (_id) => {
-        const response = await fetch('/api/contacts/' + _id, {
-            method: 'DELETE',
-            headers: {
-                'Authentication': `Bearer ${user.token}`
-            }
-        });
-
-        const json = await response.json();
-
-        if (response.ok) {
-            dispatch({ type: 'DELETE_CONTACT', payload: json })
-        };
-    };
 
     // function closure returns a func that sets the contact to be edited, hides the CreateStatusForm and shows EditStatusForm
     const handleEditClick = (job) => {
@@ -66,14 +48,16 @@ const Jobs = () => {
 
     return (
         <PageContentWrapper>
-            {showCreateForm ?
-                <CreateJobForm setShowThisForm={setShowCreateForm} /> :
-                <ShowCreateFormButton text='Create a Job' handleOnClick={() => {
-                    setShowCreateForm(true);
-                    setShowEditForm(false);
-                }}
-                />
-            }
+            <div className='mb-3'>
+                {showCreateForm ?
+                    <CreateJobForm setShowThisForm={setShowCreateForm} /> :
+                    <ShowCreateFormButton text='Create a Job' handleOnClick={() => {
+                        setShowCreateForm(true);
+                        setShowEditForm(false);
+                    }}
+                    />
+                }
+            </div>
 
             <FlexBoxWrapper>
                 {jobs && jobs.map((job) => {
