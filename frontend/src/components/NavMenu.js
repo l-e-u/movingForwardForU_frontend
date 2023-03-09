@@ -11,6 +11,7 @@ const NavMenu = ({ selectedLink, setSelectedLink, setShowThisNav, user }) => {
         { name: 'Contacts', path: '/contacts', icon: 'bi-person-vcard-fill' },
         { name: 'Statuses', path: '/statuses', icon: 'bi-tags-fill' },
         { name: 'Users', path: '/users', icon: 'bi-people-fill' },
+        { name: 'Fees', path: '/fees', icon: 'bi-currency-dollar' },
     ];
     const { logout } = useLogout();
     const isAdmin = user?.isAdmin;

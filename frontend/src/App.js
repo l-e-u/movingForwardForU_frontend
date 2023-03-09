@@ -16,6 +16,7 @@ import Statuses from './pages/Statuses.js';
 import Contacts from './pages/Contacts.js';
 import Users from './pages/Users.js';
 import Verify from './pages/Verify.js';
+import Fees from './pages/Fees.js';
 
 function App() {
   const [showNavMenu, setShowNavMenu] = useState(false);
@@ -52,6 +53,10 @@ function App() {
             <Route
               path='/users'
               element={user ? <Users /> : <Navigate to='/login' />}
+            />
+            <Route
+              path='/fees'
+              element={user ? <Fees /> : <Navigate to='/login' />}
             />
             <Route
               path='/login'
