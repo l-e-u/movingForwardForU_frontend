@@ -30,7 +30,7 @@ app.use('/api/jobs', jobRoutes);
 app.use('/api/statuses', statusRoutes);
 app.use('/api/contacts', contactRoutes);
 app.use('/api/users', userRoutes);
-app.use('api/fees', feeRoutes);
+app.use('/api/fees', feeRoutes);
 
 // connect to db
 connectToDatabase(URI)
