@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams } from 'react-router';
 
 // components
@@ -7,34 +7,118 @@ import PasswordChecklist from 'react-password-checklist';
 
 // hooks
 import { useVerify } from '../hooks/useVerify.js';
+import LoadingDocuments from '../components/LoadingDocuments.js';
+import PageContentWrapper from '../components/PageContentWrapper.js';
 
 const Verify = () => {
-    const { token } = useParams();
+    const { emailToken } = useParams();
     const { name } = useParams();
-    const [password, setPassword] = useState('');
+
+    const { verify, error: verifyError, isLoading: verifyIsLoading } = useVerify();
+
     const [confirmPassword, setConfirmPassword] = useState('');
+    const [error, setError] = useState(null);
+    const [isLoading, setIsLoading] = useState(true);
+    const [password, setPassword] = useState('');
     const [passwordIsValid, setPasswordIsValid] = useState(false);
-    const { verify, error, isLoading } = useVerify();
+    const [user, setUser] = useState(null);
+
+    // on first mount only, check if the email token is still valid and get user
+    useEffect(() => {
+        (async () => {
+            setIsLoading(true);
+
+            // don't want to show the error if user is trying to rectify, so null error at the start
+            setError(null);
+
+            // on mount, check if the token is valid, if invalid, show error
+            // if the user is already verified, then direct them to login
+            const response = await fetch('/api/users/verify/' + emailToken, { method: 'POST' });
+
+            // expecting a found user
+            const json = await response.json();
+
+            if (!response.ok) {
+                setIsLoading(false);
+                setError(json.error);
+                return false;
+            };
+
+            if (response.ok) {
+                setIsLoading(false);
+                setUser(json);
+                return true;
+            };
+        })();
+    }, [emailToken]);
+
+    // redired to login page when token has expired OR when the user has already been verified
+    useEffect(() => {
+        let timeoutId;
+        if (error?.token || user?.isVerified) {
+            timeoutId = setTimeout(() => {
+                window.location.replace('/');
+            }, 3500);
+        };
+
+        return () => clearTimeout(timeoutId);
+    }, [user, error]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        await verify({ token, password, confirmPassword });
+        await verify({
+            _id: user._id,
+            password,
+            confirmPassword
+        }).then(isVerified => {
+            if (isVerified) {
+                setUser(prev => {
+                    return {
+                        ...prev,
+                        isVerified: true
+                    }
+                })
+            };
+        });
     };
 
     return (
-        <div className='flex-grow-1 mx-auto my-3' style={{ maxWidth: '350px' }}>
-            <CardContainer>
-                <form className='verify' onSubmit={handleSubmit}>
+        <PageContentWrapper>
+            <div className='flex-grow-1 mx-auto my-3' style={{ maxWidth: '350px' }}>
+                <CardContainer>
                     <h2 className='fs-3 mb-0'>
                         Welcome,
                     </h2>
-
                     <h3 className='mb-3'>{name + '!'}</h3>
 
-                    {error?.token ?
-                        <p className='text-danger'>{error.token.message}</p> :
+                    {/* while loading, display the loading spinner */}
+                    {isLoading && <LoadingDocuments />}
+
+                    {/* show error when token has expired */}
+                    {error?.token && <p>Oops! This link has expired.</p>}
+
+                    {/* any server errors during verifying user */}
+                    {verifyError && <p>Something went wrong. Please refresh the page and try again.</p>}
+
+                    {/* succesful confirmation */}
+                    {user?.isVerified && <p>You're good to go!</p>}
+
+                    {/* if the email token has expired OR the user has already been verified, direct them to the login screen */}
+                    {(error?.token || user?.isVerified) &&
                         <>
+                            <p style={{ whiteSpace: 'pre-wrap' }}>You will be redirected to the login page in 3 seconds...
+                            </p>
+                            <div className='spinner-border spinner-border-sm' role='status'>
+                                <span className='visually-hidden'>Loading...</span>
+                            </div>
+                        </>
+                    }
+
+                    {/* have the user set their password to verify their email */}
+                    {(!error && !user?.isVerified) &&
+                        <form className='verify' onSubmit={handleSubmit}>
+
                             <p>Please set your password to complete your account.<br />Afterwards you'll be able to login.</p>
 
                             <div className='form-floating mb-2'>
@@ -82,15 +166,15 @@ const Verify = () => {
 
                             <button
                                 type='submit'
-                                disabled={isLoading || !passwordIsValid}
+                                disabled={verifyIsLoading || !passwordIsValid}
                                 className='btn btn-sm btn-success rounded-pill d-block ms-auto mt-4 px-3'>
-                                {(isLoading ? 'Saving...' : 'Submit')}
+                                {verifyIsLoading ? 'Saving...' : 'Submit'}
                             </button>
-                        </>
+                        </form>
                     }
-                </form>
-            </CardContainer>
-        </div >
+                </CardContainer>
+            </div >
+        </PageContentWrapper>
     )
 };
 

@@ -1,6 +1,6 @@
 const FlexBoxWrapper = ({ children }) => {
     return (
-        <div className='d-flex flex-wrap justify-content-center gap-4'>
+        <div className='d-flex flex-column gap-3'>
             {children}
         </div>
     )

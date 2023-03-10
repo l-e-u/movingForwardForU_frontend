@@ -27,6 +27,7 @@ const CreateUserForm = ({ setShowThisForm }) => {
             <UserForm
                 error={error}
                 isDisabled={isLoading}
+                isLoading={isLoading}
                 handleSubmit={async (e) => {
                     e.preventDefault();
 

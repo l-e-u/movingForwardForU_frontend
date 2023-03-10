@@ -4,16 +4,16 @@ export const useVerify = () => {
     const [error, setError] = useState(null);
     const [isLoading, setIsLoading] = useState(null);
 
-    const verify = async ({ token, password, confirmPassword }) => {
+    const verify = async ({ _id, password, confirmPassword }) => {
         setIsLoading(true);
 
         // don't want to show the error if user is trying to rectify, so null error at the start
         setError(null);
 
-        const response = await fetch('/api/users/verify/' + token, {
-            method: 'POST',
+        const response = await fetch('/api/users/verify', {
+            method: 'PATCH',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ password, confirmPassword })
+            body: JSON.stringify({ _id, password, confirmPassword })
         });
 
         const json = await response.json();

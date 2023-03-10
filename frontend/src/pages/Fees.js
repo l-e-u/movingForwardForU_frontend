@@ -70,7 +70,7 @@ const Fees = () => {
                 }
             </div>
             {/* show spinner with actively fetching data */}
-            {isLoading && <LoadingDocuments />}
+            {isLoading && <div style={{ height: '50vh' }}><LoadingDocuments /></div>}
             {error && <ErrorLoadingDocuments docType='Fees' />}
             <FlexBoxWrapper>
                 {fees &&

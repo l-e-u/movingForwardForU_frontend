@@ -4,12 +4,13 @@ import { requireAuth } from '../middleware/requireAuth.js';
 // controller functions
 import {
     loginUser,
-    verifyUserEmailAndSetPassword,
+    verifyUser,
     registerUser,
     getUser,
     getUsers,
     deleteUser,
     updateUser,
+    verifyEmailToken
 } from "../controllers/userController.js";
 
 const router = Router();
@@ -17,8 +18,11 @@ const router = Router();
 // login route
 router.post('/login', loginUser);
 
+// verify email token route
+router.post('/verify/:emailToken', verifyEmailToken)
+
 // verify route
-router.post('/verify/:token', verifyUserEmailAndSetPassword);
+router.patch('/verify', verifyUser);
 
 // authenticates user is valid and logged in to access further end points
 router.use(requireAuth);

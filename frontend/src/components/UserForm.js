@@ -9,6 +9,7 @@ const UserForm = ({
     error,
     handleSubmit,
     isDisabled,
+    isLoading,
     setUser,
     user,
     isEditing = false,
@@ -18,7 +19,7 @@ const UserForm = ({
     const errorFromLastNameInput = error?.lastName;
 
     return (
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} className='d-flex flex-column gap-2'>
             <RequiredFieldsText />
 
             {/* Deactivating a user only happens when editing the doc */}
@@ -164,11 +165,13 @@ const UserForm = ({
                 <label htmlFor='commentsTextarea' className='form-label'>Comments</label>
             </div>
 
+            {(isLoading && !isEditing) && <div className='alert alert-success py-1 m-0'>Sending email to user...</div>}
+
             <button
                 type='submit'
                 disabled={isDisabled}
-                className='btn btn-sm btn-success rounded-pill px-3 d-flex mt-4 ms-auto'>
-                Save
+                className='btn btn-sm btn-success rounded-pill px-3 d-flex ms-auto'>
+                {isLoading ? 'Saving...' : 'Submit'}
             </button>
         </form>
     );

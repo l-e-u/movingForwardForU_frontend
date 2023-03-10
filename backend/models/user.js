@@ -55,8 +55,41 @@ const userSchema = new Schema({
 
 userSchema.plugin(uniqueValidator, { message: 'Is already in use.' });
 
-// static login method
+// changes a user's password
+userSchema.statics.changePassword = async function ({ _id, password, confirmPassword }) {
+    const errMsg1 = 'Passwords do not match.';
+    const errMsg2 = 'Password is not strong enough.';
+    const message = { message: errMsg1 };
 
+    if (password !== confirmPassword) {
+        throw {
+            errors: {
+                password: message,
+                confirmPassword: message
+            }
+        };
+    };
+
+    if (!validator.isStrongPassword(password)) {
+        throw {
+            errors: {
+                password: { message: errMsg2 }
+            }
+        };
+    };
+
+    const salt = await bcrypt.genSalt(10);
+    const hash = await bcrypt.hash(password, salt);
+
+    const user = await this.findByIdAndUpdate(
+        { _id },
+        { password: hash }
+    );
+
+    return user;
+};
+
+// logs in a verified user
 userSchema.statics.login = async function (email, password) {
     const errInputMsg = 'Cannot be empty.'
     const errMsg = 'Incorrect credentials.';
@@ -92,49 +125,6 @@ userSchema.statics.login = async function (email, password) {
 
     return user;
 };
-
-userSchema.statics.verify = async function ({ _id, password, confirmPassword }) {
-    const u = await this.findById(_id);
-
-    if (u.isVerified) {
-        throw {
-            errors: {
-                token: { message: 'You have already been verified, please login.' }
-            }
-        }
-    };
-
-    if (password !== confirmPassword) {
-        throw {
-            errors: {
-                password: { message: 'Passwords do not match.' },
-                confirmPassword: { message: 'Passwords do not match.' }
-            }
-        };
-    };
-
-    if (!validator.isStrongPassword(password)) {
-        throw {
-            errors: {
-                password: { message: 'Password is not strong enough.' }
-            }
-        };
-    };
-
-    const salt = await bcrypt.genSalt(10);
-    const hash = await bcrypt.hash(password, salt);
-
-    const user = await this.findByIdAndUpdate(
-        { _id },
-        {
-            password: hash,
-            isVerified: true
-        },
-        { returnDocument: 'after' }
-    );
-
-    return user;
-}
 
 const User = Model('User', userSchema);
 

@@ -63,7 +63,7 @@ function App() {
               element={!user ? <Login /> : <Navigate to='/' />}
             />
             <Route
-              path='/verify/:token/:name'
+              path='/verify/:emailToken/:name'
               element={!user ? <Verify /> : <Navigate to='/login' />}
             />
           </Routes>

@@ -71,26 +71,58 @@ const loginUser = async (req, res) => {
     };
 };
 
-const verifyUserEmailAndSetPassword = async (req, res) => {
-    const { token } = req.params;
-    const { password, confirmPassword } = req.body;
+const verifyEmailToken = async (req, res) => {
+    const { emailToken } = req.params;
 
     try {
-        const { userId: _id } = jwt.verify(token, process.env.EMAIL_TOKEN_SECURE);
+        const { userId: _id } = jwt.verify(emailToken, process.env.EMAIL_TOKEN_SECURE);
 
-        const user = await User.verify({ _id, password, confirmPassword });
+        const user = await User.findById(_id);
 
         return res.status(200).json(user);
     }
     catch (err) {
         console.error(err);
 
+        // error for tokens over their 1h expiration
         if (err.name === 'TokenExpiredError') {
             err.errors = {
                 token:
-                    { message: 'This link is no longer valid. If you have already set your password, please try to login. If you cannot login, contact us.' }
-            }
+                    { message: 'Email token has expired.' }
+            };
         };
+
+        // 'errors' contains any mongoose model-validation fails, rename to error
+        const { errors: error } = err;
+
+        // if no input errors, then send back the err message as a server error
+        if (!error) {
+            err.error = {
+                server: { message: err.message }
+            };
+        };
+
+        return res.status(400).json({ error });
+    };
+
+
+}
+
+// set user.isVerified to true and set their password
+const verifyUser = async (req, res) => {
+    const { _id, password, confirmPassword } = req.body;
+
+    try {
+        const user = await User.changePassword({ _id, password, confirmPassword });
+
+        user.isVerified = true;
+
+        await user.save();
+
+        return res.status(200).json(user);
+    }
+    catch (err) {
+        console.error(err);
 
         // 'errors' contains any mongoose model-validation fails
         const { errors } = err;
@@ -203,4 +235,13 @@ const updateUser = async (req, res) => {
     res.status(200).json(user);
 };
 
-export { loginUser, registerUser, getUsers, getUser, verifyUserEmailAndSetPassword, deleteUser, updateUser };
+export {
+    deleteUser,
+    getUser,
+    getUsers,
+    loginUser,
+    registerUser,
+    updateUser,
+    verifyUser,
+    verifyEmailToken
+};
