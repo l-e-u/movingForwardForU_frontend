@@ -53,33 +53,37 @@ const jobSchema = new Schema(
         notes: [noteSchema],
         pickup: transportSchema,
         createdBy: {
-            type: Schema.Types.ObjectId,
             ref: 'User',
-            required: true
+            required: true,
+            type: Schema.Types.ObjectId,
         },
         customer: {
-            type: Schema.Types.ObjectId,
             ref: 'Contact',
-            required: [true, 'Make a selection.']
+            required: [true, 'Make a selection.'],
+            type: Schema.Types.ObjectId,
         },
         drivers: [{
+            ref: 'User',
             type: Schema.Types.ObjectId,
-            ref: 'User'
+        }],
+        fees: [{
+            ref: 'Fee',
+            type: Schema.Types.ObjectId,
         }],
         parcel: {
-            type: String,
+            set: i => !i ? null : i,
             trim: true,
-            set: i => !i ? null : i
+            type: String,
         },
         reference: {
-            type: String,
+            set: i => !i ? null : i,
             trim: true,
-            set: i => !i ? null : i
+            type: String,
         },
         status: {
-            type: Schema.Types.ObjectId,
             ref: 'Status',
-            required: [true, 'Make a selection.']
+            required: [true, 'Make a selection.'],
+            type: Schema.Types.ObjectId,
         },
     },
     { timestamps: true }

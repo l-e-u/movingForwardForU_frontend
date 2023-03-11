@@ -13,6 +13,7 @@ const FeeForm = ({
     error,
     handleSubmit,
     isDisabled,
+    isLoading,
     name,
     setFee,
 }) => {
@@ -62,7 +63,6 @@ const FeeForm = ({
 
     // validate that the input represents a currency
     useEffect(() => {
-        console.log('validating')
         setFee(prev => {
             return { ...prev, amount: formatCurrency(amount) }
         });
@@ -146,7 +146,7 @@ const FeeForm = ({
                 type='submit'
                 disabled={isDisabled}
                 className='btn btn-sm btn-success rounded-pill d-block ms-auto mt-4 px-3'>
-                Save
+                {isLoading ? 'Saving...' : 'Save'}
             </button>
         </form>
     )

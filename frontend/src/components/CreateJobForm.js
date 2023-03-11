@@ -9,14 +9,15 @@ import CloseFormButton from './XButton.js';
 const CreateJobForm = ({ setShowThisForm }) => {
     const { createJob, error, setError, isLoading } = useCreateJob();
     const [job, setJob] = useState({
-        pickup: { address: '', date: null, includeTime: false },
+        customer: null,
         delivery: { address: '', date: null, includeTime: false },
         drivers: [],
+        fees: [],
+        notes: [],
         parcel: '',
+        pickup: { address: '', date: null, includeTime: false },
         reference: '',
-        customer: null,
         status: null,
-        notes: []
     });
 
     return (
@@ -36,9 +37,10 @@ const CreateJobForm = ({ setShowThisForm }) => {
                     // return console.log(job);
                     await createJob({
                         ...job,
-                        status: job.status?._id,
                         customer: job.customer?._id,
-                        drivers: job.drivers.map(d => d._id)
+                        drivers: job.drivers.map(d => d._id),
+                        fees: job.fees.map(f => f._id),
+                        status: job.status?._id,
                     })
                         .then(isCreated => {
                             if (isCreated) setShowThisForm(false);

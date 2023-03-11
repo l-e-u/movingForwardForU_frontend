@@ -3,22 +3,29 @@ import { dateStringFormat, timeStringFormat } from '../utils/StringUtils';
 
 // components
 import DriversList from './DriversList';
+import FeesList from './FeesList';
 import NotesList from './NotesList';
 import SmallHeader from './SmallHeader';
 
 const JobOverview = ({
-    pickup,
+    customer,
     delivery,
+    drivers,
+    fees,
+    notes,
+    pickup,
     parcel,
     reference,
     status,
-    drivers,
-    customer,
-    notes,
-    listDrivers = false
+    listDrivers = false,
+    listFees = false,
 }) => {
     const hasDrivers = drivers.length > 0;
+    const hasFees = fees.length > 0;
+
+    // these lists are for admins only
     const showDrivers = hasDrivers && listDrivers;
+    const showFees = hasFees && listFees;
 
     return (
         <div className='d-flex flex-column gap-2'>
@@ -34,7 +41,8 @@ const JobOverview = ({
                 <div>
                     <SmallHeader text={'Driver' + ((drivers.length > 1) ? 's' : '')} />
                     <DriversList list={drivers} />
-                </div>}
+                </div>
+            }
 
 
             <div>
@@ -59,7 +67,15 @@ const JobOverview = ({
                 <div>
                     <SmallHeader text='Parcel' />
                     {parcel}
-                </div>}
+                </div>
+            }
+
+            {showFees &&
+                <div>
+                    <SmallHeader text={'Fee' + ((fees.length > 1) ? 's' : '')} />
+                    <FeesList list={fees} />
+                </div>
+            }
 
             {notes && <NotesList notes={notes} />}
         </div>

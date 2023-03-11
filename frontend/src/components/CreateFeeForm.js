@@ -34,6 +34,7 @@ const CreateFeeForm = ({ setShowThisForm }) => {
                         });
                 }}
                 isDisabled={isLoading}
+                isLoading={isLoading}
                 setFee={setFee}
             />
         </>

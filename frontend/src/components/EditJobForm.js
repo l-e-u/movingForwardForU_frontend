@@ -23,6 +23,7 @@ const EditJobForm = ({ prevJob, setShowThisForm }) => {
     if (JSON.stringify(prevJob.pickup) !== JSON.stringify(job.pickup)) updatedProperties.pickup = job.pickup;
     if (JSON.stringify(prevJob.delivery) !== JSON.stringify(job.delivery)) updatedProperties.delivery = job.delivery;
     if ((prevJob.drivers.length !== job.drivers.length) || !prevJob.drivers.every(driver => job.drivers.some(d => driver._id === d._id))) updatedProperties.drivers = job.drivers;
+    if ((prevJob.fees.length !== job.fees.length) || !prevJob.fees.every(fee => job.fees.some(f => fee._id === f._id))) updatedProperties.fees = job.fees;
 
     const differentNumberOfNotes = prevJob.notes?.length !== job.notes?.length;
 

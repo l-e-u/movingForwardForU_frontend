@@ -2,10 +2,11 @@ import mongoose from 'mongoose';
 import Job from '../models/job.js';
 
 const docFieldsToPopulate = [
-    'status',
     'customer',
-    'drivers',
     'createdBy',
+    'drivers',
+    'fees',
+    'status',
     'notes.createdBy'
 ];
 

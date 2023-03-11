@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useJobsContext } from '../hooks/useJobsContext.js';
+
+// hooks
 import { useAuthContext } from '../hooks/useAuthContext.js';
-import { useGetJobs } from '../hooks/useGetJobs.js';
 
 // components
 import CreatedInfo from '../components//CreatedInfo.js';
@@ -13,23 +14,48 @@ import FlexBoxWrapper from '../components/FlexBoxWrapper.js';
 import EditJobForm from '../components/EditJobForm.js';
 import PageContentWrapper from '../components/PageContentWrapper.js';
 import ShowCreateFormButton from '../components/ShowCreateFormButton.js';
+import LoadingDocuments from '../components/LoadingDocuments.js';
 
 // date fns
 import formatDistanceToNow from 'date-fns/formatDistanceToNow';
 
 const Jobs = () => {
-    const { getJobs, error, isLoading } = useGetJobs();
-    const { jobs } = useJobsContext();
-
-    // local state
+    const [error, setError] = useState(null);
+    const [isLoading, setIsLoading] = useState(null);
     const [docToEdit, setDocToEdit] = useState(null);
     const [showCreateForm, setShowCreateForm] = useState(false);
     const [showEditForm, setShowEditForm] = useState(false);
 
+    const { user } = useAuthContext();
+    const { jobs, dispatch } = useJobsContext();
+
     // get jobs once
     useEffect(() => {
         (async () => {
-            await getJobs();
+            setIsLoading(true);
+            setError(null);
+
+            const response = await fetch('/api/jobs', {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authentication': `Bearer ${user.token}`
+                }
+            });
+
+            // expecting all fees
+            const json = await response.json();
+
+            if (!response.ok) {
+                console.error(json);
+                setError(json.error);
+                setIsLoading(false);
+            };
+
+            if (response.ok) {
+                setError(null);
+                setIsLoading(false);
+                dispatch({ type: 'SET_JOBS', payload: json });
+            };
         })();
     }, []);
 
@@ -59,6 +85,9 @@ const Jobs = () => {
                 }
             </div>
 
+            {/* show spinner with actively fetching data */}
+            {isLoading && <div className='my-5'><LoadingDocuments /></div>}
+
             <FlexBoxWrapper>
                 {jobs && jobs.map((job) => {
                     const { _id, createdBy, createdAt } = job;
@@ -73,7 +102,7 @@ const Jobs = () => {
 
                             {isEditingThisDoc ?
                                 <EditJobForm prevJob={job} setShowThisForm={setShowEditForm} /> :
-                                <JobOverview {...job} listDrivers={false} />
+                                <JobOverview {...job} listDrivers={true} listFees={true} />
                             }
                             <CreatedInfo createdBy={createdBy} createdAt={createdAt} />
                         </CardContainer>

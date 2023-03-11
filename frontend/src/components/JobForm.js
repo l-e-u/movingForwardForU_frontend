@@ -8,9 +8,10 @@ import NotesInput from './NotesInput';
 
 // functions
 import { removeExtraSpaces } from '../utils/StringUtils';
+import FeeSearchSelect from './FeeSearchSelect';
 
 const JobForm = ({ job, setJob, handleSubmit, error, setError, isDisabled }) => {
-    const { status, customer, reference, parcel, drivers, notes } = job;
+    const { status, customer, fees, reference, parcel, drivers, notes } = job;
 
     const errorOther = error?.server;
 
@@ -104,6 +105,9 @@ const JobForm = ({ job, setJob, handleSubmit, error, setError, isDisabled }) => 
                 error={error?.['delivery.address']}
                 job={job}
                 setJob={setJob} />
+
+            {/* FEES */}
+            <FeeSearchSelect feesList={fees} setJob={setJob} />
 
             <NotesInput notes={notes} setJob={setJob} error={error} setError={setError} />
 

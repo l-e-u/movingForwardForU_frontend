@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useGetUsers } from '../hooks/useGetUsers'
+
+// hooks
 import { useUsersContext } from '../hooks/useUsersContext';
 
 // components
