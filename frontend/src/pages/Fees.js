@@ -11,6 +11,7 @@ import CreatedInfo from '../components/CreatedInfo.js';
 import ShowCreateFormButton from '../components/ShowCreateFormButton.js';
 import CreateFeeForm from '../components/CreateFeeForm.js';
 import FeeOverview from '../components/FeeOverview.js';
+import EditDocIcon from '../components/EditDocIcon.js';
 
 // hooks
 import { useFeesContext } from '../hooks/useFeesContext';
@@ -69,12 +70,15 @@ const Fees = () => {
                     />
                 }
             </div>
+
             {/* show spinner with actively fetching data */}
             {isLoading && <div className='my-5'><LoadingDocuments /></div>}
+
             {error && <ErrorLoadingDocuments docType='Fees' />}
-            <FlexBoxWrapper>
-                {fees &&
-                    fees.map(fee => {
+
+            {fees &&
+                <FlexBoxWrapper>
+                    {fees.map(fee => {
                         const { _id, createdAt, createdBy } = fee;
 
                         return (
@@ -84,8 +88,9 @@ const Fees = () => {
                             </CardContainer>
                         );
                     })
-                }
-            </FlexBoxWrapper>
+                    }
+                </FlexBoxWrapper>
+            }
         </PageContentWrapper>
     );
 };

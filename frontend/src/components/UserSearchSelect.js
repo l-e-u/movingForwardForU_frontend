@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
-import { useGetUsers } from '../hooks/useGetUsers'
 
 // hooks
 import { useUsersContext } from '../hooks/useUsersContext';
+import { useAuthContext } from '../hooks/useAuthContext';
 
 // components
 import AutoCompleteSelect from './AutoCompleteSelect';
@@ -10,10 +10,12 @@ import SmallHeader from './SmallHeader';
 import CancellableOption from './CancellableOption';
 
 const UserSearchSelect = ({ drivers, setJob }) => {
-    const { getUsers, error, isLoading } = useGetUsers();
-    const { users } = useUsersContext();
+    const { user } = useAuthContext()
+    const { users, dispatch } = useUsersContext();
 
     const [inputError, setInputError] = useState(null);
+    const [error, setError] = useState(null);
+    const [isLoading, setIsLoading] = useState(null);
 
     const inputErrorMessage = 'Has already been added.';
     const hasAddedDrivers = drivers.length > 0;
@@ -21,11 +23,29 @@ const UserSearchSelect = ({ drivers, setJob }) => {
     // on first mount only, get documents
     useEffect(() => {
         (async () => {
-            try {
-                await getUsers();
+            setIsLoading(true);
+            setError(null);
 
-            } catch (error) {
-                console.log('Could not fetch, check your network.');
+            const response = await fetch('/api/users', {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authentication': `Bearer ${user.token}`
+                }
+            });
+
+            // expecting all contacts
+            const json = await response.json();
+
+            if (!response.ok) {
+                console.error(json);
+                setError(json.error);
+                setIsLoading(false);
+            };
+
+            if (response.ok) {
+                setError(null);
+                setIsLoading(false);
+                dispatch({ type: 'SET_USERS', payload: json });
             };
         })();
     }, []);

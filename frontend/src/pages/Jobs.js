@@ -15,6 +15,7 @@ import EditJobForm from '../components/EditJobForm.js';
 import PageContentWrapper from '../components/PageContentWrapper.js';
 import ShowCreateFormButton from '../components/ShowCreateFormButton.js';
 import LoadingDocuments from '../components/LoadingDocuments.js';
+import ErrorLoadingDocuments from '../components/ErrorLoadingDocuments.js';
 
 // date fns
 import formatDistanceToNow from 'date-fns/formatDistanceToNow';
@@ -88,27 +89,31 @@ const Jobs = () => {
             {/* show spinner with actively fetching data */}
             {isLoading && <div className='my-5'><LoadingDocuments /></div>}
 
-            <FlexBoxWrapper>
-                {jobs && jobs.map((job) => {
-                    const { _id, createdBy, createdAt } = job;
-                    const isEditingThisDoc = showEditForm && (_id === docToEdit._id);
+            {error && <ErrorLoadingDocuments docType='Jobs' />}
 
-                    return (
-                        <CardContainer key={_id} hasCreatedInfo={true}>
-                            {/* Edit and Delete options */}
-                            <div className='position-absolute top-0 end-0 pe-3 pt-2 d-flex'>
-                                {!isEditingThisDoc && <EditDocIcon onClick={handleEditClick(job)} />}
-                            </div>
+            {jobs &&
+                <FlexBoxWrapper>
+                    {jobs.map((job) => {
+                        const { _id, createdBy, createdAt } = job;
+                        const isEditingThisDoc = showEditForm && (_id === docToEdit._id);
 
-                            {isEditingThisDoc ?
-                                <EditJobForm prevJob={job} setShowThisForm={setShowEditForm} /> :
-                                <JobOverview {...job} listDrivers={true} listFees={true} />
-                            }
-                            <CreatedInfo createdBy={createdBy} createdAt={createdAt} />
-                        </CardContainer>
-                    );
-                })}
-            </FlexBoxWrapper>
+                        return (
+                            <CardContainer key={_id} hasCreatedInfo={true}>
+                                {/* Edit and Delete options */}
+                                <div className='position-absolute top-0 end-0 pe-3 pt-2 d-flex'>
+                                    {!isEditingThisDoc && <EditDocIcon onClick={handleEditClick(job)} />}
+                                </div>
+
+                                {isEditingThisDoc ?
+                                    <EditJobForm prevJob={job} setShowThisForm={setShowEditForm} /> :
+                                    <JobOverview {...job} listDrivers={true} listFees={true} />
+                                }
+                                <CreatedInfo createdBy={createdBy} createdAt={createdAt} />
+                            </CardContainer>
+                        );
+                    })}
+                </FlexBoxWrapper>
+            }
         </PageContentWrapper>
     );
 };

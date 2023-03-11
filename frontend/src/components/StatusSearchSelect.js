@@ -1,26 +1,48 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 // components
 import AutoCompleteSelect from './AutoCompleteSelect';
 import CancellableOption from './CancellableOption';
 
 // hooks
-import { useGetStatuses } from '../hooks/useGetStatuses';
 import { useStatusesContext } from '../hooks/useStatusesContext';
+import { useAuthContext } from '../hooks/useAuthContext';
 
 const StatusSearchSelect = ({ status, setJob, inputError, inputErrorMessage }) => {
-    const { getStatuses, error, isLoading } = useGetStatuses();
-    const { statuses } = useStatusesContext();
+    const [error, setError] = useState(null);
+    const [isLoading, setIsLoading] = useState(null);
+
+    const { user } = useAuthContext();
+    const { statuses, dispatch } = useStatusesContext();
+
     const hasSelected = !!status;
 
     // on first mount only, get documents
     useEffect(() => {
         (async () => {
-            try {
-                await getStatuses();
+            setIsLoading(true);
+            setError(null);
 
-            } catch (error) {
-                console.log('Could not fetch, check your network.');
+            const response = await fetch('/api/statuses', {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authentication': `Bearer ${user.token}`
+                }
+            });
+
+            // expecting all contacts
+            const json = await response.json();
+
+            if (!response.ok) {
+                console.error(json);
+                setError(json.error);
+                setIsLoading(false);
+            };
+
+            if (response.ok) {
+                setError(null);
+                setIsLoading(false);
+                dispatch({ type: 'SET_STATUSES', payload: json });
             };
         })();
     }, []);
