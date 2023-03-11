@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useMyJobsContext } from "../hooks/useMyJobsContext.js";
 import { useAuthContext } from '../hooks/useAuthContext.js';
 
@@ -10,13 +10,21 @@ import CardContainer from "../components/CardContainer.js";
 import JobOverview from '../components/JobOverview.js';
 import FlexBoxWrapper from '../components/FlexBoxWrapper.js';
 import PageContentWrapper from '../components/PageContentWrapper.js';
+import LoadingDocuments from '../components/LoadingDocuments.js';
+import ErrorLoadingDocuments from '../components/ErrorLoadingDocuments.js';
 
 const MyJobs = () => {
+    const [error, setError] = useState(null);
+    const [isLoading, setIsLoading] = useState(null);
+
     const { myJobs, dispatch } = useMyJobsContext();
     const { user } = useAuthContext();
 
     useEffect(() => {
-        const fetchJobs = async () => {
+        (async () => {
+            setIsLoading(true);
+            setError(null);
+
             const response = await fetch('/api/jobs/', {
                 headers: {
                     'Authentication': `Bearer ${user.token}`
@@ -24,33 +32,49 @@ const MyJobs = () => {
             });
 
             // expecting all jobs returned
-            const jobs = await response.json();
+            const json = await response.json();
+
+            if (!response.ok) {
+                console.error(json);
+                setError(json.error);
+                setIsLoading(false);
+            };
 
             if (response.ok) {
-                const jobsAssignedToMe = jobs.filter((job) => {
+                setError(null);
+                setIsLoading(false);
+
+                // only get the jobs that have current user assigned as driver
+                const jobsAssignedToMe = json.filter((job) => {
                     return job.drivers.some((driver) => {
                         return driver._id === user._id
                     });
                 });
                 dispatch({ type: 'SET_MYJOBS', payload: jobsAssignedToMe });
             };
-        };
-
-        if (user) fetchJobs();
+        })();
     }, [dispatch, user]);
 
     return (
         <PageContentWrapper>
-            <FlexBoxWrapper>
-                {myJobs && myJobs.map((job) => {
-                    return (
-                        <CardContainer key={job._id}>
-                            <JobOverview {...job} />
-                            {/* <p>{formatDistanceToNow(new Date(job.createdAt), { addSuffix: true })}</p> */}
-                        </CardContainer>
-                    )
-                })}
-            </FlexBoxWrapper>
+
+            {/* show spinner with actively fetching data */}
+            {isLoading && <div className='my-5'><LoadingDocuments /></div>}
+
+            {error && <ErrorLoadingDocuments docType='Jobs' />}
+
+            {myJobs &&
+                <FlexBoxWrapper>
+                    {myJobs.map((job) => {
+                        return (
+                            <CardContainer key={job._id}>
+                                <JobOverview {...job} />
+                                {/* <p>{formatDistanceToNow(new Date(job.createdAt), { addSuffix: true })}</p> */}
+                            </CardContainer>
+                        )
+                    })}
+                </FlexBoxWrapper>
+            }
         </PageContentWrapper>
     )
 };
