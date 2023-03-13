@@ -10,12 +10,12 @@ const CreateJobForm = ({ setShowThisForm }) => {
     const { createJob, error, setError, isLoading } = useCreateJob();
     const [job, setJob] = useState({
         customer: null,
-        delivery: { address: '', date: null, includeTime: false },
+        delivery: { address: '', date: undefined, includeTime: false },
         drivers: [],
         fees: [],
         notes: [],
         parcel: '',
-        pickup: { address: '', date: null, includeTime: false },
+        pickup: { address: '', date: undefined, includeTime: false },
         reference: '',
         status: null,
     });

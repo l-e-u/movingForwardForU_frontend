@@ -1,16 +1,19 @@
 import { Schema, model as Model } from 'mongoose';
 
 const transportSchema = new Schema({
-    date: Date,
+    date: {
+        default: new Date(),
+        type: Date,
+    },
     address: {
-        type: String,
-        trim: true,
         index: true,
-        required: [true, 'Cannot be empty.']
+        required: [true, 'Cannot be empty.'],
+        trim: true,
+        type: String,
     },
     includeTime: {
+        default: false,
         type: Boolean,
-        default: false
     }
 });
 

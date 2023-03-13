@@ -47,7 +47,7 @@ const PickupOrDeliveryInput = ({
                         onChange={(e) => {
                             const isChecked = e.target.checked;
 
-                            setPickupOrDeliveryInfo({ date: isChecked ? new Date() : null, includeTime: false });
+                            setPickupOrDeliveryInfo({ date: isChecked ? new Date() : undefined, includeTime: false });
                         }} />
                     <label className='form-check-label' htmlFor='dateCheckbox'><SmallHeader text='Set Date' /></label>
                 </div>

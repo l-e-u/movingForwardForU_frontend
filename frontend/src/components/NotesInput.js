@@ -75,7 +75,8 @@ const NotesInput = ({
                                         className='form-control-plaintext p-0'
                                         placeholder={'Message' + (inputMessageError ? ` : ${inputMessageError}` : '')}
                                         onBlur={e => handleOnChange({ message: e.target.value.trim() }, index)}
-                                        onChange={e => handleOnChange({ message: e.target.value }, index)} />
+                                        onChange={e => handleOnChange({ message: e.target.value }, index)}
+                                    />
                                 </li>
                             );
                         })}
