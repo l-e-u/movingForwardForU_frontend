@@ -2,13 +2,13 @@ import { Link } from 'react-router-dom';
 
 const Navbar = ({ user, setShowNavMenu, setSelectedLink }) => {
     return (
-        <header className='mx-auto maxWidth1400px px-lg-4'>
+        <header className='mx-auto maxWidth1400px px-lg-3'>
             <div
                 className='d-flex py-3 px-4 theme-light align-items-center justify-content-between'
                 style={{ borderBottomRightRadius: 'var(--bs-border-radius', borderBottomLeftRadius: 'var(--bs-border-radius' }}>
                 {user &&
                     <h1 className='m-0'>
-                        <i className='bi bi-list' onClick={() => {
+                        <i className='bi bi-list text-green' onClick={() => {
                             setShowNavMenu(true);
                         }}></i>
                     </h1>

@@ -35,8 +35,7 @@ const PickupOrDeliveryInput = ({
             <SmallHeader text={propertyText.toUpperCase()} />
 
             {/* checkboxes for options to set date and set time of pickup/delivery */}
-            <div className='d-flex justify-content-around'>
-                {/* checking will add a new date and allow user to set the date, unchecking will null the date */}
+            {/* <div className='d-flex justify-content-around'>
                 <div className='form-check'>
                     <input
                         type='checkbox'
@@ -50,24 +49,18 @@ const PickupOrDeliveryInput = ({
                             setPickupOrDeliveryInfo({ date: isChecked ? new Date() : undefined, includeTime: false });
                         }} />
                     <label className='form-check-label' htmlFor='dateCheckbox'><SmallHeader text='Set Date' /></label>
-                </div>
+                </div> */}
 
-                {/* checking will allow user to set the time for the date, user cannot check this if date is null */}
-                <div className='form-check'>
-                    <input
-                        type='checkbox'
-                        className='form-check-input'
-                        name='timeCheckbox'
-                        id='timeCheckbox'
-                        disabled={date ? false : true}
-                        checked={includeTime}
-                        onChange={e => {
-                            const checked = (date && e.target.checked) || false;
-
-                            setPickupOrDeliveryInfo({ includeTime: checked });
-                        }} />
-                    <label className='form-check-label' htmlFor='timeCheckbox'><SmallHeader text='Set Time' /></label>
-                </div>
+            <div className='form-check'>
+                <input
+                    type='checkbox'
+                    className='form-check-input'
+                    name='timeCheckbox'
+                    id='timeCheckbox'
+                    checked={includeTime}
+                    onChange={e => setPickupOrDeliveryInfo({ includeTime: e.target.checked })}
+                />
+                <label className='form-check-label' htmlFor='timeCheckbox'><SmallHeader text='Set Time' /></label>
             </div>
 
             {/* render when pickup/delivery has a date */}

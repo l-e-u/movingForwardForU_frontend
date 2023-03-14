@@ -9,6 +9,7 @@ import { useJobsContext } from '../hooks/useJobsContext.js';
 import CreatedInfo from '../components//CreatedInfo.js';
 import CardContainer from '../components/CardContainer.js';
 import JobOverview from '../components/JobOverview.js';
+import JobCard from '../components/JobCard.js';
 import CreateJobForm from '../components/CreateJobForm.js';
 import EditDocIcon from '../components/EditDocIcon.js';
 import FlexBoxWrapper from '../components/FlexBoxWrapper.js';
@@ -168,6 +169,10 @@ const Jobs = () => {
                     {jobs.map((job) => {
                         const { _id, createdBy, createdAt } = job;
                         const isEditingThisDoc = showEditForm && (_id === docToEdit._id);
+
+                        return (
+                            <JobCard {...job} listDrivers={true} listFees={true} key={_id} />
+                        );
 
                         return (
                             <CardContainer key={_id} hasCreatedInfo={true}>

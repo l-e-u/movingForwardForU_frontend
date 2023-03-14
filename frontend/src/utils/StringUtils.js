@@ -29,9 +29,20 @@ export const dateStringFormat = (date) => {
     return `${day} ${month} ${year}`;
 };
 
-export const timeStringFormat = (date, showTimezone = false) => {
-    const hour = paddedZeroStartWhenSingleDigit(date.getHours());
+export const timeStringFormat = (date, showMilitary, showTimezone = false) => {
+    const militaryHr = date.getHours();
+    const hr = militaryHr > 12 ? militaryHr % 12 : militaryHr;
+    const meridiem = militaryHr < 12 ? 'A' : 'P';
+    const hour = paddedZeroStartWhenSingleDigit(showMilitary ? militaryHr : hr);
     const minutes = paddedZeroStartWhenSingleDigit(date.getMinutes());
 
-    return `${hour}${minutes}`;
+    let timeString = hour;
+
+    if (!showMilitary) timeString += ':';
+
+    timeString += minutes;
+
+    if (!showMilitary) timeString += meridiem;
+
+    return timeString;
 };

@@ -13,7 +13,7 @@ const TimeInput = ({ date, setTime }) => {
             const jsx = [];
 
             for (let num = start; num <= end; num++) {
-                jsx.push(<option key={num} value={num}>{num}</option>);
+                jsx.push(<option key={num} value={String(num).padStart(2, '0')}>{String(num).padStart(2, '0')}</option>);
             };
 
             return jsx;
@@ -36,7 +36,7 @@ const TimeInput = ({ date, setTime }) => {
             if (meridiem === 'pm') return value % 12;
         };
 
-        return value;
+        return String(value).padStart(2, '0');
     };
 
     const handleOnChange = ({ hours = null, minutes = null }) => {
@@ -92,7 +92,7 @@ const TimeInput = ({ date, setTime }) => {
                         name='minuteSelect'
                         id='minuteSelect'
                         className='form-select'
-                        value={minutes}
+                        value={String(minutes).padStart(2, '0')}
                         onChange={e => handleOnChange({ minutes: Number(e.target.value) })}>
                         {minuteOptionsJSX()}
                     </select>

@@ -22,7 +22,8 @@ body {
   margin: 0;
   font-family: "Poppins" !important;
   font-size: 16px;
-  color: var(--bs-gray-900);
+  /* color: var(--bs-gray-900); */
+  color: var(--secondary);
 }
 
 nav .selected {
@@ -56,6 +57,18 @@ nav.menu {
 
 .maxWidth1400px {
   max-width: 1400px;
+}
+
+.text-navy {
+  color: var(--secondary);
+}
+
+.background-navy {
+  background-color: var(--secondary);
+}
+
+.background-white {
+  background-color: var(--bs-white);
 }
 
 /* targets nav bar and overview containers */
@@ -112,6 +125,7 @@ nav.menu {
   max-height: 300px;
 }
 
+/* small screen and above */
 @media screen and (min-width: 576px) {
   .w-sm-50 {
     width: 50% !important;
@@ -122,6 +136,26 @@ nav.menu {
   }
 }
 
+/* medium screen and above */
+@media screen and (min-width: 768px) {
+  .rounded-md-top-end {
+    border-top-right-radius: var(--bs-border-radius) !important;
+  }
+
+  .rounded-md-top-end-0 {
+    border-top-right-radius: 0 !important;
+  }
+
+  .rounded-md-bottom-start {
+    border-bottom-left-radius: var(--bs-border-radius) !important;
+  }
+
+  .rounded-md-bottom-start-0 {
+    border-bottom-left-radius: 0 !important;
+  }
+}
+
+/* large screen and above */
 @media screen and (min-width: 992px) {
   .w-lg-25 {
     width: 25% !important;

@@ -1,10 +1,7 @@
 // components
-import { useState } from 'react';
 import SmallHeader from './SmallHeader';
 
 const NotesList = ({ notes }) => {
-    const [collapse, setCollapse] = useState(null);
-
     return (
         <div>
             <SmallHeader text='NOTES' />
@@ -12,7 +9,7 @@ const NotesList = ({ notes }) => {
                 {notes.map((note, index) => {
                     const { _id, subject, message } = note;
                     return (
-                        <li key={_id} className='list-group-item p-0'>
+                        <li key={_id} className='list-group-item p-0 text-reset'>
                             <button
                                 className='btn btn-secondary rounded-0 border-0 w-100 text-start py-1 text-capitalize'
                                 type='button'
