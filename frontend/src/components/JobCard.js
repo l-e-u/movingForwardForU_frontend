@@ -1,6 +1,3 @@
-// functions
-import { dateStringFormat, timeStringFormat } from '../utils/StringUtils';
-
 // components
 import AddressDisplay from './AddressDisplay';
 import Card from './Card'
@@ -24,6 +21,7 @@ const JobCard = ({
     status,
     listDrivers = false,
     listFees = false,
+    showCreatedDetails = false,
 }) => {
     const hasDrivers = drivers.length > 0;
     const hasFees = fees.length > 0;
@@ -38,7 +36,7 @@ const JobCard = ({
                 <div className='mb-2'>{status.name}</div>
                 <div className='d-flex flex-wrap justify-content-between gap-2'>
                     <h2 className='fs-5 m-0'>{customer.organization}</h2>
-                    {reference && <small className='text-green text-end align-self-end flex-grow-1'>{reference}</small>}
+                    {reference && <small className='text-action text-end align-self-end flex-grow-1'>{reference}</small>}
                 </div>
             </>}
 
@@ -87,7 +85,7 @@ const JobCard = ({
                 {notes && <NotesList notes={notes} />}
             </div>}
 
-            footer={<><CreatedInfo createdBy={createdBy} createdAt={createdAt} /></>}
+            footer={showCreatedDetails && <CreatedInfo createdBy={createdBy} createdAt={createdAt} />}
         />
     );
 };

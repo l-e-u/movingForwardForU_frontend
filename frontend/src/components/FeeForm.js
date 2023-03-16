@@ -18,13 +18,13 @@ const FeeForm = ({
     setFee,
 }) => {
 
-
     // remove non-digits and format number 1000000 to 1,234,567
     const formatNumber = (n) => n.replace(/\D/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 
-    const formatCurrency = (value, onBlur = false) => {
+    const formatCurrency = (input, onBlur = false) => {
+        const value = String(input);
         let validatedNumString = null;
-
+        console.log(value)
         const decimalPosition = value.indexOf('.');
 
         // if value is floating, validate both sides
@@ -75,13 +75,11 @@ const FeeForm = ({
     };
 
     return (
-        <form
-            className='d-flex flex-column gap-2'
-            onSubmit={e => {
-                e.preventDefault();
+        <form className='d-flex flex-column gap-2' onSubmit={e => {
+            e.preventDefault();
 
-                handleSubmit();
-            }}
+            handleSubmit();
+        }}
         >
             <RequiredFieldsText />
 

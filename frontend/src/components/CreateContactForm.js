@@ -1,8 +1,9 @@
 import { useState } from "react";
+
+// hooks
 import { useCreateContact } from "../hooks/useCreateContact.js";
 
 // components
-import CloseFormButton from './XButton.js';
 import ContactForm from './ContactForm.js';
 import FormHeader from './FormHeader.js';
 
@@ -21,24 +22,24 @@ const CreateContactForm = ({ setShowThisForm }) => {
     });
 
     return (
-        <div>
-            <FormHeader text='New Contact'>
-                <CloseFormButton handleOnClick={() => setShowThisForm(false)} />
-            </FormHeader>
+        <div className='shadow'>
+            <FormHeader text='New Contact' handleCloseForm={() => setShowThisForm(false)} />
 
-            <ContactForm
-                contact={contact}
-                setContact={setContact}
-                error={error}
-                isDisabled={isLoading}
-                handleSubmit={async (e) => {
-                    e.preventDefault();
+            <div className='rounded-bottom background-white text-reset px-3 pb-3 pt-1'>
+                <ContactForm
+                    contact={contact}
+                    setContact={setContact}
+                    error={error}
+                    isDisabled={isLoading}
+                    handleSubmit={async (e) => {
+                        e.preventDefault();
 
-                    await createContact(contact)
-                        .then(isCreated => {
-                            if (isCreated) setShowThisForm(false)
-                        })
-                }} />
+                        await createContact(contact)
+                            .then(isCreated => {
+                                if (isCreated) setShowThisForm(false)
+                            })
+                    }} />
+            </div>
         </div>
     );
 };

@@ -6,28 +6,26 @@ import { useAuthContext } from '../hooks/useAuthContext.js';
 import { useJobsContext } from '../hooks/useJobsContext.js';
 
 // components
-import CreatedInfo from '../components//CreatedInfo.js';
-import CardContainer from '../components/CardContainer.js';
-import JobOverview from '../components/JobOverview.js';
 import JobCard from '../components/JobCard.js';
 import CreateJobForm from '../components/CreateJobForm.js';
-import EditDocIcon from '../components/EditDocIcon.js';
 import FlexBoxWrapper from '../components/FlexBoxWrapper.js';
 import EditJobForm from '../components/EditJobForm.js';
 import PageContentWrapper from '../components/PageContentWrapper.js';
-import ShowCreateFormButton from '../components/ShowCreateFormButton.js';
+import ActionButton from '../components/ActionButton.js';
 import LoadingDocuments from '../components/LoadingDocuments.js';
 import ErrorLoadingDocuments from '../components/ErrorLoadingDocuments.js';
 
 // date fns
 import formatDistanceToNow from 'date-fns/formatDistanceToNow';
+import OptionsMenu from '../components/OptionsMenu.js';
 
 const Jobs = () => {
     const [error, setError] = useState(null);
     const [isLoading, setIsLoading] = useState(null);
-    const [docToEdit, setDocToEdit] = useState(null);
+    const [selectedJobId, setSelectedJobId] = useState(null);
     const [showCreateForm, setShowCreateForm] = useState(false);
     const [showEditForm, setShowEditForm] = useState(false);
+    const [showOptionsMenu, setShowOptionsMenu] = useState(false);
 
     const { user } = useAuthContext();
     const { jobs, dispatch } = useJobsContext();
@@ -130,34 +128,23 @@ const Jobs = () => {
         XLSX.writeFile(workbook, fileName);
     };
 
-    // function closure returns a func that sets the contact to be edited, hides the CreateStatusForm and shows EditStatusForm
-    const handleEditClick = (job) => {
-        return () => {
-            setDocToEdit(job);
-            setShowCreateForm(false);
-            setShowEditForm(true);
-        };
-    };
-
-    if (error) {
-        return <p className='text-danger'>Could not load, check network and refresh.</p>
-    };
-
     return (
         <PageContentWrapper>
-            <div className='mb-3'>
-                {showCreateForm ?
-                    <CreateJobForm setShowThisForm={setShowCreateForm} /> :
-                    <ShowCreateFormButton text='Create a Job' handleOnClick={() => {
-                        setShowCreateForm(true);
-                        setShowEditForm(false);
-                    }}
-                    />
-                }
-            </div>
+            {showCreateForm ?
+                <CreateJobForm setShowThisForm={setShowCreateForm} /> :
+                <ActionButton text='Create a Job' handleOnClick={() => {
+                    setShowCreateForm(true);
+                    setShowEditForm(false);
+                    setShowOptionsMenu(false);
+                }}
+                />
+            }
+
 
             {/* exports the current jobs listed */}
-            <button className='btn btn-sm btn-success mx-auto d-flex rounded-pill mb-3 px-3 py-1' onClick={exportToExcel}>Export</button>
+            <div className='py-3'>
+                <ActionButton handleOnClick={exportToExcel} text='Export Listed Jobs' />
+            </div>
 
             {/* show spinner with actively fetching data */}
             {isLoading && <div className='my-5'><LoadingDocuments /></div>}
@@ -167,27 +154,42 @@ const Jobs = () => {
             {jobs &&
                 <FlexBoxWrapper>
                     {jobs.map((job) => {
-                        const { _id, createdBy, createdAt } = job;
-                        const isEditingThisDoc = showEditForm && (_id === docToEdit._id);
+                        const { _id } = job;
+                        const isSelectedJob = selectedJobId === _id;
 
-                        return (
-                            <JobCard {...job} listDrivers={true} listFees={true} key={_id} />
-                        );
+                        switch (true) {
+                            case (showEditForm && isSelectedJob):
+                                return (<div className='position-relative' key={_id}>
+                                    <EditJobForm prevJob={job} setShowThisForm={setShowEditForm} />
+                                </div>);
 
-                        return (
-                            <CardContainer key={_id} hasCreatedInfo={true}>
-                                {/* Edit and Delete options */}
-                                <div className='position-absolute top-0 end-0 pe-3 pt-2 d-flex'>
-                                    {!isEditingThisDoc && <EditDocIcon onClick={handleEditClick(job)} />}
-                                </div>
+                            default:
+                                return (<div className='position-relative' key={_id}>
+                                    <OptionsMenu
+                                        showMenu={showOptionsMenu && isSelectedJob}
+                                        handleOnClickCloseMenu={() => setShowOptionsMenu(false)}
+                                        handleOnClickEditOption={() => {
+                                            setShowEditForm(true);
+                                            setShowCreateForm(false);
+                                            setShowOptionsMenu(false);
+                                        }}
+                                        handleOnClickMenu={() => {
+                                            setSelectedJobId(_id);
+                                            setShowCreateForm(false);
+                                            setShowEditForm(false);
+                                            setShowOptionsMenu(true);
+                                        }}
+                                    />
+                                    <JobCard
+                                        {...job}
+                                        listDrivers={true}
+                                        listFees={true}
+                                        showCreatedDetails={true}
+                                    />
+                                </div>);
+                        }
 
-                                {isEditingThisDoc ?
-                                    <EditJobForm prevJob={job} setShowThisForm={setShowEditForm} /> :
-                                    <JobOverview {...job} listDrivers={true} listFees={true} />
-                                }
-                                <CreatedInfo createdBy={createdBy} createdAt={createdAt} />
-                            </CardContainer>
-                        );
+
                     })}
                 </FlexBoxWrapper>
             }

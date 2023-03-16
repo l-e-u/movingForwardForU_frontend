@@ -32,7 +32,7 @@ const PickupOrDeliveryInput = ({
     return (
         <div className='d-flex flex-column gap-2' >
 
-            <SmallHeader text={propertyText.toUpperCase()} />
+            <SmallHeader text={propertyText.toUpperCase() + ' DETAILS'} />
 
             {/* checkboxes for options to set date and set time of pickup/delivery */}
             {/* <div className='d-flex justify-content-around'>

@@ -4,7 +4,6 @@ import uniqueValidator from 'mongoose-unique-validator';
 const feeSchema = new Schema(
     {
         amount: {
-            min: [0.01, 'Not a valid amount.'],
             required: [true, 'Needs an amount.'],
             type: Number,
         },

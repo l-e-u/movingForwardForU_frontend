@@ -6,22 +6,26 @@ import PageContentWrapper from '../components/PageContentWrapper.js'
 import FlexBoxWrapper from '../components/FlexBoxWrapper.js';
 import LoadingDocuments from '../components/LoadingDocuments.js';
 import ErrorLoadingDocuments from '../components/ErrorLoadingDocuments.js';
-import CardContainer from '../components/CardContainer.js';
 import CreatedInfo from '../components/CreatedInfo.js';
-import ShowCreateFormButton from '../components/ShowCreateFormButton.js';
+import ActionButton from '../components/ActionButton.js';
 import CreateFeeForm from '../components/CreateFeeForm.js';
-import FeeOverview from '../components/FeeOverview.js';
-import EditDocIcon from '../components/EditDocIcon.js';
+import EditFeeForm from '../components/EditFeeForm.js';
+import OptionsMenu from '../components/OptionsMenu.js';
+import Card from '../components/Card.js';
 
 // hooks
 import { useFeesContext } from '../hooks/useFeesContext';
 import { useAuthContext } from '../hooks/useAuthContext';
+import SmallHeader from '../components/SmallHeader.js';
 
 const Fees = () => {
     const [error, setError] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
+    const [selectedFeeId, setSelectedFeeId] = useState(null);
     const [showCreateForm, setShowCreateForm] = useState(false);
     const [showEditForm, setShowEditForm] = useState(false);
+    const [showOptionsMenu, setShowOptionsMenu] = useState(false);
+
     const { user } = useAuthContext();
     const { fees, dispatch } = useFeesContext();
 
@@ -54,18 +58,15 @@ const Fees = () => {
         })();
     }, []);
 
-    if (error) {
-
-    };
-
     return (
         <PageContentWrapper>
             <div className='mb-3'>
                 {showCreateForm ?
                     <CreateFeeForm setShowThisForm={setShowCreateForm} /> :
-                    <ShowCreateFormButton text='Create a Fee' handleOnClick={() => {
+                    <ActionButton text='Create a Fee' handleOnClick={() => {
                         setShowCreateForm(true);
                         setShowEditForm(false);
+                        setShowOptionsMenu(false);
                     }}
                     />
                 }
@@ -79,14 +80,47 @@ const Fees = () => {
             {fees &&
                 <FlexBoxWrapper>
                     {fees.map(fee => {
-                        const { _id, createdAt, createdBy } = fee;
+                        const { _id } = fee;
+                        const isSelectedFee = selectedFeeId === _id;
 
-                        return (
-                            <CardContainer key={_id} hasCreatedInfo={true}>
-                                <FeeOverview {...fee} />
-                                <CreatedInfo createdAt={createdAt} createdBy={createdBy} />
-                            </CardContainer>
-                        );
+                        switch (true) {
+                            case (showEditForm && isSelectedFee):
+                                return (<div className='position-relative' key={_id}>
+                                    <EditFeeForm prev={fee} setShowThisForm={setShowEditForm} />
+                                </div>);
+
+                            default:
+                                return (<div className='position-relative' key={_id}>
+                                    <OptionsMenu
+                                        showMenu={showOptionsMenu && isSelectedFee}
+                                        handleOnClickCloseMenu={() => setShowOptionsMenu(false)}
+                                        handleOnClickEditOption={() => {
+                                            setShowEditForm(true);
+                                            setShowCreateForm(false);
+                                            setShowOptionsMenu(false);
+                                        }}
+                                        handleOnClickMenu={() => {
+                                            setSelectedFeeId(_id);
+                                            setShowCreateForm(false);
+                                            setShowEditForm(false);
+                                            setShowOptionsMenu(true);
+                                        }}
+                                    />
+                                    <Card
+                                        header={<div>{fee.name}</div>}
+                                        body={
+                                            <div>
+                                                <SmallHeader text='Amount' />
+                                                <p className='mb-2'>{fee.amount}</p>
+                                                <SmallHeader text='Description' />
+                                                <p style={{ whiteSpace: 'pre-wrap' }}>{fee.description}</p>
+                                            </div>
+                                        }
+                                        footer={<CreatedInfo createdAt={fee.createdAt} createdBy={fee.createdBy} />}
+                                    />
+
+                                </div>)
+                        }
                     })
                     }
                 </FlexBoxWrapper>

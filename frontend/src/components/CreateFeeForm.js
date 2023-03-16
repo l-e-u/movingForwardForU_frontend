@@ -5,7 +5,6 @@ import { useCreateFee } from '../hooks/useCreateFee';
 // components
 import FeeForm from './FeeForm';
 import FormHeader from './FormHeader';
-import CloseFormButton from './XButton';
 
 const CreateFeeForm = ({ setShowThisForm }) => {
     const { createFee, error, isLoading } = useCreateFee();
@@ -16,28 +15,28 @@ const CreateFeeForm = ({ setShowThisForm }) => {
     });
 
     return (
-        <>
-            <FormHeader text='New Fee'>
-                <CloseFormButton handleOnClick={() => setShowThisForm(false)} />
-            </FormHeader>
+        <div className='shadow'>
+            <FormHeader text='New Fee' handleCloseForm={() => setShowThisForm(false)} />
 
-            <FeeForm
-                {...fee}
-                error={error}
-                handleSubmit={async () => {
-                    await createFee({
-                        ...fee,
-                        amount: Number(fee.amount.replace(/,/g, ''))
-                    })
-                        .then(isCreated => {
-                            if (isCreated) setShowThisForm(false);
-                        });
-                }}
-                isDisabled={isLoading}
-                isLoading={isLoading}
-                setFee={setFee}
-            />
-        </>
+            <div className='rounded-bottom background-white text-reset px-3 pb-3 pt-1'>
+                <FeeForm
+                    {...fee}
+                    error={error}
+                    handleSubmit={async () => {
+                        await createFee({
+                            ...fee,
+                            amount: Number(fee.amount.replace(/,/g, ''))
+                        })
+                            .then(isCreated => {
+                                if (isCreated) setShowThisForm(false);
+                            });
+                    }}
+                    isDisabled={isLoading}
+                    isLoading={isLoading}
+                    setFee={setFee}
+                />
+            </div>
+        </div>
     );
 };
 

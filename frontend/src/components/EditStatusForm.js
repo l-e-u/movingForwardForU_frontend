@@ -24,30 +24,31 @@ const EditStatusForm = ({ prevStatus, setShowThisForm }) => {
 
     return (
         <div>
-            <FormHeader text='Edit Status'>
-                <XButton handleOnClick={() => setShowThisForm(false)} />
-            </FormHeader>
+            <FormHeader text='Edit Status' handleCloseForm={() => setShowThisForm(false)} />
 
-            <CautionNotice text='Changes will also reflect on all jobs with the same status.' />
+            <div className='rounded-bottom background-white text-reset px-3 pb-3 pt-1'>
+                <br />
+                <CautionNotice text='Changes will also reflect on all jobs with the same status.' />
 
-            <StatusForm
-                status={status}
-                setStatus={setStatus}
-                error={error}
-                isDisabled={isLoading || noInputChanges}
-                handleSubmit={async (e) => {
-                    e.preventDefault();
+                <StatusForm
+                    status={status}
+                    setStatus={setStatus}
+                    error={error}
+                    isDisabled={isLoading || noInputChanges}
+                    handleSubmit={async (e) => {
+                        e.preventDefault();
 
-                    // when patching, only update the data that has been changed, any undefined values will be ignored in the backend
-                    await updateStatus({
-                        _id: prevStatus._id,
-                        name: nameHasChanged ? name : undefined,
-                        description: descHasChanged ? description : undefined
-                    })
-                        .then(isUpdated => {
-                            if (isUpdated) setShowThisForm(false);
-                        });
-                }} />
+                        // when patching, only update the data that has been changed, any undefined values will be ignored in the backend
+                        await updateStatus({
+                            _id: prevStatus._id,
+                            name: nameHasChanged ? name : undefined,
+                            description: descHasChanged ? description : undefined
+                        })
+                            .then(isUpdated => {
+                                if (isUpdated) setShowThisForm(false);
+                            });
+                    }} />
+            </div>
         </div>
     );
 };

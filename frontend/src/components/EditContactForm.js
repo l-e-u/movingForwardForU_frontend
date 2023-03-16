@@ -48,38 +48,39 @@ const EditContactForm = ({ prevContact, setShowThisForm }) => {
 
     return (
         <div>
-            <FormHeader text='Edit Contact'>
-                <CloseFormButton handleOnClick={() => setShowThisForm(false)} />
-            </FormHeader>
+            <FormHeader text='Edit Contact' handleCloseForm={() => setShowThisForm(false)} />
 
-            <CautionNotice text='Changes will be reflected on jobs with this contact set as customer.' />
+            <div className='rounded-bottom background-white text-reset px-3 pb-3 pt-1'>
+                <br />
+                <CautionNotice text='Changes will be reflected on jobs with this contact set as a customer.' />
 
-            <ContactForm
-                contact={contact}
-                setContact={setContact}
-                error={error}
-                isDisabled={isLoading || noInputChanges}
-                handleSubmit={async (e) => {
-                    e.preventDefault();
+                <ContactForm
+                    contact={contact}
+                    setContact={setContact}
+                    error={error}
+                    isDisabled={isLoading || noInputChanges}
+                    handleSubmit={async (e) => {
+                        e.preventDefault();
 
-                    // when patching, only update the data that has been changed, any undefined values will be ignored in the backend
-                    await updateContact({
-                        _id: prevContact._id,
-                        contact: {
-                            organization: organizationHasChanged ? organization : undefined,
-                            name: nameHasChanged ? name : undefined,
-                            address: addressHasChanged ? address : undefined,
-                            billingAddress: billingAddressHasChanged ? billingAddress : undefined,
-                            email: emailHasChanged ? email : undefined,
-                            phoneNumber: phoneNumberHasChanged ? phoneNumber : undefined,
-                            phoneExt: phoneExtHasChanged ? phoneExt : undefined,
-                            misc: miscHasChanged ? misc : undefined
-                        }
-                    })
-                        .then(isUpdated => {
-                            if (isUpdated) setShowThisForm(false);
-                        });
-                }} />
+                        // when patching, only update the data that has been changed, any undefined values will be ignored in the backend
+                        await updateContact({
+                            _id: prevContact._id,
+                            contact: {
+                                organization: organizationHasChanged ? organization : undefined,
+                                name: nameHasChanged ? name : undefined,
+                                address: addressHasChanged ? address : undefined,
+                                billingAddress: billingAddressHasChanged ? billingAddress : undefined,
+                                email: emailHasChanged ? email : undefined,
+                                phoneNumber: phoneNumberHasChanged ? phoneNumber : undefined,
+                                phoneExt: phoneExtHasChanged ? phoneExt : undefined,
+                                misc: miscHasChanged ? misc : undefined
+                            }
+                        })
+                            .then(isUpdated => {
+                                if (isUpdated) setShowThisForm(false);
+                            });
+                    }} />
+            </div>
         </div>
     );
 };

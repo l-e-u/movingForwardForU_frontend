@@ -79,30 +79,32 @@ const FeeSearchSelect = ({ feesList, setJob }) => {
 
             {hasAddedFees &&
                 <div className='mt-2 d-flex flex-column gap-1'>
-                    <SmallHeader text={'FEE' + (feesList.length > 1 ? 'S' : '')} />
-                    {feesList.map((fee, index) => {
-                        const { _id, amount, name } = fee;
+                    <SmallHeader text={'APPLIED FEE' + (feesList.length > 1 ? 'S' : '')} />
+                    <ul className='list-group flex-grow-1 d-flex flex-column gap-1' style={{ overflow: 'auto' }}>
+                        {feesList.map((fee, index) => {
+                            const { _id, amount, name } = fee;
 
-                        return (
-                            <div key={_id}>
-                                <CancellableOption
-                                    value={amount}
-                                    label={name}
-                                    labelAlt={'Fee' + index}
-                                    required={false}
-                                    handleCancelOnClick={() => {
-                                        setDuplicateError(null);
-                                        setJob(prev => {
-                                            const updated = { ...prev };
-                                            updated.fees = feesList.filter(f => f._id !== _id);
-                                            return updated;
-                                        });
-                                    }}
-                                    preLabel='$'
-                                />
-                            </div>
-                        );
-                    })}
+                            return (
+                                <li key={_id}>
+                                    <CancellableOption
+                                        handleCancelOnClick={() => {
+                                            setDuplicateError(null);
+                                            setJob(prev => {
+                                                const updated = { ...prev };
+                                                updated.fees = feesList.filter(f => f._id !== _id);
+                                                return updated;
+                                            });
+                                        }}
+                                        label={name}
+                                        labelAlt={'Fee' + index}
+                                        preLabel='$'
+                                        required={false}
+                                        value={amount}
+                                    />
+                                </li>
+                            );
+                        })}
+                    </ul>
                 </div>}
         </div>
     );

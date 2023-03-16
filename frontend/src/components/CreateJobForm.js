@@ -1,10 +1,11 @@
 import { useState } from 'react';
+
+// hooks
 import { useCreateJob } from '../hooks/useCreateJob.js';
 
 // components
 import JobForm from './JobForm.js';
 import FormHeader from './FormHeader.js';
-import CloseFormButton from './XButton.js';
 
 const CreateJobForm = ({ setShowThisForm }) => {
     const { createJob, error, setError, isLoading } = useCreateJob();
@@ -21,32 +22,32 @@ const CreateJobForm = ({ setShowThisForm }) => {
     });
 
     return (
-        <>
-            <FormHeader text='New Job'>
-                <CloseFormButton handleOnClick={() => setShowThisForm(false)} />
-            </FormHeader>
+        <div className='shadow'>
+            <FormHeader text='New Job' handleCloseForm={() => setShowThisForm(false)} />
 
-            <JobForm
-                job={job}
-                setJob={setJob}
-                setError={setError}
-                error={error}
-                isDisabled={isLoading}
-                handleSubmit={async (e) => {
-                    e.preventDefault();
-                    // return console.log(job);
-                    await createJob({
-                        ...job,
-                        customer: job.customer?._id,
-                        drivers: job.drivers.map(d => d._id),
-                        fees: job.fees.map(f => f._id),
-                        status: job.status?._id,
-                    })
-                        .then(isCreated => {
-                            if (isCreated) setShowThisForm(false);
+            <div className='rounded-bottom background-white text-reset px-3 pb-3 pt-1'>
+                <JobForm
+                    job={job}
+                    setJob={setJob}
+                    setError={setError}
+                    error={error}
+                    isDisabled={isLoading}
+                    handleSubmit={async (e) => {
+                        e.preventDefault();
+
+                        await createJob({
+                            ...job,
+                            customer: job.customer?._id,
+                            drivers: job.drivers.map(d => d._id),
+                            fees: job.fees.map(f => f._id),
+                            status: job.status?._id,
                         })
-                }} />
-        </>
+                            .then(isCreated => {
+                                if (isCreated) setShowThisForm(false);
+                            })
+                    }} />
+            </div>
+        </div>
     );
 };
 

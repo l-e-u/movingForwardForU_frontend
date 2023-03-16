@@ -5,7 +5,7 @@ import PageContentWrapper from '../components/PageContentWrapper.js';
 import CardContainer from '../components/CardContainer.js';
 import CreatedInfo from '../components/CreatedInfo.js';
 import FlexBoxWrapper from '../components/FlexBoxWrapper.js';
-import ShowCreateFormButton from '../components/ShowCreateFormButton.js';
+import ActionButton from '../components/ActionButton.js';
 import CreateUserForm from '../components/CreateUserForm.js';
 import UserOverview from '../components/UserOverview.js';
 import EditDocIcon from '../components/EditDocIcon.js';
@@ -70,7 +70,7 @@ const Users = () => {
             <div className='mb-3'>
                 {showCreateForm ?
                     <CreateUserForm setShowThisForm={setShowCreateForm} /> :
-                    <ShowCreateFormButton text='Create A User' handleOnClick={() => {
+                    <ActionButton text='Create A User' handleOnClick={() => {
                         setShowCreateForm(true);
                         setShowEditForm(false);
                     }}

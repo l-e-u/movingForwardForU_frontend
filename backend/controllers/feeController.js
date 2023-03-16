@@ -77,15 +77,15 @@ const updateFee = async (req, res) => {
     const { id } = req.params;
     const error = { server: { message: 'No such fee.' } };
 
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+        return res.status(404).json({ error });
+    };
 
     // add doc to db
     try {
-        let fee = await Fee.findByIdAndUpdate(
+        const fee = await Fee.findByIdAndUpdate(
             { _id: id },
-            {
-                ...req.body,
-                createdBy: user_id
-            },
+            { ...req.body },
             {
                 returnDocument: 'after',
                 runValidators: true

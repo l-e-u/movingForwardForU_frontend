@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+
+// hooks
 import { useMyJobsContext } from "../hooks/useMyJobsContext.js";
 import { useAuthContext } from '../hooks/useAuthContext.js';
 
@@ -6,12 +8,11 @@ import { useAuthContext } from '../hooks/useAuthContext.js';
 import formatDistanceToNow from "date-fns/formatDistanceToNow";
 
 // components
-import CardContainer from "../components/CardContainer.js";
-import JobOverview from '../components/JobOverview.js';
 import FlexBoxWrapper from '../components/FlexBoxWrapper.js';
 import PageContentWrapper from '../components/PageContentWrapper.js';
 import LoadingDocuments from '../components/LoadingDocuments.js';
 import ErrorLoadingDocuments from '../components/ErrorLoadingDocuments.js';
+import JobCard from '../components/JobCard.js';
 
 const MyJobs = () => {
     const [error, setError] = useState(null);
@@ -67,16 +68,13 @@ const MyJobs = () => {
                 <FlexBoxWrapper>
                     {myJobs.map((job) => {
                         return (
-                            <CardContainer key={job._id}>
-                                <JobOverview {...job} />
-                                {/* <p>{formatDistanceToNow(new Date(job.createdAt), { addSuffix: true })}</p> */}
-                            </CardContainer>
+                            <JobCard {...job} key={job._id} />
                         )
                     })}
                 </FlexBoxWrapper>
             }
         </PageContentWrapper>
-    )
+    );
 };
 
 export default MyJobs;

@@ -86,7 +86,7 @@ const UserSearchSelect = ({ drivers, setJob }) => {
 
             {hasAddedDrivers &&
                 <div className='mt-2 d-flex flex-column gap-1'>
-                    <SmallHeader text={'DRIVER' + (drivers.length > 1 ? 'S' : '')} />
+                    <SmallHeader text={'ASSIGNED DRIVER' + (drivers.length > 1 ? 'S' : '')} />
                     {drivers.map((driver, index) => {
                         const { _id, firstName, lastName } = driver;
                         const fullName = firstName + ' ' + lastName;

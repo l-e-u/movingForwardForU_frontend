@@ -1,19 +1,21 @@
 import { useEffect, useState } from 'react';
+
+// hooks
 import { useAuthContext } from '../hooks/useAuthContext.js';
 import { useStatusesContext } from '../hooks/useStatusesContext.js';
 
 // components
-import CardContainer from '../components/CardContainer.js';
 import EditStatusForm from '../components/EditStatusForm.js';
 import CreateStatusForm from '../components/CreateStatusForm.js';
 import CreatedInfo from '../components/CreatedInfo.js';
-import EditDocIcon from '../components/EditDocIcon.js';
-import StatusOverview from '../components/StatusOverview.js';
 import FlexBoxWrapper from '../components/FlexBoxWrapper.js';
 import PageContentWrapper from '../components/PageContentWrapper.js';
-import ShowCreateFormButton from '../components/ShowCreateFormButton.js';
+import ActionButton from '../components/ActionButton.js';
 import LoadingDocuments from '../components/LoadingDocuments.js';
 import ErrorLoadingDocuments from '../components/ErrorLoadingDocuments.js';
+import OptionsMenu from '../components/OptionsMenu.js';
+import Card from '../components/Card.js';
+import SmallHeader from '../components/SmallHeader.js';
 
 const Statuses = () => {
     const { statuses, dispatch } = useStatusesContext();
@@ -22,9 +24,10 @@ const Statuses = () => {
     // local state
     const [error, setError] = useState(null);
     const [isLoading, setIsLoading] = useState(null);
-    const [docToEdit, setDocToEdit] = useState(null);
+    const [selectedStatusId, setSelectedStatusId] = useState(null);
     const [showCreateForm, setShowCreateForm] = useState(false);
     const [showEditForm, setShowEditForm] = useState(false);
+    const [showOptionsMenu, setShowOptionsMenu] = useState(false);
 
     // get statuses once
     useEffect(() => {
@@ -56,15 +59,6 @@ const Statuses = () => {
         })();
     }, []);
 
-    // function closure returns a func that sets the status to be edited, hides the CreateStatusForm and shows EditStatusForm
-    const handleEditClick = (status) => {
-        return () => {
-            setDocToEdit(status);
-            setShowCreateForm(false);
-            setShowEditForm(true);
-        };
-    };
-
     if (error) {
         return <p className='text-danger'>Could not load, check network and refresh.</p>
     };
@@ -74,7 +68,7 @@ const Statuses = () => {
             <div className='mb-3'>
                 {showCreateForm ?
                     <CreateStatusForm setShowThisForm={setShowCreateForm} /> :
-                    <ShowCreateFormButton
+                    <ActionButton
                         handleOnClick={() => {
                             setShowCreateForm(true);
                             setShowEditForm(false);
@@ -92,25 +86,44 @@ const Statuses = () => {
             {statuses &&
                 <FlexBoxWrapper>
                     {statuses.map((status) => {
-                        const { _id, createdBy, createdAt } = status;
-                        const isEditingThisDoc = showEditForm && (_id === docToEdit._id);
-                        const editFormProps = {
-                            prevStatus: status,
-                            setShowThisForm: setShowEditForm
-                        };
+                        const { _id } = status;
+                        const isSelectedStatus = selectedStatusId === _id;
 
-                        return (
-                            <CardContainer key={_id} hasCreatedInfo={true}>
-                                {/* Edit and Delete options */}
-                                {!isEditingThisDoc && <div className='position-absolute top-0 end-0 pe-3 pt-2 d-flex'>
-                                    {!isEditingThisDoc && <EditDocIcon onClick={handleEditClick(status)} />}
-                                </div>}
+                        switch (true) {
+                            case (showEditForm && isSelectedStatus):
+                                return (<div className='position-relative' key={_id}>
+                                    <EditStatusForm prevStatus={status} setShowThisForm={setShowEditForm} />
+                                </div>);
 
-                                {isEditingThisDoc ? <EditStatusForm {...editFormProps} /> : <StatusOverview {...status} />
-                                }
-                                <CreatedInfo createdBy={createdBy} createdAt={createdAt} />
-                            </CardContainer>
-                        )
+                            default:
+                                return (<div className='position-relative' key={_id}>
+                                    <OptionsMenu
+                                        handleOnClickCloseMenu={() => setShowOptionsMenu(false)}
+                                        handleOnClickEditOption={() => {
+                                            setShowEditForm(true);
+                                            setShowCreateForm(false);
+                                            setShowOptionsMenu(false);
+                                        }}
+                                        handleOnClickMenu={() => {
+                                            setSelectedStatusId(_id);
+                                            setShowCreateForm(false);
+                                            setShowEditForm(false);
+                                            setShowOptionsMenu(true);
+                                        }}
+                                        showMenu={showOptionsMenu && isSelectedStatus}
+                                    />
+                                    <Card
+                                        header={<div>{status.name}</div>}
+                                        body={
+                                            <div>
+                                                <SmallHeader text='Description' />
+                                                <p style={{ whiteSpace: 'pre-wrap' }}>{status.description}</p>
+                                            </div>
+                                        }
+                                        footer={<CreatedInfo createdAt={status.createdAt} createdBy={status.createdBy} />}
+                                    />
+                                </div>)
+                        }
                     })}
                 </FlexBoxWrapper>
             }

@@ -3,17 +3,15 @@ import { useAuthContext } from '../hooks/useAuthContext.js';
 import { useContactsContext } from '../hooks/useContactsContext.js'
 
 // components
-import CardContainer from '../components/CardContainer.js'
 import CreateContactForm from '../components/CreateContactForm.js';
-import CreatedInfo from '../components/CreatedInfo.js';
-import EditDocIcon from '../components/EditDocIcon.js';
 import EditContactForm from '../components/EditContactForm.js';
-import ContactOverview from '../components/ContactOverview.js';
 import FlexBoxWrapper from '../components/FlexBoxWrapper.js';
 import PageContentWrapper from '../components/PageContentWrapper.js';
-import ShowCreateFormButton from '../components/ShowCreateFormButton.js';
+import ActionButton from '../components/ActionButton.js';
 import LoadingDocuments from '../components/LoadingDocuments.js';
 import ErrorLoadingDocuments from '../components/ErrorLoadingDocuments.js';
+import OptionsMenu from '../components/OptionsMenu.js';
+import ContactCard from '../components/ContactCard.js';
 
 const Contacts = () => {
     const { contacts, dispatch } = useContactsContext();
@@ -25,6 +23,9 @@ const Contacts = () => {
     const [docToEdit, setDocToEdit] = useState(null);
     const [showCreateForm, setShowCreateForm] = useState(false);
     const [showEditForm, setShowEditForm] = useState(false);
+    const [selectedContactId, setSelectedContactId] = useState(null);
+    const [showOptionsMenu, setShowOptionsMenu] = useState(false);
+
 
     useEffect(() => {
         (async () => {
@@ -69,7 +70,7 @@ const Contacts = () => {
             <div className='mb-3'>
                 {showCreateForm ?
                     <CreateContactForm setShowThisForm={setShowCreateForm} /> :
-                    <ShowCreateFormButton
+                    <ActionButton
                         handleOnClick={() => {
                             setShowCreateForm(true);
                             setShowEditForm(false);
@@ -87,23 +88,35 @@ const Contacts = () => {
             {contacts &&
                 <FlexBoxWrapper>
                     {contacts.map((contact) => {
-                        const { _id, createdBy, createdAt } = contact;
-                        const isEditingThisDoc = showEditForm && (_id === docToEdit._id);
+                        const { _id } = contact;
+                        const isSelectedContact = selectedContactId === _id;
 
-                        return (
-                            <CardContainer key={_id} hasCreatedInfo={true}>
-                                {/* Edit and Delete options */}
-                                <div className='position-absolute top-0 end-0 pe-3 pt-2 d-flex'>
-                                    {!isEditingThisDoc && <EditDocIcon onClick={handleEditClick(contact)} />}
-                                </div>
+                        switch (true) {
+                            case (showEditForm && isSelectedContact):
+                                return (<div className='position-relative' key={_id}>
+                                    <EditContactForm prevContact={contact} setShowThisForm={setShowEditForm} />
+                                </div>);
 
-                                {isEditingThisDoc ?
-                                    <EditContactForm prevContact={contact} setShowThisForm={setShowEditForm} /> :
-                                    <ContactOverview {...contact} />
-                                }
-                                <CreatedInfo createdBy={createdBy} createdAt={createdAt} />
-                            </CardContainer>
-                        );
+                            default:
+                                return (<div className='position-relative' key={_id}>
+                                    <OptionsMenu
+                                        showMenu={showOptionsMenu && isSelectedContact}
+                                        handleOnClickCloseMenu={() => setShowOptionsMenu(false)}
+                                        handleOnClickEditOption={() => {
+                                            setShowEditForm(true);
+                                            setShowCreateForm(false);
+                                            setShowOptionsMenu(false);
+                                        }}
+                                        handleOnClickMenu={() => {
+                                            setSelectedContactId(_id);
+                                            setShowCreateForm(false);
+                                            setShowEditForm(false);
+                                            setShowOptionsMenu(true);
+                                        }}
+                                    />
+                                    <ContactCard {...contact} />
+                                </div>);
+                        }
                     })}
                 </FlexBoxWrapper>
             }

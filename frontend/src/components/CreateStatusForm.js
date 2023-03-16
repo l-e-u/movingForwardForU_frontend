@@ -12,24 +12,24 @@ const CreateStatusForm = ({ setShowThisForm }) => {
     const [status, setStatus] = useState({ name: '', description: '' });
 
     return (
-        <div>
-            <FormHeader text='New Status'>
-                <XButton handleOnClick={() => setShowThisForm(false)} />
-            </FormHeader>
+        <div className='shadow'>
+            <FormHeader text='New Status' handleCloseForm={() => setShowThisForm(false)} />
 
-            <StatusForm
-                status={status}
-                setStatus={setStatus}
-                error={error}
-                isDisabled={isLoading}
-                handleSubmit={async (e) => {
-                    e.preventDefault();
+            <div className='rounded-bottom background-white text-reset px-3 pb-3 pt-1'>
+                <StatusForm
+                    status={status}
+                    setStatus={setStatus}
+                    error={error}
+                    isDisabled={isLoading}
+                    handleSubmit={async (e) => {
+                        e.preventDefault();
 
-                    await createStatus(status)
-                        .then((isCreated) => {
-                            if (isCreated) setShowThisForm(false);
-                        });
-                }} />
+                        await createStatus(status)
+                            .then((isCreated) => {
+                                if (isCreated) setShowThisForm(false);
+                            });
+                    }} />
+            </div>
         </div>
     );
 };

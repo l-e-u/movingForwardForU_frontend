@@ -1,5 +1,6 @@
 // components
 import RequiredFieldsText from './RequiredFieldsText';
+import GrowingTextArea from './GrowingTextArea';
 
 // functions
 import { removeExtraSpaces } from '../utils/StringUtils';
@@ -47,20 +48,9 @@ const StatusForm = ({ status, setStatus, handleSubmit, error, isDisabled }) => {
             </div>
 
             <div className='form-floating mb-3'>
-                <textarea
-                    type='text'
+                <GrowingTextArea
                     className={'form-control' + (errorFromDescriptionInput ? ' is-invalid' : '')}
                     name='description'
-                    placeholder='Description'
-                    id='description'
-                    onChange={(e) => {
-                        setStatus(prev => {
-                            return {
-                                ...prev,
-                                description: removeExtraSpaces(e.target.value)
-                            }
-                        })
-                    }}
                     onBlur={(e) => {
                         setStatus(prev => {
                             return {
@@ -69,9 +59,17 @@ const StatusForm = ({ status, setStatus, handleSubmit, error, isDisabled }) => {
                             }
                         })
                     }}
+                    onChange={(e) => {
+                        setStatus(prev => {
+                            return {
+                                ...prev,
+                                description: e.target.value
+                            }
+                        })
+                    }}
+                    placeholder='Description'
                     value={description}
-                    style={{ height: '100px' }}
-                ></textarea>
+                />
                 <label htmlFor='description' className='form-label required'>
                     Description
                     {errorFromDescriptionInput && <span className='ms-1 text-danger'>{': ' + error.description.message}</span>}</label>

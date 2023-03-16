@@ -17,11 +17,11 @@ const ContactForm = ({ contact, setContact, handleSubmit, error, isDisabled }) =
     const errorOther = error?.server;
 
     return (
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} className='d-flex flex-column gap-2'>
             <RequiredFieldsText />
 
             {/* ORGANIZATION */}
-            <div className='form-floating mb-2'>
+            <div className='form-floating'>
                 <input
                     type='text'
                     className={'form-control' + (errorFromOrganizationInput ? ' is-invalid' : '')}
@@ -51,138 +51,21 @@ const ContactForm = ({ contact, setContact, handleSubmit, error, isDisabled }) =
                 </label>
             </div>
 
-            {/* NAME */}
-            <div className='form-floating mb-2'>
-                <input
-                    type='text'
-                    className='form-control'
-                    name='name'
-                    id='name'
-                    placeholder='Name'
-                    value={name ?? ''}
-                    onChange={(e) => {
-                        setContact(prev => {
-                            return {
-                                ...prev,
-                                name: removeExtraSpaces(e.target.value)
-                            }
-                        })
-                    }}
-                    onBlur={(e) => {
-                        setContact(prev => {
-                            return {
-                                ...prev,
-                                name: e.target.value.trim()
-                            }
-                        })
-                    }} />
-                <label htmlFor='name' className='form-label'>Name</label>
-            </div>
-
-            {/* ADDRESS */}
-            <div className='form-floating mb-2'>
-                <input
-                    type='text'
-                    className={'form-control' + (errorFromAddressInput ? ' is-invalid' : '')}
-                    name='address'
-                    placeholder='Address'
-                    id='address'
-                    value={address ?? ''}
-                    onChange={(e) => {
-                        setContact(prev => {
-                            return {
-                                ...prev,
-                                address: removeExtraSpaces(e.target.value)
-                            }
-                        })
-                    }}
-                    onBlur={(e) => {
-                        setContact(prev => {
-                            return {
-                                ...prev,
-                                address: e.target.value.trim()
-                            }
-                        })
-                    }} />
-                <label htmlFor='address' className='form-label required'>
-                    Address
-                    {errorFromAddressInput && <span className='inputError'>{error.address.message}</span>}
-                </label>
-            </div>
-
-            {/* BILLING ADDRESS */}
-            <div className='form-floating mb-2'>
-                <input
-                    type='text'
-                    className='form-control'
-                    name='billing'
-                    placeholder='Billing Address'
-                    id='billing'
-                    value={billingAddress ?? ''}
-                    onChange={(e) => {
-                        setContact(prev => {
-                            return {
-                                ...prev,
-                                billingAddress: removeExtraSpaces(e.target.value)
-                            }
-                        })
-                    }}
-                    onBlur={(e) => {
-                        setContact(prev => {
-                            return {
-                                ...prev,
-                                billingAddress: e.target.value.trim()
-                            }
-                        })
-                    }} />
-                <label htmlFor='address' className='form-label'>Billing Address</label>
-            </div>
-
-            {/* EMAIL */}
-            <div className='form-floating mb-2'>
-                <input
-                    type='email'
-                    className={'form-control' + (errorFromEmailInput ? ' is-invalid' : '')}
-                    id='email'
-                    placeholder='name@example.com'
-                    value={email ?? ''}
-                    onChange={(e) => {
-                        setContact(prev => {
-                            return {
-                                ...prev,
-                                email: removeExtraSpaces(e.target.value)
-                            }
-                        })
-                    }}
-                    onBlur={(e) => {
-                        setContact(prev => {
-                            return {
-                                ...prev,
-                                email: e.target.value.trim()
-                            }
-                        })
-                    }} />
-                <label htmlFor='email' className='form-label'>
-                    Email
-                    {errorFromEmailInput && <span className='inputError'>{error.email.message}</span>}
-                </label>
-            </div>
-
-            {/* PHONE NUMBER AND EXT */}
-            <div className='d-sm-flex gap-sm-3 mb-2'>
-                <div className='form-floating w-100 w-sm-75 mb-2 mb-sm-0'>
+            <div className='d-flex flex-column flex-lg-row gap-2'>
+                {/* ADDRESS */}
+                <div className='form-floating flex-grow-1'>
                     <input
                         type='text'
-                        className={'form-control' + (errorFromPhoneNumberInput ? ' is-invalid' : '')}
-                        name='phoneNumber'
-                        placeholder='Phone'
-                        id='phoneNumber'
-                        value={phoneNumber ?? ''}
+                        className={'form-control' + (errorFromAddressInput ? ' is-invalid' : '')}
+                        name='address'
+                        placeholder='Address'
+                        id='address'
+                        value={address ?? ''}
                         onChange={(e) => {
                             setContact(prev => {
                                 return {
                                     ...prev,
-                                    phoneNumber: removeExtraSpaces(e.target.value)
+                                    address: removeExtraSpaces(e.target.value)
                                 }
                             })
                         }}
@@ -190,29 +73,30 @@ const ContactForm = ({ contact, setContact, handleSubmit, error, isDisabled }) =
                             setContact(prev => {
                                 return {
                                     ...prev,
-                                    phoneNumber: e.target.value.trim()
+                                    address: e.target.value.trim()
                                 }
                             })
                         }} />
-                    <label htmlFor='phoneNumber' className='form-label'>
-                        Phone
-                        {errorFromPhoneNumberInput && <span className='inputError'>{error.phoneNumber.message}</span>}
+                    <label htmlFor='address' className='form-label required'>
+                        Address
+                        {errorFromAddressInput && <span className='inputError'>{error.address.message}</span>}
                     </label>
                 </div>
-                <div className='form-floating w-100 w-sm-25'>
+
+                {/* BILLING ADDRESS */}
+                <div className='form-floating flex-grow-1'>
                     <input
-                        type='number'
-                        min={0}
-                        className={'form-control' + (errorFromPhoneExtInput ? ' is-invalid' : '')}
-                        name='phoneExt'
-                        placeholder='Ext'
-                        id='phoneExt'
-                        value={phoneExt ?? ''}
+                        type='text'
+                        className='form-control'
+                        name='billing'
+                        placeholder='Billing Address'
+                        id='billing'
+                        value={billingAddress ?? ''}
                         onChange={(e) => {
                             setContact(prev => {
                                 return {
                                     ...prev,
-                                    phoneExt: removeExtraSpaces(e.target.value)
+                                    billingAddress: removeExtraSpaces(e.target.value)
                                 }
                             })
                         }}
@@ -220,14 +104,136 @@ const ContactForm = ({ contact, setContact, handleSubmit, error, isDisabled }) =
                             setContact(prev => {
                                 return {
                                     ...prev,
-                                    phoneExt: e.target.value.trim()
+                                    billingAddress: e.target.value.trim()
                                 }
                             })
                         }} />
-                    <label htmlFor='PhoneExt' className='form-label'>
-                        Ext
-                        {errorFromPhoneExtInput && <span className='inputError'>{error.phoneExt.message}</span>}
+                    <label htmlFor='address' className='form-label'>Billing Address</label>
+                </div>
+            </div>
+
+            <div className='d-flex flex-wrap gap-2'>
+                {/* NAME */}
+                <div className='form-floating' style={{ flex: '1 1 400px' }}>
+                    <input
+                        type='text'
+                        className='form-control'
+                        name='name'
+                        id='name'
+                        placeholder='Name'
+                        value={name ?? ''}
+                        onChange={(e) => {
+                            setContact(prev => {
+                                return {
+                                    ...prev,
+                                    name: removeExtraSpaces(e.target.value)
+                                }
+                            })
+                        }}
+                        onBlur={(e) => {
+                            setContact(prev => {
+                                return {
+                                    ...prev,
+                                    name: e.target.value.trim()
+                                }
+                            })
+                        }} />
+                    <label htmlFor='name' className='form-label'>Name</label>
+                </div>
+
+                {/* EMAIL */}
+                <div className='form-floating' style={{ flex: '1 1 400px' }}>
+                    <input
+                        type='email'
+                        className={'form-control' + (errorFromEmailInput ? ' is-invalid' : '')}
+                        id='email'
+                        placeholder='name@example.com'
+                        value={email ?? ''}
+                        onChange={(e) => {
+                            setContact(prev => {
+                                return {
+                                    ...prev,
+                                    email: removeExtraSpaces(e.target.value)
+                                }
+                            })
+                        }}
+                        onBlur={(e) => {
+                            setContact(prev => {
+                                return {
+                                    ...prev,
+                                    email: e.target.value.trim()
+                                }
+                            })
+                        }} />
+                    <label htmlFor='email' className='form-label'>
+                        Email
+                        {errorFromEmailInput && <span className='inputError'>{error.email.message}</span>}
                     </label>
+                </div>
+
+                <div className='d-flex flex-column flex-sm-row gap-2' style={{ flex: '1 1 300px' }}>
+                    {/* PHONE NUMBER */}
+                    <div className='form-floating flex-grow-1'>
+                        <input
+                            type='text'
+                            className={'form-control' + (errorFromPhoneNumberInput ? ' is-invalid' : '')}
+                            name='phoneNumber'
+                            placeholder='Phone'
+                            id='phoneNumber'
+                            value={phoneNumber ?? ''}
+                            onChange={(e) => {
+                                setContact(prev => {
+                                    return {
+                                        ...prev,
+                                        phoneNumber: removeExtraSpaces(e.target.value)
+                                    }
+                                })
+                            }}
+                            onBlur={(e) => {
+                                setContact(prev => {
+                                    return {
+                                        ...prev,
+                                        phoneNumber: e.target.value.trim()
+                                    }
+                                })
+                            }} />
+                        <label htmlFor='phoneNumber' className='form-label'>
+                            Phone
+                            {errorFromPhoneNumberInput && <span className='inputError'>{error.phoneNumber.message}</span>}
+                        </label>
+                    </div>
+
+                    {/* PHONE EXT */}
+                    <div className='form-floating'>
+                        <input
+                            type='number'
+                            min={0}
+                            className={'form-control' + (errorFromPhoneExtInput ? ' is-invalid' : '')}
+                            name='phoneExt'
+                            placeholder='Ext'
+                            id='phoneExt'
+                            value={phoneExt ?? ''}
+                            onChange={(e) => {
+                                setContact(prev => {
+                                    return {
+                                        ...prev,
+                                        phoneExt: removeExtraSpaces(e.target.value)
+                                    }
+                                })
+                            }}
+                            onBlur={(e) => {
+                                setContact(prev => {
+                                    return {
+                                        ...prev,
+                                        phoneExt: e.target.value.trim()
+                                    }
+                                })
+                            }} />
+                        <label htmlFor='PhoneExt' className='form-label'>
+                            Ext
+                            {errorFromPhoneExtInput && <span className='inputError'>{error.phoneExt.message}</span>}
+                        </label>
+                    </div>
                 </div>
             </div>
 
@@ -248,7 +254,7 @@ const ContactForm = ({ contact, setContact, handleSubmit, error, isDisabled }) =
             <button
                 type='submit'
                 disabled={isDisabled}
-                className='btn btn-sm btn-success rounded-pill px-3 d-flex mt-4 ms-auto'>
+                className='btn btn-sm btn-success rounded-pill px-3 d-flex ms-auto'>
                 Save
             </button>
 

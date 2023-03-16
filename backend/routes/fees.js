@@ -24,6 +24,6 @@ router.post('/', createFee);
 router.delete('/:id', deleteFee);
 
 // UPDATE a fee
-router.patch('/id', updateFee);
+router.patch('/:id', updateFee);
 
 export default router;

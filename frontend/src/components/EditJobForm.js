@@ -7,7 +7,6 @@ import { noCharChanges } from '../utils/StringUtils.js';
 // components
 import JobForm from './JobForm';
 import FormHeader from './FormHeader';
-import CloseFormButton from './XButton';
 
 const EditJobForm = ({ prevJob, setShowThisForm }) => {
     const { updateJob, error, isLoading, setError } = useUpdateJob();
@@ -48,28 +47,28 @@ const EditJobForm = ({ prevJob, setShowThisForm }) => {
     const noInputChanges = Object.keys(updatedProperties).length === 0;
 
     return (
-        <div>
-            <FormHeader text='Edit Job'>
-                <CloseFormButton handleOnClick={() => setShowThisForm(false)} />
-            </FormHeader>
+        <div className='shadow'>
+            <FormHeader text='Edit Job' handleCloseForm={() => setShowThisForm(false)} />
 
-            <JobForm
-                job={job}
-                setJob={setJob}
-                setError={setError}
-                error={error}
-                isDisabled={isLoading || noInputChanges}
-                handleSubmit={async (e) => {
-                    e.preventDefault();
+            <div className='rounded-bottom background-white text-reset px-3 pb-3 pt-1'>
+                <JobForm
+                    job={job}
+                    setJob={setJob}
+                    setError={setError}
+                    error={error}
+                    isDisabled={isLoading || noInputChanges}
+                    handleSubmit={async (e) => {
+                        e.preventDefault();
 
-                    await updateJob({
-                        _id: prevJob._id,
-                        job: { ...updatedProperties },
-                    })
-                        .then(isCreated => {
-                            if (isCreated) setShowThisForm(false);
+                        await updateJob({
+                            _id: prevJob._id,
+                            job: { ...updatedProperties },
                         })
-                }} />
+                            .then(isCreated => {
+                                if (isCreated) setShowThisForm(false);
+                            })
+                    }} />
+            </div>
         </div>
     );
 };
