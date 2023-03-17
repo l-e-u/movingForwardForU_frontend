@@ -87,28 +87,29 @@ const UserSearchSelect = ({ drivers, setJob }) => {
             {hasAddedDrivers &&
                 <div className='mt-2 d-flex flex-column gap-1'>
                     <SmallHeader text={'ASSIGNED DRIVER' + (drivers.length > 1 ? 'S' : '')} />
-                    {drivers.map((driver, index) => {
-                        const { _id, firstName, lastName } = driver;
-                        const fullName = firstName + ' ' + lastName;
+                    <ul className='list-group d-flex flex-column gap-1' style={{ overflow: 'auto' }}>
+                        {drivers.map(driver => {
+                            const { _id, firstName, lastName } = driver;
+                            const fullName = firstName + ' ' + lastName;
 
-                        return (
-                            <div key={_id}>
-                                <CancellableOption
-                                    value={fullName}
-                                    label={driver.email}
-                                    labelAlt={'Driver' + index}
-                                    required={false}
-                                    handleCancelOnClick={() => {
-                                        setInputError(null);
-                                        setJob(prev => {
-                                            const updated = { ...prev };
-                                            updated.drivers = drivers.filter(d => d._id !== _id);
-                                            return updated;
-                                        });
-                                    }} />
-                            </div>
-                        );
-                    })}
+                            return (
+                                <li key={_id}>
+                                    <CancellableOption
+                                        handleCancelOnClick={() => {
+                                            setInputError(null);
+                                            setJob(prev => {
+                                                const updated = { ...prev };
+                                                updated.drivers = drivers.filter(d => d._id !== _id);
+                                                return updated;
+                                            });
+                                        }}
+                                        label={driver.email}
+                                        value={fullName}
+                                    />
+                                </li>
+                            );
+                        })}
+                    </ul>
                 </div>}
         </div>
     );

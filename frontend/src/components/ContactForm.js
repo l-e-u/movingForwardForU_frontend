@@ -1,11 +1,12 @@
 // components
 import RequiredFieldsText from './RequiredFieldsText';
 import GrowingTextArea from './GrowingTextArea';
+import ActionButton from './ActionButton'
 
 // functions
 import { removeExtraSpaces } from '../utils/StringUtils';
 
-const ContactForm = ({ contact, setContact, handleSubmit, error, isDisabled }) => {
+const ContactForm = ({ contact, setContact, handleSubmit, error, isDisabled, isLoading }) => {
     const { name, misc, address, billingAddress, organization, email, phoneNumber, phoneExt } = contact;
 
     // error identification on fields with validation
@@ -251,12 +252,12 @@ const ContactForm = ({ contact, setContact, handleSubmit, error, isDisabled }) =
                 <label htmlFor='miscTextarea' className='form-label'>Miscellaneous</label>
             </div>
 
-            <button
+            <ActionButton
+                alignX='right'
+                text={(isLoading ? 'Saving...' : 'Save')}
                 type='submit'
-                disabled={isDisabled}
-                className='btn btn-sm btn-success rounded-pill px-3 d-flex ms-auto'>
-                Save
-            </button>
+                isDisabled={isDisabled}
+            />
 
             {/* any errors other than input validation */}
             {errorOther && <div className='text-danger mt-3'>{`${error.server.message} Refresh page. If problem persists, contact developer.`}</div>}

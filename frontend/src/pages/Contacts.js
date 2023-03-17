@@ -20,7 +20,6 @@ const Contacts = () => {
     // local state
     const [error, setError] = useState(null);
     const [isLoading, setIsLoading] = useState(null);
-    const [docToEdit, setDocToEdit] = useState(null);
     const [showCreateForm, setShowCreateForm] = useState(false);
     const [showEditForm, setShowEditForm] = useState(false);
     const [selectedContactId, setSelectedContactId] = useState(null);
@@ -56,24 +55,18 @@ const Contacts = () => {
         })();
     }, [dispatch, user]);
 
-    // function closure returns a func that sets the contact to be edited, hides the CreateStatusForm and shows EditStatusForm
-    const handleEditClick = (contact) => {
-        return () => {
-            setDocToEdit(contact);
-            setShowCreateForm(false);
-            setShowEditForm(true);
-        };
-    };
-
     return (
         <PageContentWrapper>
             <div className='mb-3'>
                 {showCreateForm ?
                     <CreateContactForm setShowThisForm={setShowCreateForm} /> :
                     <ActionButton
+                        alignX='right'
                         handleOnClick={() => {
                             setShowCreateForm(true);
                             setShowEditForm(false);
+                            setShowOptionsMenu(false);
+                            setSelectedContactId(null);
                         }}
                         text='Create a Contact'
                     />
@@ -109,8 +102,6 @@ const Contacts = () => {
                                         }}
                                         handleOnClickMenu={() => {
                                             setSelectedContactId(_id);
-                                            setShowCreateForm(false);
-                                            setShowEditForm(false);
                                             setShowOptionsMenu(true);
                                         }}
                                     />

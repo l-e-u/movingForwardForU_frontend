@@ -8,7 +8,6 @@ import { noCharChanges } from "../utils/StringUtils.js";
 import FormHeader from './FormHeader.js';
 import CautionNotice from './CautionNotice.js';
 import StatusForm from './StatusForm.js';
-import XButton from './XButton.js';
 
 // Form to update a status
 const EditStatusForm = ({ prevStatus, setShowThisForm }) => {
@@ -23,11 +22,10 @@ const EditStatusForm = ({ prevStatus, setShowThisForm }) => {
     const noInputChanges = !nameHasChanged && !descHasChanged;
 
     return (
-        <div>
+        <div className='shadow'>
             <FormHeader text='Edit Status' handleCloseForm={() => setShowThisForm(false)} />
 
-            <div className='rounded-bottom background-white text-reset px-3 pb-3 pt-1'>
-                <br />
+            <div className='rounded-bottom background-white text-reset p-3'>
                 <CautionNotice text='Changes will also reflect on all jobs with the same status.' />
 
                 <StatusForm
@@ -35,6 +33,7 @@ const EditStatusForm = ({ prevStatus, setShowThisForm }) => {
                     setStatus={setStatus}
                     error={error}
                     isDisabled={isLoading || noInputChanges}
+                    isLoading={isLoading}
                     handleSubmit={async (e) => {
                         e.preventDefault();
 

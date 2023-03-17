@@ -1,9 +1,11 @@
-import { useAuthContext } from '../hooks/useAuthContext';
-
 // components
 import GrowingTextArea from './GrowingTextArea';
 import SmallHeader from './SmallHeader';
 import XButton from './XButton';
+import ActionButton from './ActionButton';
+
+// hooks
+import { useAuthContext } from '../hooks/useAuthContext';
 
 // user can create a list of notes, each note has its own functions to update and delete itself
 const NotesInput = ({
@@ -13,7 +15,6 @@ const NotesInput = ({
     setJob,
 }) => {
     const { user } = useAuthContext();
-    const userId = user._id;
     const hasNotes = notes.length > 0;
 
     const handleOnChange = (input, index) => {
@@ -48,55 +49,52 @@ const NotesInput = ({
     };
 
     return (
-        <>
+        <div className='d-flex flex-column gap-2'>
+            <SmallHeader text='NOTES' />
             {hasNotes &&
-                <div>
-                    <SmallHeader text='NOTES' />
-                    <ul className='list-group mt-1 d-flex flex-column gap-1'>
-                        {notes.map((note, index) => {
-                            const noteId = note._id;
-                            const inputSubjectError = error?.notes[index]?.subject;
-                            const inputMessageError = error?.notes[index]?.message;
-                            const inputError = inputMessageError || inputSubjectError;
+                <ul className='list-group mb-1 d-flex flex-column gap-1 overflow-scroll' style={{ maxHeight: '415px' }}>
+                    {notes.map((note, index) => {
+                        const noteId = note._id;
+                        const inputSubjectError = error?.notes[index]?.subject;
+                        const inputMessageError = error?.notes[index]?.message;
+                        const inputError = inputMessageError || inputSubjectError;
 
-                            return (
-                                <li key={noteId || index} className={'position-relative form-control' + (inputError ? ' is-invalid' : '')}>
-                                    <div className='position-absolute top-0 end-0'>
-                                        <XButton handleOnClick={() => handleDeleteOnClick(index)} />
-                                    </div>
-                                    <input
-                                        className='form-control-plaintext p-0'
-                                        placeholder={'Subject' + (inputSubjectError ? ` : ${inputSubjectError}` : '')}
-                                        value={note.subject}
-                                        onBlur={e => handleOnChange({ subject: e.target.value.trim() }, index)}
-                                        onChange={e => handleOnChange({ subject: e.target.value }, index)} />
-                                    <GrowingTextArea
-                                        value={note.message}
-                                        className='form-control-plaintext p-0'
-                                        placeholder={'Message' + (inputMessageError ? ` : ${inputMessageError}` : '')}
-                                        onBlur={e => handleOnChange({ message: e.target.value.trim() }, index)}
-                                        onChange={e => handleOnChange({ message: e.target.value }, index)}
-                                    />
-                                </li>
-                            );
-                        })}
-                    </ul>
-                </div>
+                        return (
+                            <li key={noteId || index} className={'position-relative form-control' + (inputError ? ' is-invalid' : '')}>
+                                <div className='position-absolute top-0 end-0 text-action'>
+                                    <XButton handleOnClick={() => handleDeleteOnClick(index)} />
+                                </div>
+                                <input
+                                    className='form-control-plaintext p-0'
+                                    placeholder={'Subject' + (inputSubjectError ? ` : ${inputSubjectError}` : '')}
+                                    value={note.subject}
+                                    onBlur={e => handleOnChange({ subject: e.target.value.trim() }, index)}
+                                    onChange={e => handleOnChange({ subject: e.target.value }, index)} />
+                                <GrowingTextArea
+                                    value={note.message}
+                                    className='form-control-plaintext p-0'
+                                    placeholder={'Message' + (inputMessageError ? ` : ${inputMessageError}` : '')}
+                                    onBlur={e => handleOnChange({ message: e.target.value.trim() }, index)}
+                                    onChange={e => handleOnChange({ message: e.target.value }, index)}
+                                />
+                            </li>
+                        );
+                    })}
+                </ul>
             }
-            <button
-                type='button'
-                className='btn rounded-circle border-0 btn-lg btn-outline-primary d-flex mx-auto'
-                onClick={() => {
+            <ActionButton
+                isDisabled={error}
+                handleOnClick={() => {
                     setJob(prev => {
                         return {
                             ...prev,
-                            notes: [...prev.notes, { subject: '', message: '', createdBy: userId }]
+                            notes: [...prev.notes, { subject: '', message: '', createdBy: user._id }]
                         }
                     })
-                }}>
-                <i className='bi bi-journal-plus'></i>
-            </button>
-        </>
+                }}
+                text='Append Note'
+            />
+        </div>
     );
 };
 

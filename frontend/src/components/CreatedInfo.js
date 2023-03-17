@@ -8,12 +8,7 @@ const CreatedInfo = ({ createdBy, createdAt }) => {
 
     return (
         <small className='fst-italic text-secondary smallPrint'>
-            {`created on ${dateStringFormat(date)} at ${timeStringFormat(date)}` + (createdBy ? ` by ${firstName} ${lastInitial}` : '')}
-        </small>
-    );
-    return (
-        <small className='position-absolute text-end bottom-0 end-0 pe-3 pb-1 fst-italic text-secondary smallPrint w-100'>
-            {`created on ${dateStringFormat(date)} at ${timeStringFormat(date)}` + (createdBy ? ` by ${firstName} ${lastInitial}` : '')}
+            {`created on ${dateStringFormat(date)} at ${timeStringFormat(date, true)}` + (createdBy ? ` by ${firstName} ${lastInitial}` : '')}
         </small>
     );
 };

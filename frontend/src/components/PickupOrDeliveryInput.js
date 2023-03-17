@@ -34,23 +34,7 @@ const PickupOrDeliveryInput = ({
 
             <SmallHeader text={propertyText.toUpperCase() + ' DETAILS'} />
 
-            {/* checkboxes for options to set date and set time of pickup/delivery */}
-            {/* <div className='d-flex justify-content-around'>
-                <div className='form-check'>
-                    <input
-                        type='checkbox'
-                        className='form-check-input'
-                        name='dateCheckbox'
-                        id='dateCheckbox'
-                        checked={date ? true : false}
-                        onChange={(e) => {
-                            const isChecked = e.target.checked;
-
-                            setPickupOrDeliveryInfo({ date: isChecked ? new Date() : undefined, includeTime: false });
-                        }} />
-                    <label className='form-check-label' htmlFor='dateCheckbox'><SmallHeader text='Set Date' /></label>
-                </div> */}
-
+            {/* toggle to include a due time */}
             <div className='form-check'>
                 <input
                     type='checkbox'
@@ -63,8 +47,7 @@ const PickupOrDeliveryInput = ({
                 <label className='form-check-label' htmlFor='timeCheckbox'><SmallHeader text='Set Time' /></label>
             </div>
 
-            {/* render when pickup/delivery has a date */}
-            {date && <DateInput date={new Date(date)} setDate={setPickupOrDeliveryInfo} />}
+            <DateInput date={new Date(date)} setDate={setPickupOrDeliveryInfo} />
 
             {includeTime && <TimeInput date={new Date(date)} setTime={setPickupOrDeliveryInfo} />}
 
@@ -89,7 +72,7 @@ const PickupOrDeliveryInput = ({
                                     })}
                                 />
                                 <label htmlFor={propertyText + 'GoogleAddressAutocomplete'} className='form-label required'>
-                                    Address
+                                    <i className='bi bi-search text-action me-1'></i> Address
                                     {loading && <span className='ms-2'>: Loading...</span>}
                                     {error && <span className='inputError'>{error.message}</span>}
                                 </label>

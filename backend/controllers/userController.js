@@ -79,6 +79,12 @@ const verifyEmailToken = async (req, res) => {
 
         const user = await User.findById(_id);
 
+        // if the user already has a set password, verify the email
+        if (user.password) {
+            user.isVerified = true;
+            await user.save();
+        };
+
         return res.status(200).json(user);
     }
     catch (err) {
@@ -214,10 +220,15 @@ const deleteUser = async (req, res) => {
 // update a user
 const updateUser = async (req, res) => {
     const { id } = req.params;
+    const { email } = req.body;
+
+    console.log(req.body)
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
         return res.status(404).json({ error: 'No such user.' });
     };
+
+    // if the email is being updated, unverify the user to require them to verify the new email address
 
     const user = await User.findByIdAndUpdate(
         { _id: id },
@@ -230,6 +241,14 @@ const updateUser = async (req, res) => {
 
     if (!user) {
         return res.status(404).json({ error: 'No such user.' });
+    };
+
+    if (email) {
+        user.isVerified = false;
+        await user.save();
+
+        const token = registerToken(user._id);
+        await sendVerifyEmailRequest({ firstName: user.firstName, email, token });
     };
 
     res.status(200).json(user);

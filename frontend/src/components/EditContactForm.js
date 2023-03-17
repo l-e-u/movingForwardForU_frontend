@@ -5,7 +5,6 @@ import { useUpdateContact } from '../hooks/useUpdateContact.js';
 import { noCharChanges } from '../utils/StringUtils.js';
 
 // components
-import CloseFormButton from './XButton.js';
 import ContactForm from './ContactForm.js';
 import FormHeader from './FormHeader.js';
 import CautionNotice from './CautionNotice.js';
@@ -59,6 +58,7 @@ const EditContactForm = ({ prevContact, setShowThisForm }) => {
                     setContact={setContact}
                     error={error}
                     isDisabled={isLoading || noInputChanges}
+                    isLoading={isLoading}
                     handleSubmit={async (e) => {
                         e.preventDefault();
 

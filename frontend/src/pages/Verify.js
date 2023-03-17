@@ -4,11 +4,11 @@ import { useParams } from 'react-router';
 // components
 import CardContainer from '../components/CardContainer.js';
 import PasswordChecklist from 'react-password-checklist';
+import LoadingDocuments from '../components/LoadingDocuments.js';
+import PageContentWrapper from '../components/PageContentWrapper.js';
 
 // hooks
 import { useVerify } from '../hooks/useVerify.js';
-import LoadingDocuments from '../components/LoadingDocuments.js';
-import PageContentWrapper from '../components/PageContentWrapper.js';
 
 const Verify = () => {
     const { emailToken } = useParams();
@@ -82,6 +82,8 @@ const Verify = () => {
             };
         });
     };
+
+    console.log(user)
 
     return (
         <PageContentWrapper>

@@ -4,6 +4,9 @@ import { Link } from 'react-router-dom';
 // hooks
 import { useLogout } from '../hooks/useLogout.js';
 
+// components
+import ActionButton from './ActionButton.js'
+
 const NavMenu = ({ selectedLink, setSelectedLink, setShowThisNav, user }) => {
     const links = [
         { name: 'My Jobs', path: '/', icon: 'bi-list-check' },
@@ -50,15 +53,15 @@ const NavMenu = ({ selectedLink, setSelectedLink, setShowThisNav, user }) => {
                 }
 
                 {/* LOGOUT BUTTON */}
-                <button
-                    type='button'
-                    className='d-flex mx-auto mt-auto btn btn-danger btn-sm rounded-pill px-3'
-                    onClick={() => {
+                <ActionButton
+                    alignX='center'
+                    alignY='bottom'
+                    handleOnClick={() => {
                         setShowThisNav(false);
                         logout();
-                    }}>
-                    Log out
-                </button>
+                    }}
+                    text='Logout'
+                />
             </div>
             {/* on smaller screens, this area is clicked to close the nav menu */}
             <div className='flex-grow-1 h-100 background' onClick={() => setShowThisNav(false)}></div>

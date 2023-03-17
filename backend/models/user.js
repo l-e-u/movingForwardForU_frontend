@@ -114,6 +114,7 @@ userSchema.statics.login = async function (email, password) {
 
     if (!user) throw { errors };
 
+    // throw error if the user has not verified the email
     if (!user.isVerified) {
         errors.email.message = 'Not verified.';
         throw { errors };

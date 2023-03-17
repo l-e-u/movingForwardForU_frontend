@@ -2,16 +2,16 @@ import { useEffect, useState } from 'react';
 
 // components
 import PageContentWrapper from '../components/PageContentWrapper.js';
-import CardContainer from '../components/CardContainer.js';
 import CreatedInfo from '../components/CreatedInfo.js';
 import FlexBoxWrapper from '../components/FlexBoxWrapper.js';
 import ActionButton from '../components/ActionButton.js';
 import CreateUserForm from '../components/CreateUserForm.js';
-import UserOverview from '../components/UserOverview.js';
-import EditDocIcon from '../components/EditDocIcon.js';
 import EditUserForm from '../components/EditUserForm.js';
 import LoadingDocuments from '../components/LoadingDocuments.js';
 import ErrorLoadingDocuments from '../components/ErrorLoadingDocuments.js';
+import SmallHeader from '../components/SmallHeader.js';
+import OptionsMenu from '../components/OptionsMenu.js';
+import Card from '../components/Card.js';
 
 // hooks
 import { useUsersContext } from '../hooks/useUsersContext.js';
@@ -24,9 +24,11 @@ const Users = () => {
     // local state
     const [error, setError] = useState(null);
     const [isLoading, setIsLoading] = useState(null);
-    const [docToEdit, setDocToEdit] = useState(null);
+    const [selectedUserId, setSelectedUserId] = useState(null);
     const [showCreateForm, setShowCreateForm] = useState(false);
     const [showEditForm, setShowEditForm] = useState(false);
+    const [showOptionsMenu, setShowOptionsMenu] = useState(false);
+
 
     useEffect(() => {
         (async () => {
@@ -57,23 +59,20 @@ const Users = () => {
         })();
     }, []);
 
-    const handleOnClickShowEditForm = (user) => {
-        return () => {
-            setDocToEdit(user);
-            setShowCreateForm(false);
-            setShowEditForm(true);
-        };
-    };
-
     return (
         <PageContentWrapper>
             <div className='mb-3'>
                 {showCreateForm ?
                     <CreateUserForm setShowThisForm={setShowCreateForm} /> :
-                    <ActionButton text='Create A User' handleOnClick={() => {
-                        setShowCreateForm(true);
-                        setShowEditForm(false);
-                    }}
+                    <ActionButton
+                        alignX='right'
+                        handleOnClick={() => {
+                            setShowCreateForm(true);
+                            setShowEditForm(false);
+                            setShowOptionsMenu(false);
+                            setSelectedUserId(null);
+                        }}
+                        text='Create A User'
                     />
                 }
             </div>
@@ -81,28 +80,66 @@ const Users = () => {
             {/* show spinner with actively fetching data */}
             {isLoading && <div className='my-5'><LoadingDocuments /></div>}
 
-            {error && <ErrorLoadingDocuments docType='Jobs' />}
+            {error && <ErrorLoadingDocuments docType='Users' />}
 
             {users &&
                 <FlexBoxWrapper>
                     {users.map((u) => {
-                        const { _id, createdAt } = u;
-                        const isEditingThisDoc = showEditForm && (_id === docToEdit._id);
+                        const { _id, address, comments, createdAt, email, firstName, isActive, isAdmin, isVerified, lastName } = u;
+                        const isSelectedUser = selectedUserId === _id;
 
-                        return (
-                            <CardContainer key={_id} hasCreatedInfo={true}>
-                                {/* Edit and Delete options */}
-                                <div className='position-absolute top-0 end-0 pe-3 pt-2 d-flex'>
-                                    {!isEditingThisDoc && <EditDocIcon onClick={handleOnClickShowEditForm(u)} />}
-                                </div>
 
-                                {isEditingThisDoc ?
-                                    <EditUserForm prev={u} setShowThisForm={setShowEditForm} /> :
-                                    <UserOverview {...u} />
-                                }
-                                <CreatedInfo createdAt={createdAt} />
-                            </CardContainer>
-                        );
+                        switch (true) {
+                            case (showEditForm && isSelectedUser):
+                                return (<div className='position-relative' key={_id}>
+                                    <EditUserForm prev={u} setShowThisForm={setShowEditForm} />
+                                </div>);
+
+                            default:
+                                return (<div className='position-relative' key={_id}>
+                                    <OptionsMenu
+                                        showMenu={showOptionsMenu && isSelectedUser}
+                                        handleOnClickCloseMenu={() => setShowOptionsMenu(false)}
+                                        handleOnClickEditOption={() => {
+                                            setShowEditForm(true);
+                                            setShowCreateForm(false);
+                                            setShowOptionsMenu(false);
+                                        }}
+                                        handleOnClickMenu={() => {
+                                            setSelectedUserId(_id);
+                                            setShowOptionsMenu(true);
+                                        }}
+                                    />
+                                    <Card
+                                        header={<div>{firstName + ' ' + lastName + (isAdmin ? ' (Admin)' : '')}</div>}
+                                        body={
+                                            <div>
+                                                <SmallHeader text='Status' />
+                                                <p className='mb-2'>{isActive ? 'Active' : 'Inactive'}</p>
+
+                                                <SmallHeader text='Email' />
+                                                <div className='mb-2'>
+                                                    <i className='bi bi-envelope text-action me-2'></i>
+                                                    {isVerified && <i className='bi bi-patch-check text-action me-2'></i>}
+                                                    <span>{email}</span>
+                                                </div>
+
+                                                {address && <>
+                                                    <SmallHeader text='Address' />
+                                                    <i className='bi bi-geo-alt text-action me-2'></i> <span>{address}</span>
+                                                </>}
+
+                                                {comments && <>
+                                                    <SmallHeader text='Comments' />
+                                                    <p style={{ whiteSpace: 'pre-wrap' }}>{comments}</p>
+                                                </>}
+                                            </div>
+                                        }
+                                        footer={<CreatedInfo createdAt={createdAt} />}
+                                    />
+
+                                </div>)
+                        }
                     })
                     }
                 </FlexBoxWrapper>

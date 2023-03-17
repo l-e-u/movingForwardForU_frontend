@@ -1,11 +1,12 @@
 // components
 import RequiredFieldsText from './RequiredFieldsText';
 import GrowingTextArea from './GrowingTextArea';
+import ActionButton from './ActionButton'
 
 // functions
 import { removeExtraSpaces } from '../utils/StringUtils';
 
-const StatusForm = ({ status, setStatus, handleSubmit, error, isDisabled }) => {
+const StatusForm = ({ status, setStatus, handleSubmit, error, isDisabled, isLoading }) => {
     const { name, description } = status;
 
     // error identification
@@ -75,12 +76,12 @@ const StatusForm = ({ status, setStatus, handleSubmit, error, isDisabled }) => {
                     {errorFromDescriptionInput && <span className='ms-1 text-danger'>{': ' + error.description.message}</span>}</label>
             </div>
 
-            <button
+            <ActionButton
+                alignX='right'
+                text={(isLoading ? 'Saving...' : 'Save')}
                 type='submit'
-                disabled={isDisabled}
-                className='btn btn-sm btn-success rounded-pill px-3 d-flex ms-auto'>
-                Save
-            </button>
+                isDisabled={isDisabled}
+            />
 
             {/* any errors other than name and description input validation */}
             {errorOther && <div className="text-danger mt-3">{`${error.server.message} Refresh page. If problem persists, contact developer.`}</div>}

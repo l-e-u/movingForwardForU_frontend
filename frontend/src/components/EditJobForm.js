@@ -57,6 +57,7 @@ const EditJobForm = ({ prevJob, setShowThisForm }) => {
                     setError={setError}
                     error={error}
                     isDisabled={isLoading || noInputChanges}
+                    isLoading={isLoading}
                     handleSubmit={async (e) => {
                         e.preventDefault();
 

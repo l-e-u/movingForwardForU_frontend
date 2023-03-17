@@ -48,22 +48,21 @@ const ContactSearchSelect = ({ customer, setJob, inputError, inputErrorMessage }
     }, []);
 
     if (hasSelected) {
-        if (hasSelected) {
-            return (
-                <CancellableOption
-                    value={customer.organization}
-                    required={true}
-                    label='Customer'
-                    handleCancelOnClick={() => {
-                        setJob(prev => {
-                            const updated = { ...prev };
-                            updated.customer = null;
-                            return updated;
-                        });
-                    }} />
-            );
-        };
+        return (
+            <CancellableOption
+                handleCancelOnClick={() => {
+                    setJob(prev => {
+                        const updated = { ...prev };
+                        updated.customer = null;
+                        return updated;
+                    });
+                }}
+                label='Customer'
+                value={customer.organization}
+            />
+        );
     };
+
 
     return (
         <AutoCompleteSelect

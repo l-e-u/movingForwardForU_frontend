@@ -4,6 +4,7 @@ import { removeExtraSpaces } from '../utils/StringUtils';
 // components
 import RequiredFieldsText from './RequiredFieldsText';
 import GrowingTextArea from './GrowingTextArea';
+import ActionButton from './ActionButton'
 
 const UserForm = ({
     error,
@@ -22,8 +23,8 @@ const UserForm = ({
         <form onSubmit={handleSubmit} className='d-flex flex-column gap-2'>
             <RequiredFieldsText />
 
-            {/* Deactivating a user only happens when editing the doc */}
-            {isEditing && <div className='form-check'>
+            {/* Option to deactivate a user is only available for the Edit Form */}
+            {isEditing && <div className='form-check m-0'>
                 <input
                     type='checkbox'
                     className='form-check-input'
@@ -38,9 +39,11 @@ const UserForm = ({
                         })
                     }} />
                 <label className='form-check-label' htmlFor='activeCheck'>Active</label>
+                <br />
+                <small className='text-secondary'>Inactive users will not be able to login.</small>
             </div>}
 
-            <div className='form-check'>
+            <div className='form-check m-0'>
                 <input
                     type='checkbox'
                     className='form-check-input'
@@ -59,96 +62,128 @@ const UserForm = ({
                 <small className='text-secondary'>A user with administrator privileges will be able to create, edit , and delete all documents. </small>
             </div>
 
+            <div className='d-flex flex-column flex-md-row gap-2'>
+                {/* NAME */}
+                <div className='form-floating flex-grow-1'>
+                    <input
+                        type='text'
+                        className={'form-control' + (errorFromFirstNameInput ? ' is-invalid' : '')}
+                        name='firstName'
+                        id='firstName'
+                        placeholder='First Name'
+                        value={user.firstName}
+                        onChange={e => {
+                            setUser(prev => {
+                                return {
+                                    ...prev,
+                                    firstName: e.target.value
+                                }
+                            })
+                        }}
+                        onBlur={e => {
+                            setUser(prev => {
+                                return {
+                                    ...prev,
+                                    firstName: removeExtraSpaces(e.target.value.trim())
+                                }
+                            })
+                        }} />
+                    <label htmlFor='firstName' className='form-label required'>
+                        First Name
+                        {errorFromFirstNameInput && <span className='inputError'>{error.firstName.message}</span>}
+                    </label>
+                </div>
 
-            {/* NAME */}
-            <div className='form-floating'>
-                <input
-                    type='text'
-                    className={'form-control' + (errorFromFirstNameInput ? ' is-invalid' : '')}
-                    name='firstName'
-                    id='firstName'
-                    placeholder='First Name'
-                    value={user.firstName}
-                    onChange={e => {
-                        setUser(prev => {
-                            return {
-                                ...prev,
-                                firstName: e.target.value
-                            }
-                        })
-                    }}
-                    onBlur={e => {
-                        setUser(prev => {
-                            return {
-                                ...prev,
-                                firstName: removeExtraSpaces(e.target.value.trim())
-                            }
-                        })
-                    }} />
-                <label htmlFor='firstName' className='form-label required'>
-                    First Name
-                    {errorFromFirstNameInput && <span className='inputError'>{error.firstName.message}</span>}
-                </label>
+                <div className='form-floating flex-grow-1'>
+                    <input
+                        type='text'
+                        className={'form-control' + (errorFromLastNameInput ? ' is-invalid' : '')}
+                        name='lastName'
+                        id='lastName'
+                        placeholder='Last Name'
+                        value={user.lastName}
+                        onChange={e => {
+                            setUser(prev => {
+                                return {
+                                    ...prev,
+                                    lastName: e.target.value
+                                }
+                            })
+                        }}
+                        onBlur={e => {
+                            setUser(prev => {
+                                return {
+                                    ...prev,
+                                    lastName: removeExtraSpaces(e.target.value.trim())
+                                }
+                            })
+                        }} />
+                    <label htmlFor='lastName' className='form-label required'>
+                        Last Name
+                        {errorFromLastNameInput && <span className='inputError'>{error.lastName.message}</span>}
+                    </label>
+                </div>
             </div>
 
-            <div className='form-floating'>
-                <input
-                    type='text'
-                    className={'form-control' + (errorFromLastNameInput ? ' is-invalid' : '')}
-                    name='lastName'
-                    id='lastName'
-                    placeholder='Last Name'
-                    value={user.lastName}
-                    onChange={e => {
-                        setUser(prev => {
-                            return {
-                                ...prev,
-                                lastName: e.target.value
-                            }
-                        })
-                    }}
-                    onBlur={e => {
-                        setUser(prev => {
-                            return {
-                                ...prev,
-                                lastName: removeExtraSpaces(e.target.value.trim())
-                            }
-                        })
-                    }} />
-                <label htmlFor='lastName' className='form-label required'>
-                    Last Name
-                    {errorFromLastNameInput && <span className='inputError'>{error.lastName.message}</span>}
-                </label>
-            </div>
+            <div className='d-flex flex-column flex-md-row gap-2'>
 
-            {/* EMAIL */}
-            <div className='form-floating'>
-                <input
-                    type='email'
-                    className={'form-control' + (errorFromEmailInput ? ' is-invalid' : '')}
-                    id='email'
-                    placeholder='name@example.com'
-                    value={user.email}
-                    onChange={(e) => {
-                        setUser(prev => {
-                            return {
-                                ...prev,
-                                email: e.target.value
-                            }
-                        })
-                    }}
-                    onBlur={(e) => {
-                        setUser(prev => {
-                            return {
-                                ...prev,
-                                email: removeExtraSpaces(e.target.value.trim())
-                            }
-                        })
-                    }} />
-                <label htmlFor='email' className='form-label required'>
-                    Email
-                    {errorFromEmailInput && <span className='inputError'>{error.email.message}</span>}
-                </label>
+                {/* EMAIL */}
+                <div className='form-floating flex-grow-1'>
+                    <input
+                        type='email'
+                        className={'form-control' + (errorFromEmailInput ? ' is-invalid' : '')}
+                        id='email'
+                        placeholder='name@example.com'
+                        value={user.email}
+                        onChange={(e) => {
+                            setUser(prev => {
+                                return {
+                                    ...prev,
+                                    email: e.target.value
+                                }
+                            })
+                        }}
+                        onBlur={(e) => {
+                            setUser(prev => {
+                                return {
+                                    ...prev,
+                                    email: removeExtraSpaces(e.target.value.trim())
+                                }
+                            })
+                        }} />
+                    <label htmlFor='email' className='form-label required'>
+                        Email
+                        {errorFromEmailInput && <span className='inputError'>{error.email.message}</span>}
+                    </label>
+                </div>
+
+                {/* ADDRESS */}
+                <div className='form-floating flex-grow-1'>
+                    <input
+                        type='text'
+                        className='form-control'
+                        name='address'
+                        placeholder='Address'
+                        id='address'
+                        value={user.address ?? ''}
+                        onChange={(e) => {
+                            setUser(prev => {
+                                return {
+                                    ...prev,
+                                    address: removeExtraSpaces(e.target.value)
+                                }
+                            })
+                        }}
+                        onBlur={(e) => {
+                            setUser(prev => {
+                                return {
+                                    ...prev,
+                                    address: e.target.value.trim()
+                                }
+                            })
+                        }} />
+                    <label htmlFor='address' className='form-label'>Address</label>
+                </div>
             </div>
 
             {/* COMMENTS */}
@@ -167,12 +202,12 @@ const UserForm = ({
 
             {(isLoading && !isEditing) && <div className='alert alert-success py-1 m-0'>Sending email to user...</div>}
 
-            <button
+            <ActionButton
+                alignX='right'
+                text={(isLoading ? 'Saving...' : 'Save')}
                 type='submit'
-                disabled={isDisabled}
-                className='btn btn-sm btn-success rounded-pill px-3 d-flex ms-auto'>
-                {isLoading ? 'Saving...' : 'Submit'}
-            </button>
+                isDisabled={isDisabled}
+            />
         </form>
     );
 };

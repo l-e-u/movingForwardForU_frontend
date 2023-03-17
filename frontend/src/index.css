@@ -162,6 +162,10 @@ nav.menu {
   .rounded-md-bottom-start-0 {
     border-bottom-left-radius: 0 !important;
   }
+
+  .w-md-50 {
+    width: 50%;
+  }
 }
 
 /* large screen and above */

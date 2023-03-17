@@ -1,4 +1,3 @@
-// components
 import { useEffect, useState } from 'react';
 
 // components
@@ -12,11 +11,14 @@ import CreateFeeForm from '../components/CreateFeeForm.js';
 import EditFeeForm from '../components/EditFeeForm.js';
 import OptionsMenu from '../components/OptionsMenu.js';
 import Card from '../components/Card.js';
+import SmallHeader from '../components/SmallHeader.js';
 
 // hooks
 import { useFeesContext } from '../hooks/useFeesContext';
 import { useAuthContext } from '../hooks/useAuthContext';
-import SmallHeader from '../components/SmallHeader.js';
+
+// functions
+import { formatCurrency } from '../utils/StringUtils.js';
 
 const Fees = () => {
     const [error, setError] = useState(null);
@@ -63,11 +65,15 @@ const Fees = () => {
             <div className='mb-3'>
                 {showCreateForm ?
                     <CreateFeeForm setShowThisForm={setShowCreateForm} /> :
-                    <ActionButton text='Create a Fee' handleOnClick={() => {
-                        setShowCreateForm(true);
-                        setShowEditForm(false);
-                        setShowOptionsMenu(false);
-                    }}
+                    <ActionButton
+                        alignX='right'
+                        handleOnClick={() => {
+                            setShowCreateForm(true);
+                            setShowEditForm(false);
+                            setShowOptionsMenu(false);
+                            setSelectedFeeId(null);
+                        }}
+                        text='Create a Fee'
                     />
                 }
             </div>
@@ -101,8 +107,6 @@ const Fees = () => {
                                         }}
                                         handleOnClickMenu={() => {
                                             setSelectedFeeId(_id);
-                                            setShowCreateForm(false);
-                                            setShowEditForm(false);
                                             setShowOptionsMenu(true);
                                         }}
                                     />
@@ -111,7 +115,7 @@ const Fees = () => {
                                         body={
                                             <div>
                                                 <SmallHeader text='Amount' />
-                                                <p className='mb-2'>{fee.amount}</p>
+                                                <p className='mb-2'>{'$ ' + formatCurrency(fee.amount, true)}</p>
                                                 <SmallHeader text='Description' />
                                                 <p style={{ whiteSpace: 'pre-wrap' }}>{fee.description}</p>
                                             </div>

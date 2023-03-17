@@ -9,6 +9,9 @@ import SmallHeader from './SmallHeader';
 import CancellableOption from './CancellableOption';
 import { useAuthContext } from '../hooks/useAuthContext';
 
+// functions
+import { formatCurrency } from '../utils/StringUtils';
+
 const FeeSearchSelect = ({ feesList, setJob }) => {
     const [duplicateError, setDuplicateError] = useState(null);
     const [error, setError] = useState(null);
@@ -80,8 +83,8 @@ const FeeSearchSelect = ({ feesList, setJob }) => {
             {hasAddedFees &&
                 <div className='mt-2 d-flex flex-column gap-1'>
                     <SmallHeader text={'APPLIED FEE' + (feesList.length > 1 ? 'S' : '')} />
-                    <ul className='list-group flex-grow-1 d-flex flex-column gap-1' style={{ overflow: 'auto' }}>
-                        {feesList.map((fee, index) => {
+                    <ul className='list-group flex-grow-1 d-flex flex-column gap-1 overflow-scroll' style={{ maxHeight: '350px' }}>
+                        {feesList.map(fee => {
                             const { _id, amount, name } = fee;
 
                             return (
@@ -96,15 +99,17 @@ const FeeSearchSelect = ({ feesList, setJob }) => {
                                             });
                                         }}
                                         label={name}
-                                        labelAlt={'Fee' + index}
-                                        preLabel='$'
-                                        required={false}
-                                        value={amount}
+                                        updated={true}
+                                        value={'$ ' + formatCurrency(amount, true)}
                                     />
                                 </li>
                             );
                         })}
                     </ul>
+                    <div className='mt-1'>
+                        <SmallHeader text='Total' />
+                        <span className='ms-3'>{'$ ' + formatCurrency(feesList.reduce((total, f) => total + f.amount, 0), true)}</span>
+                    </div>
                 </div>}
         </div>
     );

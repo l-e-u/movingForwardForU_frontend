@@ -29,13 +29,13 @@ const AddressDisplay = ({
             <SmallHeader text={heading} />
 
             {/* date */}
-            <div className='d-flex align-items-center gap-2'>
+            <div className='d-flex gap-2'>
                 <i className={'text-action bi bi-calendar-event order-' + (alignEnd ? '1' : '0')}></i>
                 <span className={'flex-grow-1 order-' + (alignEnd ? '0' : '1')}>{dateString}</span>
             </div>
 
             {/* time */}
-            <div className='d-flex align-items-center gap-2'>
+            <div className='d-flex gap-2'>
                 <i className={'text-action bi bi-clock order-' + (alignEnd ? '1' : '0')}></i>
                 <div className={'flex-grow-1 order-' + (alignEnd ? '0' : '1')}>
                     {/* <span className='me-3'>{militaryTimeString}</span> */}
@@ -44,7 +44,7 @@ const AddressDisplay = ({
             </div>
 
             {/* address */}
-            <div className='d-flex align-items-center gap-2'>
+            <div className='d-flex gap-2'>
                 <i className={'text-action bi bi-geo-alt order-' + (alignEnd ? '1' : '0')}></i>
                 <div className={'flex-grow-1 order-' + (alignEnd ? '0' : '1')}>
                     {/* <span className='me-3'>{militaryTimeString}</span> */}

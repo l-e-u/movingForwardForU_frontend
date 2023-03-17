@@ -8,7 +8,6 @@ import { noCharChanges } from '../utils/StringUtils';
 
 // components
 import FormHeader from './FormHeader';
-import CloseFormButton from './XButton';
 import UserForm from './UserForm';
 import CautionNotice from './CautionNotice';
 
@@ -21,6 +20,8 @@ const EditUserForm = ({ prev, setShowThisForm }) => {
     // any changed properties are added to updatedProperties object
     if (!noCharChanges(prev.firstName, user.firstName)) updatedProperties.firstName = user.firstName;
     if (!noCharChanges(prev.lastName, user.lastName)) updatedProperties.lastName = user.lastName;
+    if (!noCharChanges(prev.email, user.email)) updatedProperties.email = user.email;
+    if (!noCharChanges(prev.address ?? '', user.address ?? '')) updatedProperties.address = user.address;
     if (!noCharChanges(prev.comments ?? '', user.comments ?? '')) updatedProperties.comments = user.comments;
     if (prev.isActive !== user.isActive) updatedProperties.isActive = user.isActive;
     if (prev.isAdmin !== user.isAdmin) updatedProperties.isAdmin = user.isAdmin;
@@ -29,33 +30,35 @@ const EditUserForm = ({ prev, setShowThisForm }) => {
     const noInputChanges = Object.keys(updatedProperties).length === 0;
 
     return (
-        <>
-            <FormHeader text='Edit User'>
-                <CloseFormButton handleOnClick={() => setShowThisForm(false)} />
-            </FormHeader>
+        <div className='shadow'>
+            <FormHeader text='Edit User' handleCloseForm={() => setShowThisForm(false)} />
 
-            <CautionNotice text='Changes will also reflect on all other documents with this user.' />
+            <div className='rounded-bottom background-white text-reset p-3'>
+                <CautionNotice text='Changes will also reflect on all other documents with this user.' />
 
-            <CautionNotice text={`Updating an email will require ${user.firstName} to verify it. They won't be able to login until they do.`} />
+                <CautionNotice text={`Updating the email will require ${user.firstName} to verify it. They won't be able to login until they do.`} />
 
-            <UserForm
-                error={error}
-                isDisabled={isLoading || noInputChanges}
-                handleSubmit={async (e) => {
-                    e.preventDefault();
+                <UserForm
+                    error={error}
+                    isDisabled={isLoading || noInputChanges}
+                    isLoading={isLoading}
+                    isEditing={true}
+                    handleSubmit={async (e) => {
+                        e.preventDefault();
 
-                    await updateUser({
-                        _id: prev._id,
-                        profile: { ...updatedProperties }
-                    })
-                        .then(isCreated => {
-                            if (isCreated) setShowThisForm(false);
+                        await updateUser({
+                            _id: prev._id,
+                            profile: updatedProperties
                         })
-                }}
-                setUser={setUser}
-                user={user}
-            />
-        </>
+                            .then(isCreated => {
+                                if (isCreated) setShowThisForm(false);
+                            })
+                    }}
+                    setUser={setUser}
+                    user={user}
+                />
+            </div>
+        </div>
     )
 };
 

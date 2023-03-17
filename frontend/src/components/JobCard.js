@@ -7,6 +7,9 @@ import FeesList from './FeesList';
 import NotesList from './NotesList';
 import SmallHeader from './SmallHeader';
 
+// functions
+import { formatCurrency } from '../utils/StringUtils';
+
 const JobCard = ({
     createdAt,
     createdBy,
@@ -25,10 +28,7 @@ const JobCard = ({
 }) => {
     const hasDrivers = drivers.length > 0;
     const hasFees = fees.length > 0;
-
-    // these lists are for admins only
-    const showDrivers = hasDrivers && listDrivers;
-    const showFees = hasFees && listFees;
+    const hasNotes = notes.length > 0;
 
     return (
         <Card
@@ -41,12 +41,10 @@ const JobCard = ({
             </>}
 
             body={<div className='d-flex flex-column gap-3'>
-                {!hasDrivers && <div className='text-danger'>No driver has been assigned.</div>}
-
-                {showDrivers &&
+                {listDrivers &&
                     <div>
                         <SmallHeader text={'Driver' + ((drivers.length > 1) ? 's' : '')} />
-                        <DriversList list={drivers} />
+                        {hasDrivers ? <DriversList list={drivers} /> : <div>No drivers have been assigned.</div>}
                     </div>
                 }
 
@@ -75,14 +73,26 @@ const JobCard = ({
                     </div>
                 }
 
-                {showFees &&
+                {listFees &&
                     <div>
                         <SmallHeader text={'Fee' + ((fees.length > 1) ? 's' : '')} />
-                        <FeesList list={fees} />
+                        {hasFees && <>
+                            <FeesList list={fees} />
+                            <div className='d-flex align-items-center justify-content-end mt-1'>
+                                <SmallHeader text='Total' />
+                                <span className='border-top ms-2 ps-2'>{'$ ' + formatCurrency(fees.reduce((total, f) => total + f.amount, 0), true)}</span>
+                            </div>
+                        </>}
+
+                        {!hasFees && <div>No fess has been assessed.</div>}
                     </div>
                 }
 
-                {notes && <NotesList notes={notes} />}
+                <div>
+                    <SmallHeader text={'Note' + ((notes.length > 1) ? 's' : '')} />
+                    {hasNotes ? <NotesList list={notes} /> : <div>No notes have been appended.</div>}
+                </div>
+
             </div>}
 
             footer={showCreatedDetails && <CreatedInfo createdBy={createdBy} createdAt={createdAt} />}

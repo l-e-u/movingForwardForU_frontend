@@ -50,16 +50,16 @@ const StatusSearchSelect = ({ status, setJob, inputError, inputErrorMessage }) =
     if (hasSelected) {
         return (
             <CancellableOption
-                value={status.name}
-                required={true}
-                label='Status'
                 handleCancelOnClick={() => {
                     setJob(prev => {
                         const updated = { ...prev };
                         updated.status = null;
                         return updated;
                     });
-                }} />
+                }}
+                label='Status'
+                value={status.name}
+            />
 
         );
     };

@@ -1,18 +1,19 @@
+// components
 import XButton from './XButton'
 
-const CancellableOption = ({ value, required, handleCancelOnClick, label, labelAlt = null, preLabel = null }) => {
+const CancellableOption = ({ value, handleCancelOnClick, label }) => {
     return (
-        <div className='input-group'>
-            {preLabel && <span className='input-group-text'>{preLabel}</span>}
-            <div className='form-floating'>
-                <input type='text' name={'selected' + (labelAlt || label)} id={'selected' + (labelAlt || label)} readOnly={true} disabled={true} defaultValue={value} className='form-control' />
-                <label htmlFor={'selected' + label} className={'form-label' + (required ? ' required' : '')}>{label}</label>
+        <div
+            className='rounded ps-3 pe-0 py-2 border d-flex align-items-center'
+            style={{ backgroundColor: 'var(--bs-gray-100)' }}
+        >
+            <div className='text-reset flex-grow-1 lh-1'>
+                <small className='smallPrint' style={{ opacity: '.65' }}>{label}</small>
+                <div className='my-1'>{value}</div>
             </div>
-            <span className='input-group-text p-0'>
-                <XButton handleOnClick={handleCancelOnClick} />
-            </span>
-        </div>
-    );
+            <div className='text-action'><XButton handleOnClick={handleCancelOnClick} /></div>
+        </div >
+    )
 };
 
 export default CancellableOption;

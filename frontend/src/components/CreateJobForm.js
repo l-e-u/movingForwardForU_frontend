@@ -32,6 +32,7 @@ const CreateJobForm = ({ setShowThisForm }) => {
                     setError={setError}
                     error={error}
                     isDisabled={isLoading}
+                    isLoading={isLoading}
                     handleSubmit={async (e) => {
                         e.preventDefault();
 

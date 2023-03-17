@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { useUpdateFee } from '../hooks/useUpdateFee.js';
 
 // functions
-import { noCharChanges } from '../utils/StringUtils';
+import { formatCurrency, noCharChanges } from '../utils/StringUtils';
 
 // components
 import FeeForm from './FeeForm';
@@ -16,13 +16,19 @@ const EditFeeForm = ({ prev, setShowThisForm }) => {
     const [fee, setFee] = useState(prev);
     const updatedProperties = {};
 
+    console.log('prev:', formatCurrency(prev.amount));
+    console.log('curr:', formatCurrency(fee.amount))
+
     // check if any property values have changed
     if (!noCharChanges(prev.name, fee.name)) updatedProperties.name = fee.name;
-    if (prev.amount !== fee.amount) updatedProperties.amount = fee.amount;
+    if (formatCurrency(prev.amount) !== formatCurrency(fee.amount)) updatedProperties.amount = Number(fee.amount);
     if (prev.description !== fee.description) updatedProperties.description = fee.description;
 
     // check if there were any set properties that have been changed
     const noInputChanges = Object.keys(updatedProperties).length === 0;
+
+    console.log(updatedProperties)
+    console.log(noInputChanges)
 
     return (
         <div className='shadow'>

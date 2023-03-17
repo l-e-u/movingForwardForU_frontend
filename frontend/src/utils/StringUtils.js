@@ -46,3 +46,46 @@ export const timeStringFormat = (date, showMilitary, showTimezone = false) => {
 
     return timeString;
 };
+
+// remove non-digits and format number 1000000 to 1,234,567
+export const formatNumber = (n) => n.replace(/\D/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+
+export const formatCurrency = (input, onBlur = false) => {
+    const value = String(input);
+    let validatedNumString = null;
+
+    const decimalPosition = value.indexOf('.');
+
+    // if value is floating, validate both sides
+    if (decimalPosition >= 0) {
+        let leftSide = value.substring(0, decimalPosition);
+        let rightSide = value.substring(decimalPosition);
+
+        // remove non-digits
+        leftSide = formatNumber(leftSide);
+        rightSide = formatNumber(rightSide);
+
+        // gets rid of leading zeros, helps keep the commas proper
+        if (leftSide.charAt(0) === '0') leftSide = leftSide.substring(1);
+
+        // if all that's entered is a decimal
+        if (!leftSide) leftSide += '0';
+
+        // on blur, make sure there's 2 digits after the decimal
+        if (onBlur) rightSide += '00';
+
+        // limit the right side to only 2 digits for cents
+        rightSide = rightSide.substring(0, 2);
+
+        // join integers by decimal
+        validatedNumString = leftSide + '.' + rightSide;
+    }
+    else {
+        validatedNumString = formatNumber(value);
+        // gets rid of leading zeros, helps keep the commas proper
+        if (validatedNumString.length > 1 && validatedNumString.charAt(0) === '0') validatedNumString = validatedNumString.substring(1);
+        if (onBlur) validatedNumString += '.00';
+    };
+
+    return validatedNumString;
+};

@@ -69,9 +69,12 @@ const Statuses = () => {
                 {showCreateForm ?
                     <CreateStatusForm setShowThisForm={setShowCreateForm} /> :
                     <ActionButton
+                        alignX='right'
                         handleOnClick={() => {
                             setShowCreateForm(true);
                             setShowEditForm(false);
+                            setShowOptionsMenu(false);
+                            setSelectedStatusId(null);
                         }}
                         text='Create a Status'
                     />
@@ -106,8 +109,6 @@ const Statuses = () => {
                                         }}
                                         handleOnClickMenu={() => {
                                             setSelectedStatusId(_id);
-                                            setShowCreateForm(false);
-                                            setShowEditForm(false);
                                             setShowOptionsMenu(true);
                                         }}
                                         showMenu={showOptionsMenu && isSelectedStatus}

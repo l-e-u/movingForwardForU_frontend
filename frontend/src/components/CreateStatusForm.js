@@ -4,7 +4,6 @@ import { useCreateStatus } from "../hooks/useCreateStatus.js";
 // components
 import FormHeader from './FormHeader.js';
 import StatusForm from './StatusForm.js';
-import XButton from './XButton.js';
 
 // Form to create a status for a job and description of what the status means.
 const CreateStatusForm = ({ setShowThisForm }) => {
@@ -21,6 +20,7 @@ const CreateStatusForm = ({ setShowThisForm }) => {
                     setStatus={setStatus}
                     error={error}
                     isDisabled={isLoading}
+                    isLoading={isLoading}
                     handleSubmit={async (e) => {
                         e.preventDefault();
 

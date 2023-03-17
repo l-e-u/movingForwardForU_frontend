@@ -31,6 +31,7 @@ const CreateContactForm = ({ setShowThisForm }) => {
                     setContact={setContact}
                     error={error}
                     isDisabled={isLoading}
+                    isLoading={isLoading}
                     handleSubmit={async (e) => {
                         e.preventDefault();
 

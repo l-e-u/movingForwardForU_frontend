@@ -6,7 +6,6 @@ import { useRegisterUser } from '../hooks/useRegisterUser';
 // components
 import FormHeader from './FormHeader';
 import UserForm from './UserForm';
-import CloseFormButton from './XButton';
 
 const CreateUserForm = ({ setShowThisForm }) => {
     const { registerUser, error, isLoading } = useRegisterUser();
@@ -19,27 +18,28 @@ const CreateUserForm = ({ setShowThisForm }) => {
     });
 
     return (
-        <>
-            <FormHeader text='New User'>
-                <CloseFormButton handleOnClick={() => setShowThisForm(false)} />
-            </FormHeader>
+        < div className='shadow'>
+            <FormHeader text='New User' handleCloseForm={() => setShowThisForm(false)} />
 
-            <UserForm
-                error={error}
-                isDisabled={isLoading}
-                isLoading={isLoading}
-                handleSubmit={async (e) => {
-                    e.preventDefault();
+            <div className='rounded-bottom background-white text-reset px-3 pb-3 pt-1'>
 
-                    await registerUser(user)
-                        .then(isCreated => {
-                            if (isCreated) setShowThisForm(false);
-                        })
-                }}
-                setUser={setUser}
-                user={user}
-            />
-        </>
+                <UserForm
+                    error={error}
+                    isDisabled={isLoading}
+                    isLoading={isLoading}
+                    handleSubmit={async (e) => {
+                        e.preventDefault();
+
+                        await registerUser(user)
+                            .then(isCreated => {
+                                if (isCreated) setShowThisForm(false);
+                            })
+                    }}
+                    setUser={setUser}
+                    user={user}
+                />
+            </div>
+        </div>
     );
 };
 

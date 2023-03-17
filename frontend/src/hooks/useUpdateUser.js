@@ -10,7 +10,7 @@ export const useUpdateUser = () => {
     const { dispatch } = useUsersContext();
     const { user } = useAuthContext();
 
-    const updatedUser = async ({ _id, profile }) => {
+    const updateUser = async ({ _id, profile }) => {
         setIsLoading(true);
 
         // don't want to show the error if the user is trying to rectify, so null error at the start
@@ -44,5 +44,5 @@ export const useUpdateUser = () => {
         };
     };
 
-    return { updatedUser, isLoading, error };
+    return { updateUser, isLoading, error };
 };

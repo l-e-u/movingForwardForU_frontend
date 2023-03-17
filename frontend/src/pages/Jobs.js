@@ -100,8 +100,6 @@ const Jobs = () => {
         // set the max column width default
         const maxColWidth = Array(Object.keys(dataSet[0]).length).fill().map(() => ({ wch: 15 }));
 
-        console.log(maxColWidth)
-
         dataSet.forEach(row => {
             Object.values(row).forEach((value, index) => {
                 // skip date objects
@@ -132,18 +130,26 @@ const Jobs = () => {
         <PageContentWrapper>
             {showCreateForm ?
                 <CreateJobForm setShowThisForm={setShowCreateForm} /> :
-                <ActionButton text='Create a Job' handleOnClick={() => {
-                    setShowCreateForm(true);
-                    setShowEditForm(false);
-                    setShowOptionsMenu(false);
-                }}
+                <ActionButton
+                    alignX='right'
+                    handleOnClick={() => {
+                        setShowCreateForm(true);
+                        setShowEditForm(false);
+                        setShowOptionsMenu(false);
+                        setSelectedJobId(null);
+                    }}
+                    text='Create a Job'
                 />
             }
 
 
             {/* exports the current jobs listed */}
             <div className='py-3'>
-                <ActionButton handleOnClick={exportToExcel} text='Export Listed Jobs' />
+                <ActionButton
+                    alignX='right'
+                    handleOnClick={exportToExcel}
+                    text='Export Listed Jobs'
+                />
             </div>
 
             {/* show spinner with actively fetching data */}
@@ -175,8 +181,6 @@ const Jobs = () => {
                                         }}
                                         handleOnClickMenu={() => {
                                             setSelectedJobId(_id);
-                                            setShowCreateForm(false);
-                                            setShowEditForm(false);
                                             setShowOptionsMenu(true);
                                         }}
                                     />

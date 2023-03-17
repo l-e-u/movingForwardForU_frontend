@@ -5,6 +5,8 @@ const OptionsMenu = ({
     showMenu,
     handleOnClickMenu,
     handleOnClickCloseMenu,
+    handleOnClickArchiveOption,
+    handleOnClickDeleteOption,
     handleOnClickEditOption
 }) => {
     return (<>
@@ -24,22 +26,41 @@ const OptionsMenu = ({
                 <div className='text-end'>
                     <XButton handleOnClick={handleOnClickCloseMenu} />
                 </div>
-                <button
-                    className='border-0 text-reset py-2 ps-4 pe-5'
-                    onClick={handleOnClickEditOption}
-                    style={{ backgroundColor: 'transparent' }}
-                >
-                    <i className='bi bi-pencil me-4'></i>
-                    Edit
-                </button>
-                <br /><br />
-                <button
-                    className='border-0 text-reset py-2 ps-4 pe-5'
-                    style={{ backgroundColor: 'transparent' }}
-                >
-                    <i className='bi bi-trash3 me-4'></i>
-                    Delete
-                </button>
+
+                {handleOnClickEditOption &&
+                    <button
+                        className='border-0 text-reset py-2 ps-4 pe-5'
+                        onClick={handleOnClickEditOption}
+                        style={{ backgroundColor: 'transparent' }}
+                    >
+                        <i className='bi bi-pencil me-4'></i>
+                        Edit
+                    </button>
+                }
+
+                {handleOnClickDeleteOption && <>
+                    <br /><br />
+                    <button
+                        className='border-0 text-reset py-2 ps-4 pe-5'
+                        onClick={handleOnClickDeleteOption}
+                        style={{ backgroundColor: 'transparent' }}
+                    >
+                        <i className='bi bi-trash3 me-4'></i>
+                        Delete
+                    </button>
+                </>}
+
+                {handleOnClickArchiveOption && <>
+                    <br /><br />
+                    <button
+                        className='border-0 text-reset py-2 ps-4 pe-5'
+                        onClick={handleOnClickArchiveOption}
+                        style={{ backgroundColor: 'transparent' }}
+                    >
+                        <i className='bi bi-archive me-4'></i>
+                        Archive
+                    </button>
+                </>}
             </div>
         }
     </>);
