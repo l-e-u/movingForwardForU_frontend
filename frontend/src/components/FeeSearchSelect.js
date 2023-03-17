@@ -106,7 +106,7 @@ const FeeSearchSelect = ({ feesList, setJob }) => {
                             );
                         })}
                     </ul>
-                    <div className='mt-1'>
+                    <div className='mt-1 mb-3'>
                         <SmallHeader text='Total' />
                         <span className='ms-3'>{'$ ' + formatCurrency(feesList.reduce((total, f) => total + f.amount, 0), true)}</span>
                     </div>

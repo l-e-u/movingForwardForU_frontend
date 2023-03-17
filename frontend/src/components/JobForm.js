@@ -23,7 +23,7 @@ const JobForm = ({ job, setJob, handleSubmit, error, setError, isDisabled, isLoa
     return (<>
         <RequiredFieldsText />
         <form onSubmit={handleSubmit}>
-            <div className='d-xl-flex gap-3 mb-4'>
+            <div className='d-xl-flex gap-3'>
                 {/* status, customer, ref, parcel, drivers */}
                 <div className='d-md-flex flex-grow-1 gap-3 mb-3 mb-xl-0'>
                     <div className='d-flex flex-column gap-2 w-md-50 mb-3 mb-md-0' >
@@ -104,7 +104,7 @@ const JobForm = ({ job, setJob, handleSubmit, error, setError, isDisabled, isLoa
                     </div>
 
                     {/* pickup delivery details */}
-                    <div className='d-flex flex-column gap-3 w-md-50'>
+                    <div className='d-flex flex-column justify-content-evenly gap-3 w-md-50'>
                         {/* PICKUP ADDRESS/TIME */}
                         <PickupOrDeliveryInput
                             isPickup={true}
@@ -136,13 +136,14 @@ const JobForm = ({ job, setJob, handleSubmit, error, setError, isDisabled, isLoa
                 </div>
             </div>
 
-            <ActionButton
-                alignX='right'
-                isDisabled={isDisabled}
-                text={(isLoading ? 'Saving...' : 'Save')}
-                type='submit'
-            />
-
+            <div className='mt-4 mt-sm-0'>
+                <ActionButton
+                    alignX='right'
+                    isDisabled={isDisabled}
+                    text={(isLoading ? 'Saving...' : 'Save')}
+                    type='submit'
+                />
+            </div>
 
             {/* any errors other than input validation */}
             {errorOther && <div className='text-danger mt-3 w-100'>{`${error.server.message} Refresh page. If problem persists, contact developer.`}</div>}
