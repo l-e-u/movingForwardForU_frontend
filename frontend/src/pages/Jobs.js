@@ -26,6 +26,7 @@ const Jobs = () => {
     const [showCreateForm, setShowCreateForm] = useState(false);
     const [showEditForm, setShowEditForm] = useState(false);
     const [showOptionsMenu, setShowOptionsMenu] = useState(false);
+    const [showDeleteConfirmation,setShowDeleteConfirmation]=useState(false);
 
     const { user } = useAuthContext();
     const { jobs, dispatch } = useJobsContext();

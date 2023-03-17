@@ -6,9 +6,8 @@ const FormHeader = ({ text, handleCloseForm }) => {
     return (
         <div className='d-flex justify-content-between align-items-center background-navy p-3 rounded-top'>
             <h2 className='ps-2 m-0 fs-3 text-white' >{text}</h2>
-            <div className='text-action'>
+            
                 <XButton handleOnClick={handleCloseForm} />
-            </div>
         </div>
     );
 };
