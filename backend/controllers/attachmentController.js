@@ -1,4 +1,3 @@
-
 import mongoose from 'mongoose';
 
 const deleteAttachments = async (files) => {
@@ -19,9 +18,9 @@ const deleteAttachments = async (files) => {
     });
 };
 
-const getAttachment = async (req,res) => {
-  const {file_id} = req.params;
-  
+const getAttachment = async (req, res) => {
+    const { file_id } = req.params;
+
     try {
         let gfs;
         const conn = new mongoose.createConnection(process.env.MONGO_URI);
@@ -37,6 +36,7 @@ const getAttachment = async (req,res) => {
             });
 
             downloadStream.on('error', function (err) {
+                console.error(err);
                 return res.status(404).send({ file: { message: 'Cannot download the attachment.' } });
             });
 

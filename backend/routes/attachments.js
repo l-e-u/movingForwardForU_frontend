@@ -1,7 +1,7 @@
-import {Router} from 'express';
+import { Router } from 'express';
 
 // controllers
-import {getAttachment} from '../controllers/attachmentController;';
+import { getAttachment } from '../controllers/attachmentController.js';
 
 // middleware
 import { requireAuth } from '../middleware/requireAuth.js';

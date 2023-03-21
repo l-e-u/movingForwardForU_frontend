@@ -18,14 +18,14 @@ const NotesList = ({ list }) => {
                             aria-expanded='false'
                             aria-controls={'collapseMsg' + _id}>
                             <span>{subject}</span>
-                            {attachment && <i className='bi bi-paperclip ms-3'></i>}
+                            {attachment && <i className='bi bi-paperclip ms-2'></i>}
                         </button>
                         <div
                             className='collapse'
                             id={'collapseMsg' + _id}
                         >
                             <small className='mt-1 mb-2' style={{ whiteSpace: 'pre-wrap' }}>{message}</small>
-                            <FileDownloadButton {...attachment} />
+                            {attachment && <FileDownloadButton {...attachment} />}
                             <div className='text-end'> <CreatedInfo createdAt={createdAt} createdBy={createdBy} /></div>
                         </div>
                     </li>
