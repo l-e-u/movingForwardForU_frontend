@@ -1,16 +1,7 @@
-import { useState } from 'react';
-
-// hooks
-import { useAuthContext } from '../hooks/useAuthContext';
-
 const FileDownloadButton = ({
     contentType,
-    files_id,
+    filename,
 }) => {
-    const { user } = useAuthContext();
-    const [error, setError] = useState(null);
-    const [isLoading, setIsLoading] = useState(null);
-
     let iconClassText;
 
     switch (contentType) {
@@ -33,11 +24,16 @@ const FileDownloadButton = ({
     };
 
     return (
-        <a download={true} href={'/api/attachments/download/' + files_id}>
-            <span>Download</span><i className={'ms-1 bi ' + iconClassText}></i>
-        </a>
+        <small className='text-action text-end'>
+            <a
+                className='text-action d-block text-end'
+                href={'http://localhost:4000/api/attachments/download/' + filename}
+                target='_blank'
+            >
+                <span>Download</span><i className={'ms-1 bi ' + iconClassText}></i>
+            </a>
+        </small>
     );
-
 };
 
 export default FileDownloadButton;

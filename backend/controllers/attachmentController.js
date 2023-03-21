@@ -19,7 +19,7 @@ const deleteAttachments = async (files) => {
 };
 
 const getAttachment = async (req, res) => {
-    const { file_id } = req.params;
+    const { filename } = req.params;
 
     try {
         let gfs;
@@ -28,8 +28,8 @@ const getAttachment = async (req, res) => {
         conn.once('open', () => {
             gfs = new mongoose.mongo.GridFSBucket(conn.db, { bucketName: 'attachments' });
 
-            const _id = new mongoose.Types.ObjectId(file_id);
-            const downloadStream = gfs.openDownloadStream(_id);
+            // const _id = new mongoose.Types.ObjectId(file_id);
+            const downloadStream = gfs.openDownloadStreamByName(filename);
 
             downloadStream.on('data', function (data) {
                 return res.status(200).write(data);
