@@ -19,7 +19,9 @@ const deleteAttachments = async (files) => {
     });
 };
 
-const downloadAttachment = async (fileId) => {
+const getAttachment = async (req,res) => {
+  const {file_id} = req.params;
+  
     try {
         let gfs;
         const conn = new mongoose.createConnection(process.env.MONGO_URI);
@@ -27,7 +29,7 @@ const downloadAttachment = async (fileId) => {
         conn.once('open', () => {
             gfs = new mongoose.mongo.GridFSBucket(conn.db, { bucketName: 'attachments' });
 
-            const _id = new mongoose.Types.ObjectId(fileId);
+            const _id = new mongoose.Types.ObjectId(file_id);
             const downloadStream = gfs.openDownloadStream(_id);
 
             downloadStream.on('data', function (data) {
@@ -35,7 +37,7 @@ const downloadAttachment = async (fileId) => {
             });
 
             downloadStream.on('error', function (err) {
-                return res.status(404).send({ file: { message: 'Cannot download the Image!' } });
+                return res.status(404).send({ file: { message: 'Cannot download the attachment.' } });
             });
 
             downloadStream.on('end', () => {
@@ -48,4 +50,4 @@ const downloadAttachment = async (fileId) => {
     };
 };
 
-export { deleteAttachments, downloadAttachment };
+export { deleteAttachments, getAttachment };
