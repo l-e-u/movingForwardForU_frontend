@@ -50,7 +50,7 @@ const FeeSearchSelect = ({ feesList, setJob }) => {
     }, []);
 
     return (
-        <div>
+        <>
             <AutoCompleteSelect
                 labelText='Fees'
                 isRequired={false}
@@ -82,7 +82,7 @@ const FeeSearchSelect = ({ feesList, setJob }) => {
 
             {hasAddedFees &&
                 <div className='mt-2 d-flex flex-column gap-1'>
-                    <SmallHeader text={'APPLIED FEE' + (feesList.length > 1 ? 'S' : '')} />
+                    <SmallHeader text={`Applied fee${feesList.length > 1 ? 's' : ''} (${feesList.length})`} />
                     <ul className='list-group flex-grow-1 d-flex flex-column gap-1 overflow-scroll' style={{ maxHeight: '350px' }}>
                         {feesList.map(fee => {
                             const { _id, amount, name } = fee;
@@ -111,7 +111,7 @@ const FeeSearchSelect = ({ feesList, setJob }) => {
                         <span className='ms-3'>{'$ ' + formatCurrency(feesList.reduce((total, f) => total + f.amount, 0), true)}</span>
                     </div>
                 </div>}
-        </div>
+        </>
     );
 };
 

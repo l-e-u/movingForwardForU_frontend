@@ -11,12 +11,8 @@ import ActionButton from './ActionButton'
 // functions
 import { removeExtraSpaces } from '../utils/StringUtils';
 
-// hooks
-import { useAuthContext } from '../hooks/useAuthContext';
-
 const JobForm = ({ job, setJob, handleSubmit, error, setError, isDisabled, isLoading }) => {
-    const { user } = useAuthContext();
-    const { status, customer, fees, reference, parcel, drivers, notes } = job;
+    const { status, customer, fees, mileage, reference, parcel, drivers, notes } = job;
 
     const errorOther = error?.server;
 
@@ -26,7 +22,7 @@ const JobForm = ({ job, setJob, handleSubmit, error, setError, isDisabled, isLoa
             <div className='d-xl-flex gap-3'>
                 {/* status, customer, ref, parcel, drivers */}
                 <div className='d-md-flex flex-grow-1 gap-3 mb-3 mb-xl-0'>
-                    <div className='d-flex flex-column gap-2 w-md-50 mb-3 mb-md-0' >
+                    <div className='d-flex flex-column justify-content-between gap-2 w-md-50 mb-3 mb-md-0' >
                         {/* STATUS */}
                         <StatusSearchSelect
                             status={status}
@@ -99,12 +95,51 @@ const JobForm = ({ job, setJob, handleSubmit, error, setError, isDisabled, isLoa
                             <label htmlFor='parcel' className='form-label'>Parcel</label>
                         </div>
 
+                        {/* MILEAGE */}
+                        <div className='input-group'>
+                            <div className='form-floating'>
+                                <input
+                                    className={'form-control' + (error?.mileage ? ' is-invalid' : '')}
+                                    id='mileage'
+                                    name='mileage'
+                                    onBlur={e => {
+                                        const input = e.target.value;
+
+                                        if (input === '') {
+                                            setJob(prev => {
+                                                return {
+                                                    ...prev,
+                                                    mileage: 0
+                                                }
+                                            })
+                                        }
+                                    }}
+                                    onChange={e => setJob(prev => {
+                                        return {
+                                            ...prev,
+                                            mileage: e.target.value
+                                        }
+                                    })}
+                                    placeholder='Mileage'
+                                    step={1}
+                                    title='Needs to be a number.'
+                                    type='number'
+                                    value={mileage}
+                                />
+                                <label htmlFor='mileage' className='form-label'>
+                                    Mileage
+                                    {error?.mileage && <span className='ms-1 text-danger'>{': ' + error.mileage.message}</span>}
+                                </label>
+                            </div>
+                            <span className='input-group-text'>mi.</span>
+                        </div>
+
                         {/* DRIVERS */}
                         <DriverSearchSelect drivers={drivers} setJob={setJob} />
                     </div>
 
                     {/* pickup delivery details */}
-                    <div className='d-flex flex-column justify-content-evenly gap-3 w-md-50'>
+                    <div className='d-flex flex-column justify-content-between gap-3 w-md-50'>
                         {/* PICKUP ADDRESS/TIME */}
                         <PickupOrDeliveryInput
                             isPickup={true}
@@ -123,14 +158,14 @@ const JobForm = ({ job, setJob, handleSubmit, error, setError, isDisabled, isLoa
                     </div>
                 </div>
 
-                <div className='d-md-flex flex-grow-1 gap-3'>
+                <div className='d-md-flex flex-grow-1 gap-3 mb-md-3 mb-xl-0'>
                     {/* fees */}
-                    <div className='w-md-50 order-md-1 mb-3 mb-md-0'>
+                    <div className='w-md-50 order-md-1'>
                         <FeeSearchSelect feesList={fees} setJob={setJob} />
                     </div>
 
                     {/* notes */}
-                    <div className='w-md-50 order-md-0'>
+                    <div className='w-md-50 order-md-0 mt-3 mt-md-0'>
                         <NotesInput notes={notes} setJob={setJob} error={error} setError={setError} />
                     </div>
                 </div>

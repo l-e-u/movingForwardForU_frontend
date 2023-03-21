@@ -14,6 +14,7 @@ import PageContentWrapper from '../components/PageContentWrapper.js';
 import ActionButton from '../components/ActionButton.js';
 import LoadingDocuments from '../components/LoadingDocuments.js';
 import ErrorLoadingDocuments from '../components/ErrorLoadingDocuments.js';
+import DeleteConfirmation from '../components/DeleteConfirmation.js';
 
 // date fns
 import formatDistanceToNow from 'date-fns/formatDistanceToNow';
@@ -26,7 +27,7 @@ const Jobs = () => {
     const [showCreateForm, setShowCreateForm] = useState(false);
     const [showEditForm, setShowEditForm] = useState(false);
     const [showOptionsMenu, setShowOptionsMenu] = useState(false);
-    const [showDeleteConfirmation,setShowDeleteConfirmation]=useState(false);
+    const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
 
     const { user } = useAuthContext();
     const { jobs, dispatch } = useJobsContext();
@@ -127,31 +128,38 @@ const Jobs = () => {
         XLSX.writeFile(workbook, fileName);
     };
 
+    // sets all the forms and menus show setters to false
+    const hideAllMenusAndForms = () => [setShowEditForm, setShowCreateForm, setShowOptionsMenu, setShowDeleteConfirmation].forEach(setShow => setShow(false));
+
     return (
         <PageContentWrapper>
             {showCreateForm ?
                 <CreateJobForm setShowThisForm={setShowCreateForm} /> :
-                <ActionButton
-                    alignX='right'
-                    handleOnClick={() => {
-                        setShowCreateForm(true);
-                        setShowEditForm(false);
-                        setShowOptionsMenu(false);
-                        setSelectedJobId(null);
-                    }}
-                    text='Create a Job'
-                />
+                <div className='mb-3'>
+                    <ActionButton
+                        alignX='right'
+                        handleOnClick={() => {
+                            setShowCreateForm(true);
+                            setShowEditForm(false);
+                            setShowOptionsMenu(false);
+                            setSelectedJobId(null);
+                        }}
+                        text='Create a Job'
+                    />
+                </div>
             }
 
 
             {/* exports the current jobs listed */}
-            <div className='py-3'>
-                <ActionButton
-                    alignX='right'
-                    handleOnClick={exportToExcel}
-                    text='Export Listed Jobs'
-                />
-            </div>
+            {(!showCreateForm && !showEditForm && !showDeleteConfirmation) &&
+                <div className='mb-3'>
+                    <ActionButton
+                        alignX='right'
+                        handleOnClick={exportToExcel}
+                        text='Export Listed Jobs'
+                    />
+                </div>
+            }
 
             {/* show spinner with actively fetching data */}
             {isLoading && <div className='my-5'><LoadingDocuments /></div>}
@@ -170,15 +178,29 @@ const Jobs = () => {
                                     <EditJobForm prevJob={job} setShowThisForm={setShowEditForm} />
                                 </div>);
 
+                            case (showDeleteConfirmation && isSelectedJob):
+                                return (<div className='position-relative' key={_id}>
+                                    <DeleteConfirmation
+                                        dispatch={dispatch}
+                                        doc_id={_id}
+                                        model='JOB'
+                                        route='jobs'
+                                        setShowThisForm={setShowDeleteConfirmation}
+                                    />
+                                </div>)
+
                             default:
                                 return (<div className='position-relative' key={_id}>
                                     <OptionsMenu
                                         showMenu={showOptionsMenu && isSelectedJob}
                                         handleOnClickCloseMenu={() => setShowOptionsMenu(false)}
+                                        handleOnClickDeleteOption={() => {
+                                            hideAllMenusAndForms();
+                                            setShowDeleteConfirmation(true);
+                                        }}
                                         handleOnClickEditOption={() => {
+                                            hideAllMenusAndForms();
                                             setShowEditForm(true);
-                                            setShowCreateForm(false);
-                                            setShowOptionsMenu(false);
                                         }}
                                         handleOnClickMenu={() => {
                                             setSelectedJobId(_id);
@@ -189,6 +211,7 @@ const Jobs = () => {
                                         {...job}
                                         listDrivers={true}
                                         listFees={true}
+                                        listMileage={true}
                                         showCreatedDetails={true}
                                     />
                                 </div>);

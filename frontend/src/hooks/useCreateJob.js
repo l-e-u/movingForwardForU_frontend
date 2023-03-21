@@ -14,13 +14,21 @@ export const useCreateJob = () => {
         // don't want to show the error if the user is trying to rectify, so null error at the start
         setError(null);
 
+        const form = new FormData();
+
+        // this will hold the form values in a json
+        form.append('job', JSON.stringify(job));
+
+        // this will hold the attachments
+        job.notes.forEach(note => {
+            const { attachment } = note;
+            if (attachment) form.append('attachments', attachment.file);
+        });
+
         const response = await fetch('/api/jobs', {
             method: 'POST',
-            body: JSON.stringify(job),
-            headers: {
-                'Content-Type': 'application/json',
-                'Authentication': `Bearer ${user.token}`
-            }
+            body: form,
+            headers: { 'Authentication': `Bearer ${user.token}` }
         });
 
         // expecting the newly created status

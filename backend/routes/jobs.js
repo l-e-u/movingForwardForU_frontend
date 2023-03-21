@@ -1,4 +1,5 @@
 import { Router } from 'express';
+
 import {
     createJob,
     getJob,
@@ -7,12 +8,18 @@ import {
     updateJob,
     getJobsByUserId
 } from '../controllers/jobController.js'
+
+// middleware
 import { requireAuth } from '../middleware/requireAuth.js';
+import { uploadAttachments } from '../middleware/uploadAttachments.js';
 
 const router = Router();
 
 // authenticates user is valid and logged in to access further end points
 router.use(requireAuth);
+
+// GET filtered jobs
+router.get('/filter/:model/:id', getJobs);
 
 // GET all jobs
 router.get('/', getJobs);
@@ -24,7 +31,7 @@ router.get('/user', getJobsByUserId);
 router.get('/:id', getJob);
 
 // POST a new job
-router.post('/', createJob);
+router.post('/', uploadAttachments, createJob);
 
 // DELETE a job
 router.delete('/:id', deleteJob);

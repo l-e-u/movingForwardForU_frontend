@@ -1,5 +1,5 @@
 import 'dotenv/config';
-import express, { json } from 'express';
+import express, { json, urlencoded } from 'express';
 import { connectToDatabase } from './models/index.js';
 import cors from 'cors';
 
@@ -19,6 +19,7 @@ app.use(cors());
 
 
 // middleware
+app.use(urlencoded({ extended: true }));
 app.use(json());
 app.use((req, res, next) => {
     console.log(req.path, req.method);

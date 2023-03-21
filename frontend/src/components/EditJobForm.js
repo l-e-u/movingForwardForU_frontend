@@ -19,6 +19,7 @@ const EditJobForm = ({ prevJob, setShowThisForm }) => {
     if (prevJob.customer._id !== job.customer?._id) updatedProperties.customer = job.customer?._id;
     if (!noCharChanges(prevJob.reference ?? '', job.reference ?? '')) updatedProperties.reference = job.reference;
     if (!noCharChanges(prevJob.parcel ?? '', job.parcel ?? '')) updatedProperties.parcel = job.parcel;
+    if (prevJob.mileage !== Number(job.mileage === '' ? 0 : job.mileage)) updatedProperties.mileage = Number(job.mileage);
     if (JSON.stringify(prevJob.pickup) !== JSON.stringify(job.pickup)) updatedProperties.pickup = job.pickup;
     if (JSON.stringify(prevJob.delivery) !== JSON.stringify(job.delivery)) updatedProperties.delivery = job.delivery;
     if ((prevJob.drivers.length !== job.drivers.length) || !prevJob.drivers.every(driver => job.drivers.some(d => driver._id === d._id))) updatedProperties.drivers = job.drivers;

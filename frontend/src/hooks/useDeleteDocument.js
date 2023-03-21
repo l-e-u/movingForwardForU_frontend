@@ -1,13 +1,15 @@
-import { useState } from "react"
-import { useAuthContext } from "./useAuthContext";
+import { useState } from 'react'
+
+// hooks
+import { useAuthContext } from '../hooks/useAuthContext';
 
 export const useDeleteDocument = () => {
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(null);
-  
+
   const { user } = useAuthContext();
 
-  const deleteDocument = async ({_id,dispatch, model, route}) => {
+  const deleteDocument = async ({ _id, dispatch, model, route }) => {
     setIsLoading(true);
 
     // don't want to show the error if the user is trying to rectify, so null error at the start

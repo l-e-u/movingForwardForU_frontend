@@ -14,6 +14,7 @@ const CreateJobForm = ({ setShowThisForm }) => {
         delivery: { address: '', date: new Date(), includeTime: false },
         drivers: [],
         fees: [],
+        mileage: 0,
         notes: [],
         parcel: '',
         pickup: { address: '', date: new Date(), includeTime: false },
@@ -22,7 +23,7 @@ const CreateJobForm = ({ setShowThisForm }) => {
     });
 
     return (
-        <div className='shadow'>
+        <div className='shadow mb-4'>
             <FormHeader text='New Job' handleCloseForm={() => setShowThisForm(false)} />
 
             <div className='rounded-bottom background-white text-reset px-3 pb-3 pt-1'>
@@ -40,6 +41,7 @@ const CreateJobForm = ({ setShowThisForm }) => {
                             ...job,
                             customer: job.customer?._id,
                             drivers: job.drivers.map(d => d._id),
+                            mileage: Number(job.mileage),
                             fees: job.fees.map(f => f._id),
                             status: job.status?._id,
                         })

@@ -19,6 +19,7 @@ const transportSchema = new Schema({
 
 const noteSchema = new Schema(
     {
+        attachment: Object,
         createdAt: {
             type: Date,
             default: new Date(),
@@ -33,7 +34,6 @@ const noteSchema = new Schema(
             type: String,
             trim: true,
             index: true,
-            required: [true, 'Cannot be empty.']
         },
         subject: {
             type: String,
@@ -53,6 +53,7 @@ const noteSchema = new Schema(
 const jobSchema = new Schema(
     {
         delivery: transportSchema,
+        mileage: Number,
         notes: [noteSchema],
         pickup: transportSchema,
         createdBy: {

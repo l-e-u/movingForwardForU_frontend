@@ -16,6 +16,7 @@ import ErrorLoadingDocuments from '../components/ErrorLoadingDocuments.js';
 import OptionsMenu from '../components/OptionsMenu.js';
 import Card from '../components/Card.js';
 import SmallHeader from '../components/SmallHeader.js';
+import DeleteConfirmation from '../components/DeleteConfirmation.js';
 
 const Statuses = () => {
     const { statuses, dispatch } = useStatusesContext();
@@ -28,6 +29,7 @@ const Statuses = () => {
     const [showCreateForm, setShowCreateForm] = useState(false);
     const [showEditForm, setShowEditForm] = useState(false);
     const [showOptionsMenu, setShowOptionsMenu] = useState(false);
+    const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
 
     // get statuses once
     useEffect(() => {
@@ -59,9 +61,8 @@ const Statuses = () => {
         })();
     }, []);
 
-    if (error) {
-        return <p className='text-danger'>Could not load, check network and refresh.</p>
-    };
+    // sets all the forms and menus show setters to false
+    const hideAllMenusAndForms = () => [setShowEditForm, setShowCreateForm, setShowOptionsMenu, setShowDeleteConfirmation].forEach(setShow => setShow(false));
 
     return (
         <PageContentWrapper>
@@ -98,16 +99,32 @@ const Statuses = () => {
                                     <EditStatusForm prevStatus={status} setShowThisForm={setShowEditForm} />
                                 </div>);
 
+                            case (showDeleteConfirmation && isSelectedStatus):
+                                return (<div className='position-relative' key={_id}>
+                                    <DeleteConfirmation
+                                        dispatch={dispatch}
+                                        doc_id={_id}
+                                        model='STATUS'
+                                        checkReference='status'
+                                        route='statuses'
+                                        setShowThisForm={setShowDeleteConfirmation}
+                                    />
+                                </div>)
+
                             default:
                                 return (<div className='position-relative' key={_id}>
                                     <OptionsMenu
                                         handleOnClickCloseMenu={() => setShowOptionsMenu(false)}
+                                        handleOnClickDeleteOption={() => {
+                                            hideAllMenusAndForms();
+                                            setShowDeleteConfirmation(true);
+                                        }}
                                         handleOnClickEditOption={() => {
+                                            hideAllMenusAndForms();
                                             setShowEditForm(true);
-                                            setShowCreateForm(false);
-                                            setShowOptionsMenu(false);
                                         }}
                                         handleOnClickMenu={() => {
+                                            hideAllMenusAndForms();
                                             setSelectedStatusId(_id);
                                             setShowOptionsMenu(true);
                                         }}

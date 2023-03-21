@@ -1,4 +1,7 @@
 import mongoose from 'mongoose';
+import { deleteAttachments } from './attachmentController.js';
+
+// model
 import Job from '../models/job.js';
 
 const docFieldsToPopulate = [
@@ -12,7 +15,16 @@ const docFieldsToPopulate = [
 
 // get all jobs
 const getJobs = async (req, res) => {
-    let jobs = await Job.find({}).populate(docFieldsToPopulate);
+    let filter = {};
+
+    // if there are parameters, set them as a filter and return the filtered jobs, otherwise return all jobs
+    if (req.params) {
+        const { model, id } = req.params;
+
+        filter = { [model]: id };
+    };
+
+    const jobs = await Job.find(filter).populate(docFieldsToPopulate);
 
     return res.status(200).json(jobs);
 }
@@ -38,11 +50,23 @@ const getJob = async (req, res) => {
 // create new job
 const createJob = async (req, res) => {
     const { _id: user_id } = req.user;
+    const newJob = JSON.parse(req.body.job);
+    const files = req.files;
 
-    // add doc to db
     try {
+        // for each note, check if it has an attachment property, if so get the matching file originalname with the attachment file name
+        newJob.notes.forEach(note => {
+            if (note.attachment) {
+                const result = files.find(file => file.originalname === note.attachment.filename);
+                const { contentType, filename, id, originalname, size } = result;
+
+                note.attachment = { contentType, filename, originalname, size, files_id: id };
+            };
+        });
+
+        // add doc to db
         let job = await Job.create({
-            ...req.body,
+            ...newJob,
             createdBy: user_id
         });
 
@@ -54,8 +78,12 @@ const createJob = async (req, res) => {
     catch (err) {
         console.error(err);
 
+        console.error('An error has occured, job creation has been aborted, and uploaded files will be deleted.');
         // 'errors' contains any mongoose model-validation fails, rename to error
         const { errors: error } = err;
+
+        // if there's any files that were uploaded, delete them now
+        if (req.files.length > 0) deleteAttachments(req.files);
 
         // go through the properties and seek out note errors, format them in an array
         for (const key in error) {
@@ -88,7 +116,7 @@ const createJob = async (req, res) => {
 
         // if no input errors, then send back the err message as a server error
         if (!error) {
-            error.server = err.message;
+            error.server = err || err.message;
         };
 
         return res.status(400).json({ error });

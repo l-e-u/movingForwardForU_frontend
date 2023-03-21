@@ -11,14 +11,15 @@ const NavMenu = ({ selectedLink, setSelectedLink, setShowThisNav, user }) => {
     const links = [
         { name: 'My Jobs', path: '/', icon: 'bi-list-check' },
         { name: 'Jobs', path: '/jobs', icon: 'bi-view-list' },
-        { name: 'Contacts', path: '/contacts', icon: 'bi-person-vcard-fill' },
-        { name: 'Statuses', path: '/statuses', icon: 'bi-tags-fill' },
-        { name: 'Users', path: '/users', icon: 'bi-people-fill' },
+        { name: 'Contacts', path: '/contacts', icon: 'bi-person-vcard' },
+        { name: 'Statuses', path: '/statuses', icon: 'bi-tags' },
+        { name: 'Users', path: '/users', icon: 'bi-people' },
         { name: 'Fees', path: '/fees', icon: 'bi-currency-dollar' },
     ];
     const { logout } = useLogout();
     const isAdmin = user?.isAdmin;
 
+    // when the menu is displayed. prevent the body from scrolling
     useEffect(() => {
         document.body.style.overflow = 'hidden';
 
@@ -41,7 +42,7 @@ const NavMenu = ({ selectedLink, setSelectedLink, setShowThisNav, user }) => {
                         <Link
                             key={index}
                             to={link.path}
-                            className={(selectedLink === index ? 'selected' : '') + ' text-decoration-none text-reset my-4 py-2 px-4'}
+                            className={(selectedLink === index ? 'selected' : '') + ' text-decoration-none text-action my-4 py-2 px-4'}
                             onClick={() => {
                                 setSelectedLink(index);
                                 setShowThisNav(false);

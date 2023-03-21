@@ -32,7 +32,7 @@ const PickupOrDeliveryInput = ({
     return (
         <div className='d-flex flex-column gap-2' >
 
-            <SmallHeader text={propertyText.toUpperCase() + ' DETAILS'} />
+            <SmallHeader text={propertyText + ' Details'} />
 
             {/* toggle to include a due time */}
             <div className='form-check'>

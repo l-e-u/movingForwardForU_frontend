@@ -1,8 +1,12 @@
+import CreatedInfo from './CreatedInfo';
+import FileDownloadButton from './FileDownloadLink';
+
 const NotesList = ({ list }) => {
     return (
         <ul className='list-group list-group-flush d-flex flex-column gap-2 mt-1'>
             {list.map((note) => {
-                const { _id, subject, message } = note;
+                const { _id, attachment, createdAt, createdBy, subject, message } = note;
+
                 return (
                     <li key={_id} className='list-group-item p-0 text-reset'>
                         <button
@@ -13,13 +17,16 @@ const NotesList = ({ list }) => {
                             data-bs-target={'#collapseMsg' + _id}
                             aria-expanded='false'
                             aria-controls={'collapseMsg' + _id}>
-                            {subject}
+                            <span>{subject}</span>
+                            {attachment && <i className='bi bi-paperclip ms-3'></i>}
                         </button>
                         <div
-                            className='collapse mt-1 '
+                            className='collapse'
                             id={'collapseMsg' + _id}
-                            style={{ whiteSpace: 'pre-wrap' }} >
-                            {message}
+                        >
+                            <small className='mt-1 mb-2' style={{ whiteSpace: 'pre-wrap' }}>{message}</small>
+                            <FileDownloadButton {...attachment} />
+                            <div className='text-end'> <CreatedInfo createdAt={createdAt} createdBy={createdBy} /></div>
                         </div>
                     </li>
                 )

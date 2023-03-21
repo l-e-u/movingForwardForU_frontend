@@ -50,32 +50,49 @@ const NotesInput = ({
 
     return (
         <div className='d-flex flex-column gap-2'>
-            <SmallHeader text='NOTES' />
+            <SmallHeader text='Notes' />
             {hasNotes &&
                 <ul className='list-group mb-1 d-flex flex-column gap-1 overflow-scroll' style={{ maxHeight: '415px' }}>
                     {notes.map((note, index) => {
                         const noteId = note._id;
                         const inputSubjectError = error?.notes[index]?.subject;
-                        const inputMessageError = error?.notes[index]?.message;
-                        const inputError = inputMessageError || inputSubjectError;
 
                         return (
-                            <li key={noteId || index} className={'position-relative form-control' + (inputError ? ' is-invalid' : '')}>
+                            <li key={noteId || index} className={'position-relative form-control' + (inputSubjectError ? ' is-invalid' : '')}>
                                 <div className='position-absolute top-0 end-0 text-action'>
                                     <XButton handleOnClick={() => handleDeleteOnClick(index)} />
                                 </div>
                                 <input
                                     className='form-control-plaintext p-0'
-                                    placeholder={'Subject' + (inputSubjectError ? ` : ${inputSubjectError}` : '')}
+                                    placeholder={'* Subject' + (inputSubjectError ? ` : ${inputSubjectError}` : '')}
                                     value={note.subject}
                                     onBlur={e => handleOnChange({ subject: e.target.value.trim() }, index)}
                                     onChange={e => handleOnChange({ subject: e.target.value }, index)} />
                                 <GrowingTextArea
                                     value={note.message}
                                     className='form-control-plaintext p-0'
-                                    placeholder={'Message' + (inputMessageError ? ` : ${inputMessageError}` : '')}
+                                    placeholder='Message'
                                     onBlur={e => handleOnChange({ message: e.target.value.trim() }, index)}
                                     onChange={e => handleOnChange({ message: e.target.value }, index)}
+                                />
+                                <input
+                                    accept='image/png, image/jpeg, application/pdf'
+                                    className='form-control form-control-sm'
+                                    id='file'
+                                    name='file'
+                                    onChange={e => {
+                                        const file = e.target.files[0];
+                                        handleOnChange(
+                                            {
+                                                attachment: {
+                                                    file,
+                                                    filename: file.name
+                                                }
+                                            },
+                                            index
+                                        );
+                                    }}
+                                    type='file'
                                 />
                             </li>
                         );

@@ -17,6 +17,7 @@ const JobCard = ({
     delivery,
     drivers,
     fees,
+    mileage,
     notes,
     pickup,
     parcel,
@@ -24,6 +25,7 @@ const JobCard = ({
     status,
     listDrivers = false,
     listFees = false,
+    listMileage = false,
     showCreatedDetails = false,
 }) => {
     const hasDrivers = drivers.length > 0;
@@ -40,7 +42,7 @@ const JobCard = ({
                 </div>
             </>}
 
-            body={<div className='d-flex flex-column gap-3'>
+            body={<div className='d-flex flex-column gap-2'>
                 {listDrivers &&
                     <div>
                         <SmallHeader text={'Driver' + ((drivers.length > 1) ? 's' : '')} />
@@ -66,33 +68,42 @@ const JobCard = ({
                     />
                 </div>
 
-                {parcel &&
-                    <div>
-                        <SmallHeader text='Parcel' />
-                        {parcel}
-                    </div>
-                }
-
-                {listFees &&
-                    <div>
-                        <SmallHeader text={'Fee' + ((fees.length > 1) ? 's' : '')} />
-                        {hasFees && <>
-                            <FeesList list={fees} />
-                            <div className='d-flex align-items-center justify-content-end mt-1'>
-                                <SmallHeader text='Total' />
-                                <span className='border-top ms-2 ps-2'>{'$ ' + formatCurrency(fees.reduce((total, f) => total + f.amount, 0), true)}</span>
-                            </div>
-                        </>}
-
-                        {!hasFees && <div>No fess has been assessed.</div>}
-                    </div>
-                }
-
-                <div>
-                    <SmallHeader text={'Note' + ((notes.length > 1) ? 's' : '')} />
-                    {hasNotes ? <NotesList list={notes} /> : <div>No notes have been appended.</div>}
+                {/* parcel and mileage */}
+                <div className='d-flex flex-column gap-2 flex-sm-row justify-sm-content-between'>
+                    {parcel &&
+                        <div className='flex-grow-1'>
+                            <SmallHeader text='Parcel' />
+                            {parcel}
+                        </div>
+                    }
+                    {listMileage &&
+                        <div className={'flex-grow-1' + (parcel ? ' text-end' : '')}>
+                            <SmallHeader text='Mileage' />
+                            {mileage}
+                        </div>
+                    }
                 </div>
+                <div className='d-lg-flex gap-lg-5'>
+                    {listFees &&
+                        <div className='w-lg-50 order-lg-last'>
+                            <SmallHeader text={'Fee' + ((fees.length > 1) ? 's' : '')} />
+                            {hasFees && <>
+                                <FeesList list={fees} />
+                                <div className='d-flex align-items-center justify-content-end mt-1'>
+                                    <SmallHeader text='Total' />
+                                    <span className='border-top ms-2 ps-2'>{'$ ' + formatCurrency(fees.reduce((total, f) => total + f.amount, 0), true)}</span>
+                                </div>
+                            </>}
 
+                            {!hasFees && <div>No fees has been assessed.</div>}
+                        </div>
+                    }
+
+                    <div className={'order-lg-first' + (listFees ? ' w-lg-50' : ' flex-grow-1')}>
+                        <SmallHeader text={'Note' + ((notes.length > 1) ? 's' : '')} />
+                        {hasNotes ? <NotesList list={notes} /> : <div>No notes have been appended.</div>}
+                    </div>
+                </div>
             </div>}
 
             footer={showCreatedDetails && <CreatedInfo createdBy={createdBy} createdAt={createdAt} />}
