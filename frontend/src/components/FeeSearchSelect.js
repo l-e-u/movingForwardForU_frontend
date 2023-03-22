@@ -13,14 +13,12 @@ import { useAuthContext } from '../hooks/useAuthContext';
 import { formatCurrency } from '../utils/StringUtils';
 
 const FeeSearchSelect = ({ feesList, setJob }) => {
-    const [duplicateError, setDuplicateError] = useState(null);
     const [error, setError] = useState(null);
     const [isLoading, setIsLoading] = useState(null);
 
     const { fees, dispatch } = useFeesContext();
     const { user } = useAuthContext();
 
-    const dupErrorMessage = 'Has already been added.';
     const hasAddedFees = feesList.length > 0;
 
     // on first mount only, get documents
@@ -57,26 +55,19 @@ const FeeSearchSelect = ({ feesList, setJob }) => {
                 setJob={setJob}
                 handleOnClickListItem={doc => {
                     return () => {
-                        setDuplicateError(null);
-
-                        // check if the fee hasn't already been added. throw an error to avoid duplicates
                         setJob(prev => {
-                            if (prev.fees.some(fee => fee._id === doc._id)) {
-                                setDuplicateError(true);
-                                return prev;
-                            };
-
-                            const updated = { ...prev };
-                            updated.fees = [...prev.fees, doc];
-                            return updated;
+                            return {
+                                ...prev,
+                                fees: [...prev.fees, doc]
+                            }
                         });
                     };
                 }}
                 getListedItemText={value => value.name}
                 filterSuggestions={(feeDoc, text) => feeDoc.name.toLowerCase().includes(text.toLowerCase())}
-                inputError={duplicateError}
-                inputErrorMessage={dupErrorMessage}
-                documents={fees ?? []}
+                inputError={null}
+                inputErrorMessage={''}
+                documents={fees?.filter(f => feesList.every(item => f._id !== item._id)) ?? []}
                 errorLoading={error}
                 isLoading={isLoading} />
 
@@ -91,11 +82,11 @@ const FeeSearchSelect = ({ feesList, setJob }) => {
                                 <li key={_id}>
                                     <CancellableOption
                                         handleCancelOnClick={() => {
-                                            setDuplicateError(null);
                                             setJob(prev => {
-                                                const updated = { ...prev };
-                                                updated.fees = feesList.filter(f => f._id !== _id);
-                                                return updated;
+                                                return {
+                                                    ...prev,
+                                                    fees: feesList.filter(f => f._id !== _id)
+                                                }
                                             });
                                         }}
                                         label={name}

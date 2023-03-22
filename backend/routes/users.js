@@ -19,7 +19,7 @@ const router = Router();
 router.post('/login', loginUser);
 
 // verify email token route
-router.post('/verify/:emailToken', verifyEmailToken)
+router.post('/verify/:emailToken', verifyEmailToken);
 
 // verify route
 router.patch('/verify', verifyUser);

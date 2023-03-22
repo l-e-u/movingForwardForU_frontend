@@ -1,17 +1,20 @@
 import { useState, useEffect } from 'react';
+
+// hooks
 import { useAuthContext } from '../hooks/useAuthContext.js';
 import { useContactsContext } from '../hooks/useContactsContext.js'
 
 // components
-import CreateContactForm from '../components/CreateContactForm.js';
-import EditContactForm from '../components/EditContactForm.js';
-import FlexBoxWrapper from '../components/FlexBoxWrapper.js';
-import PageContentWrapper from '../components/PageContentWrapper.js';
 import ActionButton from '../components/ActionButton.js';
-import LoadingDocuments from '../components/LoadingDocuments.js';
-import ErrorLoadingDocuments from '../components/ErrorLoadingDocuments.js';
-import OptionsMenu from '../components/OptionsMenu.js';
+import CreateContactForm from '../components/CreateContactForm.js';
 import ContactCard from '../components/ContactCard.js';
+import DeleteConfirmation from '../components/DeleteConfirmation.js';
+import EditContactForm from '../components/EditContactForm.js';
+import ErrorLoadingDocuments from '../components/ErrorLoadingDocuments.js';
+import FlexBoxWrapper from '../components/FlexBoxWrapper.js';
+import LoadingDocuments from '../components/LoadingDocuments.js';
+import OptionsMenu from '../components/OptionsMenu.js';
+import PageContentWrapper from '../components/PageContentWrapper.js';
 
 const Contacts = () => {
     const { contacts, dispatch } = useContactsContext();
@@ -20,11 +23,11 @@ const Contacts = () => {
     // local state
     const [error, setError] = useState(null);
     const [isLoading, setIsLoading] = useState(null);
+    const [selectedContactId, setSelectedContactId] = useState(null);
     const [showCreateForm, setShowCreateForm] = useState(false);
     const [showEditForm, setShowEditForm] = useState(false);
-    const [selectedContactId, setSelectedContactId] = useState(null);
+    const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
     const [showOptionsMenu, setShowOptionsMenu] = useState(false);
-
 
     useEffect(() => {
         (async () => {
@@ -55,6 +58,9 @@ const Contacts = () => {
         })();
     }, [dispatch, user]);
 
+    // sets all the forms and menus show setters to false
+    const hideAllMenusAndForms = () => [setShowEditForm, setShowCreateForm, setShowOptionsMenu, setShowDeleteConfirmation].forEach(setShow => setShow(false));
+
     return (
         <PageContentWrapper>
             <div className='mb-3'>
@@ -63,9 +69,8 @@ const Contacts = () => {
                     <ActionButton
                         alignX='right'
                         handleOnClick={() => {
+                            hideAllMenusAndForms();
                             setShowCreateForm(true);
-                            setShowEditForm(false);
-                            setShowOptionsMenu(false);
                             setSelectedContactId(null);
                         }}
                         text='Create a Contact'
@@ -84,10 +89,23 @@ const Contacts = () => {
                         const { _id } = contact;
                         const isSelectedContact = selectedContactId === _id;
 
+                        // by default, an overview of the model is displayed, unless the user clicks on an option
                         switch (true) {
                             case (showEditForm && isSelectedContact):
                                 return (<div className='position-relative' key={_id}>
                                     <EditContactForm prevContact={contact} setShowThisForm={setShowEditForm} />
+                                </div>);
+
+                            case (showDeleteConfirmation && isSelectedContact):
+                                return (<div className='position-relative' key={_id}>
+                                    <DeleteConfirmation
+                                        dispatch={dispatch}
+                                        doc_id={_id}
+                                        model='CONTACT'
+                                        checkReference='customer'
+                                        route='contacts'
+                                        setShowThisForm={setShowDeleteConfirmation}
+                                    />
                                 </div>);
 
                             default:
@@ -95,12 +113,17 @@ const Contacts = () => {
                                     <OptionsMenu
                                         showMenu={showOptionsMenu && isSelectedContact}
                                         handleOnClickCloseMenu={() => setShowOptionsMenu(false)}
+                                        handleOnClickDeleteOption={() => {
+                                            hideAllMenusAndForms();
+                                            setShowDeleteConfirmation(true);
+                                        }}
                                         handleOnClickEditOption={() => {
+                                            hideAllMenusAndForms();
                                             setShowEditForm(true);
-                                            setShowCreateForm(false);
-                                            setShowOptionsMenu(false);
+
                                         }}
                                         handleOnClickMenu={() => {
+                                            hideAllMenusAndForms();
                                             setSelectedContactId(_id);
                                             setShowOptionsMenu(true);
                                         }}

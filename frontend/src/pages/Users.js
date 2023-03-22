@@ -59,6 +59,9 @@ const Users = () => {
         })();
     }, []);
 
+    // sets all the forms and menus show setters to false
+    const hideAllMenusAndForms = () => [setShowEditForm, setShowCreateForm, setShowOptionsMenu].forEach(setShow => setShow(false));
+
     return (
         <PageContentWrapper>
             <div className='mb-3'>
@@ -67,9 +70,8 @@ const Users = () => {
                     <ActionButton
                         alignX='right'
                         handleOnClick={() => {
+                            hideAllMenusAndForms();
                             setShowCreateForm(true);
-                            setShowEditForm(false);
-                            setShowOptionsMenu(false);
                             setSelectedUserId(null);
                         }}
                         text='Create A User'
@@ -101,11 +103,11 @@ const Users = () => {
                                         showMenu={showOptionsMenu && isSelectedUser}
                                         handleOnClickCloseMenu={() => setShowOptionsMenu(false)}
                                         handleOnClickEditOption={() => {
+                                            hideAllMenusAndForms();
                                             setShowEditForm(true);
-                                            setShowCreateForm(false);
-                                            setShowOptionsMenu(false);
                                         }}
                                         handleOnClickMenu={() => {
+                                            hideAllMenusAndForms();
                                             setSelectedUserId(_id);
                                             setShowOptionsMenu(true);
                                         }}

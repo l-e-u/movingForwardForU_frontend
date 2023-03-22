@@ -61,16 +61,16 @@ const deleteFee = async (req, res) => {
     const error = { server: { message: 'No such fee.' } };
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
-        return res.fee(404).json({ error });
+        return res.status(404).json({ error });
     };
 
     const fee = await Fee.findByIdAndDelete({ _id: id });
 
     if (!fee) {
-        return res.fee(404).json({ error });
+        return res.status(404).json({ error });
     };
 
-    res.fee(200).json(fee);
+    res.status(200).json(fee);
 };
 
 const updateFee = async (req, res) => {

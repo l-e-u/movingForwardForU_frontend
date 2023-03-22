@@ -1,5 +1,10 @@
 import { useState } from 'react';
+
+// componenets
 import CardContainer from '../components/CardContainer.js';
+import ActionButton from '../components/ActionButton.js';
+
+// hooks
 import { useLogin } from '../hooks/useLogin.js';
 
 const Login = () => {
@@ -50,12 +55,13 @@ const Login = () => {
                         </label>
                     </div>
 
-                    <button
+                    <br />
+                    <ActionButton
+                        alignX='right'
+                        isDisabled={isLoading}
+                        text={(isLoading ? 'Logging in...' : 'Login')}
                         type='submit'
-                        disabled={isLoading}
-                        className='btn btn-sm btn-success rounded-pill d-block ms-auto mt-4 px-3'>
-                        Login
-                    </button>
+                    />
                 </form>
             </CardContainer>
         </div>

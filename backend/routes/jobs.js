@@ -37,6 +37,6 @@ router.post('/', uploadAttachments, createJob);
 router.delete('/:id', deleteJob);
 
 // UPDATE a job
-router.patch('/:id', updateJob);
+router.patch('/:id', uploadAttachments, updateJob);
 
 export default router;

@@ -19,7 +19,10 @@ const transportSchema = new Schema({
 
 const noteSchema = new Schema(
     {
-        attachment: Object,
+        attachment: {
+            type: Object,
+            default: null
+        },
         createdAt: {
             type: Date,
             default: new Date(),
@@ -90,7 +93,19 @@ const jobSchema = new Schema(
             type: Schema.Types.ObjectId,
         },
     },
-    { timestamps: true }
+    {
+        timestamps: true,
+        toJSON: {
+            transform: function (doc, json) {
+                json.billing = json.fees.map(fee => {
+                    return {
+                        ...fee,
+                        override: null
+                    }
+                })
+            }
+        }
+    }
 );
 
 export default Model('Job', jobSchema);;

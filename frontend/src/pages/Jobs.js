@@ -25,9 +25,9 @@ const Jobs = () => {
     const [isLoading, setIsLoading] = useState(null);
     const [selectedJobId, setSelectedJobId] = useState(null);
     const [showCreateForm, setShowCreateForm] = useState(false);
+    const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
     const [showEditForm, setShowEditForm] = useState(false);
     const [showOptionsMenu, setShowOptionsMenu] = useState(false);
-    const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
 
     const { user } = useAuthContext();
     const { jobs, dispatch } = useJobsContext();
@@ -130,7 +130,7 @@ const Jobs = () => {
 
     // sets all the forms and menus show setters to false
     const hideAllMenusAndForms = () => [setShowEditForm, setShowCreateForm, setShowOptionsMenu, setShowDeleteConfirmation].forEach(setShow => setShow(false));
-
+    console.log(jobs)
     return (
         <PageContentWrapper>
             {showCreateForm ?
@@ -139,9 +139,8 @@ const Jobs = () => {
                     <ActionButton
                         alignX='right'
                         handleOnClick={() => {
+                            hideAllMenusAndForms();
                             setShowCreateForm(true);
-                            setShowEditForm(false);
-                            setShowOptionsMenu(false);
                             setSelectedJobId(null);
                         }}
                         text='Create a Job'
@@ -172,6 +171,7 @@ const Jobs = () => {
                         const { _id } = job;
                         const isSelectedJob = selectedJobId === _id;
 
+                        // by default, an overview of the model is displayed, unless the user clicks on an option
                         switch (true) {
                             case (showEditForm && isSelectedJob):
                                 return (<div className='position-relative' key={_id}>
@@ -203,6 +203,7 @@ const Jobs = () => {
                                             setShowEditForm(true);
                                         }}
                                         handleOnClickMenu={() => {
+                                            hideAllMenusAndForms();
                                             setSelectedJobId(_id);
                                             setShowOptionsMenu(true);
                                         }}

@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 
 // components
-import Card from './Card';
 import ActionButton from './ActionButton';
 import LoadingDocuments from './LoadingDocuments';
 
@@ -58,7 +57,6 @@ const DeleteConfirmation = ({
     }
   }, []);
 
-  console.log(references)
   return (
     <div className='shadow'>
       <FormHeader text='Confirm Delete' handleCloseForm={() => setShowThisForm(false)} />
@@ -70,13 +68,13 @@ const DeleteConfirmation = ({
         {error?.server && <p>{'Could not delete. ' + error.server.message + ' Refresh and try again.'}</p>}
 
         {(references.length > 0) &&
-          <p className='m-0'>{`This ${model.toLowerCase()} is referenced on other jobs, it cannot be deleted until those jobs are deleted, archived, or updated with another ${model.toLowerCase()}.`}</p>
+          <p className='m-0 px-3 pt-3 pb-2'>{`This ${model.toLowerCase()} is referenced on one or more jobs, you must delete, archive, or update the job(s) before deleting this document.`}</p>
         }
 
         {(!error && !getIsLoading && !getError && (references.length === 0)) && <>
           <p style={{ whiteSpace: 'pre-wrap' }}>{`Are you sure you want to delete this ${model.toLowerCase()}?\nThis cannot be undone.`}</p>
 
-          <div className='d-flex justify-content-between'>
+          <div className='d-flex flex-column gap-3 flex-sm-row justify-content-between align-items-center'>
             <ActionButton
               text='Cancel'
               handleOnClick={() => setShowThisForm(false)}

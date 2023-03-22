@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'react-router';
 
 // components
+import ActionButton from '../components/ActionButton.js';
 import CardContainer from '../components/CardContainer.js';
 import PasswordChecklist from 'react-password-checklist';
 import LoadingDocuments from '../components/LoadingDocuments.js';
@@ -166,12 +167,12 @@ const Verify = () => {
                                     ValidIcon: <i className='text-success bi bi-check me-1'></i>
                                 }} />
 
-                            <button
+                            <ActionButton
+                                alignX='right'
+                                isDisabled={verifyIsLoading || !passwordIsValid}
+                                text={(verifyIsLoading ? 'Saving...' : 'Submit')}
                                 type='submit'
-                                disabled={verifyIsLoading || !passwordIsValid}
-                                className='btn btn-sm btn-success rounded-pill d-block ms-auto mt-4 px-3'>
-                                {verifyIsLoading ? 'Saving...' : 'Submit'}
-                            </button>
+                            />
                         </form>
                     }
                 </CardContainer>

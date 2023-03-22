@@ -53,7 +53,7 @@ const NotesInput = ({
             <SmallHeader text='Notes' />
             {hasNotes &&
                 <ul className='list-group mb-1 d-flex flex-column gap-1 overflow-scroll' style={{ maxHeight: '415px' }}>
-                    {notes.map((note, index) => {
+                    {notes.map((note, index, arr) => {
                         const noteId = note._id;
                         const inputSubjectError = error?.notes[index]?.subject;
 
@@ -75,25 +75,37 @@ const NotesInput = ({
                                     onBlur={e => handleOnChange({ message: e.target.value.trim() }, index)}
                                     onChange={e => handleOnChange({ message: e.target.value }, index)}
                                 />
-                                <input
-                                    accept='image/png, image/jpeg, application/pdf'
-                                    className='form-control form-control-sm'
-                                    id='file'
-                                    name='file'
-                                    onChange={e => {
-                                        const file = e.target.files[0];
-                                        handleOnChange(
-                                            {
-                                                attachment: {
-                                                    file,
-                                                    filename: file.name
-                                                }
-                                            },
-                                            index
-                                        );
-                                    }}
-                                    type='file'
-                                />
+
+                                {/* button to remove the attachment will delete the property off of job */}
+                                {note.attachment?.filename ?
+                                    <button
+                                        className='btn btn-sm text-action border-0 p-0 text-start'
+                                        onClick={() => handleOnChange({ attachment: null }, index)}
+                                        type='button'
+                                    >
+                                        {'Remove ' + note.attachment.filename}
+                                    </button> :
+
+                                    <input
+                                        accept='image/png, image/jpeg, application/pdf'
+                                        className='form-control form-control-sm'
+                                        id='file'
+                                        name='file'
+                                        onChange={e => {
+                                            const file = e.target.files[0];
+                                            handleOnChange(
+                                                {
+                                                    attachment: {
+                                                        file,
+                                                        filename: file?.name
+                                                    }
+                                                },
+                                                index
+                                            );
+                                        }}
+                                        type='file'
+                                    />
+                                }
                             </li>
                         );
                     })}
@@ -111,7 +123,7 @@ const NotesInput = ({
                 }}
                 text='Append Note'
             />
-        </div>
+        </div >
     );
 };
 

@@ -15,9 +15,9 @@ const storage = new GridFsStorage({
 
         return {
             bucketName: 'attachments',
-            filename: `${Date.now()}--movingForward-${file.originalname}`
+            filename: `${Date.now()}--movingForward-${file.originalname}`,
         };
-    }
+    },
 });
 
 const uploadFiles = multer({ storage: storage }).array('attachments', 10);

@@ -10,7 +10,7 @@ const docFieldsToPopulate = [
     'drivers',
     'fees',
     'status',
-    'notes.createdBy'
+    'notes.createdBy',
 ];
 
 // get all jobs
@@ -24,7 +24,7 @@ const getJobs = async (req, res) => {
         filter = { [model]: id };
     };
 
-    const jobs = await Job.find(filter).populate(docFieldsToPopulate);
+    const jobs = await Job.find(filter, {}).populate(docFieldsToPopulate);
 
     return res.status(200).json(jobs);
 }
@@ -50,18 +50,20 @@ const getJob = async (req, res) => {
 // create new job
 const createJob = async (req, res) => {
     const { _id: user_id } = req.user;
+
+    // from client
     const newJob = JSON.parse(req.body.job);
+
+    // from middleware
     const files = req.files;
 
     try {
-        // for each note, check if it has an attachment property, if so get the matching file originalname with the attachment file name
-        newJob.notes.forEach(note => {
-            if (note.attachment) {
-                const result = files.find(file => file.originalname === note.attachment.filename);
-                const { contentType, filename, id, originalname, size } = result;
+        // for each uploaded file, attach its info to its note
+        files.forEach(file => {
+            const { contentType, filename, id, originalname, size } = file;
+            const note = newJob.notes.find(note => file.originalname === note.attachment.filename);
+            note.attachment = { contentType, filename, originalname, size, files_id: id };
 
-                note.attachment = { contentType, filename, originalname, size, files_id: id };
-            };
         });
 
         // add doc to db
@@ -145,18 +147,32 @@ const deleteJob = async (req, res) => {
 const updateJob = async (req, res) => {
     const { id } = req.params;
     const error = { server: { message: 'No such job.' } };
-    const updatedFields = { ...req.body };
 
-    console.log(updatedFields);
+    // from client
+    const updates = JSON.parse(req.body.updates);
+    const filesToDelete = JSON.parse(req.body.filesToDelete);
+
+    // from middleware
+    const files = req.files;
+
+    console.log('to be updated:', updates);
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
         return res.status(404).json({ error });
     };
 
     try {
+        // for each uploaded file, attach its info to its note
+        files.forEach(file => {
+            const { contentType, filename, id, originalname, size } = file;
+            const note = updates.notes.find(note => file.originalname === note.attachment.filename);
+            note.attachment = { contentType, filename, originalname, size, files_id: id };
+
+        });
+
         const job = await Job.findByIdAndUpdate(
             { _id: id },
-            { ...updatedFields },
+            { ...updates },
             {
                 returnDocument: 'after',
                 runValidators: true
@@ -167,15 +183,21 @@ const updateJob = async (req, res) => {
             return res.status(404).json({ error });
         };
 
-        console.log('to client:', job.notes);
+        // once the document has been updated, deleted the old attachments of the notes that were removed
+        deleteAttachments(filesToDelete);
 
         return res.status(200).json(job);
     }
     catch (err) {
         console.error(err);
 
+        console.error('An error has occured, job creation has been aborted, and uploaded files will be deleted.');
+
         // 'errors' contains any mongoose model-validation fails, rename to error
         const { errors: error } = err;
+
+        // if there's any files that were uploaded, delete them now
+        if (req.files.length > 0) deleteAttachments(req.files);
 
         // go through the properties and seek out note errors, format them in an array
         for (const key in error) {

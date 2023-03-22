@@ -1,16 +1,17 @@
 import { useEffect, useState } from 'react';
 
 // components
-import PageContentWrapper from '../components/PageContentWrapper.js'
+import ActionButton from '../components/ActionButton.js';
+import Card from '../components/Card.js';
+import CreateFeeForm from '../components/CreateFeeForm.js';
+import CreatedInfo from '../components/CreatedInfo.js';
+import DeleteConfirmation from '../components/DeleteConfirmation.js';
+import EditFeeForm from '../components/EditFeeForm.js';
+import ErrorLoadingDocuments from '../components/ErrorLoadingDocuments.js';
 import FlexBoxWrapper from '../components/FlexBoxWrapper.js';
 import LoadingDocuments from '../components/LoadingDocuments.js';
-import ErrorLoadingDocuments from '../components/ErrorLoadingDocuments.js';
-import CreatedInfo from '../components/CreatedInfo.js';
-import ActionButton from '../components/ActionButton.js';
-import CreateFeeForm from '../components/CreateFeeForm.js';
-import EditFeeForm from '../components/EditFeeForm.js';
 import OptionsMenu from '../components/OptionsMenu.js';
-import Card from '../components/Card.js';
+import PageContentWrapper from '../components/PageContentWrapper.js';
 import SmallHeader from '../components/SmallHeader.js';
 
 // hooks
@@ -25,6 +26,7 @@ const Fees = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [selectedFeeId, setSelectedFeeId] = useState(null);
     const [showCreateForm, setShowCreateForm] = useState(false);
+    const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
     const [showEditForm, setShowEditForm] = useState(false);
     const [showOptionsMenu, setShowOptionsMenu] = useState(false);
 
@@ -60,6 +62,9 @@ const Fees = () => {
         })();
     }, []);
 
+    // sets all the forms and menus show setters to false
+    const hideAllMenusAndForms = () => [setShowEditForm, setShowCreateForm, setShowOptionsMenu, setShowDeleteConfirmation].forEach(setShow => setShow(false));
+
     return (
         <PageContentWrapper>
             <div className='mb-3'>
@@ -68,9 +73,8 @@ const Fees = () => {
                     <ActionButton
                         alignX='right'
                         handleOnClick={() => {
+                            hideAllMenusAndForms();
                             setShowCreateForm(true);
-                            setShowEditForm(false);
-                            setShowOptionsMenu(false);
                             setSelectedFeeId(null);
                         }}
                         text='Create a Fee'
@@ -95,17 +99,33 @@ const Fees = () => {
                                     <EditFeeForm prev={fee} setShowThisForm={setShowEditForm} />
                                 </div>);
 
+                            case (showDeleteConfirmation && isSelectedFee):
+                                return (<div className='position-relative' key={_id}>
+                                    <DeleteConfirmation
+                                        dispatch={dispatch}
+                                        doc_id={_id}
+                                        model='FEE'
+                                        checkReference='fees'
+                                        route='fees'
+                                        setShowThisForm={setShowDeleteConfirmation}
+                                    />
+                                </div>);
+
                             default:
                                 return (<div className='position-relative' key={_id}>
                                     <OptionsMenu
                                         showMenu={showOptionsMenu && isSelectedFee}
                                         handleOnClickCloseMenu={() => setShowOptionsMenu(false)}
+                                        handleOnClickDeleteOption={() => {
+                                            hideAllMenusAndForms();
+                                            setShowDeleteConfirmation(true);
+                                        }}
                                         handleOnClickEditOption={() => {
+                                            hideAllMenusAndForms();
                                             setShowEditForm(true);
-                                            setShowCreateForm(false);
-                                            setShowOptionsMenu(false);
                                         }}
                                         handleOnClickMenu={() => {
+                                            hideAllMenusAndForms();
                                             setSelectedFeeId(_id);
                                             setShowOptionsMenu(true);
                                         }}

@@ -14,12 +14,11 @@ export const useCreateJob = () => {
         // don't want to show the error if the user is trying to rectify, so null error at the start
         setError(null);
 
+        // create a multipart form data object to send to server
         const form = new FormData();
-
-        // this will hold the form values in a json
         form.append('job', JSON.stringify(job));
 
-        // this will hold the attachments
+        // this will hold the attachments which middleware will upload on the backend
         job.notes.forEach(note => {
             const { attachment } = note;
             if (attachment) form.append('attachments', attachment.file);

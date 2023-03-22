@@ -39,8 +39,8 @@ const PickupOrDeliveryInput = ({
                 <input
                     type='checkbox'
                     className='form-check-input'
-                    name='timeCheckbox'
-                    id='timeCheckbox'
+                    name={propertyText + 'TimeCheckbox'}
+                    id={propertyText + 'TimeCheckbox'}
                     checked={includeTime}
                     onChange={e => setPickupOrDeliveryInfo({ includeTime: e.target.checked })}
                 />

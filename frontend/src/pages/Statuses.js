@@ -27,9 +27,9 @@ const Statuses = () => {
     const [isLoading, setIsLoading] = useState(null);
     const [selectedStatusId, setSelectedStatusId] = useState(null);
     const [showCreateForm, setShowCreateForm] = useState(false);
+    const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
     const [showEditForm, setShowEditForm] = useState(false);
     const [showOptionsMenu, setShowOptionsMenu] = useState(false);
-    const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
 
     // get statuses once
     useEffect(() => {
@@ -72,9 +72,8 @@ const Statuses = () => {
                     <ActionButton
                         alignX='right'
                         handleOnClick={() => {
+                            hideAllMenusAndForms();
                             setShowCreateForm(true);
-                            setShowEditForm(false);
-                            setShowOptionsMenu(false);
                             setSelectedStatusId(null);
                         }}
                         text='Create a Status'
@@ -109,7 +108,7 @@ const Statuses = () => {
                                         route='statuses'
                                         setShowThisForm={setShowDeleteConfirmation}
                                     />
-                                </div>)
+                                </div>);
 
                             default:
                                 return (<div className='position-relative' key={_id}>
