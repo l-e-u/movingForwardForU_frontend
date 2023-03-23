@@ -68,6 +68,8 @@ const JobCard = ({
                     />
                 </div>
 
+                <hr className='m-0' />
+
                 {/* parcel and mileage */}
                 <div className='d-flex flex-column gap-2 flex-sm-row justify-sm-content-between'>
                     {parcel &&

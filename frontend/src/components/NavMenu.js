@@ -29,7 +29,7 @@ const NavMenu = ({ selectedLink, setSelectedLink, setShowThisNav, user }) => {
     });
 
     return (
-        <nav className='position-fixed d-flex top-0 start-0 w-100 h-100 menu'>
+        <nav aria-label='Pages navigation' className='position-fixed d-flex top-0 start-0 w-100 h-100 menu'>
             <div className='theme-light d-flex flex-column w-lg-25 w-75 w-sm-50 p-4 overflow-auto'>
                 {user &&
                     <div className='border-bottom py-3'>

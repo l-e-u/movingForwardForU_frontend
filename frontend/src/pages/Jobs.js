@@ -6,15 +6,16 @@ import { useAuthContext } from '../hooks/useAuthContext.js';
 import { useJobsContext } from '../hooks/useJobsContext.js';
 
 // components
-import JobCard from '../components/JobCard.js';
-import CreateJobForm from '../components/CreateJobForm.js';
-import FlexBoxWrapper from '../components/FlexBoxWrapper.js';
-import EditJobForm from '../components/EditJobForm.js';
-import PageContentWrapper from '../components/PageContentWrapper.js';
 import ActionButton from '../components/ActionButton.js';
-import LoadingDocuments from '../components/LoadingDocuments.js';
-import ErrorLoadingDocuments from '../components/ErrorLoadingDocuments.js';
+import CreateJobForm from '../components/CreateJobForm.js';
 import DeleteConfirmation from '../components/DeleteConfirmation.js';
+import EditJobForm from '../components/EditJobForm.js';
+import ErrorLoadingDocuments from '../components/ErrorLoadingDocuments.js';
+import FlexBoxWrapper from '../components/FlexBoxWrapper.js';
+import JobCard from '../components/JobCard.js';
+import LoadingDocuments from '../components/LoadingDocuments.js';
+import NavPagination from '../components/NavPagination.js';
+import PageContentWrapper from '../components/PageContentWrapper.js';
 
 // date fns
 import formatDistanceToNow from 'date-fns/formatDistanceToNow';
@@ -130,35 +131,36 @@ const Jobs = () => {
 
     // sets all the forms and menus show setters to false
     const hideAllMenusAndForms = () => [setShowEditForm, setShowCreateForm, setShowOptionsMenu, setShowDeleteConfirmation].forEach(setShow => setShow(false));
-    console.log(jobs)
+
     return (
         <PageContentWrapper>
             {showCreateForm ?
                 <CreateJobForm setShowThisForm={setShowCreateForm} /> :
-                <div className='mb-3'>
-                    <ActionButton
-                        alignX='right'
-                        handleOnClick={() => {
-                            hideAllMenusAndForms();
-                            setShowCreateForm(true);
-                            setSelectedJobId(null);
-                        }}
-                        text='Create a Job'
-                    />
+                // show the options show the create Job Form or to export the job list to excel
+                <div className='d-flex flex-column flex-sm-row gap-3 justify-content-between align-items-end mb-3'>
+                    {(!showCreateForm && !showEditForm && !showDeleteConfirmation) &&
+                        <div className='order-last order-sm-first'>
+                            <ActionButton
+                                handleOnClick={exportToExcel}
+                                text='Export Listed Jobs'
+                            />
+                        </div>
+                    }
+                    {/* option to show the create Job Form */}
+                    <div className='order-first order-sm-last'>
+                        <ActionButton
+                            handleOnClick={() => {
+                                hideAllMenusAndForms();
+                                setShowCreateForm(true);
+                                setSelectedJobId(null);
+                            }}
+                            text='Create a Job'
+                        />
+                    </div>
                 </div>
             }
 
-
-            {/* exports the current jobs listed */}
-            {(!showCreateForm && !showEditForm && !showDeleteConfirmation) &&
-                <div className='mb-3'>
-                    <ActionButton
-                        alignX='right'
-                        handleOnClick={exportToExcel}
-                        text='Export Listed Jobs'
-                    />
-                </div>
-            }
+            <NavPagination />
 
             {/* show spinner with actively fetching data */}
             {isLoading && <div className='my-5'><LoadingDocuments /></div>}

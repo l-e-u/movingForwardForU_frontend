@@ -15,6 +15,17 @@ const docFieldsToPopulate = [
 
 // get all jobs
 const getJobs = async (req, res) => {
+    const page = req.query.page;
+    const limit = req.query.limit;
+
+    const startIndex = (page - 1) * limit;
+    const endIndex = page * limit;
+
+    console.log('page:', page)
+    console.log('limit:', limit)
+    console.log('start:', startIndex)
+    console.log('end:', endIndex)
+
     let filter = {};
 
     // if there are parameters, set them as a filter and return the filtered jobs, otherwise return all jobs
@@ -25,6 +36,23 @@ const getJobs = async (req, res) => {
     };
 
     const jobs = await Job.find(filter, {}).populate(docFieldsToPopulate);
+
+    const results = limit ? jobs : jobs.splice(startIndex, endIndex);
+    let totalPages = 0;
+
+    if (jobs.length > 0) {
+        if (limit) {
+            const count = jobs.length;
+            const pages = Math.floor(count / limit);
+            const lastPage = ((count > limit) && ((count % limit) === 0)) ? 0 : 1;
+
+            console.log(count, pages, lastPage);
+            totalPages = pages + lastPage;
+        }
+    }
+
+    console.log('total pages:', totalPages);
+
 
     return res.status(200).json(jobs);
 }
