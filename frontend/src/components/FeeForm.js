@@ -24,7 +24,7 @@ const FeeForm = ({
         setFee(prev => {
             return { ...prev, amount: formatCurrency(amount) }
         });
-    }, [amount]);
+    }, [amount, setFee]);
 
     const handleOnChange = (value) => {
         setFee(prev => {

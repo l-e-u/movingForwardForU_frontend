@@ -45,7 +45,7 @@ const ContactSearchSelect = ({ customer, setJob, inputError, inputErrorMessage }
                 dispatch({ type: 'SET_CONTACTS', payload: json });
             };
         })();
-    }, []);
+    }, [dispatch, user]);
 
     if (hasSelected) {
         return (

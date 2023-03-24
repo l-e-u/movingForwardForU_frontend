@@ -48,7 +48,7 @@ const UserSearchSelect = ({ drivers, setJob }) => {
                 dispatch({ type: 'SET_USERS', payload: json });
             };
         })();
-    }, []);
+    }, [dispatch, user]);
 
     return (
         <div>

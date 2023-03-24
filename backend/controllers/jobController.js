@@ -15,24 +15,18 @@ const docFieldsToPopulate = [
 
 // get all jobs
 const getJobs = async (req, res) => {
-    const page = parseInt(req.query.page);
-    const limit = parseInt(req.query.limit);
+    let { page, limit, ...filters } = req.query;
+
+    page = parseInt(page || 0);
+    limit = parseInt(limit || 0);
 
     let startIndex = (page - 1) * limit;
     let endIndex = page * limit;
     let totalPages = 0;
 
-    let filter = {};
+    console.log('filters:', filters);
 
-    // if there are parameters, set them as a filter and return the filtered jobs, otherwise return all jobs
-    if (req.params) {
-        const { model, id } = req.params;
-
-        filter = { [model]: id };
-        console.log(filter)
-    };
-
-    const jobs = await Job.find(filter).populate(docFieldsToPopulate);
+    const jobs = await Job.find(filters).populate(docFieldsToPopulate);
     const count = jobs.length;
     totalPages = Math.floor(count / limit);
 

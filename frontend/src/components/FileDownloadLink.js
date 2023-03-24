@@ -28,6 +28,7 @@ const FileDownloadButton = ({
             <a
                 className='text-action d-block text-end'
                 href={'http://localhost:4000/api/attachments/download/' + filename}
+                rel='noreferrer'
                 target='_blank'
             >
                 <span>Download</span><i className={'ms-1 bi ' + iconClassText}></i>

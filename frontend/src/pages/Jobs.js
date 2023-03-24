@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import * as XLSX from 'xlsx';
 
 // hooks
 import { useJobsContext } from '../hooks/useJobsContext.js';
+import { useAuthContext } from '../hooks/useAuthContext.js';
 
 // components
 import ActionButton from '../components/ActionButton.js';
@@ -14,22 +15,72 @@ import FlexBoxWrapper from '../components/FlexBoxWrapper.js';
 import JobCard from '../components/JobCard.js';
 import LoadingDocuments from '../components/LoadingDocuments.js';
 import NavPagination from '../components/NavPagination.js';
+import OptionsMenu from '../components/OptionsMenu.js';
 import PageContentWrapper from '../components/PageContentWrapper.js';
 
-// date fns
+// functions
 // import formatDistanceToNow from 'date-fns/formatDistanceToNow';
-import OptionsMenu from '../components/OptionsMenu.js';
+import { urlQueryString } from '../utils/StringUtils.js';
 
 const Jobs = () => {
+    const { user } = useAuthContext()
+    const { jobs, dispatch } = useJobsContext();
+
+    // used during fetching
     const [error, setError] = useState(null);
     const [isLoading, setIsLoading] = useState(null);
+
+    // sets when user clicks on an option menu, then user can choose one of the options
     const [selectedJobId, setSelectedJobId] = useState(null);
+
+    // sets when user selects menu or option, displays corresponding form
     const [showCreateForm, setShowCreateForm] = useState(false);
     const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
     const [showEditForm, setShowEditForm] = useState(false);
     const [showOptionsMenu, setShowOptionsMenu] = useState(false);
 
-    const { jobs, dispatch } = useJobsContext();
+    // pagination state
+    const [limit, setLimit] = useState(5);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+    const [totalResults, setTotalResults] = useState(0);
+
+    // filters
+    const [filters, setFilters] = useState({});
+
+    // fetches results as the user chooses filters or changes limits for results
+    useEffect(() => {
+        (async () => {
+            setIsLoading(true);
+            setError(null);
+
+            const filterQuery = urlQueryString(filters);
+
+            const response = await fetch(`/api/jobs?page=${currentPage}&limit=${limit}${filterQuery}`, {
+                headers: {
+                    'Authentication': `Bearer ${user.token}`
+                }
+            });
+
+            // expecting the list of jobs depending on page and limit
+            const json = await response.json();
+
+            if (!response.ok) {
+                console.error(json);
+                setError(json.error);
+                setIsLoading(false);
+            };
+
+            if (response.ok) {
+                setError(null);
+                setIsLoading(false);
+                setTotalPages(json.totalPages);
+                setTotalResults(json.count);
+                dispatch({ type: 'SET_JOBS', payload: json.results });
+
+            };
+        })();
+    }, [currentPage, dispatch, filters, limit, user]);
 
     const exportToExcel = () => {
         const dataSet = jobs.map(job => {
@@ -129,9 +180,13 @@ const Jobs = () => {
             }
 
             <NavPagination
-                setError={setError}
-                setIsLoading={setIsLoading}
-                context='SET_JOBS'
+                currentPage={currentPage}
+                limit={limit}
+                setCurrentPage={setCurrentPage}
+                setLimit={setLimit}
+                setTotalPages={setTotalPages}
+                totalPages={totalPages}
+                totalResults={totalResults}
             />
 
             {/* show spinner with actively fetching data */}

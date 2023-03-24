@@ -60,7 +60,7 @@ const Fees = () => {
                 dispatch({ type: 'SET_FEES', payload: json });
             };
         })();
-    }, []);
+    }, [dispatch, user]);
 
     // sets all the forms and menus show setters to false
     const hideAllMenusAndForms = () => [setShowEditForm, setShowCreateForm, setShowOptionsMenu, setShowDeleteConfirmation].forEach(setShow => setShow(false));

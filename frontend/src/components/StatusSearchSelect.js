@@ -42,10 +42,11 @@ const StatusSearchSelect = ({ status, setJob, inputError, inputErrorMessage }) =
             if (response.ok) {
                 setError(null);
                 setIsLoading(false);
+
                 dispatch({ type: 'SET_STATUSES', payload: json });
             };
         })();
-    }, []);
+    }, [dispatch, user]);
 
     if (hasSelected) {
         return (

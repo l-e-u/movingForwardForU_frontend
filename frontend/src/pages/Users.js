@@ -53,10 +53,11 @@ const Users = () => {
             if (response.ok) {
                 setError(null);
                 setIsLoading(false);
+
                 dispatch({ type: 'SET_USERS', payload: json });
             };
         })();
-    }, []);
+    }, [dispatch, user]);
 
     // sets all the forms and menus show setters to false
     const hideAllMenusAndForms = () => [setShowEditForm, setShowCreateForm, setShowOptionsMenu].forEach(setShow => setShow(false));

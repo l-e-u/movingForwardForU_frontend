@@ -32,9 +32,8 @@ const DeleteConfirmation = ({
         setGetIsLoading(true);
         setGetError(null);
 
-        const response = await fetch(`/api/jobs/filter/${checkReference}/${doc_id}`, {
+        const response = await fetch(`/api/jobs?${checkReference}=${doc_id}`, {
           headers: {
-            'Content-Type': 'application/json',
             'Authentication': `Bearer ${user.token}`
           }
         });
@@ -51,11 +50,11 @@ const DeleteConfirmation = ({
         if (response.ok) {
           setGetError(null);
           setGetIsLoading(false);
-          setReferences(json);
+          setReferences(json.results);
         };
       })();
     }
-  }, []);
+  }, [checkReference, doc_id, user]);
 
   return (
     <div className='shadow'>

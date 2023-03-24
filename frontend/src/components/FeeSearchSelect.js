@@ -45,7 +45,7 @@ const FeeSearchSelect = ({ feesList, setJob }) => {
             }
 
         })();
-    }, []);
+    }, [dispatch, user]);
 
     return (
         <>

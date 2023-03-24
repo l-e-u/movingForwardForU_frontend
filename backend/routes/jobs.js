@@ -34,10 +34,7 @@ router.get('/seed', async (req, res, next) => {
 // authenticates user is valid and logged in to access further end points
 router.use(requireAuth);
 
-// GET filtered jobs
-router.get('/filter/:model/:id', getJobs);
-
-// GET all jobs
+// GET jobs
 router.get('/', getJobs);
 
 // GET all jobs assigned to current logged user

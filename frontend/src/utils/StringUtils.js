@@ -89,3 +89,13 @@ export const formatCurrency = (input, onBlur = false) => {
 
     return validatedNumString;
 };
+
+// takes an object, loops through its entries and returns a url query string
+export const urlQueryString = (filter) => {
+    let query = '';
+
+    Object.entries(filter).forEach(([prop, value]) => {
+        query += `&${prop}=${value}`;
+    })
+    return query;
+};

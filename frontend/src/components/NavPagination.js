@@ -1,58 +1,13 @@
-import { useEffect, useState } from 'react';
-
-// hooks
-import { useAuthContext } from '../hooks/useAuthContext';
-import { useJobsContext } from '../hooks/useJobsContext'
-
 const NavPagination = ({
-    context,
-    setError,
-    setIsLoading,
-    filterString = '',
+    currentPage,
+    limit,
+    setCurrentPage,
+    setLimit,
+    setTotalPages,
+    totalPages,
+    totalResults,
 }) => {
-    const { dispatch } = useJobsContext();
-    const { user } = useAuthContext();
-
-    const [limit, setLimit] = useState(5);
-    const [currentPage, setCurrentPage] = useState(1);
-    const [totalPages, setTotalPages] = useState(1);
-    const [totalResults, setTotalResults] = useState(0);
-
-    useEffect(() => {
-        (async () => {
-            setIsLoading(true);
-            setError(null);
-
-            const query = `?page=${currentPage}&limit=${limit}`;
-
-            const response = await fetch(`/api/jobs${filterString}${query}`, {
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authentication': `Bearer ${user.token}`
-                }
-            });
-
-            // expecting the list of jobs depending on page and limit
-            const json = await response.json();
-
-            if (!response.ok) {
-                console.error(json);
-                setError(json.error);
-                setIsLoading(false);
-            };
-
-            if (response.ok) {
-                setError(null);
-                setIsLoading(false);
-                setTotalPages(json.totalPages);
-                setTotalResults(json.count);
-                dispatch({ type: context, payload: json.results });
-
-            };
-        })();
-    }, [currentPage, dispatch, limit, user]);
-
-    const hasPrevious = currentPage == 1 ? false : true;
+    const hasPrevious = currentPage === 1 ? false : true;
     const hasNext = currentPage === totalPages ? false : true;
     const pageNumbersJSX = [];
 
