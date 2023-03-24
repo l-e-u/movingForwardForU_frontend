@@ -29,7 +29,6 @@ const Users = () => {
     const [showEditForm, setShowEditForm] = useState(false);
     const [showOptionsMenu, setShowOptionsMenu] = useState(false);
 
-
     useEffect(() => {
         (async () => {
             setIsLoading(true);
