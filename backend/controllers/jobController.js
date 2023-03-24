@@ -15,16 +15,12 @@ const docFieldsToPopulate = [
 
 // get all jobs
 const getJobs = async (req, res) => {
-    const page = req.query.page;
-    const limit = req.query.limit;
+    const page = parseInt(req.query.page);
+    const limit = parseInt(req.query.limit);
 
-    const startIndex = (page - 1) * limit;
-    const endIndex = page * limit;
-
-    console.log('page:', page)
-    console.log('limit:', limit)
-    console.log('start:', startIndex)
-    console.log('end:', endIndex)
+    let startIndex = (page - 1) * limit;
+    let endIndex = page * limit;
+    let totalPages = 0;
 
     let filter = {};
 
@@ -33,28 +29,34 @@ const getJobs = async (req, res) => {
         const { model, id } = req.params;
 
         filter = { [model]: id };
+        console.log(filter)
     };
 
-    const jobs = await Job.find(filter, {}).populate(docFieldsToPopulate);
+    const jobs = await Job.find(filter).populate(docFieldsToPopulate);
+    const count = jobs.length;
+    totalPages = Math.floor(count / limit);
 
-    const results = limit ? jobs : jobs.splice(startIndex, endIndex);
-    let totalPages = 0;
+    if (count > limit) totalPages += (count % limit) === 0 ? 0 : 1;
 
-    if (jobs.length > 0) {
-        if (limit) {
-            const count = jobs.length;
-            const pages = Math.floor(count / limit);
-            const lastPage = ((count > limit) && ((count % limit) === 0)) ? 0 : 1;
+    // set boundaries for safety
+    if (!limit || limit === 0 || limit > count || startIndex > count) {
+        startIndex = 0;
+        endIndex = jobs.length;
+        totalPages = 1;
+    };
 
-            console.log(count, pages, lastPage);
-            totalPages = pages + lastPage;
-        }
-    }
+    console.log('count:', count)
+    console.log('page:', page)
+    console.log('limit:', limit)
+    console.log('start:', startIndex)
+    console.log('end:', endIndex)
+
+    const results = jobs.splice(startIndex, endIndex);
 
     console.log('total pages:', totalPages);
 
 
-    return res.status(200).json(jobs);
+    return res.status(200).json({ count, results, totalPages });
 }
 
 // get a single job

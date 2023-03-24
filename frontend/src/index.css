@@ -49,9 +49,13 @@ nav.menu {
   transition: background-color .15s;
 }
 
-.btn-action:disabled {
-  opacity: 50%;
-  pointer-events: none;
+.btn-action:disabled,
+button.page-link:disabled {
+  background-color: var(--bs-secondary) !important;
+  color: var(--bs-white) !important;
+  opacity: 50% !important;
+  pointer-events: none !important;
+  transition: all .15s;
 }
 
 /* targets job form notes input, subject and message fields */

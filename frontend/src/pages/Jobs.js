@@ -1,8 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import * as XLSX from 'xlsx';
 
 // hooks
-import { useAuthContext } from '../hooks/useAuthContext.js';
 import { useJobsContext } from '../hooks/useJobsContext.js';
 
 // components
@@ -18,7 +17,7 @@ import NavPagination from '../components/NavPagination.js';
 import PageContentWrapper from '../components/PageContentWrapper.js';
 
 // date fns
-import formatDistanceToNow from 'date-fns/formatDistanceToNow';
+// import formatDistanceToNow from 'date-fns/formatDistanceToNow';
 import OptionsMenu from '../components/OptionsMenu.js';
 
 const Jobs = () => {
@@ -30,38 +29,7 @@ const Jobs = () => {
     const [showEditForm, setShowEditForm] = useState(false);
     const [showOptionsMenu, setShowOptionsMenu] = useState(false);
 
-    const { user } = useAuthContext();
     const { jobs, dispatch } = useJobsContext();
-
-    // get jobs once
-    useEffect(() => {
-        (async () => {
-            setIsLoading(true);
-            setError(null);
-
-            const response = await fetch('/api/jobs', {
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authentication': `Bearer ${user.token}`
-                }
-            });
-
-            // expecting all fees
-            const json = await response.json();
-
-            if (!response.ok) {
-                console.error(json);
-                setError(json.error);
-                setIsLoading(false);
-            };
-
-            if (response.ok) {
-                setError(null);
-                setIsLoading(false);
-                dispatch({ type: 'SET_JOBS', payload: json });
-            };
-        })();
-    }, []);
 
     const exportToExcel = () => {
         const dataSet = jobs.map(job => {
@@ -160,7 +128,11 @@ const Jobs = () => {
                 </div>
             }
 
-            <NavPagination />
+            <NavPagination
+                setError={setError}
+                setIsLoading={setIsLoading}
+                context='SET_JOBS'
+            />
 
             {/* show spinner with actively fetching data */}
             {isLoading && <div className='my-5'><LoadingDocuments /></div>}

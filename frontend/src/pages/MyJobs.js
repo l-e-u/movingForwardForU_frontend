@@ -5,14 +5,15 @@ import { useMyJobsContext } from "../hooks/useMyJobsContext.js";
 import { useAuthContext } from '../hooks/useAuthContext.js';
 
 // date fns
-import formatDistanceToNow from "date-fns/formatDistanceToNow";
+// import formatDistanceToNow from "date-fns/formatDistanceToNow";
 
 // components
-import FlexBoxWrapper from '../components/FlexBoxWrapper.js';
-import PageContentWrapper from '../components/PageContentWrapper.js';
-import LoadingDocuments from '../components/LoadingDocuments.js';
 import ErrorLoadingDocuments from '../components/ErrorLoadingDocuments.js';
+import FlexBoxWrapper from '../components/FlexBoxWrapper.js';
 import JobCard from '../components/JobCard.js';
+import LoadingDocuments from '../components/LoadingDocuments.js';
+import NavPagination from '../components/NavPagination.js';
+import PageContentWrapper from '../components/PageContentWrapper.js';
 
 const MyJobs = () => {
     const [error, setError] = useState(null);
@@ -26,7 +27,11 @@ const MyJobs = () => {
             setIsLoading(true);
             setError(null);
 
-            const response = await fetch('/api/jobs/', {
+            const currentPage = 1;
+            const limit = 0;
+            const query = `?page=${currentPage}&limit=${limit}`;
+
+            const response = await fetch('/api/jobs/filter/drivers/' + user._id + query, {
                 headers: {
                     'Authentication': `Bearer ${user.token}`
                 }
@@ -45,19 +50,20 @@ const MyJobs = () => {
                 setError(null);
                 setIsLoading(false);
 
-                // only get the jobs that have current user assigned as driver
-                const jobsAssignedToMe = json.filter((job) => {
-                    return job.drivers.some((driver) => {
-                        return driver._id === user._id
-                    });
-                });
-                dispatch({ type: 'SET_MYJOBS', payload: jobsAssignedToMe });
+                dispatch({ type: 'SET_MYJOBS', payload: json.results });
             };
         })();
     }, [dispatch, user]);
 
     return (
         <PageContentWrapper>
+
+            <NavPagination
+                context='SET_MYJOBS'
+                filterString={'/filter/drivers/' + user._id}
+                setError={setError}
+                setIsLoading={setIsLoading}
+            />
 
             {/* show spinner with actively fetching data */}
             {isLoading && <div className='my-5'><LoadingDocuments /></div>}

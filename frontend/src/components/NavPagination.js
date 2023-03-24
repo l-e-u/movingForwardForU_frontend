@@ -4,21 +4,28 @@ import { useEffect, useState } from 'react';
 import { useAuthContext } from '../hooks/useAuthContext';
 import { useJobsContext } from '../hooks/useJobsContext'
 
-const NavPagination = () => {
-    const { jobs, dispatch } = useJobsContext();
+const NavPagination = ({
+    context,
+    setError,
+    setIsLoading,
+    filterString = '',
+}) => {
+    const { dispatch } = useJobsContext();
     const { user } = useAuthContext();
 
-    const [error, setError] = useState(null);
-    const [isLoading, setIsLoading] = useState(null);
-    const [limit, setLimit] = useState(10);
-    const [pages, setPages] = useState({ current: 1, next: null, previous: null });
+    const [limit, setLimit] = useState(5);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+    const [totalResults, setTotalResults] = useState(0);
 
     useEffect(() => {
         (async () => {
             setIsLoading(true);
             setError(null);
 
-            const response = await fetch(`/api/jobs?page=${pages.current}&limit=${limit}`, {
+            const query = `?page=${currentPage}&limit=${limit}`;
+
+            const response = await fetch(`/api/jobs${filterString}${query}`, {
                 headers: {
                     'Content-Type': 'application/json',
                     'Authentication': `Bearer ${user.token}`
@@ -37,54 +44,91 @@ const NavPagination = () => {
             if (response.ok) {
                 setError(null);
                 setIsLoading(false);
-                console.log('jobs list:', json)
-                // dispatch({ type: 'SET_JOBS', payload: json });
+                setTotalPages(json.totalPages);
+                setTotalResults(json.count);
+                dispatch({ type: context, payload: json.results });
+
             };
         })();
-    }, [dispatch, limit, pages, user]);
+    }, [currentPage, dispatch, limit, user]);
 
-    const hasPrevious = pages.previous === null ? false : true;
-    const hasNext = pages.next === null ? false : true;
+    const hasPrevious = currentPage == 1 ? false : true;
+    const hasNext = currentPage === totalPages ? false : true;
+    const pageNumbersJSX = [];
+
+    for (let index = 0; index < totalPages; index++) {
+        const pageNumber = index + 1;
+
+        pageNumbersJSX.push(
+            <li className='page-item' key={pageNumber}>
+                <button
+                    className='page-link text-action py-1 px-3'
+                    disabled={pageNumber === currentPage}
+                    onClick={() => setCurrentPage(pageNumber)}
+                    style={{ width: '50px' }}
+                >
+                    {pageNumber}
+                </button>
+            </li>
+        );
+    };
 
     return (
-        <nav aria-label='Jobs list pagination'>
-            <div className='d-flex justify-content-center gap-3'>
-                <ul className='pagination pagination-sm m-0'>
-                    <li className={'page-item' + (hasPrevious ? '' : ' disabled')} key={0}>
-                        <button
-                            className='page-link'
-                            disabled={!hasPrevious}
-                        >
-                            &laquo;
-                        </button>
-                    </li>
-                    <li className={'page-item' + (hasNext ? '' : ' disabled')} key={(jobs ? jobs.length + 1 : 1)}>
-                        <button
-                            className='page-link'
-                            disabled={!hasNext}
-                        >
-                            &raquo;
-                        </button>
-                    </li>
-                </ul>
+        <nav aria-label='Jobs list pagination' className='d-flex justify-content-center align-items-center mb-3'>
+            <ul className='pagination d-flex flex-wrap pagination-sm m-0'>
+                <li className={'page-item' + (hasPrevious ? '' : ' disabled')} key={0}>
+                    <button
+                        className='page-link text-action py-1 px-3'
+                        disabled={!hasPrevious}
+                        onClick={() => {
+                            if (hasPrevious) setCurrentPage(prev => --prev);
+                        }}
+                        style={{ width: '50px' }}
+                    >
+                        &laquo;
+                    </button>
+                </li>
+                {pageNumbersJSX}
+                <li className={'page-item' + (hasNext ? '' : ' disabled')} key={totalPages + 1}>
+                    <button
+                        className='page-link text-action py-1 px-3'
+                        disabled={!hasNext}
+                        onClick={() => {
+                            if (hasNext) setCurrentPage(prev => ++prev);
+                        }}
+                        style={{ width: '50px' }}
+                    >
+                        &raquo;
+                    </button>
+                </li>
+            </ul>
 
-                <select
-                    className='form-select form-select-sm text-reset'
+            <select
+                className='form-select form-select-sm text-secondary text-end border-0 ms-2 flex-shrink-0'
+                name='limitSelect'
+                id='limitSelect'
+                onChange={e => {
+                    const input = e.target.value;
+                    const value = input === 'All' ? 0 : Number(input);
+                    setLimit(value);
+                    setCurrentPage(1);
+                    setTotalPages(1);
+                }}
+                value={limit > 0 ? String(limit) : 'All'}
+                style={{ width: '70px', backgroundColor: 'transparent' }}>
+                <option>5</option>
+                <option>10</option>
+                <option>25</option>
+                <option>50</option>
+                <option>100</option>
+                <option>All</option>
+            </select>
 
-                    style={{ width: '75px' }}>
-                    <option>10</option>
-                    <option>25</option>
-                    <option>50</option>
-                    <option>100</option>
-                    <option>All</option>
-                </select>
-            </div>
-
-            <p className='smallPrint text-secondary text-center my-1'>
-                {'Count: ' + (jobs ? jobs.length : 0)}
-            </p>
+            <small className='text-secondary text-center my-1 flex-shrink-0'>
+                {'of ' + totalResults}
+            </small>
         </nav>
-    )
-}
+    );
+};
 
 export default NavPagination;

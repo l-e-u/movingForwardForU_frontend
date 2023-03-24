@@ -96,42 +96,39 @@ const JobForm = ({ job, setJob, handleSubmit, error, setError, isDisabled, isLoa
                         </div>
 
                         {/* MILEAGE */}
-                        <div className='input-group'>
-                            <div className='form-floating'>
-                                <input
-                                    className={'form-control' + (error?.mileage ? ' is-invalid' : '')}
-                                    id='mileage'
-                                    name='mileage'
-                                    onBlur={e => {
-                                        const input = e.target.value;
+                        <div className='form-floating'>
+                            <input
+                                className={'form-control' + (error?.mileage ? ' is-invalid' : '')}
+                                id='mileage'
+                                name='mileage'
+                                onBlur={e => {
+                                    const input = e.target.value;
 
-                                        if (input === '') {
-                                            setJob(prev => {
-                                                return {
-                                                    ...prev,
-                                                    mileage: 0
-                                                }
-                                            })
-                                        }
-                                    }}
-                                    onChange={e => setJob(prev => {
-                                        return {
-                                            ...prev,
-                                            mileage: e.target.value
-                                        }
-                                    })}
-                                    placeholder='Mileage'
-                                    step={1}
-                                    title='Needs to be a number.'
-                                    type='number'
-                                    value={mileage}
-                                />
-                                <label htmlFor='mileage' className='form-label'>
-                                    Mileage
-                                    {error?.mileage && <span className='ms-1 text-danger'>{': ' + error.mileage.message}</span>}
-                                </label>
-                            </div>
-                            <span className='input-group-text'>mi.</span>
+                                    if (input === '') {
+                                        setJob(prev => {
+                                            return {
+                                                ...prev,
+                                                mileage: 0
+                                            }
+                                        })
+                                    }
+                                }}
+                                onChange={e => setJob(prev => {
+                                    return {
+                                        ...prev,
+                                        mileage: e.target.value
+                                    }
+                                })}
+                                placeholder='Mileage'
+                                step={1}
+                                title='Needs to be a number.'
+                                type='number'
+                                value={mileage}
+                            />
+                            <label htmlFor='mileage' className='form-label'>
+                                Mileage
+                                {error?.mileage && <span className='ms-1 text-danger'>{': ' + error.mileage.message}</span>}
+                            </label>
                         </div>
 
                         {/* DRIVERS */}
