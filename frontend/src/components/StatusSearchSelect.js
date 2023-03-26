@@ -25,7 +25,6 @@ const StatusSearchSelect = ({ status, setJob, inputError, inputErrorMessage }) =
 
             const response = await fetch('/api/statuses', {
                 headers: {
-                    'Content-Type': 'application/json',
                     'Authentication': `Bearer ${user.token}`
                 }
             });

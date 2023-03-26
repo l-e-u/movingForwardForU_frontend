@@ -11,6 +11,7 @@ const NavPagination = ({
     const hasNext = currentPage === totalPages ? false : true;
     const pageNumbersJSX = [];
 
+    // create the page number buttons between the previous and next buttons
     for (let index = 0; index < totalPages; index++) {
         const pageNumber = index + 1;
 
@@ -29,7 +30,7 @@ const NavPagination = ({
     };
 
     return (
-        <nav aria-label='Jobs list pagination' className='d-flex justify-content-center align-items-center mb-3'>
+        <nav aria-label='Jobs list pagination' className='d-flex justify-content-center align-items-center'>
             <ul className='pagination d-flex flex-wrap pagination-sm m-0'>
                 <li className={'page-item' + (hasPrevious ? '' : ' disabled')} key={0}>
                     <button

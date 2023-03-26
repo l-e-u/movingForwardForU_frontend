@@ -11,6 +11,7 @@ import CreateJobForm from '../components/CreateJobForm.js';
 import DeleteConfirmation from '../components/DeleteConfirmation.js';
 import EditJobForm from '../components/EditJobForm.js';
 import ErrorLoadingDocuments from '../components/ErrorLoadingDocuments.js';
+import FilterAndASort from '../components/FilterAndSort.js';
 import FlexBoxWrapper from '../components/FlexBoxWrapper.js';
 import JobCard from '../components/JobCard.js';
 import LoadingDocuments from '../components/LoadingDocuments.js';
@@ -22,7 +23,7 @@ import PageContentWrapper from '../components/PageContentWrapper.js';
 // import formatDistanceToNow from 'date-fns/formatDistanceToNow';
 import { urlQueryString } from '../utils/StringUtils.js';
 
-const Jobs = () => {
+const Jobs = ({ filters, setFilters }) => {
     const { user } = useAuthContext()
     const { jobs, dispatch } = useJobsContext();
 
@@ -47,9 +48,6 @@ const Jobs = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [totalResults, setTotalResults] = useState(0);
-
-    // filters
-    const [filters, setFilters] = useState({});
 
     // fetches results as the user chooses filters or changes limits for results
     useEffect(() => {
@@ -156,41 +154,50 @@ const Jobs = () => {
 
     return (
         <PageContentWrapper>
-            {showCreateForm ?
-                <CreateJobForm setShowThisForm={setShowCreateForm} /> :
-                // show the options show the create Job Form or to export the job list to excel
-                <div className='d-flex flex-column flex-sm-row gap-3 justify-content-between align-items-end mb-3'>
-                    {(!showCreateForm && !showEditForm && !showDeleteConfirmation) &&
-                        <div className='order-last order-sm-first'>
+            <div className='d-flex flex-column gap-2 mb-3'>
+                {showCreateForm ?
+                    <CreateJobForm setShowThisForm={setShowCreateForm} /> :
+                    // show the options show the create Job Form or to export the job list to excel
+                    <div className='d-flex flex-column flex-sm-row gap-3 justify-content-between align-items-end'>
+                        {(!showCreateForm && !showEditForm && !showDeleteConfirmation) &&
+                            <div className='order-last order-sm-first'>
+                                <ActionButton
+                                    handleOnClick={() => {
+                                        if (!isLoading) exportToExcel();
+                                    }}
+                                    text='Export Listed Jobs'
+                                />
+                            </div>
+                        }
+                        {/* option to show the create Job Form */}
+                        <div className='order-first order-sm-last'>
                             <ActionButton
-                                handleOnClick={exportToExcel}
-                                text='Export Listed Jobs'
+                                handleOnClick={() => {
+                                    if (!isLoading) {
+                                        hideAllMenusAndForms();
+                                        setShowCreateForm(true);
+                                        setSelectedJobId(null);
+                                    }
+                                }}
+                                text='Create a Job'
                             />
                         </div>
-                    }
-                    {/* option to show the create Job Form */}
-                    <div className='order-first order-sm-last'>
-                        <ActionButton
-                            handleOnClick={() => {
-                                hideAllMenusAndForms();
-                                setShowCreateForm(true);
-                                setSelectedJobId(null);
-                            }}
-                            text='Create a Job'
-                        />
                     </div>
-                </div>
-            }
+                }
 
-            <NavPagination
-                currentPage={currentPage}
-                limit={limit}
-                setCurrentPage={setCurrentPage}
-                setLimit={setLimit}
-                setTotalPages={setTotalPages}
-                totalPages={totalPages}
-                totalResults={totalResults}
-            />
+                {/* user can select pagination page and limit for results */}
+                <NavPagination
+                    currentPage={currentPage}
+                    limit={limit}
+                    setCurrentPage={setCurrentPage}
+                    setLimit={setLimit}
+                    setTotalPages={setTotalPages}
+                    totalPages={totalPages}
+                    totalResults={totalResults}
+                />
+
+                <FilterAndASort filters={filters} setFilters={setFilters} />
+            </div>
 
             {/* show spinner with actively fetching data */}
             {isLoading && <div className='my-5'><LoadingDocuments /></div>}
@@ -199,6 +206,7 @@ const Jobs = () => {
 
             {(jobs && !isLoading) &&
                 <FlexBoxWrapper>
+                    {/* each elements has the option to show the job, edit form, or delete confirmation depending on the user's selection */}
                     {jobs.map((job) => {
                         const { _id } = job;
                         const isSelectedJob = selectedJobId === _id;

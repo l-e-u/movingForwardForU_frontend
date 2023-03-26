@@ -24,6 +24,11 @@ const getJobs = async (req, res) => {
     let endIndex = page * limit;
     let totalPages = 0;
 
+
+    if (filters.status) {
+        filters.status = { $in: filters.status.split(',') };
+    };
+
     console.log('filters:', filters);
 
     const jobs = await Job.find(filters).populate(docFieldsToPopulate);

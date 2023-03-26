@@ -19,11 +19,14 @@ import Verify from './pages/Verify.js';
 import Fees from './pages/Fees.js';
 
 function App() {
-  const [showNavMenu, setShowNavMenu] = useState(false);
-  const [selectedLink, setSelectedLink] = useState(0)
   const { user } = useAuthContext();
 
+  const [jobFilters, setJobFilters] = useState({});
+  const [showNavMenu, setShowNavMenu] = useState(false);
+  const [selectedLink, setSelectedLink] = useState(0)
+
   useEffect(() => {
+    // page selected
     setSelectedLink(0);
   }, [user])
 
@@ -40,7 +43,7 @@ function App() {
             />
             <Route
               path='/jobs'
-              element={user ? <Jobs /> : <Navigate to='/login' />}
+              element={user ? <Jobs filters={jobFilters} setFilters={setJobFilters} /> : <Navigate to='/login' />}
             />
             <Route
               path='/statuses'

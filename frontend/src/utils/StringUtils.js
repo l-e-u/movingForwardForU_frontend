@@ -97,5 +97,6 @@ export const urlQueryString = (filter) => {
     Object.entries(filter).forEach(([prop, value]) => {
         query += `&${prop}=${value}`;
     })
+
     return query;
 };
