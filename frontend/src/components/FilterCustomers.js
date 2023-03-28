@@ -3,17 +3,17 @@ import Select from 'react-select';
 
 // hooks
 import { useAuthContext } from '../hooks/useAuthContext';
-import { useStatusesContext } from '../hooks/useStatusesContext';
+import { useContactsContext } from '../hooks/useContactsContext';
 
 
-const FilterStatuses = ({ filter, setFilters }) => {
+const FilterCustomers = ({ filter, setFilters }) => {
     const { user } = useAuthContext();
-    const { statuses, dispatch } = useStatusesContext();
+    const { contacts, dispatch } = useContactsContext();
 
     const [error, setError] = useState(null);
     const [isLoading, setIsLoading] = useState(null);
 
-    const options = !statuses ? [] : statuses.map(status => ({ label: status.name, value: status._id }));
+    const options = !contacts ? [] : contacts.map(contact => ({ label: contact.organization, value: contact._id }));
 
     // on first mount only, get documents
     useEffect(() => {
@@ -21,7 +21,7 @@ const FilterStatuses = ({ filter, setFilters }) => {
             setIsLoading(true);
             setError(null);
 
-            const response = await fetch('/api/statuses', { headers: { 'Authentication': `Bearer ${user.token}` } });
+            const response = await fetch('/api/contacts', { headers: { 'Authentication': `Bearer ${user.token}` } });
 
             // expecting all contacts
             const json = await response.json();
@@ -36,7 +36,7 @@ const FilterStatuses = ({ filter, setFilters }) => {
                 setError(null);
                 setIsLoading(false);
 
-                dispatch({ type: 'SET_STATUSES', payload: json });
+                dispatch({ type: 'SET_CONTACTS', payload: json });
             };
         })();
     }, [dispatch, user]);
@@ -50,21 +50,21 @@ const FilterStatuses = ({ filter, setFilters }) => {
             isMulti
             isSearchable
             isClearable
-            placeholder='Select Status...'
+            placeholder='Select Customer...'
             options={options}
             onChange={selected => {
                 setFilters(prev => {
                     const existingFilters = { ...prev };
-                    delete existingFilters.status;
+                    delete existingFilters.customer;
 
-                    if (selected.length > 0) existingFilters.status = selected.map(sel => sel.value);
+                    if (selected.length > 0) existingFilters.customer = selected.map(sel => sel.value);
 
                     return existingFilters;
                 })
             }}
-            value={filter.map(status => options.find(option => status === option.value))}
+            value={filter.map(contact => options.find(option => contact === option.value))}
         />
     );
 };
 
-export default FilterStatuses;
+export default FilterCustomers;

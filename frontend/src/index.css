@@ -142,7 +142,7 @@ button.page-link:disabled {
 
 .fade--appear-active {
   opacity: 1;
-  transition: all .5s;
+  transition: opacity .5s;
 }
 
 .fade--enter {
@@ -151,7 +151,7 @@ button.page-link:disabled {
 
 .fade--enter-active {
   opacity: 1;
-  transition: all .5s;
+  transition: opacity .5s;
 }
 
 .fade--enter-done {
@@ -164,11 +164,33 @@ button.page-link:disabled {
 
 .fade--exit-active {
   opacity: 0;
-  transition: all .5s;
+  transition: opacity .5s;
 }
 
 .fade--exit-done {
   opacity: 0;
+}
+
+.slideFromLeft--appear {
+  transform: translateX(-100%);
+}
+
+.slideFromLeft--appear-active {
+  transition: transform .25s;
+  transform: translateX(0%);
+}
+
+.slideFromLeft--enter {
+  transform: translateX(-100%);
+}
+
+.slideFromLeft--enter-active {
+  transition: transform .25s;
+  transform: translateX(0%);
+}
+
+.slideFromLeft--enter-done {
+  transform: translateX(0%);
 }
 
 /* small screen and above */

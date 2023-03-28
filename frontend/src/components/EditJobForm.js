@@ -24,7 +24,9 @@ const EditJobForm = ({ prevJob, setShowThisForm }) => {
     if (JSON.stringify(prevJob.pickup) !== JSON.stringify(job.pickup)) updatedProperties.pickup = job.pickup;
     if (JSON.stringify(prevJob.delivery) !== JSON.stringify(job.delivery)) updatedProperties.delivery = job.delivery;
     if ((prevJob.drivers.length !== job.drivers.length) || !prevJob.drivers.every(driver => job.drivers.some(d => driver._id === d._id))) updatedProperties.drivers = job.drivers;
-    if ((prevJob.fees.length !== job.fees.length) || !prevJob.fees.every(fee => job.fees.some(f => fee._id === f._id))) updatedProperties.fees = job.fees;
+
+    // check all the fees, if the lengths have changed, add them to 'updatedProperties', OR if any _id or adjustment amounts have changed, add to 'updatedProperties'
+    if ((prevJob.billing.length !== job.billing.length) || !prevJob.billing.every(bill => job.billing.some(b => ((bill.fee._id === b.fee._id) && (bill.adjustedAmount == b.adjustedAmount))))) updatedProperties.billing = job.billing;
 
     let notesHaveChanged = false;
 
@@ -37,6 +39,7 @@ const EditJobForm = ({ prevJob, setShowThisForm }) => {
         notesHaveChanged = !prevJob.notes.every((prev, index) => {
             const note = job.notes[index];
 
+            if (prev._id !== note._id) return false;
             if (!noCharChanges(prev.subject, note.subject)) return false;
             if (!noCharChanges(prev.message, note.message)) return false;
             if (prev.attachment?.filename !== note.attachment?.filename) return false;

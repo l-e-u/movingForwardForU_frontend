@@ -59,6 +59,16 @@ const jobSchema = new Schema(
         mileage: Number,
         notes: [noteSchema],
         pickup: transportSchema,
+        billing: [{
+            fee: {
+                ref: 'Fee',
+                type: Schema.Types.ObjectId,
+            },
+            adjustedAmount: {
+                default: null,
+                type: Number
+            }
+        }],
         createdBy: {
             ref: 'User',
             required: true,
@@ -95,16 +105,16 @@ const jobSchema = new Schema(
     },
     {
         timestamps: true,
-        toJSON: {
-            transform: function (doc, json) {
-                json.billing = json.fees.map(fee => {
-                    return {
-                        ...fee,
-                        override: null
-                    }
-                })
-            }
-        }
+        // toJSON: {
+        //     transform: function (doc, json) {
+        //         json.billing = json.fees.map(fee => {
+        //             return {
+        //                 ...fee,
+        //                 override: null
+        //             }
+        //         })
+        //     }
+        // }
     }
 );
 

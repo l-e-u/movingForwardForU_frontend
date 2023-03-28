@@ -3,7 +3,7 @@ import Status from '../models/status.js'
 
 // get all statuses
 const getStatuses = async (req, res) => {
-    const statuses = await Status.find({}).populate('createdBy');
+    const statuses = await Status.find({}).populate('createdBy').sort({ name: 1 });
 
     return res.status(200).json(statuses);
 };

@@ -80,7 +80,7 @@ const UserSearchSelect = ({ drivers, setJob }) => {
                 }}
                 inputError={inputError}
                 inputErrorMessage={inputErrorMessage}
-                documents={users ?? []}
+                documents={users?.filter(u => drivers.every(driver => u._id !== driver._id)) ?? []}
                 errorLoading={error}
                 isLoading={isLoading} />
 

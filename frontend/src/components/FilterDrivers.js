@@ -3,17 +3,17 @@ import Select from 'react-select';
 
 // hooks
 import { useAuthContext } from '../hooks/useAuthContext';
-import { useStatusesContext } from '../hooks/useStatusesContext';
+import { useUsersContext } from '../hooks/useUsersContext';
 
 
-const FilterStatuses = ({ filter, setFilters }) => {
+const FilterDrivers = ({ filter, setFilters }) => {
     const { user } = useAuthContext();
-    const { statuses, dispatch } = useStatusesContext();
+    const { users, dispatch } = useUsersContext();
 
     const [error, setError] = useState(null);
     const [isLoading, setIsLoading] = useState(null);
 
-    const options = !statuses ? [] : statuses.map(status => ({ label: status.name, value: status._id }));
+    const options = !users ? [] : users.map(user => ({ label: `${user.firstName} ${user.lastName} (${user.email})`, value: user._id }));
 
     // on first mount only, get documents
     useEffect(() => {
@@ -21,9 +21,9 @@ const FilterStatuses = ({ filter, setFilters }) => {
             setIsLoading(true);
             setError(null);
 
-            const response = await fetch('/api/statuses', { headers: { 'Authentication': `Bearer ${user.token}` } });
+            const response = await fetch('/api/users', { headers: { 'Authentication': `Bearer ${user.token}` } });
 
-            // expecting all contacts
+            // expecting all users
             const json = await response.json();
 
             if (!response.ok) {
@@ -36,7 +36,7 @@ const FilterStatuses = ({ filter, setFilters }) => {
                 setError(null);
                 setIsLoading(false);
 
-                dispatch({ type: 'SET_STATUSES', payload: json });
+                dispatch({ type: 'SET_USERS', payload: json });
             };
         })();
     }, [dispatch, user]);
@@ -50,21 +50,21 @@ const FilterStatuses = ({ filter, setFilters }) => {
             isMulti
             isSearchable
             isClearable
-            placeholder='Select Status...'
+            placeholder='Select Driver...'
             options={options}
             onChange={selected => {
                 setFilters(prev => {
                     const existingFilters = { ...prev };
-                    delete existingFilters.status;
+                    delete existingFilters.drivers;
 
-                    if (selected.length > 0) existingFilters.status = selected.map(sel => sel.value);
+                    if (selected.length > 0) existingFilters.drivers = selected.map(sel => sel.value);
 
                     return existingFilters;
                 })
             }}
-            value={filter.map(status => options.find(option => status === option.value))}
+            value={filter.map(user => options.find(option => user === option.value))}
         />
     );
 };
 
-export default FilterStatuses;
+export default FilterDrivers;

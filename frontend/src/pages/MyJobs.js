@@ -10,13 +10,14 @@ import { urlQueryString } from '../utils/StringUtils.js';
 
 // components
 import ErrorLoadingDocuments from '../components/ErrorLoadingDocuments.js';
+import FilterAndASort from '../components/FilterAndSort.js';
 import FlexBoxWrapper from '../components/FlexBoxWrapper.js';
 import JobCard from '../components/JobCard.js';
 import LoadingDocuments from '../components/LoadingDocuments.js';
 import NavPagination from '../components/NavPagination.js';
 import PageContentWrapper from '../components/PageContentWrapper.js';
 
-const MyJobs = () => {
+const MyJobs = ({ filters, setFilters }) => {
     const { user } = useAuthContext();
     const { myJobs, dispatch } = useMyJobsContext();
 
@@ -29,9 +30,6 @@ const MyJobs = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [totalResults, setTotalResults] = useState(0);
-
-    // filters
-    const [filters, setFilters] = useState({});
 
     // fetches results as the user chooses filters or changes limits for results
     useEffect(() => {
@@ -70,24 +68,32 @@ const MyJobs = () => {
 
     return (
         <PageContentWrapper>
+            <div className='d-flex flex-column gap-2 mb-3'>
+                <NavPagination
+                    currentPage={currentPage}
+                    limit={limit}
+                    setCurrentPage={setCurrentPage}
+                    setLimit={setLimit}
+                    setTotalPages={setTotalPages}
+                    totalPages={totalPages}
+                    totalResults={totalResults}
+                />
 
-            <NavPagination
-                currentPage={currentPage}
-                limit={limit}
-                setCurrentPage={setCurrentPage}
-                setLimit={setLimit}
-                setTotalPages={setTotalPages}
-                totalPages={totalPages}
-                totalResults={totalResults}
-            />
+                <FilterAndASort filters={filters} setFilters={setFilters} />
+            </div>
 
             {/* show spinner with actively fetching data */}
             {isLoading && <div className='my-5'><LoadingDocuments /></div>}
 
             {error && <ErrorLoadingDocuments docType='Jobs' />}
 
-            {myJobs &&
+            {(myJobs && !isLoading) &&
                 <FlexBoxWrapper>
+                    {/* show a message when the results have loaded and there's not results */}
+                    {(totalResults === 0) &&
+                        <div className='outline shadow-sm background-white p-3 text-center'>There are no results.</div>
+                    }
+
                     {myJobs.map((job) => {
                         return (
                             <JobCard {...job} key={job._id} />

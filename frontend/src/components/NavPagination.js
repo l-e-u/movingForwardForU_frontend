@@ -72,7 +72,6 @@ const NavPagination = ({
                 }}
                 value={limit > 0 ? String(limit) : 'All'}
                 style={{ width: '70px', backgroundColor: 'transparent' }}>
-                <option>5</option>
                 <option>10</option>
                 <option>25</option>
                 <option>50</option>

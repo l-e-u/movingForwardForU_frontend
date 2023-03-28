@@ -22,11 +22,14 @@ function App() {
   const { user } = useAuthContext();
 
   const [jobFilters, setJobFilters] = useState({});
+  const [myJobFilters, setMyJobFilters] = useState({});
   const [showNavMenu, setShowNavMenu] = useState(false);
   const [selectedLink, setSelectedLink] = useState(0)
 
   useEffect(() => {
-    // page selected
+    // reset state when user changes
+    setJobFilters({});
+    setShowNavMenu(false);
     setSelectedLink(0);
   }, [user])
 
@@ -39,7 +42,7 @@ function App() {
           <Routes>
             <Route
               path='/'
-              element={user ? <MyJobs /> : <Navigate to='/login' />}
+              element={user ? <MyJobs filters={myJobFilters} setFilters={setMyJobFilters} /> : <Navigate to='/login' />}
             />
             <Route
               path='/jobs'
@@ -66,7 +69,7 @@ function App() {
               element={!user ? <Login /> : <Navigate to='/' />}
             />
             <Route
-              path='/verify/:emailToken/:name'
+              path='/verify/:emailToken/:name/:resetPassword'
               element={!user ? <Verify /> : <Navigate to='/login' />}
             />
           </Routes>

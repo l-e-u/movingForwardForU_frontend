@@ -44,7 +44,7 @@ const Jobs = ({ filters, setFilters }) => {
     const [showOptionsMenu, setShowOptionsMenu] = useState(false);
 
     // pagination state
-    const [limit, setLimit] = useState(5);
+    const [limit, setLimit] = useState(10);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [totalResults, setTotalResults] = useState(0);
@@ -110,6 +110,7 @@ const Jobs = ({ filters, setFilters }) => {
                 'Customer': job.customer.organization,
                 'Drivers': driversString,
                 'Parcel': job.parcel,
+                'Mileage': job.mileage,
                 'Pickup Address': job.pickup.address,
                 'Delivery Address': job.delivery.address,
                 'Pickup Date': pickupDate,
@@ -196,7 +197,7 @@ const Jobs = ({ filters, setFilters }) => {
                     totalResults={totalResults}
                 />
 
-                <FilterAndASort filters={filters} setFilters={setFilters} />
+                <FilterAndASort filters={filters} setFilters={setFilters} userIsAdmin={true} />
             </div>
 
             {/* show spinner with actively fetching data */}
@@ -206,6 +207,11 @@ const Jobs = ({ filters, setFilters }) => {
 
             {(jobs && !isLoading) &&
                 <FlexBoxWrapper>
+                    {/* show a message when the results have loaded and there's not results */}
+                    {(totalResults === 0) &&
+                        <div className='outline shadow-sm background-white p-3 text-center'>There are no results.</div>
+                    }
+
                     {/* each elements has the option to show the job, edit form, or delete confirmation depending on the user's selection */}
                     {jobs.map((job) => {
                         const { _id } = job;
@@ -250,8 +256,8 @@ const Jobs = ({ filters, setFilters }) => {
                                     />
                                     <JobCard
                                         {...job}
+                                        listBilling={true}
                                         listDrivers={true}
-                                        listFees={true}
                                         listMileage={true}
                                         showCreatedDetails={true}
                                     />

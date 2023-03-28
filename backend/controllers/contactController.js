@@ -3,7 +3,7 @@ import Contact from '../models/contact.js';
 
 // get all contacts
 const getContacts = async (req, res) => {
-    const contacts = await Contact.find({}).populate('createdBy');
+    const contacts = await Contact.find({}).populate('createdBy').sort({ organization: 1 });
 
     return res.status(200).json(contacts);
 }

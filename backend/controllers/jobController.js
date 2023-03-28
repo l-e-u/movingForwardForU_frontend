@@ -5,10 +5,10 @@ import { deleteAttachments } from './attachmentController.js';
 import Job from '../models/job.js';
 
 const docFieldsToPopulate = [
+    'billing.fee',
     'customer',
     'createdBy',
     'drivers',
-    'fees',
     'status',
     'notes.createdBy',
 ];
@@ -24,9 +24,53 @@ const getJobs = async (req, res) => {
     let endIndex = page * limit;
     let totalPages = 0;
 
-
+    // format the filters for mongodb
     if (filters.status) {
         filters.status = { $in: filters.status.split(',') };
+    };
+
+    if (filters.customer) {
+        filters.customer = { $in: filters.customer.split(',') };
+    };
+
+    if (filters.mileageGTE) {
+        filters.mileage = { $gte: filters.mileageGTE };
+        delete filters.mileageGTE;
+    };
+
+    if (filters.mileageLTE) {
+        filters.mileage = { ...filters.mileage, $lte: filters.mileageLTE };
+        delete filters.mileageLTE;
+    };
+
+    if (filters.createdOnGTE) {
+        filters.createdAt = { $gte: filters.createdOnGTE };
+        delete filters.createdOnGTE;
+    };
+
+    if (filters.createdOnLTE) {
+        filters.createdAt = { ...filters.createdAt, $lte: filters.createdOnLTE };
+        delete filters.createdOnLTE;
+    };
+
+    if (filters.pickupOnGTE) {
+        filters['pickup.date'] = { $gte: filters.pickupOnGTE };
+        delete filters.pickupOnGTE;
+    };
+
+    if (filters.pickupOnLTE) {
+        filters['pickup.date'] = { ...filters['pickup.date'], $lte: filters.pickupOnLTE };
+        delete filters.pickupOnLTE;
+    };
+
+    if (filters.deliveryOnGTE) {
+        filters['delivery.date'] = { $gte: filters.deliveryOnGTE };
+        delete filters.deliveryOnGTE;
+    };
+
+    if (filters.deliveryOnLTE) {
+        filters['delivery.date'] = { ...filters['delivery.date'], $lte: filters.deliveryOnLTE };
+        delete filters.deliveryOnLTE;
     };
 
     console.log('filters:', filters);
@@ -147,6 +191,7 @@ const createJob = async (req, res) => {
 
         // if no input errors, then send back the err message as a server error
         if (!error) {
+            error = {};
             error.server = err || err.message;
         };
 
@@ -259,6 +304,7 @@ const updateJob = async (req, res) => {
 
         // if no input errors, then send back the err message as a server error
         if (!error) {
+            error = {};
             error.server = err.message;
         };
 
@@ -266,13 +312,4 @@ const updateJob = async (req, res) => {
     }
 };
 
-// get all jobs that are assinged to the logged user
-const getJobsByUserId = async (req, res) => {
-    // jobs route authenticates user and stores _id in the response
-    const { _id } = req.user;
-
-    const jobs = await Job.find({ drivers: _id }).populate(docFieldsToPopulate);
-    res.status(200).json(jobs);
-};
-
-export { createJob, getJob, getJobs, deleteJob, updateJob, getJobsByUserId };
+export { createJob, getJob, getJobs, deleteJob, updateJob };

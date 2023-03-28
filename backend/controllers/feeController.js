@@ -3,7 +3,7 @@ import Fee from '../models/fee.js';
 
 // get all fees
 const getFees = async (req, res) => {
-    const fees = await Fee.find({}).populate('createdBy');
+    const fees = await Fee.find({}).populate('createdBy').sort({ name: 1 });
 
     return res.status(200).json(fees);
 };

@@ -6,7 +6,6 @@ import {
     getJobs,
     deleteJob,
     updateJob,
-    getJobsByUserId
 } from '../controllers/jobController.js'
 
 // middleware
@@ -36,9 +35,6 @@ router.use(requireAuth);
 
 // GET jobs
 router.get('/', getJobs);
-
-// GET all jobs assigned to current logged user
-router.get('/user', getJobsByUserId);
 
 // GET a single job
 router.get('/:id', getJob);

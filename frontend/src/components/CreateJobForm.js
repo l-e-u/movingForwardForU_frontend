@@ -10,10 +10,10 @@ import FormHeader from './FormHeader.js';
 const CreateJobForm = ({ setShowThisForm }) => {
     const { createJob, error, setError, isLoading } = useCreateJob();
     const [job, setJob] = useState({
+        billing: [],
         customer: null,
         delivery: { address: '', date: new Date(), includeTime: false },
         drivers: [],
-        fees: [],
         mileage: 0,
         notes: [],
         parcel: '',
@@ -42,7 +42,15 @@ const CreateJobForm = ({ setShowThisForm }) => {
                             customer: job.customer?._id,
                             drivers: job.drivers.map(d => d._id),
                             mileage: Number(job.mileage),
-                            fees: job.fees.map(f => f._id),
+                            billing: job.billing.map(bill => {
+                                let adjustedAmount = bill.adjustedAmount
+                                if (adjustedAmount !== null) adjustedAmount = Number(adjustedAmount);
+
+                                return {
+                                    adjustedAmount,
+                                    fee: bill.fee._id,
+                                }
+                            }),
                             status: job.status?._id,
                         })
                             .then(isCreated => {

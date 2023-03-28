@@ -52,6 +52,7 @@ export const formatNumber = (n) => n.replace(/\D/g, "").replace(/\B(?=(\d{3})+(?
 
 export const formatCurrency = (input, onBlur = false) => {
     const value = String(input);
+
     let validatedNumString = null;
 
     const decimalPosition = value.indexOf('.');
@@ -100,3 +101,7 @@ export const urlQueryString = (filter) => {
 
     return query;
 };
+
+// for the filters when setting the value of existing dates chosen for the date inputs
+export const dateStringFormat_YYYY_MM_DD = (date) => `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')
+    }`;

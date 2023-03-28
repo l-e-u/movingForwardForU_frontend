@@ -12,7 +12,7 @@ import ActionButton from './ActionButton'
 import { removeExtraSpaces } from '../utils/StringUtils';
 
 const JobForm = ({ job, setJob, handleSubmit, error, setError, isDisabled, isLoading }) => {
-    const { status, customer, fees, mileage, reference, parcel, drivers, notes } = job;
+    const { status, customer, billing, mileage, reference, parcel, drivers, notes } = job;
 
     const errorOther = error?.server;
 
@@ -156,9 +156,9 @@ const JobForm = ({ job, setJob, handleSubmit, error, setError, isDisabled, isLoa
                 </div>
 
                 <div className='d-md-flex flex-grow-1 gap-3 mb-md-3 mb-xl-0'>
-                    {/* fees */}
+                    {/* billing */}
                     <div className='w-md-50 order-md-1'>
-                        <FeeSearchSelect feesList={fees} setJob={setJob} />
+                        <FeeSearchSelect billing={billing} setJob={setJob} />
                     </div>
 
                     {/* notes */}

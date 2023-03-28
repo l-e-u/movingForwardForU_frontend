@@ -3,17 +3,17 @@ import User from "../models/user.js";
 import jwt from 'jsonwebtoken';
 
 // services
-import { sendVerifyEmailRequest } from '../services/email.js';
+import { sendResetPasswordLink, sendVerifyEmailRequest } from '../services/email.js';
 
 const loginToken = (_id) => {
-    return jwt.sign({ _id }, process.env.SECURE, { expiresIn: '2d' });
+    return jwt.sign({ _id }, process.env.SECURE, { expiresIn: '5d' });
 };
 
 const registerToken = (userId) => {
     return jwt.sign(
         { userId },
         process.env.EMAIL_TOKEN_SECURE,
-        { expiresIn: '1h' }
+        { expiresIn: '1d' }
     );
 };
 
@@ -73,13 +73,21 @@ const loginUser = async (req, res) => {
 
 const verifyEmailToken = async (req, res) => {
     const { emailToken } = req.params;
+    const { resetPassword } = req.params;
 
     try {
         const { userId: _id } = jwt.verify(emailToken, process.env.EMAIL_TOKEN_SECURE);
 
         const user = await User.findById(_id);
 
-        // if the user already has a set password, verify the email
+        // when the user forgets password, their email inbox will have a message with link that will route them here to set their password null and unverify them until they set a new password
+        if (resetPassword === '1') {
+            user.password = null;
+            user.isVerified = false;
+            await user.save();
+        }
+
+        // when the user or admin updates a user's email, the user is unverified and sent a message to the updated email requesting to verify the email address by clicking on the provided link. When a user verifies, and has a set password, then there's no need to go through the sign up process. then just verify the user.
         if (user.password) {
             user.isVerified = true;
             await user.save();
@@ -103,9 +111,8 @@ const verifyEmailToken = async (req, res) => {
 
         // if no input errors, then send back the err message as a server error
         if (!error) {
-            err.error = {
-                server: { message: err.message }
-            };
+            error = {};
+            error.server = { message: err.message };
         };
 
         return res.status(400).json({ error });
@@ -217,41 +224,83 @@ const deleteUser = async (req, res) => {
     return res.status(200).json(user);
 };
 
+// send an email to the email address provided
+const sendEmailResetPasswordLink = async (req, res) => {
+    const error = { server: { message: 'No such email' } };
+    const { email } = req.body;
+
+    try {
+        const user = await User.findOne({ email });
+
+        if (!user) return res.status(404).json({ error });
+
+        const token = registerToken(user._id);
+
+        await sendResetPasswordLink({
+            firstName: user.firstName,
+            email,
+            token,
+        });
+
+        console.log(`${user.firstName} has forgotten their password, an email has been sent to ${email}.`);
+
+        return res.status(200).json(user);
+    }
+    catch (err) {
+        console.error(err);
+
+        return res.status(404).json({ error });
+    }
+}
+
 // update a user
 const updateUser = async (req, res) => {
     const { id } = req.params;
     const { email } = req.body;
-
-    console.log(req.body)
+    const error = { server: { message: 'No such user.' } };
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
-        return res.status(404).json({ error: 'No such user.' });
+        return res.status(404).json({ error });
     };
 
-    // if the email is being updated, unverify the user to require them to verify the new email address
+    try {
+        const user = await User.findByIdAndUpdate(
+            { _id: id },
+            { ...req.body },
+            {
+                returnDocument: 'after',
+                runValidators: true
+            }
+        );
 
-    const user = await User.findByIdAndUpdate(
-        { _id: id },
-        { ...req.body },
-        {
-            returnDocument: 'after',
-            runValidators: true
-        }
-    );
+        if (!user) {
+            return res.status(404).json({ error });
+        };
 
-    if (!user) {
-        return res.status(404).json({ error: 'No such user.' });
-    };
+        // if the email is being updated, unverify the user to require them to verify the new email address
+        if (email) {
+            user.isVerified = false;
+            await user.save();
 
-    if (email) {
-        user.isVerified = false;
-        await user.save();
+            const token = registerToken(user._id);
+            await sendVerifyEmailRequest({ firstName: user.firstName, email, token });
+        };
 
-        const token = registerToken(user._id);
-        await sendVerifyEmailRequest({ firstName: user.firstName, email, token });
-    };
+        res.status(200).json(user);
+    }
+    catch (err) {
+        console.error(err);
 
-    res.status(200).json(user);
+        const { errors: error } = err;
+
+        // if no input errors, then send back the err message as a server error
+        if (!error) {
+            error = {};
+            error.server = err.message;
+        };
+
+        return res.status(400).json({ error });
+    }
 };
 
 export {
@@ -260,6 +309,7 @@ export {
     getUsers,
     loginUser,
     registerUser,
+    sendEmailResetPasswordLink,
     updateUser,
     verifyUser,
     verifyEmailToken
