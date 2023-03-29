@@ -26,7 +26,7 @@ const EditJobForm = ({ prevJob, setShowThisForm }) => {
     if ((prevJob.drivers.length !== job.drivers.length) || !prevJob.drivers.every(driver => job.drivers.some(d => driver._id === d._id))) updatedProperties.drivers = job.drivers;
 
     // check all the fees, if the lengths have changed, add them to 'updatedProperties', OR if any _id or adjustment amounts have changed, add to 'updatedProperties'
-    if ((prevJob.billing.length !== job.billing.length) || !prevJob.billing.every(bill => job.billing.some(b => ((bill.fee._id === b.fee._id) && (bill.adjustedAmount == b.adjustedAmount))))) updatedProperties.billing = job.billing;
+    if ((prevJob.billing.length !== job.billing.length) || !prevJob.billing.every(bill => job.billing.some(b => ((bill.fee._id === b.fee._id) && (String(bill.adjustedAmount) === String(b.adjustedAmount)))))) updatedProperties.billing = job.billing;
 
     let notesHaveChanged = false;
 
@@ -78,7 +78,7 @@ const EditJobForm = ({ prevJob, setShowThisForm }) => {
                     isLoading={isLoading}
                     handleSubmit={async (e) => {
                         e.preventDefault();
-
+                        // return console.log(updatedProperties, filesToDelete)
                         await updateJob({
                             filesToDelete,
                             _id: prevJob._id,

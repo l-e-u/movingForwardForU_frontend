@@ -56,8 +56,8 @@ button.page-link:disabled {
 }
 
 /* targets job form notes input, subject and message fields */
-.form-control.is-invalid .form-control-plaintext::placeholder,
-.form-control.is-invalid .form-control-plaintext::-webkit-input-placeholder {
+.form-control-plaintext.is-invalid::placeholder,
+.form-control-plaintext.is-invalid::-webkit-input-placeholder {
   color: var(--bs-danger) !important;
 }
 

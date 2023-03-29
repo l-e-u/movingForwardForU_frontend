@@ -4,7 +4,6 @@ import { useParams } from 'react-router';
 // components
 import ActionButton from '../components/ActionButton.js';
 import Card from '../components/Card.js';
-import CardContainer from '../components/CardContainer.js';
 import PasswordChecklist from 'react-password-checklist';
 import LoadingDocuments from '../components/LoadingDocuments.js';
 import PageContentWrapper from '../components/PageContentWrapper.js';
@@ -55,7 +54,7 @@ const Verify = () => {
                 return true;
             };
         })();
-    }, [emailToken]);
+    }, [emailToken, resetPassword]);
 
     // redired to login page when token has expired OR when the user has already been verified
     useEffect(() => {

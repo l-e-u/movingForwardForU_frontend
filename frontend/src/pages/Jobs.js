@@ -35,7 +35,7 @@ const Jobs = ({ filters, setFilters }) => {
     const [selectedJobId, setSelectedJobId] = useState(null);
 
     // user can select certain jobs (or all jobs) to have exported or deleteMany
-    const [selectedJobs, setSelectedJobs] = useState([]);
+    // const [selectedJobs, setSelectedJobs] = useState([]);
 
     // sets when user selects menu or option, displays corresponding form
     const [showCreateForm, setShowCreateForm] = useState(false);
