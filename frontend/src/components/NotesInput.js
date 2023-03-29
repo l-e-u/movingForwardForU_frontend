@@ -114,7 +114,6 @@ const NotesInput = ({
                                                 const file = e.target.files[0];
 
                                                 if (file) {
-                                                    console.log('original:', file)
                                                     const filename = file.name;
                                                     const filetype = file.type;
                                                     const reader = new FileReader();
@@ -145,7 +144,6 @@ const NotesInput = ({
                                                             canvas.height = height;
                                                             canvas.getContext('2d').drawImage(image, 0, 0, width, height);
                                                             canvas.toBlob(function (blob) {
-                                                                // console.log(new File([blob], 'test.jpg'))
                                                                 handleOnChange(
                                                                     {
                                                                         attachment: {
