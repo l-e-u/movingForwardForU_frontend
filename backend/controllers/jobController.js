@@ -131,12 +131,13 @@ const createJob = async (req, res) => {
     const files = req.files;
 
     try {
-        // for each uploaded file, attach its info to its note
-        files.forEach(file => {
-            const { contentType, filename, id, originalname, size } = file;
-            const note = newJob.notes.find(note => file.originalname === note.attachment.filename);
-            note.attachment = { contentType, filename, originalname, size, files_id: id };
-
+        // loop through each note and attachements to find the file corresponding to that attachment
+        newJob.notes.forEach(({ attachments }) => {
+            attachments.forEach((attachment, index) => {
+                const file = files.find(f => f.originalname === attachment.filename);
+                const { contentType, filename, id, originalname, size } = file;
+                attachments[index] = { contentType, filename, originalname, size, files_id: id };
+            })
         });
 
         // add doc to db
@@ -155,7 +156,7 @@ const createJob = async (req, res) => {
 
         console.error('An error has occured, job creation has been aborted, and uploaded files will be deleted.');
         // 'errors' contains any mongoose model-validation fails, rename to error
-        const { errors: error } = err;
+        let { errors: error } = err;
 
         // if there's any files that were uploaded, delete them now
         if (req.files.length > 0) deleteAttachments(req.files);
@@ -268,7 +269,7 @@ const updateJob = async (req, res) => {
         console.error('An error has occured, job creation has been aborted, and uploaded files will be deleted.');
 
         // 'errors' contains any mongoose model-validation fails, rename to error
-        const { errors: error } = err;
+        let { errors: error } = err;
 
         // if there's any files that were uploaded, delete them now
         if (req.files.length > 0) deleteAttachments(req.files);

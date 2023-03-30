@@ -19,9 +19,9 @@ const transportSchema = new Schema({
 
 const noteSchema = new Schema(
     {
-        attachment: {
-            type: Object,
-            default: null
+        attachments: {
+            default: [],
+            type: Array,
         },
         createdAt: {
             type: Date,

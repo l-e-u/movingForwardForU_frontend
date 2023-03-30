@@ -1,3 +1,5 @@
+import { useState } from 'react';
+
 // components
 import RequiredFieldsText from './RequiredFieldsText';
 import StatusSearchSelect from './StatusSearchSelect';
@@ -13,6 +15,8 @@ import { removeExtraSpaces } from '../utils/StringUtils';
 
 const JobForm = ({ job, setJob, handleSubmit, error, setError, isDisabled, isLoading }) => {
     const { status, customer, billing, mileage, reference, parcel, drivers, notes } = job;
+
+    const [isResizingImages, setIsResizingImages] = useState(false);
 
     const errorOther = error?.server;
 
@@ -163,7 +167,13 @@ const JobForm = ({ job, setJob, handleSubmit, error, setError, isDisabled, isLoa
 
                     {/* notes */}
                     <div className='w-md-50 order-md-0 mt-3 mt-md-0'>
-                        <NotesInput notes={notes} setJob={setJob} error={error} setError={setError} />
+                        <NotesInput
+                            error={error}
+                            isResizingImages={isResizingImages}
+                            notes={notes} setJob={setJob}
+                            setError={setError}
+                            setIsResizingImages={setIsResizingImages}
+                        />
                     </div>
                 </div>
             </div>
@@ -171,7 +181,7 @@ const JobForm = ({ job, setJob, handleSubmit, error, setError, isDisabled, isLoa
             <div className='mt-4 mt-sm-0'>
                 <ActionButton
                     alignX='right'
-                    isDisabled={isDisabled}
+                    isDisabled={isDisabled || isResizingImages}
                     text={(isLoading ? 'Saving...' : 'Save')}
                     type='submit'
                 />

@@ -4,7 +4,9 @@ const ShowCreateFormButton = ({
     handleOnClick,
     text,
     isDisabled = false,
-    type = 'button' }) => {
+    isLoading = false,
+    type = 'button',
+}) => {
     let alignClass;
 
     switch (alignX) {
@@ -51,6 +53,7 @@ const ShowCreateFormButton = ({
             style={{ width: '200px' }}
             type={type}
         >
+            {isLoading && <span className='spinner-border spinner-border-sm me-1' role='status' aria-hidden='true'></span>}
             {text}
         </button>
     );

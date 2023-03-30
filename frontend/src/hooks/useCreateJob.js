@@ -20,8 +20,7 @@ export const useCreateJob = () => {
 
         // this will hold the attachments which middleware will upload on the backend
         job.notes.forEach(note => {
-            const { attachment } = note;
-            if (attachment) form.append('attachments', attachment.file);
+            note.attachments.forEach(attachment => form.append('attachments', attachment.file));
         });
 
         const response = await fetch('/api/jobs', {

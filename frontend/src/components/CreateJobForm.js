@@ -56,7 +56,8 @@ const CreateJobForm = ({ setShowThisForm }) => {
                             .then(isCreated => {
                                 if (isCreated) setShowThisForm(false);
                             })
-                    }} />
+                    }}
+                />
             </div>
         </div>
     );

@@ -1,20 +1,23 @@
 import { CSSTransition } from 'react-transition-group';
 
 // components
+import ActionButton from './ActionButton';
+import Counter from './Counter';
+import FileUploadHandler from './FileUploadHandler';
 import GrowingTextArea from './GrowingTextArea';
 import SmallHeader from './SmallHeader';
 import XButton from './XButton';
-import ActionButton from './ActionButton';
 
 // hooks
 import { useAuthContext } from '../hooks/useAuthContext';
-import Counter from './Counter';
 
 // user can create a list of notes, each note has its own functions to update and delete itself
 const NotesInput = ({
     error,
+    isResizingImages,
     notes,
     setError,
+    setIsResizingImages,
     setJob,
 }) => {
     const { user } = useAuthContext();
@@ -27,7 +30,6 @@ const NotesInput = ({
         updatedNotes[index] = {
             ...updatedNotes[index],
             ...input,
-            createdAt: new Date()
         };
 
         setJob(prev => {
@@ -52,6 +54,26 @@ const NotesInput = ({
         });
     };
 
+    console.log(notes);
+    let totalSizeOfNewImagesToUpload = notes.reduce((total, note) => {
+        const { attachments } = note;
+
+        if (attachments) {
+            const subTotalSize = attachments.reduce((subTotal, attachment) => {
+                const { file } = attachment;
+
+                if (file) {
+                    return file.size + subTotal;
+                }
+                return subTotal + 0;
+            }, 0);
+            return total + subTotalSize;
+        };
+        return total + 0;
+    }, 0) / 1000000;
+
+    console.log('total size:', totalSizeOfNewImagesToUpload);
+
     return (
         <div className='d-flex flex-column gap-2'>
             <div className='d-flex gap-1'>
@@ -61,7 +83,7 @@ const NotesInput = ({
             {hasNotes &&
                 <ul className='list-group d-flex flex-column gap-3 overflow-scroll rounded-0 py-2' style={{ maxHeight: '700px', borderTop: '1px solid var(--darkBlue)', borderBottom: '1px solid var(--darkBlue)' }}>
                     {notes.map((note, index) => {
-                        const noteId = note._id;
+                        const { _id, attachments } = note;
                         const inputSubjectError = error?.notes ? error?.notes[index]?.subject : null;
 
                         return (
@@ -70,7 +92,7 @@ const NotesInput = ({
                                 classNames='fade-'
                                 in={true}
                                 timeout={500}
-                                key={noteId || index}
+                                key={_id || index}
                             >
                                 <li className='position-relative'>
                                     {/* the X buttons removes the note from the job */}
@@ -95,76 +117,12 @@ const NotesInput = ({
                                         onChange={e => handleOnChange({ message: e.target.value }, index)}
                                     />
 
-                                    {/* button to remove the attachment will delete the property off of job */}
-                                    {note.attachment?.filename ?
-                                        <button
-                                            className='btn btn-sm text-action border-0 p-0 text-start'
-                                            onClick={() => handleOnChange({ attachment: null }, index)}
-                                            type='button'
-                                        >
-                                            {'Remove ' + note.attachment.filename}
-                                        </button> :
-
-                                        <input
-                                            accept='image/png, image/jpeg'
-                                            className='form-control form-control-sm'
-                                            id='file'
-                                            name='file'
-                                            onChange={e => {
-                                                const file = e.target.files[0];
-
-                                                if (file) {
-                                                    const filename = file.name;
-                                                    const filetype = file.type;
-                                                    const reader = new FileReader();
-
-                                                    // define what happens when the reader is loaded
-                                                    reader.onload = function (readerEvent) {
-                                                        const image = new Image();
-
-                                                        // define when the image is loaded
-                                                        image.onload = function () {
-                                                            const canvas = document.createElement('canvas');
-                                                            const max_size = 800; /* max size */
-                                                            let width = image.width;
-                                                            let height = image.height;
-
-                                                            if (width > height) {
-                                                                if (width > max_size) {
-                                                                    height *= max_size / width;
-                                                                    width = max_size;
-                                                                }
-                                                            } else {
-                                                                if (height > max_size) {
-                                                                    width *= max_size / height;
-                                                                    height = max_size;
-                                                                }
-                                                            }
-                                                            canvas.width = width;
-                                                            canvas.height = height;
-                                                            canvas.getContext('2d').drawImage(image, 0, 0, width, height);
-                                                            canvas.toBlob(function (blob) {
-                                                                handleOnChange(
-                                                                    {
-                                                                        attachment: {
-                                                                            file: new File([blob], filename, { type: filetype }),
-                                                                            filename: file?.name
-                                                                        }
-                                                                    },
-                                                                    index
-                                                                );
-                                                            });
-                                                        }
-                                                        // load the image
-                                                        image.src = readerEvent.target.result;
-                                                    }
-                                                    // load the reader
-                                                    reader.readAsDataURL(file);
-                                                }
-                                            }}
-                                            type='file'
-                                        />
-                                    }
+                                    <FileUploadHandler
+                                        files={attachments || []}
+                                        isResizingImages={isResizingImages}
+                                        setIsResizingImages={setIsResizingImages}
+                                        setFiles={({ images }) => handleOnChange({ attachments: images }, index)}
+                                    />
                                 </li>
                             </CSSTransition>
                         );
@@ -172,12 +130,13 @@ const NotesInput = ({
                 </ul>
             }
             <ActionButton
-                isDisabled={error?.notes}
+                isDisabled={error?.notes || isResizingImages}
+                isLoading={isResizingImages}
                 handleOnClick={() => {
                     setJob(prev => {
                         return {
                             ...prev,
-                            notes: [...prev.notes, { subject: '', message: '', createdBy: user._id }]
+                            notes: [...prev.notes, { attachments: [], subject: '', message: '', createdAt: new Date(), createdBy: user._id }]
                         }
                     })
                 }}

@@ -24,6 +24,10 @@ body {
   color: var(--darkBlue);
 }
 
+input[type='file']:disabled {
+  opacity: .25;
+}
+
 nav .selected {
   background-color: var(--darkBlue) !important;
   color: var(--bs-white) !important;

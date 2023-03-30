@@ -5,7 +5,9 @@ const NotesList = ({ list }) => {
     return (
         <ul className='list-group list-group-flush d-flex flex-column gap-2 mt-1'>
             {list.map((note) => {
-                const { _id, attachment, createdAt, createdBy, subject, message } = note;
+                const { _id, attachments, createdAt, createdBy, subject, message } = note;
+                const numOfAttachments = attachments.length;
+                const hasAttachments = numOfAttachments > 0;
 
                 return (
                     <li key={_id} className='list-group-item p-0 text-reset'>
@@ -18,14 +20,18 @@ const NotesList = ({ list }) => {
                             aria-expanded='false'
                             aria-controls={'collapseMsg' + _id}>
                             <span>{subject}</span>
-                            {attachment && <i className='bi bi-paperclip ms-2'></i>}
+                            {hasAttachments && <i className='bi bi-paperclip ms-2'></i>}
                         </button>
                         <div
                             className='collapse'
                             id={'collapseMsg' + _id}
                         >
                             <small className='mt-1 mb-2' style={{ whiteSpace: 'pre-wrap' }}>{message}</small>
-                            {attachment && <FileDownloadButton {...attachment} />}
+
+                            {/* every download link gets listed separately */}
+                            {hasAttachments && <div className='d-flex flex-wrap gap-4 justify-content-end mt-2'>
+                                {attachments.map((attachment, index) => <FileDownloadButton {...attachment} key={_id + index} />)}
+                            </div>}
                             <div className='text-end'> <CreatedInfo createdAt={createdAt} createdBy={createdBy} /></div>
                         </div>
                     </li>

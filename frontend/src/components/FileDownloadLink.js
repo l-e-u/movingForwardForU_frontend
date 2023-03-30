@@ -24,7 +24,7 @@ const FileDownloadButton = ({
     };
 
     return (
-        <small className='text-action text-end'>
+        <small className='text-action text-end d-inline'>
             <a
                 className='text-action d-block text-end'
                 href={'http://localhost:4000/api/attachments/download/' + filename}

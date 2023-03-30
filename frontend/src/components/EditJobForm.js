@@ -28,36 +28,25 @@ const EditJobForm = ({ prevJob, setShowThisForm }) => {
     // check all the fees, if the lengths have changed, add them to 'updatedProperties', OR if any _id or adjustment amounts have changed, add to 'updatedProperties'
     if ((prevJob.billing.length !== job.billing.length) || !prevJob.billing.every(bill => job.billing.some(b => ((bill.fee._id === b.fee._id) && (String(bill.adjustedAmount) === String(b.adjustedAmount)))))) updatedProperties.billing = job.billing;
 
-    let notesHaveChanged = false;
+    // notes cannot be rearranged, so comparing json string is used
+    let notesHaveChanged = !noCharChanges(JSON.stringify(prevJob.notes), JSON.stringify(job.notes));
 
-    // different lengths flag the boolean that notes have changed
-    if (prevJob.notes.length !== job.notes.length) {
-        notesHaveChanged = true;
-    }
-    else {
-        // same lengths will go through each note and compare the subject, message, attachment, any changes flags the boolean that notes have changed
-        notesHaveChanged = !prevJob.notes.every((prev, index) => {
-            const note = job.notes[index];
-
-            if (prev._id !== note._id) return false;
-            if (!noCharChanges(prev.subject, note.subject)) return false;
-            if (!noCharChanges(prev.message, note.message)) return false;
-            if (prev.attachment?.filename !== note.attachment?.filename) return false;
-
-            return true;
-        });
-    };
-
-    // check to see if there's any deleted previous notes that had an attachement, if so, add them to an array
+    // check to see if there's any deleted previous notes that had any attachments, if so, add them to an array to delete those attachments
     if (notesHaveChanged) {
         updatedProperties.notes = job.notes;
 
+        // loop through each previous job note, if the previous id still exists in the updatedProperties note, check if the attachments have changed
         prevJob.notes.forEach(prevNote => {
-            // skip this note if it didn't have an attachment
-            if (!prevNote.attachment) return;
+            // skip this note if it didn't have any attachments
+            if (!prevNote.attachments.length === 0) return;
 
-            // check to see if the previous note is still found in the newly changed notes
-            if (!updatedProperties.notes.find(note => prevNote.attachment.files_id === note.attachment?.files_id)) filesToDelete.push({ id: prevNote.attachment.files_id })
+            // find out if the previous note _id still exists
+            // if the previous note was not found, then this was removed and its attachments need to be pushed into 'filesToDelete' array
+            // when the note is found, check if there's a file in the first attachment element, since the user cannot remove specific attachments, they need ot remove all to make any changes to attachments
+            const note = updatedProperties.notes.find(note => note._id === prevNote._id);
+            if (!note || note.attachments[0].file) {
+                prevNote.attachments.forEach(attachment => filesToDelete.push({ id: attachment.files_id }));
+            };
         });
     };
 
@@ -78,7 +67,7 @@ const EditJobForm = ({ prevJob, setShowThisForm }) => {
                     isLoading={isLoading}
                     handleSubmit={async (e) => {
                         e.preventDefault();
-                        // return console.log(updatedProperties, filesToDelete)
+                        return console.log(updatedProperties, filesToDelete)
                         await updateJob({
                             filesToDelete,
                             _id: prevJob._id,
