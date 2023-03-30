@@ -40,11 +40,13 @@ const EditJobForm = ({ prevJob, setShowThisForm }) => {
             // skip this note if it didn't have any attachments
             if (!prevNote.attachments.length === 0) return;
 
-            // find out if the previous note _id still exists
-            // if the previous note was not found, then this was removed and its attachments need to be pushed into 'filesToDelete' array
-            // when the note is found, check if there's a file in the first attachment element, since the user cannot remove specific attachments, they need ot remove all to make any changes to attachments
+            // find out if the previous note _id still exists and get it
             const note = updatedProperties.notes.find(note => note._id === prevNote._id);
-            if (!note || note.attachments[0].file) {
+
+            // if no result then the note was removed and its attachments are added to 'filesToDelete'
+            // OR if the note was found and now it doesn't have attachments
+            // OR the found note has attachments with new file(s)
+            if (!note || !note.attachments[0] || note.attachments[0]?.file) {
                 prevNote.attachments.forEach(attachment => filesToDelete.push({ id: attachment.files_id }));
             };
         });
@@ -67,7 +69,7 @@ const EditJobForm = ({ prevJob, setShowThisForm }) => {
                     isLoading={isLoading}
                     handleSubmit={async (e) => {
                         e.preventDefault();
-                        return console.log(updatedProperties, filesToDelete)
+
                         await updateJob({
                             filesToDelete,
                             _id: prevJob._id,

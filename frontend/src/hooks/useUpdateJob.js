@@ -18,10 +18,8 @@ export const useUpdateJob = () => {
 
         // gather all the new notes that have attachments to upload
         updates.notes?.forEach(note => {
-            const { attachment } = note;
-
             // middleware handles this form data on the backend, no need to stringify
-            if (attachment?.file) form.append('attachments', attachment.file);
+            note.attachments.forEach(attachment => form.append('attachments', attachment.file));
         });
 
         // append to formData all the previous uploads that need to be deleted with its note

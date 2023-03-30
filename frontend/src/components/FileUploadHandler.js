@@ -14,7 +14,7 @@ const FileUploadHandler = ({ files, isResizingImages, setIsResizingImages, setFi
                 // define when the image is loaded
                 image.onload = function () {
                     const canvas = document.createElement('canvas');
-                    const max_size = 500; /* max size */
+                    const max_size = 800; /* max size */
                     let width = image.width;
                     let height = image.height;
 
@@ -33,7 +33,6 @@ const FileUploadHandler = ({ files, isResizingImages, setIsResizingImages, setFi
                     canvas.height = height;
                     canvas.getContext('2d').drawImage(image, 0, 0, width, height);
                     canvas.toBlob(function (blob) {
-                        console.log('done')
                         resolve({
                             file: new File([blob], filename, { type: filetype }),
                             filename: originalFile.name
@@ -79,9 +78,7 @@ const FileUploadHandler = ({ files, isResizingImages, setIsResizingImages, setFi
                 setIsResizingImages(true);
 
                 if (files.length > 0) {
-                    console.log([...files])
                     const images = await resizeAllImages([...files]);
-                    if (images) console.log(images)
                     setFiles({ images });
                     setIsResizingImages(false);
                 }

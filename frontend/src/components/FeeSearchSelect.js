@@ -7,6 +7,7 @@ import { useFeesContext } from '../hooks/useFeesContext';
 
 // components
 import AutoCompleteSelect from './AutoCompleteSelect';
+import Counter from './Counter';
 import CurrencyInput from './CurrencyInput';
 import SmallHeader from './SmallHeader';
 import XButton from './XButton';
@@ -14,7 +15,6 @@ import XButton from './XButton';
 // functions
 import { formatCurrency } from '../utils/StringUtils';
 import { addTwoCurrencies } from '../utils/NumberUtils';
-import Counter from './Counter';
 
 const FeeSearchSelect = ({ billing, setJob }) => {
     const [error, setError] = useState(null);

@@ -19,6 +19,7 @@ const NotesInput = ({
     setError,
     setIsResizingImages,
     setJob,
+    withinUploadSizeLimit,
 }) => {
     const { user } = useAuthContext();
     const numOfNotes = notes.length;
@@ -53,26 +54,6 @@ const NotesInput = ({
             });
         });
     };
-
-    console.log(notes);
-    let totalSizeOfNewImagesToUpload = notes.reduce((total, note) => {
-        const { attachments } = note;
-
-        if (attachments) {
-            const subTotalSize = attachments.reduce((subTotal, attachment) => {
-                const { file } = attachment;
-
-                if (file) {
-                    return file.size + subTotal;
-                }
-                return subTotal + 0;
-            }, 0);
-            return total + subTotalSize;
-        };
-        return total + 0;
-    }, 0) / 1000000;
-
-    console.log('total size:', totalSizeOfNewImagesToUpload);
 
     return (
         <div className='d-flex flex-column gap-2'>
@@ -117,18 +98,22 @@ const NotesInput = ({
                                         onChange={e => handleOnChange({ message: e.target.value }, index)}
                                     />
 
-                                    <FileUploadHandler
-                                        files={attachments || []}
-                                        isResizingImages={isResizingImages}
-                                        setIsResizingImages={setIsResizingImages}
-                                        setFiles={({ images }) => handleOnChange({ attachments: images }, index)}
-                                    />
+                                    {/* only show the handler if the note already has attachments or it's within the limit */}
+                                    {(withinUploadSizeLimit || attachments.length > 0) &&
+                                        <FileUploadHandler
+                                            files={attachments || []}
+                                            isResizingImages={isResizingImages}
+                                            setIsResizingImages={setIsResizingImages}
+                                            setFiles={({ images }) => handleOnChange({ attachments: images }, index)}
+                                        />
+                                    }
                                 </li>
                             </CSSTransition>
                         );
                     })}
                 </ul>
             }
+            {!withinUploadSizeLimit && <div className='text-reset'>Upload size limit exceeded. You need to remove some new attachments.</div>}
             <ActionButton
                 isDisabled={error?.notes || isResizingImages}
                 isLoading={isResizingImages}

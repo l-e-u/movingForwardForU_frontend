@@ -34,6 +34,30 @@ const FilterAndASort = ({ filters, setFilters, userIsAdmin = false }) => {
                         <FilterCustomers filter={filters.customer || []} setFilters={setFilters} />
                         <FilterDrivers filter={filters.drivers || []} setFilters={setFilters} />
 
+                        {/* filter reference */}
+                        <div className='d-flex flex-wrap align-items-center'>
+                            <label htmlFor='referenceFilter' style={{ flex: '0 0 95px' }}><small>Reference:</small></label>
+                            <input
+                                className='form-control form-control-sm'
+                                id='referenceFilter'
+                                onChange={e => {
+                                    const input = e.target.value;
+                                    setFilters(prev => {
+                                        const existingFilters = { ...prev };
+                                        delete existingFilters.reference;
+
+                                        if (!input) return existingFilters;
+
+                                        existingFilters.reference = input;
+
+                                        return existingFilters;
+                                    })
+                                }}
+                                style={{ flex: '1 1 250px' }}
+                                type='text'
+                            />
+                        </div>
+
                         {/* filter mileage range */}
                         <div className='d-flex flex-wrap align-items-center'>
                             <label htmlFor='mileageRange' style={{ flex: '0 0 95px' }}><small>Mileage:</small></label>

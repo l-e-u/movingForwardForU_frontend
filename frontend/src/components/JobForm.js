@@ -18,6 +18,17 @@ const JobForm = ({ job, setJob, handleSubmit, error, setError, isDisabled, isLoa
 
     const [isResizingImages, setIsResizingImages] = useState(false);
 
+    const maxUploadSize = 5 * 1024 * 1024; // 5MB
+
+    // filter all notes with attachment's length larger than zero and return only those attachments
+    const arrayOfAttachments = notes.filter(note => note.attachments.length > 0).map(note => note.attachments);
+    // flatten into an array of all all attachments
+    const allAttachments = [].concat(...arrayOfAttachments);
+    // filter out only the new files
+    const allNewFilesToUpload = allAttachments.filter(attachment => attachment.file);
+    const totalSizeOfNewImagesToUpload = allNewFilesToUpload.reduce((total, { file }) => total + file.size, 0);
+    const withinUploadSizeLimit = totalSizeOfNewImagesToUpload <= maxUploadSize;
+
     const errorOther = error?.server;
 
     return (<>
@@ -173,6 +184,7 @@ const JobForm = ({ job, setJob, handleSubmit, error, setError, isDisabled, isLoa
                             notes={notes} setJob={setJob}
                             setError={setError}
                             setIsResizingImages={setIsResizingImages}
+                            withinUploadSizeLimit={withinUploadSizeLimit}
                         />
                     </div>
                 </div>
@@ -181,7 +193,7 @@ const JobForm = ({ job, setJob, handleSubmit, error, setError, isDisabled, isLoa
             <div className='mt-4 mt-sm-0'>
                 <ActionButton
                     alignX='right'
-                    isDisabled={isDisabled || isResizingImages}
+                    isDisabled={isDisabled || isResizingImages || !withinUploadSizeLimit}
                     text={(isLoading ? 'Saving...' : 'Save')}
                     type='submit'
                 />

@@ -2,6 +2,12 @@
 import { formatCurrency } from '../utils/StringUtils';
 
 const FeesList = ({ billing }) => {
+    billing.sort((a, b) => {
+        if (a.fee.name < b.fee.name) return -1;
+        if (a.fee.name > b.fee.name) return 1;
+        return 0;
+    });
+
     return (
         <ul className='m-0 list-group'>
             {billing.map(bill => {

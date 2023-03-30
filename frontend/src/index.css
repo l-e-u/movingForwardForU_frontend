@@ -56,7 +56,7 @@ button.page-link:disabled {
   color: var(--bs-white) !important;
   opacity: 50% !important;
   pointer-events: none !important;
-  transition: all .15s;
+  transition: all .2s;
 }
 
 /* targets job form notes input, subject and message fields */

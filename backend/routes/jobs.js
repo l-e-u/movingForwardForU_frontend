@@ -17,7 +17,9 @@ import Job from '../models/job.js';
 const router = Router();
 
 router.get('/seed', async (req, res, next) => {
-    // const newJobs = seed();
+    const newJobs = seed();
+    await Job.insertMany(newJobs);
+
     const jobs = await Job.find({});
 
     jobs.forEach(async (doc) => {
@@ -3126,18 +3128,12 @@ function seed() {
         "63dd92d93fdd7ffda54fc7be",
         "63ec1c53ea2943d97c5e8b95",
         "63ff80e2d5210f44f4421151",
-        "64091aba747a05b2d11cb61c"
+        "64091aba747a05b2d11cb61c",
+        '6425de71a7a5dc133fa1340a',
+        '6425dec0a7a5dc133fa13410'
     ];
 
-    const status_ids = [
-        "63e1ab2690902690e30fa32b",
-        "63e681fdaf31ca1596af6543",
-        "63e68224af31ca1596af6549",
-        "63ebca8e36017a09f5ee6318",
-        "63ee61d7d9b464b1e452d194",
-        "641b49a6983b191937dc22c5",
-        "641b66595ffb4fdc371b408c"
-    ];
+    const status_ids = ['63e681fdaf31ca1596af6543', '641b49a6983b191937dc22c5', '63ee61d7d9b464b1e452d194', '63e1ab2690902690e30fa32b', '63e68224af31ca1596af6549', '63ebca8e36017a09f5ee6318', '6420aff76eac11c2337e402b'];
 
     const user_ids = [
         "63dabec106626a6ed0bffb93",
@@ -3145,6 +3141,8 @@ function seed() {
         "63fe626891807f31fbf1e2a5",
         "640bb974f4278292bffbd7e2"
     ];
+
+    const fee_ids = ['641399dfde247169d06a7c78', '641398a0de247169d06a7c57', '641398c8de247169d06a7c5d', '6413996ade247169d06a7c72', '64139903de247169d06a7c66', '64139b43de247169d06a7ca8', '64139a70de247169d06a7c8a', '64139a32de247169d06a7c84', '64139ae9de247169d06a7c96', '64139b08de247169d06a7ca2', '64139af8de247169d06a7c9c', '64139a11de247169d06a7c7e', '64139b6bde247169d06a7cb4', '6413992bde247169d06a7c6c', '64139b55de247169d06a7cae', '640a515fd5f530a24ac23d16', '640ca811ca34df07a17e02bd', '640ca91fca34df07a17e02c9', '640ca8b0ca34df07a17e02c3', '64139aa3de247169d06a7c90'];
 
     // 2 for 0 or 1... 3 for 0, 1, 2
     function getRandomInt(max) {
@@ -3154,12 +3152,15 @@ function seed() {
     jobs.forEach(job => {
         job.createdBy = '63fe4f3a91807f31fbf1e22e';
         job.drivers = [];
+        job.billing = [];
 
         job.notes.forEach(note => {
+            note.attachments = [];
             note.createdBy = user_ids[getRandomInt(user_ids.length)]
         })
 
         const numOfDrivers = getRandomInt(3);
+        const numOfFees = getRandomInt(fee_ids.length);
 
         const contact_id = contact_ids[getRandomInt(contact_ids.length)];
         job.customer = contact_id;
@@ -3169,6 +3170,11 @@ function seed() {
 
         for (let x = 0; x < numOfDrivers; x++) {
             job.drivers.push(user_ids[getRandomInt(user_ids.length)]);
+        };
+
+        for (let x = 0; x < numOfFees; x++) {
+            const feeId = fee_ids[getRandomInt(fee_ids.length)];
+            if (!job.billing.find(({ fee }) => fee === feeId)) job.billing.push({ adjustedAmount: null, fee: feeId });
         };
 
         const pickupDate = new Date(job.pickup.date);

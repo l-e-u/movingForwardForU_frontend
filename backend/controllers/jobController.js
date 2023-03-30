@@ -33,6 +33,10 @@ const getJobs = async (req, res) => {
         filters.customer = { $in: filters.customer.split(',') };
     };
 
+    if (filters.reference) {
+        filters.reference = { $regex: filters.reference };
+    };
+
     if (filters.mileageGTE) {
         filters.mileage = { $gte: filters.mileageGTE };
         delete filters.mileageGTE;
@@ -133,6 +137,7 @@ const createJob = async (req, res) => {
     try {
         // loop through each note and attachements to find the file corresponding to that attachment
         newJob.notes.forEach(({ attachments }) => {
+            // for new jobs, if there's any attachments, then there's a new file
             attachments.forEach((attachment, index) => {
                 const file = files.find(f => f.originalname === attachment.filename);
                 const { contentType, filename, id, originalname, size } = file;
@@ -215,6 +220,9 @@ const deleteJob = async (req, res) => {
         return res.status(404).json({ error });
     };
 
+    // after the job has been deleted loop through all notes and deleted all attachments
+    job.notes.forEach(({ attachments }) => deleteAttachments(attachments.map(attachment => ({ id: attachment.files_id }))));
+
     res.status(200).json(job);
 };
 
@@ -230,19 +238,24 @@ const updateJob = async (req, res) => {
     // from middleware
     const files = req.files;
 
-    console.log('to be updated:', updates);
+    console.log('Updated fields:', updates);
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
         return res.status(404).json({ error });
     };
 
     try {
-        // for each uploaded file, attach its info to its note
-        files.forEach(file => {
-            const { contentType, filename, id, originalname, size } = file;
-            const note = updates.notes.find(note => file.originalname === note.attachment.filename);
-            note.attachment = { contentType, filename, originalname, size, files_id: id };
+        updates.notes?.forEach(({ attachments }) => {
+            attachments.forEach((attachment, index) => {
+                // check if there's any new files for attachments
+                const file = files.find(f => f.originalname === attachment.filename);
 
+                // if a new file is found, then set its info
+                if (file) {
+                    const { contentType, filename, id, originalname, size } = file;
+                    attachments[index] = { contentType, filename, originalname, size, files_id: id };
+                };
+            });
         });
 
         const job = await Job.findByIdAndUpdate(
@@ -306,7 +319,7 @@ const updateJob = async (req, res) => {
         // if no input errors, then send back the err message as a server error
         if (!error) {
             error = {};
-            error.server = err.message;
+            error.server = err;
         };
 
         return res.status(400).json({ error });

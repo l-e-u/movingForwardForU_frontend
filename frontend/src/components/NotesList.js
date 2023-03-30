@@ -1,3 +1,4 @@
+import Counter from './Counter';
 import CreatedInfo from './CreatedInfo';
 import FileDownloadButton from './FileDownloadLink';
 
@@ -20,7 +21,8 @@ const NotesList = ({ list }) => {
                             aria-expanded='false'
                             aria-controls={'collapseMsg' + _id}>
                             <span>{subject}</span>
-                            {hasAttachments && <i className='bi bi-paperclip ms-2'></i>}
+                            {hasAttachments && <i className='bi bi-paperclip ms-2 text-secondary'></i>}
+                            {(numOfAttachments > 1) && <Counter number={numOfAttachments} />}
                         </button>
                         <div
                             className='collapse'
