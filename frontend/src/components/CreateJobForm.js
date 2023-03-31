@@ -7,7 +7,7 @@ import { useCreateJob } from '../hooks/useCreateJob.js';
 import JobForm from './JobForm.js';
 import FormHeader from './FormHeader.js';
 
-const CreateJobForm = ({ setShowThisForm }) => {
+const CreateJobForm = ({ setShowThisForm, setFilters }) => {
     const { createJob, error, setError, isLoading } = useCreateJob();
     const [job, setJob] = useState({
         billing: [],
@@ -54,7 +54,12 @@ const CreateJobForm = ({ setShowThisForm }) => {
                             status: job.status?._id,
                         })
                             .then(isCreated => {
-                                if (isCreated) setShowThisForm(false);
+                                if (isCreated) {
+                                    setShowThisForm(false);
+
+                                    // this is to trigger Jobs to fetch with filters after a new job was created, that way the new job is listed if it satisfies current filters
+                                    setFilters(prev => ({ ...prev }));
+                                };
                             })
                     }}
                 />

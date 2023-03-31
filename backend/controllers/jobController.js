@@ -214,7 +214,7 @@ const deleteJob = async (req, res) => {
         return res.status(404).json({ error });
     };
 
-    const job = await Job.findByIdAndDelete({ _id: id });
+    const job = await Job.findByIdAndDelete(id);
 
     if (!job) {
         return res.status(404).json({ error });

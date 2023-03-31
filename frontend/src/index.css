@@ -24,6 +24,11 @@ body {
   color: var(--darkBlue);
 }
 
+button.filter:hover {
+  transition: all .15s;
+  background-color: whitesmoke;
+}
+
 input[type='file']:disabled {
   opacity: .25;
 }

@@ -105,16 +105,6 @@ const jobSchema = new Schema(
     },
     {
         timestamps: true,
-        // toJSON: {
-        //     transform: function (doc, json) {
-        //         json.billing = json.fees.map(fee => {
-        //             return {
-        //                 ...fee,
-        //                 override: null
-        //             }
-        //         })
-        //     }
-        // }
     }
 );
 

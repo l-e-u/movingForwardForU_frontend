@@ -5,13 +5,14 @@ import './index.css';
 import App from './App';
 
 // context
+import { AuthContextProvider } from './context/AuthContext.js';
+import { ArchivesContextProvider } from './context/ArchivesContext';
+import { ContactsContextProvider } from './context/ContactsContext.js';
+import { FeesContextProvider } from './context/FeesContext.js';
 import { JobsContextProvider } from './context/JobsContext.js';
 import { MyJobsContextProvider } from './context/MyJobsContext.js';
 import { StatusesContextProvider } from './context/StatusesContext.js'
-import { ContactsContextProvider } from './context/ContactsContext.js';
-import { AuthContextProvider } from './context/AuthContext.js';
 import { UsersContextProvider } from './context/UsersContext.js';
-import { FeesContextProvider } from './context/FeesContext.js';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -23,7 +24,9 @@ root.render(
             <ContactsContextProvider>
               <JobsContextProvider>
                 <MyJobsContextProvider>
-                  <App />
+                  <ArchivesContextProvider>
+                    <App />
+                  </ArchivesContextProvider>
                 </MyJobsContextProvider>
               </JobsContextProvider>
             </ContactsContextProvider>

@@ -1,11 +1,9 @@
 import { useState } from "react";
 import { useAuthContext } from "./useAuthContext";
-import { useJobsContext } from "./useJobsContext";
 
 export const useCreateJob = () => {
     const [error, setError] = useState(null);
     const [isLoading, setIsLoading] = useState(null);
-    const { dispatch } = useJobsContext();
     const { user } = useAuthContext();
 
     const createJob = async (job) => {
@@ -43,8 +41,6 @@ export const useCreateJob = () => {
         if (response.ok) {
             setError(null);
             setIsLoading(false);
-
-            dispatch({ type: 'CREATE_JOB', payload: json });
             return true;
         };
     };

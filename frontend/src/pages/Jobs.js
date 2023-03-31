@@ -22,6 +22,7 @@ import PageContentWrapper from '../components/PageContentWrapper.js';
 // functions
 // import formatDistanceToNow from 'date-fns/formatDistanceToNow';
 import { urlQueryString } from '../utils/StringUtils.js';
+import ArchiveConfirmation from '../components/ArchiveConfirmation.js';
 
 const Jobs = ({ filters, setFilters }) => {
     const { user } = useAuthContext()
@@ -35,6 +36,7 @@ const Jobs = ({ filters, setFilters }) => {
     const [selectedJobId, setSelectedJobId] = useState(null);
 
     // sets when user selects menu or option, displays corresponding form
+    const [showArchiveConfirmation, setShowArchiveConfirmation] = useState(false);
     const [showCreateForm, setShowCreateForm] = useState(false);
     const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
     const [showEditForm, setShowEditForm] = useState(false);
@@ -48,7 +50,7 @@ const Jobs = ({ filters, setFilters }) => {
 
     // fetches results as the user chooses filters or changes limits for results
     useEffect(() => {
-        (async () => {
+        const timeout = setTimeout(async () => {
             setIsLoading(true);
             setError(null);
 
@@ -77,7 +79,9 @@ const Jobs = ({ filters, setFilters }) => {
                 dispatch({ type: 'SET_JOBS', payload: json.results });
 
             };
-        })();
+        }, 250);
+
+        return () => clearTimeout(timeout);
     }, [currentPage, dispatch, filters, limit, user]);
 
     const exportToExcel = () => {
@@ -148,23 +152,27 @@ const Jobs = ({ filters, setFilters }) => {
     };
 
     // sets all the forms and menus show setters to false
-    const hideAllMenusAndForms = () => [setShowEditForm, setShowCreateForm, setShowOptionsMenu, setShowDeleteConfirmation].forEach(setShow => setShow(false));
+    const hideAllMenusAndForms = () => [setShowArchiveConfirmation, setShowEditForm, setShowCreateForm, setShowOptionsMenu, setShowDeleteConfirmation].forEach(setShow => setShow(false));
+
+    const hasJobs = jobs ? jobs.length > 0 : false;
 
     return (
         <PageContentWrapper>
             <div className='d-flex flex-column gap-2 mb-3'>
                 {showCreateForm ?
-                    <CreateJobForm setShowThisForm={setShowCreateForm} /> :
+                    <CreateJobForm setShowThisForm={setShowCreateForm} setFilters={setFilters} /> :
                     // show the options show the create Job Form or to export the job list to excel
                     <div className='d-flex flex-column flex-sm-row gap-3 justify-content-between align-items-end'>
                         {(!showCreateForm && !showEditForm && !showDeleteConfirmation) &&
                             <div className='order-last order-sm-first'>
-                                <ActionButton
-                                    handleOnClick={() => {
-                                        if (!isLoading) exportToExcel();
-                                    }}
-                                    text='Export Listed Jobs'
-                                />
+                                {hasJobs &&
+                                    <ActionButton
+                                        handleOnClick={() => {
+                                            if (!isLoading) exportToExcel();
+                                        }}
+                                        text='Export Listed Jobs'
+                                    />
+                                }
                             </div>
                         }
                         {/* option to show the create Job Form */}
@@ -216,9 +224,14 @@ const Jobs = ({ filters, setFilters }) => {
 
                         // by default, an overview of the model is displayed, unless the user clicks on an option
                         switch (true) {
+                            case (showArchiveConfirmation && isSelectedJob):
+                                return (<div className='position-relative' key={_id}>
+                                    <ArchiveConfirmation job={job} setShowThisForm={setShowArchiveConfirmation} />
+                                </div>);
+
                             case (showEditForm && isSelectedJob):
                                 return (<div className='position-relative' key={_id}>
-                                    <EditJobForm prevJob={job} setShowThisForm={setShowEditForm} />
+                                    <EditJobForm prevJob={job} setShowThisForm={setShowEditForm} setFilters={setFilters} />
                                 </div>);
 
                             case (showDeleteConfirmation && isSelectedJob):
@@ -236,6 +249,10 @@ const Jobs = ({ filters, setFilters }) => {
                                 return (<div className='position-relative' key={_id}>
                                     <OptionsMenu
                                         showMenu={showOptionsMenu && isSelectedJob}
+                                        handleOnClickArchiveOption={() => {
+                                            hideAllMenusAndForms();
+                                            setShowArchiveConfirmation(true);
+                                        }}
                                         handleOnClickCloseMenu={() => setShowOptionsMenu(false)}
                                         handleOnClickDeleteOption={() => {
                                             hideAllMenusAndForms();

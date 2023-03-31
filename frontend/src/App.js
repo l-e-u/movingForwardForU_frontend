@@ -9,18 +9,20 @@ import NavMenu from './components/NavMenu.js';
 import Banner from './components/Banner.js'
 
 // pages
-import MyJobs from './pages/MyJobs.js';
+import Archives from './pages/Archives.js';
+import Contacts from './pages/Contacts.js';
+import Fees from './pages/Fees.js';
 import Jobs from './pages/Jobs.js'
 import Login from './pages/Login.js';
+import MyJobs from './pages/MyJobs.js';
 import Statuses from './pages/Statuses.js';
-import Contacts from './pages/Contacts.js';
 import Users from './pages/Users.js';
 import Verify from './pages/Verify.js';
-import Fees from './pages/Fees.js';
 
 function App() {
   const { user } = useAuthContext();
 
+  const [archiveFilters, setArchiveFilters] = useState({});
   const [jobFilters, setJobFilters] = useState({});
   const [myJobFilters, setMyJobFilters] = useState({});
   const [showNavMenu, setShowNavMenu] = useState(false);
@@ -29,6 +31,7 @@ function App() {
   useEffect(() => {
     // reset state when user changes
     setJobFilters({});
+    setMyJobFilters({});
     setShowNavMenu(false);
     setSelectedLink(0);
   }, [user])
@@ -63,6 +66,10 @@ function App() {
             <Route
               path='/fees'
               element={user ? <Fees /> : <Navigate to='/login' />}
+            />
+            <Route
+              path='/archives'
+              element={user ? <Archives filters={archiveFilters} setFilters={setArchiveFilters} /> : <Navigate to='/login' />}
             />
             <Route
               path='/login'

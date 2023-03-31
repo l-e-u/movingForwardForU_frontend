@@ -1,7 +1,11 @@
 // functions
+import { useState } from 'react';
 import { formatCurrency } from '../utils/StringUtils';
 
+// takes the amount and formats it to a string representing a currency (0,000,000.00). when the input is empty, the value set is null, when the amount is null, the currncy string is empty
 const CurrencyInput = ({ amount, setCurrency }) => {
+    const [currencyString, setCurrencyString] = useState(amount === null ? '' : formatCurrency(amount, true));
+
     return (
         <div className='input-group' style={{ maxWidth: '300px' }}>
             <span className='input-group-text py-0 px-1'>$</span>
@@ -11,14 +15,20 @@ const CurrencyInput = ({ amount, setCurrency }) => {
                 name='currency'
                 onBlur={e => {
                     const string = e.target.value;
-                    if (string !== '') setCurrency({ input: formatCurrency(string, true) });
+                    if (string !== '') setCurrencyString(formatCurrency(string, true));
                 }}
-                onChange={e => setCurrency({ input: formatCurrency(e.target.value) })}
+                onChange={e => {
+                    const input = e.target.value;
+                    const value = input === '' ? null : Number(e.target.value.replace(/,/g, ''));
+
+                    setCurrencyString(formatCurrency(e.target.value));
+                    setCurrency({ input: value });
+                }}
                 pattern="^\d{1,3}(,\d{3})*(\.\d+)?$"
                 step={0.01}
                 title='Needs to be a currency.'
                 type='text'
-                value={amount ?? ''}
+                value={currencyString}
             />
         </div>
     );

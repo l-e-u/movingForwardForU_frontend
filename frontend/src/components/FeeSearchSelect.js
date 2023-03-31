@@ -112,19 +112,19 @@ const FeeSearchSelect = ({ billing, setJob }) => {
                                                 {/* name of the fee */}
                                                 <small className='smallPrint' style={{ opacity: '.65' }}>{name}</small>
 
-                                                {/* list the adjustedAmount if any, otherwise list the fee's amount */}
+
                                                 <div className='d-flex align-items-center my-1'>
+                                                    {/* list the fee's base amount */}
                                                     <div className='text-nowrap me-2 flex-grow-1'>{'$ ' + formatCurrency(amount, true)}</div>
+                                                    {/* input for adjusted amount for the fee */}
                                                     <CurrencyInput
                                                         amount={adjustedAmount}
                                                         setCurrency={({ input }) => {
-                                                            const value = input === '' ? null : input;
-
                                                             setJob(prev => {
                                                                 return ({
                                                                     ...prev,
                                                                     billing: prev.billing.map(bill => {
-                                                                        if (bill.fee._id === _id) return ({ fee: { ...bill.fee }, adjustedAmount: value });
+                                                                        if (bill.fee._id === _id) return ({ fee: { ...bill.fee }, adjustedAmount: input });
                                                                         return bill;
                                                                     })
                                                                 })

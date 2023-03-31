@@ -4,12 +4,13 @@ import { connectToDatabase } from './models/index.js';
 import cors from 'cors';
 
 // routes
+import archiveRoutes from './routes/archives.js';
+import attachmentRoutes from './routes/attachments.js';
+import contactRoutes from './routes/contacts.js';
+import feeRoutes from './routes/fees.js';
 import jobRoutes from './routes/jobs.js';
 import statusRoutes from './routes/statuses.js';
-import contactRoutes from './routes/contacts.js';
 import userRoutes from './routes/users.js';
-import feeRoutes from './routes/fees.js';
-import attachmentRoutes from './routes/attachments.js';
 
 const PORT = process.env.PORT;
 const URI = process.env.MONGO_URI;
@@ -28,12 +29,13 @@ app.use((req, res, next) => {
 });
 
 // routes
+app.use('/api/archives', archiveRoutes);
+app.use('/api/attachments', attachmentRoutes);
+app.use('/api/contacts', contactRoutes);
+app.use('/api/fees', feeRoutes);
 app.use('/api/jobs', jobRoutes);
 app.use('/api/statuses', statusRoutes);
-app.use('/api/contacts', contactRoutes);
 app.use('/api/users', userRoutes);
-app.use('/api/fees', feeRoutes);
-app.use('/api/attachments', attachmentRoutes);
 
 // connect to db
 connectToDatabase(URI)

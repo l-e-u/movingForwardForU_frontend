@@ -1,6 +1,7 @@
 // components
 import AddressDisplay from './AddressDisplay';
-import Card from './Card'
+import Card from './Card';
+import Counter from './Counter';
 import CreatedInfo from './CreatedInfo';
 import DriversList from './DriversList';
 import FeesList from './FeesList';
@@ -30,8 +31,10 @@ const JobCard = ({
     showCreatedDetails = false,
 }) => {
     const hasDrivers = drivers.length > 0;
-    const hasBilling = billing.length > 0;
-    const hasNotes = notes.length > 0;
+    const numOfBills = billing.length;
+    const hasBilling = numOfBills > 0;
+    const numOfNotes = notes.length;
+    const hasNotes = numOfNotes > 0;
 
     return (
         <Card
@@ -89,9 +92,12 @@ const JobCard = ({
                 <div className='d-lg-flex gap-lg-5'>
                     {listBilling &&
                         <div className='w-lg-50 order-lg-last'>
-                            <div className='d-flex align-items-baseline'>
-                                <SmallHeader text={`Billing` + (hasBilling ? ` (${billing.length})` : '')} />
-                                {hasBilling && <small className='text-secondary smallPrint ms-2'>&#8224; adjusted amount</small>}
+                            <div className='d-flex gap-1'>
+                                <SmallHeader text='Billing' />
+                                {hasBilling && <>
+                                    <Counter number={numOfBills} />
+                                    <small className='text-secondary smallPrint ms-auto'>&#8224; adjusted amount</small>
+                                </>}
                             </div>
                             {hasBilling && <>
                                 <FeesList billing={billing} />
@@ -106,7 +112,10 @@ const JobCard = ({
                     }
 
                     <div className={'order-lg-first' + (listBilling ? ' w-lg-50' : ' flex-grow-1')}>
-                        <SmallHeader text={'Note' + ((notes.length > 1) ? 's' : '')} />
+                        <div className='d-flex gap-1'>
+                            <SmallHeader text={'Note' + ((notes.length > 1) ? 's' : '')} />
+                            {(hasNotes && numOfNotes > 1) && <Counter number={numOfNotes} />}
+                        </div>
                         {hasNotes ? <NotesList list={notes} /> : <div>No notes have been appended.</div>}
                     </div>
                 </div>

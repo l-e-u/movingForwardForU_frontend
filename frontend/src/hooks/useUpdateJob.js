@@ -1,11 +1,9 @@
 import { useState } from 'react'
 import { useAuthContext } from './useAuthContext';
-import { useJobsContext } from './useJobsContext';
 
 export const useUpdateJob = () => {
     const [error, setError] = useState(null);
     const [isLoading, setIsLoading] = useState(null);
-    const { dispatch } = useJobsContext();
     const { user } = useAuthContext();
 
     const updateJob = async ({ _id, updates, filesToDelete }) => {
@@ -47,7 +45,6 @@ export const useUpdateJob = () => {
             setError(null);
             setIsLoading(false);
 
-            dispatch({ type: 'UPDATE_JOB', payload: json });
             return true;
         };
     };

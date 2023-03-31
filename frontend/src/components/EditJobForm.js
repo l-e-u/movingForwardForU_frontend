@@ -8,7 +8,7 @@ import { noCharChanges } from '../utils/StringUtils.js';
 import JobForm from './JobForm';
 import FormHeader from './FormHeader';
 
-const EditJobForm = ({ prevJob, setShowThisForm }) => {
+const EditJobForm = ({ prevJob, setShowThisForm, setFilters }) => {
     const { updateJob, error, isLoading, setError } = useUpdateJob();
     const [job, setJob] = useState(prevJob);
     const updatedProperties = {};
@@ -76,7 +76,12 @@ const EditJobForm = ({ prevJob, setShowThisForm }) => {
                             updates: { ...updatedProperties },
                         })
                             .then(isCreated => {
-                                if (isCreated) setShowThisForm(false);
+                                if (isCreated) {
+                                    setShowThisForm(false);
+
+                                    // once the doc has been updated, trigger a fetch to get jobs based on set filters
+                                    setFilters(prev => ({ ...prev }));
+                                };
                             })
                     }} />
             </div>
