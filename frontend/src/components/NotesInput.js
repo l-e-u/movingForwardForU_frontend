@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState } from 'react';
 import { CSSTransition } from 'react-transition-group';
 
 // components
@@ -22,8 +23,16 @@ const NotesInput = ({
     withinUploadSizeLimit,
 }) => {
     const { user } = useAuthContext();
+
+    const notesRef = useRef(null);
+
     const numOfNotes = notes.length;
     const hasNotes = numOfNotes > 0;
+
+    // referred to the unordered list, scrolls to the bottom when a new note is added
+    const scrollToBottom = () => {
+        notesRef.current?.scroll({ top: notesRef.current?.scrollHeight, behavior: 'smooth' });
+    };
 
     const handleOnChange = (input, index) => {
         const updatedNotes = [...notes];
@@ -55,6 +64,9 @@ const NotesInput = ({
         });
     };
 
+    // smooth scroll to bottom of the list to bring into view newest note added
+    useEffect(scrollToBottom, [notes]);
+
     return (
         <div className='d-flex flex-column gap-2'>
             <div className='d-flex gap-1'>
@@ -62,7 +74,7 @@ const NotesInput = ({
                 {(numOfNotes > 1) && <Counter number={numOfNotes} />}
             </div>
             {hasNotes &&
-                <ul className='list-group d-flex flex-column gap-3 overflow-scroll rounded-0 py-2' style={{ maxHeight: '700px', borderTop: '1px solid var(--darkBlue)', borderBottom: '1px solid var(--darkBlue)' }}>
+                <ul className='list-group d-flex flex-column gap-3 overflow-scroll rounded-0 py-2' ref={notesRef} style={{ maxHeight: '700px', borderTop: '1px solid var(--darkBlue)', borderBottom: '1px solid var(--darkBlue)' }}>
                     {notes.map((note, index) => {
                         const { _id, attachments } = note;
                         const inputSubjectError = error?.notes ? error?.notes[index]?.subject : null;
@@ -75,7 +87,7 @@ const NotesInput = ({
                                 timeout={500}
                                 key={_id || index}
                             >
-                                <li className='position-relative'>
+                                <li className='position-relative border rounded' style={{ backgroundColor: 'var(--bs-gray-100)' }}>
                                     {/* the X buttons removes the note from the job */}
                                     <div className='position-absolute top-0 end-0 text-action'>
                                         <XButton handleOnClick={() => handleDeleteOnClick(index)} />
@@ -83,16 +95,15 @@ const NotesInput = ({
 
                                     {/* input for the subject line and message textarea */}
                                     <input
-                                        className={'form-control-plaintext rounded ps-2 py-1 pe-0' + (inputSubjectError ? ' is-invalid' : '')}
+                                        className={'form-control-plaintext text-reset background-white ps-2 py-1 pe-0' + (inputSubjectError ? ' is-invalid' : '')}
                                         placeholder={'* Subject' + (inputSubjectError ? ` : ${inputSubjectError}` : '')}
                                         onBlur={e => handleOnChange({ subject: e.target.value.trim() }, index)}
                                         onChange={e => handleOnChange({ subject: e.target.value }, index)}
-                                        style={{ backgroundColor: 'var(--bs-gray-200)' }}
                                         value={note.subject}
                                     />
                                     <GrowingTextArea
                                         value={note.message}
-                                        className='form-control-plaintext px-1'
+                                        className='form-control-plaintext px-2 smallPrint text-reset'
                                         placeholder='Message'
                                         onBlur={e => handleOnChange({ message: e.target.value.trim() }, index)}
                                         onChange={e => handleOnChange({ message: e.target.value }, index)}
@@ -100,12 +111,13 @@ const NotesInput = ({
 
                                     {/* only show the handler if the note already has attachments or it's within the limit */}
                                     {(withinUploadSizeLimit || attachments.length > 0) &&
-                                        <FileUploadHandler
+                                        <div className='px-2 pb-2'> <FileUploadHandler
                                             files={attachments || []}
                                             isResizingImages={isResizingImages}
                                             setIsResizingImages={setIsResizingImages}
                                             setFiles={({ images }) => handleOnChange({ attachments: images }, index)}
                                         />
+                                        </div>
                                     }
                                 </li>
                             </CSSTransition>

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 
 // components
 import PageContentWrapper from '../components/PageContentWrapper.js';
@@ -21,6 +21,8 @@ const Users = () => {
     const { user } = useAuthContext();
     const { users, dispatch } = useUsersContext();
 
+    const editFormRef = useRef(null);
+
     // local state
     const [error, setError] = useState(null);
     const [isLoading, setIsLoading] = useState(null);
@@ -28,6 +30,10 @@ const Users = () => {
     const [showCreateForm, setShowCreateForm] = useState(false);
     const [showEditForm, setShowEditForm] = useState(false);
     const [showOptionsMenu, setShowOptionsMenu] = useState(false);
+
+    useEffect(() => {
+        if (showEditForm) editFormRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }, [showEditForm]);
 
     useEffect(() => {
         (async () => {
@@ -93,7 +99,7 @@ const Users = () => {
 
                         switch (true) {
                             case (showEditForm && isSelectedUser):
-                                return (<div className='position-relative' key={_id}>
+                                return (<div className='position-relative' key={_id} ref={editFormRef}>
                                     <EditUserForm prev={u} setShowThisForm={setShowEditForm} />
                                 </div>);
 

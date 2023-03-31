@@ -1,4 +1,7 @@
 import { useState } from 'react';
+import { CSSTransition } from 'react-transition-group';
+
+// hooks
 import { useUpdateJob } from '../hooks/useUpdateJob.js';
 
 // functions
@@ -56,36 +59,43 @@ const EditJobForm = ({ prevJob, setShowThisForm, setFilters }) => {
     const noInputChanges = Object.keys(updatedProperties).length === 0;
 
     return (
-        <div className='shadow'>
-            <FormHeader text='Edit Job' handleCloseForm={() => setShowThisForm(false)} />
+        <CSSTransition
+            appear={true}
+            classNames='scale-'
+            in={true}
+            timeout={500}
+        >
+            <div className='shadow'>
+                <FormHeader text='Edit Job' handleCloseForm={() => setShowThisForm(false)} />
 
-            <div className='rounded-bottom background-white text-reset px-3 pb-3 pt-1'>
-                <JobForm
-                    job={job}
-                    setJob={setJob}
-                    setError={setError}
-                    error={error}
-                    isDisabled={isLoading || noInputChanges}
-                    isLoading={isLoading}
-                    handleSubmit={async (e) => {
-                        e.preventDefault();
+                <div className='rounded-bottom background-white text-reset px-3 pb-3 pt-1'>
+                    <JobForm
+                        job={job}
+                        setJob={setJob}
+                        setError={setError}
+                        error={error}
+                        isDisabled={isLoading || noInputChanges}
+                        isLoading={isLoading}
+                        handleSubmit={async (e) => {
+                            e.preventDefault();
 
-                        await updateJob({
-                            filesToDelete,
-                            _id: prevJob._id,
-                            updates: { ...updatedProperties },
-                        })
-                            .then(isCreated => {
-                                if (isCreated) {
-                                    setShowThisForm(false);
-
-                                    // once the doc has been updated, trigger a fetch to get jobs based on set filters
-                                    setFilters(prev => ({ ...prev }));
-                                };
+                            await updateJob({
+                                filesToDelete,
+                                _id: prevJob._id,
+                                updates: { ...updatedProperties },
                             })
-                    }} />
+                                .then(isCreated => {
+                                    if (isCreated) {
+                                        setShowThisForm(false);
+
+                                        // once the doc has been updated, trigger a fetch to get jobs based on set filters
+                                        setFilters(prev => ({ ...prev }));
+                                    };
+                                })
+                        }} />
+                </div>
             </div>
-        </div>
+        </CSSTransition>
     );
 };
 

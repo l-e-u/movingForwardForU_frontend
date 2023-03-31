@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { CSSTransition } from 'react-transition-group';
 
 // hooks
@@ -23,8 +23,18 @@ const FeeSearchSelect = ({ billing, setJob }) => {
     const { fees, dispatch } = useFeesContext();
     const { user } = useAuthContext();
 
+    const billingRef = useRef(null);
+
     const numOfFees = billing.length;
     const hasAddedFees = numOfFees > 0;
+
+    // referred to the unordered list, scrolls to the bottom when a new fee is added
+    const scrollToBottom = () => {
+        billingRef.current?.scroll({ top: billingRef.current?.scrollHeight, behavior: 'smooth' });
+    };
+
+    // smooth scroll to bottom of the list to bring into view newest fee added
+    useEffect(scrollToBottom, [billing]);
 
     // on first mount only, get documents
     useEffect(() => {
@@ -86,7 +96,7 @@ const FeeSearchSelect = ({ billing, setJob }) => {
                         <small className='text-secondary ms-2'>&#8224; adjusted amount</small>
                     </div>
 
-                    <ul className='list-group flex-grow-1 d-flex flex-column gap-1 overflow-scroll rounded-0 py-2' style={{ maxHeight: '600px', borderTop: '1px solid var(--darkBlue)', borderBottom: '1px solid var(--darkBlue)' }}>
+                    <ul className='list-group flex-grow-1 d-flex flex-column gap-1 overflow-scroll rounded-0 py-2' ref={billingRef} style={{ maxHeight: '600px', borderTop: '1px solid var(--darkBlue)', borderBottom: '1px solid var(--darkBlue)' }}>
 
                         {/* when a fee is selected, it creates a list item that gives the user an option to clear it (removes from selected fee list) or enter an adjusted amount to use instead of the base fee amount */}
 

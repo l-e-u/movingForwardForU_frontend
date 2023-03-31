@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 
 // hooks
 import { useAuthContext } from '../hooks/useAuthContext.js';
@@ -22,6 +22,8 @@ const Statuses = () => {
     const { statuses, dispatch } = useStatusesContext();
     const { user } = useAuthContext();
 
+    const editFormRef = useRef(null);
+
     // local state
     const [error, setError] = useState(null);
     const [isLoading, setIsLoading] = useState(null);
@@ -30,6 +32,10 @@ const Statuses = () => {
     const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
     const [showEditForm, setShowEditForm] = useState(false);
     const [showOptionsMenu, setShowOptionsMenu] = useState(false);
+
+    useEffect(() => {
+        if (showEditForm) editFormRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }, [showEditForm]);
 
     // get statuses once
     useEffect(() => {
@@ -94,7 +100,7 @@ const Statuses = () => {
 
                         switch (true) {
                             case (showEditForm && isSelectedStatus):
-                                return (<div className='position-relative' key={_id}>
+                                return (<div className='position-relative' key={_id} ref={editFormRef}>
                                     <EditStatusForm prevStatus={status} setShowThisForm={setShowEditForm} />
                                 </div>);
 

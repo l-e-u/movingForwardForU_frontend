@@ -1,4 +1,7 @@
 import { useState } from "react";
+import { CSSTransition } from 'react-transition-group';
+
+// hooks
 import { useUpdateStatus } from "../hooks/useUpdateStatus.js";
 
 // functions
@@ -22,33 +25,40 @@ const EditStatusForm = ({ prevStatus, setShowThisForm }) => {
     const noInputChanges = !nameHasChanged && !descHasChanged;
 
     return (
-        <div className='shadow'>
-            <FormHeader text='Edit Status' handleCloseForm={() => setShowThisForm(false)} />
+        <CSSTransition
+            appear={true}
+            classNames='scale-'
+            in={true}
+            timeout={500}
+        >
+            <div className='shadow'>
+                <FormHeader text='Edit Status' handleCloseForm={() => setShowThisForm(false)} />
 
-            <div className='rounded-bottom background-white text-reset p-3'>
-                <CautionNotice text='Changes will also reflect on all jobs with the same status.' />
+                <div className='rounded-bottom background-white text-reset p-3'>
+                    <CautionNotice text='Changes will also reflect on all jobs with the same status.' />
 
-                <StatusForm
-                    status={status}
-                    setStatus={setStatus}
-                    error={error}
-                    isDisabled={isLoading || noInputChanges}
-                    isLoading={isLoading}
-                    handleSubmit={async (e) => {
-                        e.preventDefault();
+                    <StatusForm
+                        status={status}
+                        setStatus={setStatus}
+                        error={error}
+                        isDisabled={isLoading || noInputChanges}
+                        isLoading={isLoading}
+                        handleSubmit={async (e) => {
+                            e.preventDefault();
 
-                        // when patching, only update the data that has been changed, any undefined values will be ignored in the backend
-                        await updateStatus({
-                            _id: prevStatus._id,
-                            name: nameHasChanged ? name : undefined,
-                            description: descHasChanged ? description : undefined
-                        })
-                            .then(isUpdated => {
-                                if (isUpdated) setShowThisForm(false);
-                            });
-                    }} />
+                            // when patching, only update the data that has been changed, any undefined values will be ignored in the backend
+                            await updateStatus({
+                                _id: prevStatus._id,
+                                name: nameHasChanged ? name : undefined,
+                                description: descHasChanged ? description : undefined
+                            })
+                                .then(isUpdated => {
+                                    if (isUpdated) setShowThisForm(false);
+                                });
+                        }} />
+                </div>
             </div>
-        </div>
+        </CSSTransition>
     );
 };
 

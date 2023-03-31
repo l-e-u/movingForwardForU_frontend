@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import * as XLSX from 'xlsx';
 
 // hooks
@@ -27,6 +27,8 @@ import ArchiveConfirmation from '../components/ArchiveConfirmation.js';
 const Jobs = ({ filters, setFilters }) => {
     const { user } = useAuthContext()
     const { jobs, dispatch } = useJobsContext();
+
+    const editFormRef = useRef(null);
 
     // used during fetching
     const [error, setError] = useState(null);
@@ -83,6 +85,14 @@ const Jobs = ({ filters, setFilters }) => {
 
         return () => clearTimeout(timeout);
     }, [currentPage, dispatch, filters, limit, user]);
+
+    useEffect(() => {
+        if (showEditForm) scrollIntoView();
+    }, [showEditForm]);
+
+    const scrollIntoView = () => {
+        editFormRef.current?.scrollIntoView({ behavior: 'smooth' });
+    };
 
     const exportToExcel = () => {
         const dataSet = jobs.map(job => {
@@ -176,7 +186,7 @@ const Jobs = ({ filters, setFilters }) => {
                             </div>
                         }
                         {/* option to show the create Job Form */}
-                        <div className='order-first order-sm-last'>
+                        <div className='order-first order-sm-last ms-auto'>
                             <ActionButton
                                 handleOnClick={() => {
                                     if (!isLoading) {
@@ -230,7 +240,7 @@ const Jobs = ({ filters, setFilters }) => {
                                 </div>);
 
                             case (showEditForm && isSelectedJob):
-                                return (<div className='position-relative' key={_id}>
+                                return (<div className='position-relative' key={_id} ref={editFormRef}>
                                     <EditJobForm prevJob={job} setShowThisForm={setShowEditForm} setFilters={setFilters} />
                                 </div>);
 

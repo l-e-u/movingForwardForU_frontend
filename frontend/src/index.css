@@ -155,7 +155,7 @@ button.page-link:disabled {
 }
 
 .fade--enter {
-  opacity: 1;
+  opacity: 0;
 }
 
 .fade--enter-active {
@@ -178,6 +178,49 @@ button.page-link:disabled {
 
 .fade--exit-done {
   opacity: 0;
+}
+
+.scale--appear {
+  opacity: 0;
+  transform: scale(0);
+}
+
+.scale--appear-active {
+  opacity: 1;
+  transform: scale(1);
+  transition: all .5s;
+}
+
+.scale--enter {
+  opacity: 0;
+  transform: scale(0);
+}
+
+.scale--enter-active {
+  opacity: 1;
+  transform: scale(1);
+  transition: all .5s;
+}
+
+.scale--enter-done {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.scale--exit {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.scale--exit-active {
+  opacity: 0;
+  transform: scale(0);
+  transition: all .5s;
+}
+
+.scale--exit-done {
+  opacity: 0;
+  transform: scale(0);
 }
 
 .slideFromLeft--appear {

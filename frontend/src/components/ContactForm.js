@@ -247,7 +247,7 @@ const ContactForm = ({ contact, setContact, handleSubmit, error, isDisabled, isL
                         return { ...prev, misc: e.target.value };
                     })}
                     placeholder='Miscellaneous'
-                    value={misc}
+                    value={misc ?? ''}
                 />
                 <label htmlFor='miscTextarea' className='form-label'>Miscellaneous</label>
             </div>

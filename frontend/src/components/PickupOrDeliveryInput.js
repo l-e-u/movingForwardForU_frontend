@@ -52,12 +52,14 @@ const PickupOrDeliveryInput = ({
             {includeTime && <TimeInput date={new Date(date)} setTime={setPickupOrDeliveryInfo} />}
 
             <PlacesAutocomplete
-                value={address}
+                debounce={250}
+                googleCallbackName={'init' + propertyText.toUpperCase()}
+                highlightFirstSuggestion={true}
                 onChange={value => setPickupOrDeliveryInfo({ address: value })}
                 onSelect={value => setPickupOrDeliveryInfo({ address: value })}
-                debounce={250}
-                highlightFirstSuggestion={true}
-                shouldFetchSuggestions={address.length > 2}>
+                shouldFetchSuggestions={address.length > 2}
+                value={address}
+            >
                 {({ getInputProps, suggestions, getSuggestionItemProps, loading }) => {
                     return (
                         <div className="position-relative">
@@ -87,9 +89,8 @@ const PickupOrDeliveryInput = ({
                                 })}
                             </ul>
                         </div>
-                    )
-                }
-                }
+                    );
+                }}
             </PlacesAutocomplete>
         </div>
     );

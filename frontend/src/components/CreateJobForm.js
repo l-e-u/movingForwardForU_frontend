@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { CSSTransition } from 'react-transition-group';
 
 // hooks
 import { useCreateJob } from '../hooks/useCreateJob.js';
@@ -23,48 +24,55 @@ const CreateJobForm = ({ setShowThisForm, setFilters }) => {
     });
 
     return (
-        <div className='shadow mb-4'>
-            <FormHeader text='New Job' handleCloseForm={() => setShowThisForm(false)} />
+        <CSSTransition
+            appear={true}
+            classNames='scale-'
+            in={true}
+            timeout={500}
+        >
+            <div className='shadow mb-4'>
+                <FormHeader text='New Job' handleCloseForm={() => setShowThisForm(false)} />
 
-            <div className='rounded-bottom background-white text-reset px-3 pb-3 pt-1'>
-                <JobForm
-                    job={job}
-                    setJob={setJob}
-                    setError={setError}
-                    error={error}
-                    isDisabled={isLoading}
-                    isLoading={isLoading}
-                    handleSubmit={async (e) => {
-                        e.preventDefault();
+                <div className='rounded-bottom background-white text-reset px-3 pb-3 pt-1'>
+                    <JobForm
+                        job={job}
+                        setJob={setJob}
+                        setError={setError}
+                        error={error}
+                        isDisabled={isLoading}
+                        isLoading={isLoading}
+                        handleSubmit={async (e) => {
+                            e.preventDefault();
 
-                        await createJob({
-                            ...job,
-                            customer: job.customer?._id,
-                            drivers: job.drivers.map(d => d._id),
-                            mileage: Number(job.mileage),
-                            billing: job.billing.map(bill => {
-                                let adjustedAmount = bill.adjustedAmount
-                                if (adjustedAmount !== null) adjustedAmount = Number(adjustedAmount);
+                            await createJob({
+                                ...job,
+                                customer: job.customer?._id,
+                                drivers: job.drivers.map(d => d._id),
+                                mileage: Number(job.mileage),
+                                billing: job.billing.map(bill => {
+                                    let adjustedAmount = bill.adjustedAmount
+                                    if (adjustedAmount !== null) adjustedAmount = Number(adjustedAmount);
 
-                                return {
-                                    adjustedAmount,
-                                    fee: bill.fee._id,
-                                }
-                            }),
-                            status: job.status?._id,
-                        })
-                            .then(isCreated => {
-                                if (isCreated) {
-                                    setShowThisForm(false);
-
-                                    // this is to trigger Jobs to fetch with filters after a new job was created, that way the new job is listed if it satisfies current filters
-                                    setFilters(prev => ({ ...prev }));
-                                };
+                                    return {
+                                        adjustedAmount,
+                                        fee: bill.fee._id,
+                                    }
+                                }),
+                                status: job.status?._id,
                             })
-                    }}
-                />
+                                .then(isCreated => {
+                                    if (isCreated) {
+                                        setShowThisForm(false);
+
+                                        // this is to trigger Jobs to fetch with filters after a new job was created, that way the new job is listed if it satisfies current filters
+                                        setFilters(prev => ({ ...prev }));
+                                    };
+                                })
+                        }}
+                    />
+                </div>
             </div>
-        </div>
+        </CSSTransition>
     );
 };
 

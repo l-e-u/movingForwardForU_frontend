@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 // hooks
 import { useAuthContext } from '../hooks/useAuthContext.js';
@@ -19,6 +19,8 @@ import PageContentWrapper from '../components/PageContentWrapper.js';
 const Contacts = () => {
     const { contacts, dispatch } = useContactsContext();
     const { user } = useAuthContext();
+
+    const editFormRef = useRef(null);
 
     // local state
     const [error, setError] = useState(null);
@@ -58,6 +60,14 @@ const Contacts = () => {
         })();
     }, [dispatch, user]);
 
+    useEffect(() => {
+        if (showEditForm) scrollToBottom();
+    }, [showEditForm]);
+
+    const scrollToBottom = () => {
+        editFormRef.current?.scrollIntoView({ behavior: 'smooth' });
+    };
+
     // sets all the forms and menus show setters to false
     const hideAllMenusAndForms = () => [setShowEditForm, setShowCreateForm, setShowOptionsMenu, setShowDeleteConfirmation].forEach(setShow => setShow(false));
 
@@ -92,7 +102,7 @@ const Contacts = () => {
                         // by default, an overview of the model is displayed, unless the user clicks on an option
                         switch (true) {
                             case (showEditForm && isSelectedContact):
-                                return (<div className='position-relative' key={_id}>
+                                return (<div className='position-relative' key={_id} ref={editFormRef}>
                                     <EditContactForm prevContact={contact} setShowThisForm={setShowEditForm} />
                                 </div>);
 

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 
 // components
 import ActionButton from '../components/ActionButton.js';
@@ -32,6 +32,12 @@ const Fees = () => {
 
     const { user } = useAuthContext();
     const { fees, dispatch } = useFeesContext();
+
+    const editFormRef = useRef(null);
+
+    useEffect(() => {
+        if (showEditForm) editFormRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }, [showEditForm]);
 
     useEffect(() => {
         (async () => {
@@ -95,7 +101,7 @@ const Fees = () => {
 
                         switch (true) {
                             case (showEditForm && isSelectedFee):
-                                return (<div className='position-relative' key={_id}>
+                                return (<div className='position-relative' key={_id} ref={editFormRef}>
                                     <EditFeeForm prev={fee} setShowThisForm={setShowEditForm} />
                                 </div>);
 

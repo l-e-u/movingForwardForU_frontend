@@ -1,5 +1,7 @@
-// context
 import { useState } from 'react';
+import { CSSTransition } from 'react-transition-group';
+
+// hooks
 import { useCreateFee } from '../hooks/useCreateFee';
 
 // components
@@ -15,28 +17,35 @@ const CreateFeeForm = ({ setShowThisForm }) => {
     });
 
     return (
-        <div className='shadow'>
-            <FormHeader text='New Fee' handleCloseForm={() => setShowThisForm(false)} />
+        <CSSTransition
+            appear={true}
+            classNames='scale-'
+            in={true}
+            timeout={500}
+        >
+            <div className='shadow'>
+                <FormHeader text='New Fee' handleCloseForm={() => setShowThisForm(false)} />
 
-            <div className='rounded-bottom background-white text-reset px-3 pb-3 pt-1'>
-                <FeeForm
-                    {...fee}
-                    error={error}
-                    handleSubmit={async () => {
-                        await createFee({
-                            ...fee,
-                            amount: Number(fee.amount.replace(/,/g, ''))
-                        })
-                            .then(isCreated => {
-                                if (isCreated) setShowThisForm(false);
-                            });
-                    }}
-                    isDisabled={isLoading}
-                    isLoading={isLoading}
-                    setFee={setFee}
-                />
+                <div className='rounded-bottom background-white text-reset px-3 pb-3 pt-1'>
+                    <FeeForm
+                        {...fee}
+                        error={error}
+                        handleSubmit={async () => {
+                            await createFee({
+                                ...fee,
+                                amount: Number(fee.amount.replace(/,/g, ''))
+                            })
+                                .then(isCreated => {
+                                    if (isCreated) setShowThisForm(false);
+                                });
+                        }}
+                        isDisabled={isLoading}
+                        isLoading={isLoading}
+                        setFee={setFee}
+                    />
+                </div>
             </div>
-        </div>
+        </CSSTransition>
     );
 };
 

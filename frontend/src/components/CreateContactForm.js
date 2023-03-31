@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useState } from 'react';
+import { CSSTransition } from 'react-transition-group';
 
 // hooks
-import { useCreateContact } from "../hooks/useCreateContact.js";
+import { useCreateContact } from '../hooks/useCreateContact.js';
 
 // components
 import ContactForm from './ContactForm.js';
@@ -22,26 +23,33 @@ const CreateContactForm = ({ setShowThisForm }) => {
     });
 
     return (
-        <div className='shadow'>
-            <FormHeader text='New Contact' handleCloseForm={() => setShowThisForm(false)} />
+        <CSSTransition
+            appear={true}
+            classNames='scale-'
+            in={true}
+            timeout={500}
+        >
+            <div className='shadow'>
+                <FormHeader text='New Contact' handleCloseForm={() => setShowThisForm(false)} />
 
-            <div className='rounded-bottom background-white text-reset px-3 pb-3 pt-1'>
-                <ContactForm
-                    contact={contact}
-                    setContact={setContact}
-                    error={error}
-                    isDisabled={isLoading}
-                    isLoading={isLoading}
-                    handleSubmit={async (e) => {
-                        e.preventDefault();
+                <div className='rounded-bottom background-white text-reset px-3 pb-3 pt-1'>
+                    <ContactForm
+                        contact={contact}
+                        setContact={setContact}
+                        error={error}
+                        isDisabled={isLoading}
+                        isLoading={isLoading}
+                        handleSubmit={async (e) => {
+                            e.preventDefault();
 
-                        await createContact(contact)
-                            .then(isCreated => {
-                                if (isCreated) setShowThisForm(false)
-                            })
-                    }} />
+                            await createContact(contact)
+                                .then(isCreated => {
+                                    if (isCreated) setShowThisForm(false)
+                                })
+                        }} />
+                </div>
             </div>
-        </div>
+        </CSSTransition>
     );
 };
 

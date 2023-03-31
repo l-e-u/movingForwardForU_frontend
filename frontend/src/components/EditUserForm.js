@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { CSSTransition } from 'react-transition-group';
 
 // hooks
 import { useUpdateUser } from '../hooks/useUpdateUser';
@@ -30,35 +31,42 @@ const EditUserForm = ({ prev, setShowThisForm }) => {
     const noInputChanges = Object.keys(updatedProperties).length === 0;
 
     return (
-        <div className='shadow'>
-            <FormHeader text='Edit User' handleCloseForm={() => setShowThisForm(false)} />
+        <CSSTransition
+            appear={true}
+            classNames='scale-'
+            in={true}
+            timeout={500}
+        >
+            <div className='shadow'>
+                <FormHeader text='Edit User' handleCloseForm={() => setShowThisForm(false)} />
 
-            <div className='rounded-bottom background-white text-reset p-3'>
-                <CautionNotice text='Changes will also reflect on all other documents with this user.' />
+                <div className='rounded-bottom background-white text-reset p-3'>
+                    <CautionNotice text='Changes will also reflect on all other documents with this user.' />
 
-                <CautionNotice text={`Updating the email will require ${user.firstName} to verify it. They won't be able to login until they do.`} />
+                    <CautionNotice text={`Updating the email will require ${user.firstName} to verify it. They won't be able to login until they do.`} />
 
-                <UserForm
-                    error={error}
-                    isDisabled={isLoading || noInputChanges}
-                    isLoading={isLoading}
-                    isEditing={true}
-                    handleSubmit={async (e) => {
-                        e.preventDefault();
+                    <UserForm
+                        error={error}
+                        isDisabled={isLoading || noInputChanges}
+                        isLoading={isLoading}
+                        isEditing={true}
+                        handleSubmit={async (e) => {
+                            e.preventDefault();
 
-                        await updateUser({
-                            _id: prev._id,
-                            profile: updatedProperties
-                        })
-                            .then(isCreated => {
-                                if (isCreated) setShowThisForm(false);
+                            await updateUser({
+                                _id: prev._id,
+                                profile: updatedProperties
                             })
-                    }}
-                    setUser={setUser}
-                    user={user}
-                />
+                                .then(isCreated => {
+                                    if (isCreated) setShowThisForm(false);
+                                })
+                        }}
+                        setUser={setUser}
+                        user={user}
+                    />
+                </div>
             </div>
-        </div>
+        </CSSTransition>
     )
 };
 

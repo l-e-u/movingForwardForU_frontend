@@ -1,13 +1,14 @@
 import { useEffect, useState } from 'react';
+import { CSSTransition } from 'react-transition-group';
 
 // components
 import ActionButton from './ActionButton';
+import FormHeader from './FormHeader';
 import LoadingDocuments from './LoadingDocuments';
 
 // hooks
 import { useDeleteDocument } from '../hooks/useDeleteDocument';
 import { useAuthContext } from '../hooks/useAuthContext';
-import FormHeader from './FormHeader';
 
 // jobs and archives can be deleted without checking for any references. any other model document needs to check if there's any existing jobs that have a reference to that document, otherwise the user will have to change those references or delete that job before they can delete the requested document
 const DeleteConfirmation = ({
@@ -57,41 +58,48 @@ const DeleteConfirmation = ({
   }, [checkReference, doc_id, user]);
 
   return (
-    <div className='shadow'>
-      <FormHeader text='Confirm Delete' handleCloseForm={() => setShowThisForm(false)} />
+    <CSSTransition
+      appear={true}
+      classNames='scale-'
+      in={true}
+      timeout={500}
+    >
+      <div className='shadow'>
+        <FormHeader text='Confirm Delete' handleCloseForm={() => setShowThisForm(false)} />
 
-      <div className='rounded-bottom background-white text-reset px-3 pb-3 pt-1'>
-        {/* show spinner with actively fetching data */}
-        {getIsLoading && <div className='my-5'><LoadingDocuments /></div>}
+        <div className='rounded-bottom background-white text-reset px-3 pb-3 pt-1'>
+          {/* show spinner with actively fetching data */}
+          {getIsLoading && <div className='my-5'><LoadingDocuments /></div>}
 
-        {error?.server && <p>{'Could not delete. ' + error.server.message + ' Refresh and try again.'}</p>}
+          {error?.server && <p>{'Could not delete. ' + error.server.message + ' Refresh and try again.'}</p>}
 
-        {(references.length > 0) &&
-          <p className='m-0 px-3 pt-3 pb-2'>{`This ${model.toLowerCase()} is referenced on one or more jobs, you must delete, archive, or update the job(s) before deleting this document.`}</p>
-        }
+          {(references.length > 0) &&
+            <p className='m-0 px-3 pt-3 pb-2'>{`This ${model.toLowerCase()} is referenced on one or more jobs, you must delete, archive, or update the job(s) before deleting this document.`}</p>
+          }
 
-        {(!error && !getIsLoading && !getError && (references.length === 0)) && <>
-          <p style={{ whiteSpace: 'pre-wrap' }}>{`Are you sure you want to delete this ${model.toLowerCase()}?\nThis cannot be undone.`}</p>
+          {(!error && !getIsLoading && !getError && (references.length === 0)) && <>
+            <p style={{ whiteSpace: 'pre-wrap' }}>{`Are you sure you want to delete this ${model.toLowerCase()}?\nThis cannot be undone.`}</p>
 
-          <div className='d-flex flex-column gap-3 flex-sm-row justify-content-between align-items-center'>
-            <ActionButton
-              text='Cancel'
-              handleOnClick={() => setShowThisForm(false)}
-            />
+            <div className='d-flex flex-column gap-3 flex-sm-row justify-content-between align-items-center'>
+              <ActionButton
+                text='Cancel'
+                handleOnClick={() => setShowThisForm(false)}
+              />
 
-            <ActionButton
-              text={(isLoading ? 'Deleting...' : 'Confirm')}
-              handleOnClick={() => {
-                deleteDocument({ _id: doc_id, dispatch, model, route })
-                  .then(isDeleted => {
-                    if (isDeleted) setShowThisForm(false);
-                  });
-              }}
-            />
-          </div>
-        </>}
+              <ActionButton
+                text={(isLoading ? 'Deleting...' : 'Confirm')}
+                handleOnClick={() => {
+                  deleteDocument({ _id: doc_id, dispatch, model, route })
+                    .then(isDeleted => {
+                      if (isDeleted) setShowThisForm(false);
+                    });
+                }}
+              />
+            </div>
+          </>}
+        </div>
       </div>
-    </div>
+    </CSSTransition>
   );
 };
 

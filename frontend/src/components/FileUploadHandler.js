@@ -57,11 +57,11 @@ const FileUploadHandler = ({ files, isResizingImages, setIsResizingImages, setFi
         const numOfFiles = files.length;
 
         return (<button
-            className='btn btn-sm text-action border-0 p-0 text-start'
+            className='btn btn-sm text-action border-0 w-100 text-end'
             onClick={() => setFiles({ images: [] })}
             type='button'
         >
-            {'Remove ' + (numOfFiles < 2 ? ' attachment.' : numOfFiles + ' attachments.')}
+            {'Remove ' + (numOfFiles < 2 ? ' attachment.' : numOfFiles + ' attachments')}
         </button>)
     };
 

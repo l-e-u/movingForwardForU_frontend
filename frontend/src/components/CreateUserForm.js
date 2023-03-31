@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { CSSTransition } from 'react-transition-group';
 
 // hooks
 import { useRegisterUser } from '../hooks/useRegisterUser';
@@ -18,28 +19,35 @@ const CreateUserForm = ({ setShowThisForm }) => {
     });
 
     return (
-        < div className='shadow'>
-            <FormHeader text='New User' handleCloseForm={() => setShowThisForm(false)} />
+        <CSSTransition
+            appear={true}
+            classNames='scale-'
+            in={true}
+            timeout={500}
+        >
+            < div className='shadow'>
+                <FormHeader text='New User' handleCloseForm={() => setShowThisForm(false)} />
 
-            <div className='rounded-bottom background-white text-reset px-3 pb-3 pt-1'>
+                <div className='rounded-bottom background-white text-reset px-3 pb-3 pt-1'>
 
-                <UserForm
-                    error={error}
-                    isDisabled={isLoading}
-                    isLoading={isLoading}
-                    handleSubmit={async (e) => {
-                        e.preventDefault();
+                    <UserForm
+                        error={error}
+                        isDisabled={isLoading}
+                        isLoading={isLoading}
+                        handleSubmit={async (e) => {
+                            e.preventDefault();
 
-                        await registerUser(user)
-                            .then(isCreated => {
-                                if (isCreated) setShowThisForm(false);
-                            })
-                    }}
-                    setUser={setUser}
-                    user={user}
-                />
+                            await registerUser(user)
+                                .then(isCreated => {
+                                    if (isCreated) setShowThisForm(false);
+                                })
+                        }}
+                        setUser={setUser}
+                        user={user}
+                    />
+                </div>
             </div>
-        </div>
+        </CSSTransition>
     );
 };
 
