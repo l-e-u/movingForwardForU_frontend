@@ -110,6 +110,7 @@ const Fees = () => {
                                     <DeleteConfirmation
                                         dispatch={dispatch}
                                         doc_id={_id}
+                                        message={'Are you sure you want to delete this fee?\nThis cannot be undone.'}
                                         model='FEE'
                                         checkReference='fees'
                                         route='fees'

@@ -87,12 +87,8 @@ const Jobs = ({ filters, setFilters }) => {
     }, [currentPage, dispatch, filters, limit, user]);
 
     useEffect(() => {
-        if (showEditForm) scrollIntoView();
+        if (showEditForm) editFormRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, [showEditForm]);
-
-    const scrollIntoView = () => {
-        editFormRef.current?.scrollIntoView({ behavior: 'smooth' });
-    };
 
     const exportToExcel = () => {
         const dataSet = jobs.map(job => {
@@ -236,19 +232,22 @@ const Jobs = ({ filters, setFilters }) => {
                         switch (true) {
                             case (showArchiveConfirmation && isSelectedJob):
                                 return (<div className='position-relative' key={_id}>
-                                    <ArchiveConfirmation job={job} setShowThisForm={setShowArchiveConfirmation} />
+                                    <ArchiveConfirmation job={job} setShowThisForm={setShowArchiveConfirmation} callBack={() => setTotalResults(prev => prev - 1)} />
                                 </div>);
 
                             case (showEditForm && isSelectedJob):
                                 return (<div className='position-relative' key={_id} ref={editFormRef}>
-                                    <EditJobForm prevJob={job} setShowThisForm={setShowEditForm} setFilters={setFilters} />
+                                    {/* the call back is to trigger a fetch for updated jobs list */}
+                                    <EditJobForm prevJob={job} setShowThisForm={setShowEditForm} callBack={() => setFilters(prev => ({ ...prev }))} />
                                 </div>);
 
                             case (showDeleteConfirmation && isSelectedJob):
                                 return (<div className='position-relative' key={_id}>
                                     <DeleteConfirmation
+                                        callBack={() => setTotalResults(prev => prev - 1)}
                                         dispatch={dispatch}
                                         doc_id={_id}
+                                        message={'Are you sure you want to delete this job?\nThis cannot be undone.'}
                                         model='JOB'
                                         route='jobs'
                                         setShowThisForm={setShowDeleteConfirmation}

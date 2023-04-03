@@ -8,7 +8,7 @@ import { dateStringFormat_YYYY_MM_DD } from '../utils/StringUtils';
 import Counter from './Counter';
 import XButton from './XButton';
 
-const FilterAndASort = ({ filters, setFilters, userIsAdmin = false }) => {
+const FilterAndASort = ({ filters, setFilters, userIsAdmin = false, filterArchives = false }) => {
     const numOfFilters = Object.keys(filters).length;
     const labelMinWidth = '90px';
 
@@ -36,10 +36,13 @@ const FilterAndASort = ({ filters, setFilters, userIsAdmin = false }) => {
                 id='collapseFilters'
             >
                 <div className='d-flex flex-column gap-2' >
-                    <FilterStatuses filter={filters.status || []} setFilters={setFilters} />
+                    {!filterArchives && <FilterStatuses filter={filters.status || []} setFilters={setFilters} />}
                     {userIsAdmin && <>
-                        <FilterCustomers filter={filters.customer || []} setFilters={setFilters} />
-                        <FilterDrivers filter={filters.drivers || []} setFilters={setFilters} />
+                        {/* filter customers and drivers are swapped if it's for archives */}
+                        {!filterArchives && <>
+                            <FilterCustomers filter={filters.customer || []} setFilters={setFilters} />
+                            <FilterDrivers filter={filters.drivers || []} setFilters={setFilters} />
+                        </>}
 
                         {/* filter reference */}
                         <div className='d-flex flex-column flex-sm-row align-items-sm-end flex-grow-1'>
@@ -56,6 +59,29 @@ const FilterAndASort = ({ filters, setFilters, userIsAdmin = false }) => {
                                         if (!input) return existingFilters;
 
                                         existingFilters.reference = input;
+
+                                        return existingFilters;
+                                    })
+                                }}
+                                type='text'
+                            />
+                        </div>
+                    </>}
+                    {filterArchives && <>
+                        <div className='d-flex flex-column flex-sm-row align-items-sm-end flex-grow-1'>
+                            <label htmlFor='customerFilter' style={{ minWidth: labelMinWidth }}><small>Customer:</small></label>
+                            <input
+                                className='form-control form-control-sm'
+                                id='customerFilter'
+                                onChange={e => {
+                                    const input = e.target.value;
+                                    setFilters(prev => {
+                                        const existingFilters = { ...prev };
+                                        delete existingFilters.organization;
+
+                                        if (!input) return existingFilters;
+
+                                        existingFilters.organization = input;
 
                                         return existingFilters;
                                     })

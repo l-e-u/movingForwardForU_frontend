@@ -14,10 +14,12 @@ import FlexBoxWrapper from '../components/FlexBoxWrapper';
 import LoadingDocuments from '../components/LoadingDocuments';
 import NavPagination from '../components/NavPagination';
 import PageContentWrapper from '../components/PageContentWrapper'
+import ArchiveCard from '../components/ArchiveCard';
 
 const Archives = ({ filters, setFilters }) => {
     const { user } = useAuthContext();
     const { archives, dispatch } = useArchivesContext();
+
     // used during fetching
     const [error, setError] = useState(null);
     const [isLoading, setIsLoading] = useState(null);
@@ -66,17 +68,19 @@ const Archives = ({ filters, setFilters }) => {
 
     return (<PageContentWrapper>
         {/* user can select pagination page and limit for results */}
-        <NavPagination
-            currentPage={currentPage}
-            limit={limit}
-            setCurrentPage={setCurrentPage}
-            setLimit={setLimit}
-            setTotalPages={setTotalPages}
-            totalPages={totalPages}
-            totalResults={totalResults}
-        />
+        <div className='d-flex flex-column gap-2 mb-3'>
+            <NavPagination
+                currentPage={currentPage}
+                limit={limit}
+                setCurrentPage={setCurrentPage}
+                setLimit={setLimit}
+                setTotalPages={setTotalPages}
+                totalPages={totalPages}
+                totalResults={totalResults}
+            />
 
-        <FilterAndASort filters={filters} setFilters={setFilters} userIsAdmin={true} />
+            <FilterAndASort filters={filters} setFilters={setFilters} userIsAdmin={true} filterArchives={true} />
+        </div>
 
         {/* show spinner with actively fetching data */}
         {isLoading && <div className='my-5'><LoadingDocuments /></div>}
@@ -89,6 +93,18 @@ const Archives = ({ filters, setFilters }) => {
                 {(totalResults === 0) &&
                     <div className='outline shadow-sm background-white p-3 text-center'>There are no results.</div>
                 }
+
+                {archives.map(archive => {
+                    const { _id } = archive;
+
+                    // by default the archive card is shown, unless the user selects to edit or delete
+                    switch (true) {
+                        default:
+                            return (<div className='position-relative' key={_id}>
+                                <ArchiveCard {...archive} />
+                            </div>)
+                    }
+                })}
             </FlexBoxWrapper>
         }
     </PageContentWrapper>)

@@ -1,7 +1,18 @@
 import { Schema, model as Model } from 'mongoose';
 
 const archiveSchema = new Schema({
-    amendments: String,
+    amendments: [{
+        text: String,
+        createdAt: {
+            default: new Date(),
+            type: Date,
+        },
+        createdBy: {
+            ref: 'User',
+            required: true,
+            type: Schema.Types.ObjectId,
+        }
+    }],
     createdBy: String,
     createdOn: Date,
     reference: String,
@@ -19,7 +30,7 @@ const archiveSchema = new Schema({
         includeTime: Boolean,
     },
     drivers: [{
-        fullName: String,
+        name: String,
         email: String,
     }],
     pickup: {

@@ -7,7 +7,7 @@ import FormHeader from './FormHeader';
 // hooks
 import { useCreateArchive } from '../hooks/useCreateArchive';
 
-const ArchiveConfirmation = ({ job, setShowThisForm }) => {
+const ArchiveConfirmation = ({ callBack, job, setShowThisForm }) => {
     const { archiveJob, error, isLoading } = useCreateArchive();
 
     return (
@@ -34,12 +34,16 @@ const ArchiveConfirmation = ({ job, setShowThisForm }) => {
                             handleOnClick={() => {
                                 archiveJob(job)
                                     .then(isArchived => {
-                                        if (isArchived) setShowThisForm(false);
+                                        if (isArchived) {
+                                            setShowThisForm(false);
+                                            callBack();
+                                        };
                                     });
                             }}
                         />
                     </div>
                 </div>
+                {error && <div>{error.message}</div>}
             </div>
         </CSSTransition>
     );

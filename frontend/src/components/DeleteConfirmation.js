@@ -3,8 +3,8 @@ import { CSSTransition } from 'react-transition-group';
 
 // components
 import ActionButton from './ActionButton';
-import FormHeader from './FormHeader';
 import LoadingDocuments from './LoadingDocuments';
+import XButton from './XButton';
 
 // hooks
 import { useDeleteDocument } from '../hooks/useDeleteDocument';
@@ -14,9 +14,11 @@ import { useAuthContext } from '../hooks/useAuthContext';
 const DeleteConfirmation = ({
   dispatch,
   doc_id,
+  message,
   model,
   route,
   setShowThisForm,
+  callBack = () => { },
   checkReference = false,
 }) => {
   const { user } = useAuthContext();
@@ -64,40 +66,35 @@ const DeleteConfirmation = ({
       in={true}
       timeout={500}
     >
-      <div className='shadow'>
-        <FormHeader text='Confirm Delete' handleCloseForm={() => setShowThisForm(false)} />
+      <div className='shadow position-relative rounded background-white text-reset p-4'>
+        <div className='position-absolute top-0 end-0 p-2'><XButton handleOnClick={() => setShowThisForm(false)} /></div>
+        {/* show spinner with actively fetching data */}
+        {getIsLoading && <div className='my-5'><LoadingDocuments /></div>}
 
-        <div className='rounded-bottom background-white text-reset px-3 pb-3 pt-1'>
-          {/* show spinner with actively fetching data */}
-          {getIsLoading && <div className='my-5'><LoadingDocuments /></div>}
+        {error?.server && <p>{'Could not delete. ' + error.server.message + ' Refresh and try again.'}</p>}
 
-          {error?.server && <p>{'Could not delete. ' + error.server.message + ' Refresh and try again.'}</p>}
+        {(references.length > 0) &&
+          <p className='m-0 px-3 pt-3 pb-2'>{`This ${model.toLowerCase()} is referenced on one or more jobs, you must delete, archive, or update the job(s) in order to delete this document.`}</p>
+        }
 
-          {(references.length > 0) &&
-            <p className='m-0 px-3 pt-3 pb-2'>{`This ${model.toLowerCase()} is referenced on one or more jobs, you must delete, archive, or update the job(s) before deleting this document.`}</p>
-          }
+        {(!error && !getIsLoading && !getError && (references.length === 0)) && <>
+          <h2 className='fs-5'>Delete?</h2>
+          <p style={{ whiteSpace: 'pre-wrap' }}>{message}</p>
 
-          {(!error && !getIsLoading && !getError && (references.length === 0)) && <>
-            <p style={{ whiteSpace: 'pre-wrap' }}>{`Are you sure you want to delete this ${model.toLowerCase()}?\nThis cannot be undone.`}</p>
-
-            <div className='d-flex flex-column gap-3 flex-sm-row justify-content-between align-items-center'>
-              <ActionButton
-                text='Cancel'
-                handleOnClick={() => setShowThisForm(false)}
-              />
-
-              <ActionButton
-                text={(isLoading ? 'Deleting...' : 'Confirm')}
-                handleOnClick={() => {
-                  deleteDocument({ _id: doc_id, dispatch, model, route })
-                    .then(isDeleted => {
-                      if (isDeleted) setShowThisForm(false);
-                    });
-                }}
-              />
-            </div>
-          </>}
-        </div>
+          <ActionButton
+            alignX='right'
+            handleOnClick={() => {
+              deleteDocument({ _id: doc_id, dispatch, model, route })
+                .then(isDeleted => {
+                  if (isDeleted) {
+                    setShowThisForm(false);
+                    callBack();
+                  };
+                });
+            }}
+            text={(isLoading ? 'Deleting...' : 'Delete')}
+          />
+        </>}
       </div>
     </CSSTransition>
   );

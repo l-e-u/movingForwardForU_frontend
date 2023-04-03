@@ -1,8 +1,9 @@
 import mongoose from 'mongoose';
 import { deleteAttachments } from './attachmentController.js';
 
-// model
+// models
 import Archive from '../models/archive.js';
+import Job from '../models/job.js';
 
 // get all archives
 const getArchives = async (req, res) => {
@@ -16,8 +17,12 @@ const getArchives = async (req, res) => {
     let totalPages = 0;
 
     // format the filters for mongodb
-    if (filters.customer) {
-        filters.customer = { $regex: filters.customer };
+    if (filters.organization) {
+        filters.organization = { $regex: filters.organization };
+    };
+
+    if (filters.drivers) {
+        filters.drivers = { $regex: filters.drivers };
     };
 
     if (filters.reference) {
@@ -66,7 +71,7 @@ const getArchives = async (req, res) => {
 
     console.log('filters:', filters);
 
-    const archives = await Archive.find(filters);
+    const archives = await Archive.find(filters).populate('amendments.createdBy');
     const count = archives.length;
     totalPages = Math.floor(count / limit);
 
@@ -86,28 +91,46 @@ const getArchives = async (req, res) => {
 
 // create a new archive
 const createArchive = async (req, res) => {
-    try {
-        const archive = await Archive.create({ ...req.body });
+    const { receipt, job_id } = req.body;
 
-        return res.status(200).json(archive);
+    if (!mongoose.Types.ObjectId.isValid(job_id)) {
+        return res.status(404).json({ error: { message: 'No such job.' } });
+    };
+
+    try {
+        const archive = await Archive.create({ ...receipt });
+
+        if (!archive) {
+            return res.status(404).json({ message: 'No such archive.' });
+        };
+
+        const job = await Job.findByIdAndDelete(job_id);
+
+        if (!archive) {
+            return res.status(404).json({ message: 'No such job.' });
+        };
+
+        console.log('Archived job:', job_id);
+
+        res.status(200).json(job);
 
     } catch (err) {
         console.error(err);
 
-        return res.status(400).json(err);
+        return res.status(400).json({ error: err });
     };
 };
 
 // delete an archive
 const deleteArchive = async (req, res) => {
-    const { _id } = req.params;
+    const { id } = req.params;
     const error = { message: 'Cannot find archive.' };
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
         return res.status(404).json({ error });
     };
 
-    const archive = await Archive.findByIdAndDelete(_id);
+    const archive = await Archive.findByIdAndDelete(id);
 
     if (!archive) return res.status(404).json({ error });
 
@@ -119,14 +142,22 @@ const deleteArchive = async (req, res) => {
 
 // update an archive
 const updateArchive = async (req, res) => {
-    const { _id } = req.params;
+    const { _id: user_id } = req.user;
+    const { id } = req.params;
+    const { text } = req.body;
     const error = { message: 'Cannot find archive.' };
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
         return res.status(404).json({ error });
     };
 
-    const archive = await Archive.findByIdAndUpdate(_id, { ...req.body });
+    const archive = await Archive.findByIdAndUpdate(
+        { _id: id },
+        { $push: { amendments: { text, createdBy: user_id } } },
+        { returnDocument: 'after' }
+    ).populate('amendments.createdBy');
+
+    await archive.pop
 
     if (!archive) return res.status(404).json({ error });
 

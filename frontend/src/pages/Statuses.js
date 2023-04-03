@@ -109,6 +109,7 @@ const Statuses = () => {
                                     <DeleteConfirmation
                                         dispatch={dispatch}
                                         doc_id={_id}
+                                        message={'Are you sure you want to delete this status?\nThis cannot be undone.'}
                                         model='STATUS'
                                         checkReference='status'
                                         route='statuses'

@@ -30,7 +30,7 @@ const CreateJobForm = ({ setShowThisForm, setFilters }) => {
             in={true}
             timeout={500}
         >
-            <div className='shadow mb-4'>
+            <div className='shadow mb-4' style={{ zIndex: '2' }}>
                 <FormHeader text='New Job' handleCloseForm={() => setShowThisForm(false)} />
 
                 <div className='rounded-bottom background-white text-reset px-3 pb-3 pt-1'>

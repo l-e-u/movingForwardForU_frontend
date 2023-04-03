@@ -62,7 +62,7 @@ const AutoCompleteSelect = ({
 
             {/* list of suggestions based on debouncedQuery value, clicking on an item sets that document to property in job and it's displayed on the DOM with the value of the nested property */}
             {debounceQuery &&
-                <ul className='list-group shadow selectList'>
+                <ul className='list-group shadow selectList' style={{ zIndex: '5000' }}>
                     {suggestions.map(doc => {
                         return (
                             <li
