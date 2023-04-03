@@ -11,7 +11,7 @@ import FormHeader from './FormHeader';
 const CreateFeeForm = ({ setShowThisForm }) => {
     const { createFee, error, isLoading } = useCreateFee();
     const [fee, setFee] = useState({
-        amount: '',
+        amount: null,
         description: '',
         name: '',
     });
@@ -33,7 +33,7 @@ const CreateFeeForm = ({ setShowThisForm }) => {
                         handleSubmit={async () => {
                             await createFee({
                                 ...fee,
-                                amount: Number(fee.amount.replace(/,/g, ''))
+                                amount: Number(fee.amount)
                             })
                                 .then(isCreated => {
                                     if (isCreated) setShowThisForm(false);

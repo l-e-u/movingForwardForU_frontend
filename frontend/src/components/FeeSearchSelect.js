@@ -96,7 +96,7 @@ const FeeSearchSelect = ({ billing, setJob }) => {
                         <small className='text-secondary ms-2'>&#8224; adjusted amount</small>
                     </div>
 
-                    <ul className='list-group flex-grow-1 d-flex flex-column gap-1 overflow-scroll rounded-0 py-2' ref={billingRef} style={{ maxHeight: '600px', borderTop: '1px solid var(--darkBlue)', borderBottom: '1px solid var(--darkBlue)' }}>
+                    <ul className='list-group flex-grow-1 d-flex flex-row flex-wrap gap-2 overflow-scroll rounded-0 py-2' ref={billingRef} style={{ maxHeight: '400px', borderTop: '1px solid var(--darkBlue)', borderBottom: '1px solid var(--darkBlue)' }}>
 
                         {/* when a fee is selected, it creates a list item that gives the user an option to clear it (removes from selected fee list) or enter an adjusted amount to use instead of the base fee amount */}
 
@@ -112,7 +112,7 @@ const FeeSearchSelect = ({ billing, setJob }) => {
                                     timeout={500}
                                     key={_id}
                                 >
-                                    <li>
+                                    <li style={{ flex: '1 1 250px', maxWidth: '500px' }}>
                                         <div
                                             className='rounded ps-3 pe-0 py-1 border d-flex align-items-center'
                                             style={{ backgroundColor: 'var(--bs-gray-100)' }}
@@ -120,7 +120,7 @@ const FeeSearchSelect = ({ billing, setJob }) => {
                                             <div className='text-reset flex-grow-1 lh-1'>
 
                                                 {/* name of the fee */}
-                                                <small className='smallPrint' style={{ opacity: '.65' }}>{name}</small>
+                                                <small className='smallPrint text-break' style={{ opacity: '.65' }}>{name}</small>
 
 
                                                 <div className='d-flex align-items-center my-1'>

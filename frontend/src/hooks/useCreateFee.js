@@ -1,6 +1,8 @@
-import { useState } from "react";
-import { useAuthContext } from "./useAuthContext";
-import { useFeesContext } from "./useFeesContext";
+import { useState } from 'react';
+
+// context
+import { useAuthContext } from './useAuthContext';
+import { useFeesContext } from './useFeesContext';
 
 export const useCreateFee = () => {
     const [error, setError] = useState(null);

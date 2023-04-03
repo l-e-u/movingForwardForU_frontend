@@ -44,29 +44,52 @@ const FilterAndASort = ({ filters, setFilters, userIsAdmin = false, filterArchiv
                             <FilterDrivers filter={filters.drivers || []} setFilters={setFilters} />
                         </>}
 
-                        {/* filter reference */}
                         <div className='d-flex flex-column flex-sm-row align-items-sm-end flex-grow-1'>
-                            <label htmlFor='referenceFilter' style={{ minWidth: labelMinWidth }}><small>Reference:</small></label>
+                            <label htmlFor='notesFilter' style={{ minWidth: labelMinWidth }}><small>Note:</small></label>
                             <input
                                 className='form-control form-control-sm'
-                                id='referenceFilter'
+                                id='notesFilter'
                                 onChange={e => {
                                     const input = e.target.value;
                                     setFilters(prev => {
                                         const existingFilters = { ...prev };
-                                        delete existingFilters.reference;
+                                        delete existingFilters.notes;
 
                                         if (!input) return existingFilters;
 
-                                        existingFilters.reference = input;
+                                        existingFilters.notes = input;
 
                                         return existingFilters;
                                     })
                                 }}
+                                placeholder='Subject or Message'
                                 type='text'
                             />
                         </div>
                     </>}
+
+                    {/* filter reference */}
+                    <div className='d-flex flex-column flex-sm-row align-items-sm-end flex-grow-1'>
+                        <label htmlFor='referenceFilter' style={{ minWidth: labelMinWidth }}><small>Reference:</small></label>
+                        <input
+                            className='form-control form-control-sm'
+                            id='referenceFilter'
+                            onChange={e => {
+                                const input = e.target.value;
+                                setFilters(prev => {
+                                    const existingFilters = { ...prev };
+                                    delete existingFilters.reference;
+
+                                    if (!input) return existingFilters;
+
+                                    existingFilters.reference = input;
+
+                                    return existingFilters;
+                                })
+                            }}
+                            type='text'
+                        />
+                    </div>
                     {filterArchives && <>
                         <div className='d-flex flex-column flex-sm-row align-items-sm-end flex-grow-1'>
                             <label htmlFor='customerFilter' style={{ minWidth: labelMinWidth }}><small>Customer:</small></label>
@@ -86,6 +109,30 @@ const FilterAndASort = ({ filters, setFilters, userIsAdmin = false, filterArchiv
                                         return existingFilters;
                                     })
                                 }}
+                                type='text'
+                            />
+                        </div>
+
+                        {/* search in archives for driver names or email */}
+                        <div className='d-flex flex-column flex-sm-row align-items-sm-end flex-grow-1'>
+                            <label htmlFor='driversFilter' style={{ minWidth: labelMinWidth }}><small>Driver:</small></label>
+                            <input
+                                className='form-control form-control-sm'
+                                id='driverFilter'
+                                onChange={e => {
+                                    const input = e.target.value;
+                                    setFilters(prev => {
+                                        const existingFilters = { ...prev };
+                                        delete existingFilters.drivers;
+
+                                        if (!input) return existingFilters;
+
+                                        existingFilters.drivers = input;
+
+                                        return existingFilters;
+                                    })
+                                }}
+                                placeholder='Name or Email'
                                 type='text'
                             />
                         </div>

@@ -3,6 +3,7 @@ import { CSSTransition } from 'react-transition-group';
 // components
 import ActionButton from './ActionButton';
 import FormHeader from './FormHeader';
+import XButton from './XButton';
 
 // hooks
 import { useCreateArchive } from '../hooks/useCreateArchive';
@@ -17,32 +18,26 @@ const ArchiveConfirmation = ({ callBack, job, setShowThisForm }) => {
             in={true}
             timeout={500}
         >
-            <div className='shadow rounded background-white'>
-                <FormHeader text='Confirm Archive' handleCloseForm={() => setShowThisForm(false)} />
-                <div className='p-4'>
-                    <p style={{ whiteSpace: 'pre-wrap' }}>{'This job will be archived and its references to other documents (contact, status, users, and fees) will not be updated.\nThe archive will be treated as a receipt; its contents, and any attachments will be preserved. Only additional text notes may be appended afterwards.'}</p>
+            <div className='shadow position-relative rounded background-white text-reset p-4'>
+                <div className='position-absolute top-0 end-0 p-2'><XButton handleOnClick={() => setShowThisForm(false)} /></div>
 
-                    <div className='d-flex flex-column gap-3 flex-sm-row justify-content-between align-items-center mt-4'>
-                        <ActionButton
-                            text='Cancel'
-                            handleOnClick={() => setShowThisForm(false)}
-                        />
+                <h2 className='fs-5'>Archive?</h2>
+                <p style={{ whiteSpace: 'pre-wrap' }}>{'This job will be archived and its references to other documents (contact, status, users, and fees) will not be updated.\nThe archive will be treated as a receipt; its contents, and any attachments will be preserved. Only additional text notes may be appended afterwards.'}</p>
 
-                        <ActionButton
-                            text={(isLoading ? 'Archiving...' : 'Confirm')}
-                            isLoading={isLoading}
-                            handleOnClick={() => {
-                                archiveJob(job)
-                                    .then(isArchived => {
-                                        if (isArchived) {
-                                            setShowThisForm(false);
-                                            callBack();
-                                        };
-                                    });
-                            }}
-                        />
-                    </div>
-                </div>
+                <ActionButton
+                    alignX='right'
+                    text={(isLoading ? 'Archiving...' : 'Archive')}
+                    isLoading={isLoading}
+                    handleOnClick={() => {
+                        archiveJob(job)
+                            .then(isArchived => {
+                                if (isArchived) {
+                                    setShowThisForm(false);
+                                    callBack();
+                                };
+                            });
+                    }}
+                />
                 {error && <div>{error.message}</div>}
             </div>
         </CSSTransition>

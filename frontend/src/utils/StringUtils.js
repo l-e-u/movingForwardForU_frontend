@@ -52,6 +52,7 @@ export const formatNumber = (n) => n.replace(/\D/g, "").replace(/\B(?=(\d{3})+(?
 
 export const formatCurrency = (input, onBlur = false) => {
     const value = String(input);
+    const isNegative = value.charAt(0) === '-';
 
     let validatedNumString = null;
 
@@ -80,11 +81,13 @@ export const formatCurrency = (input, onBlur = false) => {
 
         // join integers by decimal
         validatedNumString = leftSide + '.' + rightSide;
+        if (isNegative) validatedNumString = '-' + validatedNumString;
     }
     else {
         validatedNumString = formatNumber(value);
         // gets rid of leading zeros, helps keep the commas proper
         if (validatedNumString.length > 1 && validatedNumString.charAt(0) === '0') validatedNumString = validatedNumString.substring(1);
+        if (isNegative) validatedNumString = '-' + validatedNumString;
         if (onBlur) validatedNumString += '.00';
     };
 

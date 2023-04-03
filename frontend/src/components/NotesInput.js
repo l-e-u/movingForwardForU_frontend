@@ -74,7 +74,7 @@ const NotesInput = ({
                 {(numOfNotes > 1) && <Counter number={numOfNotes} />}
             </div>
             {hasNotes &&
-                <ul className='list-group d-flex flex-column gap-3 overflow-scroll rounded-0 py-2' ref={notesRef} style={{ maxHeight: '700px', borderTop: '1px solid var(--darkBlue)', borderBottom: '1px solid var(--darkBlue)' }}>
+                <ul className='list-group d-flex flex-row flex-wrap gap-3 overflow-scroll rounded-0 py-2' ref={notesRef} style={{ maxHeight: '400px', borderTop: '1px solid var(--darkBlue)', borderBottom: '1px solid var(--darkBlue)' }}>
                     {notes.map((note, index) => {
                         const { _id, attachments } = note;
                         const inputSubjectError = error?.notes ? error?.notes[index]?.subject : null;
@@ -87,7 +87,7 @@ const NotesInput = ({
                                 timeout={500}
                                 key={_id || index}
                             >
-                                <li className='position-relative border rounded' style={{ backgroundColor: 'var(--bs-gray-100)' }}>
+                                <li className='position-relative border rounded' style={{ backgroundColor: 'var(--bs-gray-100)', flex: '1 1 300px', maxWidth: '600px' }}>
                                     {/* the X buttons removes the note from the job */}
                                     <div className='position-absolute top-0 end-0 text-action'>
                                         <XButton handleOnClick={() => handleDeleteOnClick(index)} />
@@ -95,7 +95,7 @@ const NotesInput = ({
 
                                     {/* input for the subject line and message textarea */}
                                     <input
-                                        className={'form-control-plaintext text-reset background-white ps-2 py-1 pe-0' + (inputSubjectError ? ' is-invalid' : '')}
+                                        className={'form-control-plaintext text-reset text-break background-white ps-2 py-1 pe-0' + (inputSubjectError ? ' is-invalid' : '')}
                                         placeholder={'* Subject' + (inputSubjectError ? ` : ${inputSubjectError}` : '')}
                                         onBlur={e => handleOnChange({ subject: e.target.value.trim() }, index)}
                                         onChange={e => handleOnChange({ subject: e.target.value }, index)}

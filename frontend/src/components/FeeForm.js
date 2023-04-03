@@ -7,6 +7,7 @@ import { formatCurrency, removeExtraSpaces } from '../utils/StringUtils';
 import GrowingTextArea from './GrowingTextArea';
 import RequiredFieldsText from './RequiredFieldsText';
 import ActionButton from './ActionButton'
+import CurrencyInput from './CurrencyInput';
 
 const FeeForm = ({
     amount,
@@ -59,7 +60,12 @@ const FeeForm = ({
                     </label>
                 </div>
 
-                <div className='input-group w-md-25'>
+                <CurrencyInput
+                    amount={amount}
+                    setCurrency={({ input }) => handleOnChange({ amount: input })}
+                />
+
+                {/* <div className='input-group w-md-25'>
                     <span className='input-group-text'>$</span>
                     <div className='form-floating'>
                         <input
@@ -80,7 +86,7 @@ const FeeForm = ({
                             {error?.amount && <span className='ms-1 text-danger'>{': ' + error.amount.message}</span>}
                         </label>
                     </div>
-                </div>
+                </div> */}
             </div>
             <div className='form-floating'>
                 <GrowingTextArea

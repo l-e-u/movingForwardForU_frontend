@@ -34,10 +34,9 @@ const JobForm = ({ job, setJob, handleSubmit, error, setError, isDisabled, isLoa
     return (<>
         <RequiredFieldsText />
         <form onSubmit={handleSubmit}>
-            <div className='d-xl-flex gap-3'>
-                {/* status, customer, ref, parcel, drivers */}
-                <div className='d-md-flex flex-grow-1 gap-3 mb-3 mb-xl-0'>
-                    <div className='d-flex flex-column justify-content-between gap-2 w-md-50 mb-3 mb-md-0' >
+            <div className='container-fluid'>
+                <div className='row'>
+                    <div className='col-xl-3 col-sm-6 p-0 mb-2 pe-sm-2'>
                         {/* STATUS */}
                         <StatusSearchSelect
                             status={status}
@@ -45,6 +44,9 @@ const JobForm = ({ job, setJob, handleSubmit, error, setError, isDisabled, isLoa
                             inputError={error?.status}
                             inputErrorMessage={error?.status?.message}
                         />
+                    </div>
+
+                    <div className='col-xl-4 col-sm-6 p-0 mb-2 ps-sm-2 pe-xl-2'>
 
                         {/* CUSTOMER / CONTACT */}
                         <ContactSearchSelect
@@ -53,35 +55,9 @@ const JobForm = ({ job, setJob, handleSubmit, error, setError, isDisabled, isLoa
                             inputError={error?.customer}
                             inputErrorMessage={error?.customer?.message}
                         />
+                    </div>
 
-                        {/* REFERENCE */}
-                        <div className='form-floating'>
-                            <input
-                                className='form-control'
-                                type='text'
-                                name='reference'
-                                id='reference'
-                                placeholder='Reference #'
-                                value={reference ?? ''}
-                                onChange={(e) => {
-                                    setJob(prev => {
-                                        return {
-                                            ...prev,
-                                            reference: e.target.value
-                                        }
-                                    })
-                                }}
-                                onBlur={(e) => {
-                                    setJob(prev => {
-                                        return {
-                                            ...prev,
-                                            reference: removeExtraSpaces(e.target.value.trim())
-                                        }
-                                    })
-                                }} />
-                            <label htmlFor='reference' className='form-label'>Reference #</label>
-                        </div>
-
+                    <div className='col-xl-3 col-sm-6 p-0 mb-2 pe-sm-2 ps-xl-2'>
                         {/* PARCEL */}
                         <div className='form-floating'>
                             <input
@@ -109,49 +85,92 @@ const JobForm = ({ job, setJob, handleSubmit, error, setError, isDisabled, isLoa
                                 }} />
                             <label htmlFor='parcel' className='form-label'>Parcel</label>
                         </div>
-
-                        {/* MILEAGE */}
-                        <div className='form-floating'>
-                            <input
-                                className={'form-control' + (error?.mileage ? ' is-invalid' : '')}
-                                id='mileage'
-                                name='mileage'
-                                onBlur={e => {
-                                    const input = e.target.value;
-
-                                    if (input === '') {
-                                        setJob(prev => {
-                                            return {
-                                                ...prev,
-                                                mileage: 0
-                                            }
-                                        })
-                                    }
-                                }}
-                                onChange={e => setJob(prev => {
-                                    return {
-                                        ...prev,
-                                        mileage: e.target.value
-                                    }
-                                })}
-                                placeholder='Mileage'
-                                step={1}
-                                title='Needs to be a number.'
-                                type='number'
-                                value={mileage}
-                            />
-                            <label htmlFor='mileage' className='form-label'>
-                                Mileage
-                                {error?.mileage && <span className='ms-1 text-danger'>{': ' + error.mileage.message}</span>}
-                            </label>
-                        </div>
-
-                        {/* DRIVERS */}
-                        <DriverSearchSelect drivers={drivers} setJob={setJob} />
                     </div>
 
-                    {/* pickup delivery details */}
-                    <div className='d-flex flex-column justify-content-between gap-3 w-md-50'>
+                    <div className='col-xl-2 col-sm-6 p-0 mb-2 ps-sm-2'>
+                        {/* REFERENCE */}
+                        <div className='form-floating'>
+                            <input
+                                className='form-control'
+                                type='text'
+                                name='reference'
+                                id='reference'
+                                placeholder='Reference #'
+                                value={reference ?? ''}
+                                onChange={(e) => {
+                                    setJob(prev => {
+                                        return {
+                                            ...prev,
+                                            reference: e.target.value
+                                        }
+                                    })
+                                }}
+                                onBlur={(e) => {
+                                    setJob(prev => {
+                                        return {
+                                            ...prev,
+                                            reference: removeExtraSpaces(e.target.value.trim())
+                                        }
+                                    })
+                                }} />
+                            <label htmlFor='reference' className='form-label'>Reference #</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div className='container-fluid'>
+                <div className='row'>
+                    <div className='col-xl-4 p-0 pe-xl-2'>
+                        <div className='container-fluid'>
+                            <div className='row mb-2'>
+                                {/* DRIVERS */}
+                                <div className='col-xl-8 col-sm-8 p-0 pe-sm-2 mb-2 mb-sm-0'>
+                                    <DriverSearchSelect drivers={drivers} setJob={setJob} />
+                                </div>
+
+                                <div className='col-xl-4 col-sm-4 p-0 ps-sm-2'>
+                                    {/* MILEAGE */}
+                                    <div className='form-floating'>
+                                        <input
+                                            className={'form-control' + (error?.mileage ? ' is-invalid' : '')}
+                                            id='mileage'
+                                            name='mileage'
+                                            onBlur={e => {
+                                                const input = e.target.value;
+
+                                                if (input === '') {
+                                                    setJob(prev => {
+                                                        return {
+                                                            ...prev,
+                                                            mileage: 0
+                                                        }
+                                                    })
+                                                }
+                                            }}
+                                            onChange={e => setJob(prev => {
+                                                return {
+                                                    ...prev,
+                                                    mileage: e.target.value
+                                                }
+                                            })}
+                                            placeholder='Mileage'
+                                            step={1}
+                                            title='Needs to be a number.'
+                                            type='number'
+                                            value={mileage}
+                                        />
+                                        <label htmlFor='mileage' className='form-label'>
+                                            Mileage
+                                            {error?.mileage && <span className='ms-1 text-danger'>{': ' + error.mileage.message}</span>}
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div className='col-xl-4 col-md-6 p-0 py-0 ps-xl-2 pe-md-2'>
                         {/* PICKUP ADDRESS/TIME */}
                         <PickupOrDeliveryInput
                             isPickup={true}
@@ -159,7 +178,8 @@ const JobForm = ({ job, setJob, handleSubmit, error, setError, isDisabled, isLoa
                             job={job}
                             setJob={setJob}
                         />
-
+                    </div>
+                    <div className='col-xl-4 col-md-6 p-0 py-0 pe-0 ps-md-2 mt-2 mt-md-0'>
                         {/* DELIVERY ADDRESS/TIME */}
                         <PickupOrDeliveryInput
                             isPickup={false}
@@ -169,26 +189,24 @@ const JobForm = ({ job, setJob, handleSubmit, error, setError, isDisabled, isLoa
                         />
                     </div>
                 </div>
-
-                <div className='d-md-flex flex-grow-1 gap-3 mb-md-3 mb-xl-0'>
-                    {/* billing */}
-                    <div className='w-md-50 order-md-1'>
-                        <FeeSearchSelect billing={billing} setJob={setJob} />
-                    </div>
-
-                    {/* notes */}
-                    <div className='w-md-50 order-md-0 mt-3 mt-md-0'>
-                        <NotesInput
-                            error={error}
-                            isResizingImages={isResizingImages}
-                            notes={notes} setJob={setJob}
-                            setError={setError}
-                            setIsResizingImages={setIsResizingImages}
-                            withinUploadSizeLimit={withinUploadSizeLimit}
-                        />
-                    </div>
-                </div>
             </div>
+
+            <br />
+
+            {/* billing */}
+            <FeeSearchSelect billing={billing} setJob={setJob} />
+
+            <br />
+
+            {/* notes */}
+            <NotesInput
+                error={error}
+                isResizingImages={isResizingImages}
+                notes={notes} setJob={setJob}
+                setError={setError}
+                setIsResizingImages={setIsResizingImages}
+                withinUploadSizeLimit={withinUploadSizeLimit}
+            />
 
             <div className='mt-4 mt-sm-0'>
                 <ActionButton

@@ -14,17 +14,28 @@ const CurrencyInput = ({ amount, setCurrency }) => {
                 id='currency'
                 name='currency'
                 onBlur={e => {
-                    const string = e.target.value;
-                    if (string !== '') setCurrencyString(formatCurrency(string, true));
+                    const input = e.target.value;
+
+                    // once the input is NaN, set the currency to null
+                    if (isNaN(input) || input === '') {
+                        setCurrency({ input: null });
+                        setCurrencyString('');
+                    }
+                    else {
+                        setCurrencyString(formatCurrency(input, true));
+                    };
                 }}
                 onChange={e => {
                     const input = e.target.value;
-                    const value = input === '' ? null : Number(e.target.value.replace(/,/g, ''));
+                    console.log(input);
+                    if (!isNaN(input) || input === '-') {
+                        const value = input === '' ? null : Number(e.target.value.replace(/,/g, ''));
 
-                    setCurrencyString(formatCurrency(e.target.value));
-                    setCurrency({ input: value });
+                        setCurrencyString(formatCurrency(e.target.value));
+                        setCurrency({ input: value });
+                    };
                 }}
-                pattern="^\d{1,3}(,\d{3})*(\.\d+)?$"
+                pattern="^[-]?\d{1,3}(,\d{3})*(\.\d+)?$"
                 step={0.01}
                 title='Needs to be a currency.'
                 type='text'

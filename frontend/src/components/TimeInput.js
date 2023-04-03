@@ -51,8 +51,10 @@ const TimeInput = ({ date, setTime }) => {
         <div className='d-flex gap-2'>
             <div className='input-group'>
                 <span
-                    className='input-group-text text-uppercase font-monospace'
-                    onClick={() => setIsMilitaryTime(!isMilitaryTime)}>
+                    className='input-group-text text-uppercase font-monospace text-action'
+                    onClick={() => setIsMilitaryTime(!isMilitaryTime)}
+                    style={{ cursor: 'pointer' }}
+                >
                     {(isMilitaryTime ? '24' : '12') + 'hr'}
                 </span>
                 <div className='form-floating'>
@@ -100,7 +102,7 @@ const TimeInput = ({ date, setTime }) => {
                 </div>
                 {!isMilitaryTime &&
                     <span
-                        className='input-group-text text-uppercase font-monospace'
+                        className='input-group-text text-uppercase font-monospace text-action'
                         onClick={() => {
                             let actualHour = hours;
 
@@ -111,7 +113,9 @@ const TimeInput = ({ date, setTime }) => {
                             if (meridiem === 'pm') actualHour -= 12;
 
                             handleOnChange({ hours: actualHour });
-                        }}>
+                        }}
+                        style={{ cursor: 'pointer' }}
+                    >
                         {meridiem}
                     </span>
                 }

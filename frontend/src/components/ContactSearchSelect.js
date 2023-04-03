@@ -84,7 +84,8 @@ const ContactSearchSelect = ({ customer, setJob, inputError, inputErrorMessage }
                         return updated;
                     });
                 };
-            }} ß />
+            }}
+        />
     );
 };
 

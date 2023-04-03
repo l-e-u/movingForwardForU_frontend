@@ -22,11 +22,12 @@ const getArchives = async (req, res) => {
     };
 
     if (filters.drivers) {
-        filters.drivers = { $regex: filters.drivers };
+        const text = filters.drivers;
+        filters.drivers = { $elemMatch: { $or: [{ name: { $regex: text, $options: 'i' } }, { email: { $regex: text, $options: 'i' } }] } };
     };
 
     if (filters.reference) {
-        filters.reference = { $regex: filters.reference };
+        filters.reference = { $regex: filters.reference, $options: 'i' };
     };
 
     if (filters.mileageGTE) {
@@ -67,6 +68,11 @@ const getArchives = async (req, res) => {
     if (filters.deliveryOnLTE) {
         filters['delivery.date'] = { ...filters['delivery.date'], $lte: filters.deliveryOnLTE };
         delete filters.deliveryOnLTE;
+    };
+
+    if (filters.notes) {
+        const text = filters.notes;
+        filters.notes = { $elemMatch: { $or: [{ subject: { $regex: text, $options: 'i' } }, { message: { $regex: text, $options: 'i' } }] } };
     };
 
     console.log('filters:', filters);
