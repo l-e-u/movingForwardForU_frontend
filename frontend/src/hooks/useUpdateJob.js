@@ -6,7 +6,7 @@ export const useUpdateJob = () => {
     const [isLoading, setIsLoading] = useState(null);
     const { user } = useAuthContext();
 
-    const updateJob = async ({ _id, updates, filesToDelete }) => {
+    const updateJob = async ({ _id, updates, filesToDelete = [] }) => {
         setIsLoading(true);
         setError(null);
 
@@ -45,7 +45,7 @@ export const useUpdateJob = () => {
             setError(null);
             setIsLoading(false);
 
-            return true;
+            return json;
         };
     };
     return { updateJob, isLoading, error, setError };

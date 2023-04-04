@@ -2,7 +2,6 @@ import { CSSTransition } from 'react-transition-group';
 
 // components
 import ActionButton from './ActionButton';
-import FormHeader from './FormHeader';
 import XButton from './XButton';
 
 // hooks

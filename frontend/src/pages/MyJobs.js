@@ -96,7 +96,7 @@ const MyJobs = ({ filters, setFilters }) => {
 
                     {myJobs.map((job) => {
                         return (
-                            <JobCard {...job} key={job._id} />
+                            <JobCard {...job} key={job._id} singleNoteInput={true} />
                         )
                     })}
                 </FlexBoxWrapper>

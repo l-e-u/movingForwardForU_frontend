@@ -16,8 +16,14 @@ export const myJobsReducer = (state, action) => {
                 myJobs: state.myJobs.filter((mj) => mj._id !== action.payload._id)
             };
 
+        case 'UPDATE_MYJOB':
+            return {
+                myJobs: state.myJobs.map(j => j._id === action.payload._id ? action.payload : j)
+            };
+
         default:
             return state;
+
     };
 };
 

@@ -133,7 +133,7 @@ const NotesInput = ({
                     setJob(prev => {
                         return {
                             ...prev,
-                            notes: [...prev.notes, { attachments: [], subject: '', message: '', createdAt: new Date(), createdBy: user._id }]
+                            notes: [...prev.notes, { attachments: [], subject: '', message: '', createdBy: user._id }]
                         }
                     })
                 }}

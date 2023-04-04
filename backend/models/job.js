@@ -2,7 +2,7 @@ import { Schema, model as Model } from 'mongoose';
 
 const transportSchema = new Schema({
     date: {
-        default: new Date(),
+        default: Date.now,
         type: Date,
     },
     address: {
@@ -25,7 +25,7 @@ const noteSchema = new Schema(
         },
         createdAt: {
             type: Date,
-            default: new Date(),
+            default: Date.now,
             required: true
         },
         createdBy: {
@@ -46,7 +46,7 @@ const noteSchema = new Schema(
         },
         updatedAt: {
             type: Date,
-            default: new Date(),
+            default: Date.now,
             required: true
         }
     },

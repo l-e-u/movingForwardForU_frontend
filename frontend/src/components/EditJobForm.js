@@ -88,8 +88,8 @@ const EditJobForm = ({
                                 _id: prevJob._id,
                                 updates: { ...updatedProperties },
                             })
-                                .then(isCreated => {
-                                    if (isCreated) {
+                                .then(isUpdated => {
+                                    if (isUpdated) {
                                         setShowThisForm(false);
                                         callBack();
                                     };

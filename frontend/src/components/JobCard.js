@@ -4,6 +4,7 @@ import Card from './Card';
 import Counter from './Counter';
 import CreatedInfo from './CreatedInfo';
 import DriversList from './DriversList';
+import DriverNoteInput from './DriverNoteInput';
 import FeesList from './FeesList';
 import NotesList from './NotesList';
 import SmallHeader from './SmallHeader';
@@ -13,6 +14,7 @@ import { formatCurrency } from '../utils/StringUtils';
 import { addTwoCurrencies } from '../utils/NumberUtils';
 
 const JobCard = ({
+    _id,
     billing,
     createdAt,
     createdBy,
@@ -29,6 +31,7 @@ const JobCard = ({
     listBilling = false,
     listMileage = false,
     showCreatedDetails = false,
+    singleNoteInput = false,
 }) => {
     const hasDrivers = drivers.length > 0;
     const numOfBills = billing.length;
@@ -117,6 +120,15 @@ const JobCard = ({
                             {(hasNotes && numOfNotes > 1) && <Counter number={numOfNotes} />}
                         </div>
                         {hasNotes ? <NotesList list={notes} /> : <div>No notes have been appended.</div>}
+
+                        {/* driver can add one note at a time */}
+                        {singleNoteInput &&
+                            <>
+                                <br />
+                                <DriverNoteInput job_id={_id} />
+
+                            </>
+                        }
                     </div>
                 </div>
             </div>}

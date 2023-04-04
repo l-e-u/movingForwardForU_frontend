@@ -243,7 +243,6 @@ const updateJob = async (req, res) => {
     // from middleware
     const files = req.files;
 
-    console.log('Updated fields:', updates);
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
         return res.status(404).json({ error });
@@ -262,6 +261,18 @@ const updateJob = async (req, res) => {
                 };
             });
         });
+
+        // this applies only when adding a single new note from a driver
+        if (updates.notes?.length > 0) {
+            const note = updates.notes[0];
+
+            if (!note._id) {
+                updates.$push = { notes: updates.notes[0] };
+                delete updates.notes;
+            };
+        };
+
+        console.log('Updated fields:', updates);
 
         const job = await Job.findByIdAndUpdate(
             { _id: id },

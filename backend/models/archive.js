@@ -4,7 +4,7 @@ const archiveSchema = new Schema({
     amendments: [{
         text: String,
         createdAt: {
-            default: new Date(),
+            default: Date.now,
             type: Date,
         },
         createdBy: {
