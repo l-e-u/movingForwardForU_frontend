@@ -9,6 +9,7 @@ const ShowCreateFormButton = ({
 }) => {
     let alignClass;
 
+    // sets the horizontal alignment
     switch (alignX) {
         case 'left':
             alignClass = ' me-auto';
@@ -27,6 +28,7 @@ const ShowCreateFormButton = ({
             break;
     }
 
+    // sets vertical alignment
     switch (alignY) {
         case 'top':
             alignClass += ' mb-auto';

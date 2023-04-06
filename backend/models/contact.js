@@ -18,6 +18,10 @@ const contactSchema = new Schema(
             ref: 'User',
             require: true
         },
+        defaultFees: [{
+            ref: 'Fee',
+            type: Schema.Types.ObjectId,
+        }],
         email: {
             type: String,
             lowercase: true,

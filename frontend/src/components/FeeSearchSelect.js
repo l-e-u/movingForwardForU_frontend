@@ -127,21 +127,23 @@ const FeeSearchSelect = ({ billing, setJob }) => {
                                                     {/* list the fee's base amount */}
                                                     <div className='text-nowrap me-2 flex-grow-1'>{'$ ' + formatCurrency(amount, true)}</div>
                                                     {/* input for adjusted amount for the fee */}
-                                                    <CurrencyInput
-                                                        amount={adjustedAmount}
-                                                        setCurrency={({ input }) => {
-                                                            setJob(prev => {
-                                                                return ({
-                                                                    ...prev,
-                                                                    billing: prev.billing.map(bill => {
-                                                                        if (bill.fee._id === _id) return ({ fee: { ...bill.fee }, adjustedAmount: input });
-                                                                        return bill;
+                                                    <div style={{ maxWidth: '300px' }}>
+                                                        <CurrencyInput
+                                                            amount={adjustedAmount}
+                                                            setCurrency={({ input }) => {
+                                                                setJob(prev => {
+                                                                    return ({
+                                                                        ...prev,
+                                                                        billing: prev.billing.map(bill => {
+                                                                            if (bill.fee._id === _id) return ({ fee: { ...bill.fee }, adjustedAmount: input });
+                                                                            return bill;
+                                                                        })
                                                                     })
-                                                                })
-                                                            }
-                                                            )
-                                                        }}
-                                                    />
+                                                                }
+                                                                )
+                                                            }}
+                                                        />
+                                                    </div>
                                                     <span className='smallPrint text-secondary align-self-start ms-1'>&#8224;</span>
                                                 </div>
                                             </div>

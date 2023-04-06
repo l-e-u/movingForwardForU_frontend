@@ -12,14 +12,15 @@ import FormHeader from './FormHeader.js';
 const CreateContactForm = ({ setShowThisForm }) => {
     const { createContact, error, isLoading } = useCreateContact();
     const [contact, setContact] = useState({
-        organization: '',
-        name: '',
         address: '',
         billingAddress: '',
-        phoneNumber: '',
-        phoneExt: '',
+        defaultFees: [],
+        email: '',
         misc: '',
-        email: ''
+        name: '',
+        organization: '',
+        phoneExt: '',
+        phoneNumber: '',
     });
 
     return (

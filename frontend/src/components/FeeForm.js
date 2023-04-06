@@ -60,33 +60,13 @@ const FeeForm = ({
                     </label>
                 </div>
 
-                <CurrencyInput
-                    amount={amount}
-                    setCurrency={({ input }) => handleOnChange({ amount: input })}
-                />
+                <div style={{ height: '58px' }}>
+                    <CurrencyInput
+                        amount={amount}
+                        setCurrency={({ input }) => handleOnChange({ amount: input })}
+                    />
+                </div>
 
-                {/* <div className='input-group w-md-25'>
-                    <span className='input-group-text'>$</span>
-                    <div className='form-floating'>
-                        <input
-                            className={'form-control' + (error?.amount ? ' is-invalid' : '')}
-                            id='amount'
-                            name='amount'
-                            onBlur={e => handleOnChange({ amount: formatCurrency(e.target.value, true) })}
-                            onChange={e => handleOnChange({ amount: e.target.value })}
-                            pattern="^\d{1,3}(,\d{3})*(\.\d+)?$"
-                            placeholder='Amount'
-                            step={0.01}
-                            title='Needs to be a currency.'
-                            type='text'
-                            value={amount}
-                        />
-                        <label htmlFor='amount' className='form-label required'>
-                            Amount
-                            {error?.amount && <span className='ms-1 text-danger'>{': ' + error.amount.message}</span>}
-                        </label>
-                    </div>
-                </div> */}
             </div>
             <div className='form-floating'>
                 <GrowingTextArea

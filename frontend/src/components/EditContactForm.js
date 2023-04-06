@@ -46,7 +46,8 @@ const EditContactForm = ({ prevContact, setShowThisForm }) => {
     const phoneNumberHasChanged = !noCharChanges(prevPhoneNumber ?? '', phoneNumber ?? '');
     const phoneExtHasChanged = !noCharChanges(prevPhoneExt ?? '', phoneExt ?? '');
     const miscHasChanged = !noCharChanges(prevNote ?? '', misc ?? '');
-    const noInputChanges = !organizationHasChanged && !nameHasChanged && !addressHasChanged && !billingAddressHasChanged && !emailHasChanged && !phoneNumberHasChanged && !phoneExtHasChanged && !miscHasChanged;
+    const defaultFeesHasChanged = JSON.stringify(prevContact.defaultFees) !== JSON.stringify(contact.defaultFees);
+    const noInputChanges = !organizationHasChanged && !nameHasChanged && !addressHasChanged && !billingAddressHasChanged && !emailHasChanged && !phoneNumberHasChanged && !phoneExtHasChanged && !miscHasChanged && !defaultFeesHasChanged;
 
     return (
         <CSSTransition
@@ -75,14 +76,15 @@ const EditContactForm = ({ prevContact, setShowThisForm }) => {
                             await updateContact({
                                 _id: prevContact._id,
                                 contact: {
-                                    organization: organizationHasChanged ? organization : undefined,
-                                    name: nameHasChanged ? name : undefined,
                                     address: addressHasChanged ? address : undefined,
                                     billingAddress: billingAddressHasChanged ? billingAddress : undefined,
+                                    defaultFees: defaultFeesHasChanged ? contact.defaultFees.map(dFee => dFee._id) : undefined,
                                     email: emailHasChanged ? email : undefined,
-                                    phoneNumber: phoneNumberHasChanged ? phoneNumber : undefined,
+                                    misc: miscHasChanged ? misc : undefined,
+                                    name: nameHasChanged ? name : undefined,
+                                    organization: organizationHasChanged ? organization : undefined,
                                     phoneExt: phoneExtHasChanged ? phoneExt : undefined,
-                                    misc: miscHasChanged ? misc : undefined
+                                    phoneNumber: phoneNumberHasChanged ? phoneNumber : undefined,
                                 }
                             })
                                 .then(isUpdated => {

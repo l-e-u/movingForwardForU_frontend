@@ -7,7 +7,7 @@ const CurrencyInput = ({ amount, setCurrency }) => {
     const [currencyString, setCurrencyString] = useState(amount === null ? '' : formatCurrency(amount, true));
 
     return (
-        <div className='input-group' style={{ maxWidth: '300px' }}>
+        <div className='input-group w-100 h-100'>
             <span className='input-group-text py-0 px-1'>$</span>
             <input
                 className='form-control py-0 ps-2 pe-1'

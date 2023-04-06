@@ -1,9 +1,14 @@
 import mongoose from "mongoose";
 import Contact from '../models/contact.js';
 
+const subDocumentsToPopulate = [
+    'createdBy',
+    'defaultFees',
+];
+
 // get all contacts
 const getContacts = async (req, res) => {
-    const contacts = await Contact.find({}).populate('createdBy').sort({ organization: 1 });
+    const contacts = await Contact.find({}).populate(subDocumentsToPopulate).sort({ organization: 1 });
 
     return res.status(200).json(contacts);
 }
@@ -17,7 +22,7 @@ const getContact = async (req, res) => {
         return res.status(404).json({ error });
     };
 
-    const contact = await Contact.findById(id).populate('createdBy');
+    const contact = await Contact.findById(id).populate(subDocumentsToPopulate);
 
     if (!contact) {
         return res.status(404).json({ error });
@@ -39,7 +44,7 @@ const createContact = async (req, res) => {
         });
 
         // populate field
-        contact = await contact.populate('createdBy');
+        contact = await contact.populate(subDocumentsToPopulate);
 
         return res.status(200).json(contact);
     }
@@ -92,7 +97,7 @@ const updateContact = async (req, res) => {
                 returnDocument: 'after',
                 runValidators: true
             }
-        ).populate('createdBy');
+        ).populate(subDocumentsToPopulate);
 
 
         if (!contact) {

@@ -73,7 +73,7 @@ const Contacts = () => {
 
     return (
         <PageContentWrapper>
-            <div className='mb-3'>
+            <div className='mb-3 position-relative' style={{ zIndex: '2' }}>
                 {showCreateForm ?
                     <CreateContactForm setShowThisForm={setShowCreateForm} /> :
                     <ActionButton
@@ -102,7 +102,7 @@ const Contacts = () => {
                         // by default, an overview of the model is displayed, unless the user clicks on an option
                         switch (true) {
                             case (showEditForm && isSelectedContact):
-                                return (<div className='position-relative' key={_id} ref={editFormRef}>
+                                return (<div className='position-relative' style={{ zIndex: '2' }} key={_id} ref={editFormRef}>
                                     <EditContactForm prevContact={contact} setShowThisForm={setShowEditForm} />
                                 </div>);
 

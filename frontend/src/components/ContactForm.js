@@ -1,13 +1,14 @@
 // components
-import RequiredFieldsText from './RequiredFieldsText';
+import ActionButton from './ActionButton';
+import FeesSelect from './FeesSelect';
 import GrowingTextArea from './GrowingTextArea';
-import ActionButton from './ActionButton'
+import RequiredFieldsText from './RequiredFieldsText';
 
 // functions
 import { removeExtraSpaces } from '../utils/StringUtils';
 
 const ContactForm = ({ contact, setContact, handleSubmit, error, isDisabled, isLoading }) => {
-    const { name, misc, address, billingAddress, organization, email, phoneNumber, phoneExt } = contact;
+    const { name, misc, address, billingAddress, organization, email, phoneNumber, phoneExt, defaultFees = [] } = contact;
 
     // error identification on fields with validation
     const errorFromOrganizationInput = error?.organization;
@@ -238,6 +239,8 @@ const ContactForm = ({ contact, setContact, handleSubmit, error, isDisabled, isL
                 </div>
             </div>
 
+            <FeesSelect defaultFees={defaultFees} setDefaultFees={(fees) => setContact(prev => ({ ...prev, defaultFees: [...fees] }))} />
+
             {/* MISC */}
             <div className='form-floating'>
                 <GrowingTextArea
@@ -254,9 +257,10 @@ const ContactForm = ({ contact, setContact, handleSubmit, error, isDisabled, isL
 
             <ActionButton
                 alignX='right'
+                isDisabled={isDisabled}
+                isLoading={isLoading}
                 text={(isLoading ? 'Saving...' : 'Save')}
                 type='submit'
-                isDisabled={isDisabled}
             />
 
             {/* any errors other than input validation */}

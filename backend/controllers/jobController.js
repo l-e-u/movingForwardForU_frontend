@@ -84,7 +84,7 @@ const getJobs = async (req, res) => {
 
     console.log('filters:', filters);
 
-    const jobs = await Job.find(filters).populate(docFieldsToPopulate);
+    const jobs = await Job.find(filters).populate(docFieldsToPopulate).sort({ createdAt: -1 });
     const count = jobs.length;
     totalPages = Math.floor(count / limit);
 

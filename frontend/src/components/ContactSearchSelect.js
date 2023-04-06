@@ -76,11 +76,15 @@ const ContactSearchSelect = ({ customer, setJob, inputError, inputErrorMessage }
             documents={contacts ?? []}
             errorLoading={error}
             isLoading={isLoading}
-            handleOnClickListItem={doc => {
+            handleOnClickListItem={selectedContact => {
                 return () => {
                     setJob(prev => {
                         const updated = { ...prev };
-                        updated.customer = doc;
+                        // loop throught the contact's default fees, and the default fee is not already listed in the job's billing, then push it
+                        selectedContact.defaultFees.forEach(defaultFee => {
+                            if (!updated.billing.find(bill => defaultFee._id === bill.fee._id)) updated.billing.push({ adjustedAmount: null, fee: defaultFee });
+                        })
+                        updated.customer = selectedContact;
                         return updated;
                     });
                 };

@@ -212,6 +212,7 @@ const JobForm = ({ job, setJob, handleSubmit, error, setError, isDisabled, isLoa
                 <ActionButton
                     alignX='right'
                     isDisabled={isDisabled || isResizingImages || !withinUploadSizeLimit}
+                    isLoading={isLoading}
                     text={(isLoading ? 'Saving...' : 'Save')}
                     type='submit'
                 />
