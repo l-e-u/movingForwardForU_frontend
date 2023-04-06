@@ -70,6 +70,11 @@ button.page-link:disabled {
   color: var(--bs-danger) !important;
 }
 
+.item-hover:hover {
+  background-color: var(--bs-gray-200);
+  transition: all .2s;
+}
+
 .list-group li {
   list-style: none;
 }
