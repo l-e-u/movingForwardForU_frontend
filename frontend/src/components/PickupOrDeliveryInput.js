@@ -81,20 +81,48 @@ const PickupOrDeliveryInput = ({
 
             <SmallHeader text={propertyText + ' Details'} />
 
-            {/* toggle to include a due time */}
-            <div className='form-check'>
-                <input
-                    type='checkbox'
-                    className='form-check-input'
-                    name={propertyText + 'TimeCheckbox'}
-                    id={propertyText + 'TimeCheckbox'}
-                    checked={includeTime}
-                    onChange={e => setPickupOrDeliveryInfo({ includeTime: e.target.checked })}
-                />
-                <label className='form-check-label' htmlFor='timeCheckbox'><SmallHeader text='Set Time' /></label>
-            </div>
+            <DateInput
+                className='form-control form-control-sm'
+                date={new Date(date)}
+                setDate={input => {
+                    let updatedDate = input;
 
-            <DateInput date={new Date(date)} setDate={setPickupOrDeliveryInfo} />
+                    // a job has to have a date
+                    if (!input) {
+                        updatedDate = new Date();
+                        // this helps avoid falling back one day from user input
+                        updatedDate.setMinutes(updatedDate.getMinutes() + updatedDate.getTimezoneOffset());
+                    };
+
+                    if (includeTime) {
+                        updatedDate.setHours(new Date(date).getHours());
+                        updatedDate.setMinutes(new Date(date).getMinutes());
+                    };
+
+                    setPickupOrDeliveryInfo({ date: updatedDate });
+                }}
+            />
+
+            {/* toggle to include a due time */}
+            <div className='form-check form-switch'>
+                <input
+                    className='form-check-input'
+                    id={propertyText + 'ToggleTime'}
+                    name={propertyText + 'ToggleTime'}
+                    onChange={e => {
+                        const updatedDateTime = new Date(date);
+                        updatedDateTime.setHours(new Date().getHours());
+                        updatedDateTime.setMinutes(new Date().getMinutes());
+
+                        setPickupOrDeliveryInfo({ includeTime: e.target.checked, date: updatedDateTime });
+                    }}
+                    type='checkbox'
+                    checked={includeTime}
+                />
+                <label
+                    className='form-check-label'
+                    htmlFor={propertyText + 'ToggleTime'}>{(includeTime ? 'Has' : 'No') + ' Due Time'}</label>
+            </div >
 
             {includeTime && <>
                 <CSSTransition
@@ -103,21 +131,35 @@ const PickupOrDeliveryInput = ({
                     in={true}
                     timeout={500}
                 >
-                    <TimeInput date={new Date(date)} setTime={setPickupOrDeliveryInfo} />
+                    <TimeInput
+                        hours={new Date(date).getHours()}
+                        minutes={new Date(date).getMinutes()}
+                        setTime={({ hours, minutes }) => {
+                            const updatedDateTime = new Date(date);
+
+                            updatedDateTime.setHours(hours);
+                            updatedDateTime.setMinutes(minutes);
+                            updatedDateTime.setSeconds(0);
+                            updatedDateTime.setMilliseconds(0);
+
+                            setPickupOrDeliveryInfo({ date: updatedDateTime });
+                        }}
+                    />
                 </CSSTransition>
             </>
             }
 
+            {/* toggle between selecting contact's address or a google address search */}
             <div className='form-check form-switch'>
                 <input
                     className='form-check-input'
-                    id={propertyText + 'Toggle'}
+                    id={propertyText + 'ToggleAddress'}
                     onChange={() => {
                         setSearchGoogle(prev => !prev);
                         setInput('');
                     }}
                     type='checkbox'
-                    value={searchGoogle}
+                    checked={searchGoogle}
                 />
                 <label
                     className='form-check-label'

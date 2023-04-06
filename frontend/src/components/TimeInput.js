@@ -1,10 +1,8 @@
 import { useState } from 'react';
 
-const TimeInput = ({ date, setTime }) => {
+const TimeInput = ({ hours, minutes, setTime }) => {
     const [isMilitaryTime, setIsMilitaryTime] = useState(true);
-    // date object is 0 - 23
-    const hours = date.getHours();
-    const minutes = date.getMinutes();
+
     const meridiem = hours < 12 ? 'am' : 'pm';
 
     // returns number of select input options for range used
@@ -26,25 +24,21 @@ const TimeInput = ({ date, setTime }) => {
     // for minutes, it always returns options 0 - 59
     const minuteOptionsJSX = numberedOptionsJSX(0, 59);
     const hoursToDisplay = () => {
-        let value = hours;
+        let acutalHours = hours;
 
         if (!isMilitaryTime) {
-            value %= 12;
-
-            // 12hr format uses 12 for midnight
-            if (value === 0) return 12;
-            if (meridiem === 'pm') return value % 12;
+            // if the hour is zero, then it's midnight (12)
+            acutalHours = (acutalHours % 12 === 0) ? 12 : hours % 12;
         };
 
-        return String(value).padStart(2, '0');
+        return String(acutalHours).padStart(2, '0');
     };
 
-    const handleOnChange = ({ hours = null, minutes = null }) => {
-        const newDate = new Date(date);
-        if (hours !== null) newDate.setHours(hours);
-        if (minutes !== null) newDate.setMinutes(minutes);
-
-        setTime({ date: newDate });
+    const handleOnChange = ({ updatedHours = null, updatedMinutes = null }) => {
+        setTime({
+            hours: (updatedHours === null ? hours : updatedHours),
+            minutes: (updatedMinutes === null ? minutes : updatedMinutes)
+        });
     };
 
     return (
@@ -76,7 +70,7 @@ const TimeInput = ({ date, setTime }) => {
                                 if ((meridiem === 'pm') && (selectedNumber < 12)) actualHour += 12;
                             };
 
-                            handleOnChange({ hours: actualHour });
+                            handleOnChange({ updatedHours: actualHour });
                         }} >
                         {hourOptionsJSX()}
                     </select>
@@ -95,7 +89,7 @@ const TimeInput = ({ date, setTime }) => {
                         id='minuteSelect'
                         className='form-select'
                         value={String(minutes).padStart(2, '0')}
-                        onChange={e => handleOnChange({ minutes: Number(e.target.value) })}>
+                        onChange={e => handleOnChange({ updatedMinutes: Number(e.target.value) })}>
                         {minuteOptionsJSX()}
                     </select>
                     <label htmlFor='minuteSelect' className='form-label'>Minute</label>
@@ -112,7 +106,7 @@ const TimeInput = ({ date, setTime }) => {
                             // from pm to am
                             if (meridiem === 'pm') actualHour -= 12;
 
-                            handleOnChange({ hours: actualHour });
+                            handleOnChange({ updatedHours: actualHour });
                         }}
                         style={{ cursor: 'pointer' }}
                     >
