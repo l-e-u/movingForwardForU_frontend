@@ -16,23 +16,23 @@ import { UsersContextProvider } from './context/UsersContext.js';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  <React.StrictMode>
-    <AuthContextProvider>
-      <FeesContextProvider>
-        <UsersContextProvider>
-          <StatusesContextProvider>
-            <ContactsContextProvider>
-              <JobsContextProvider>
-                <MyJobsContextProvider>
-                  <ArchivesContextProvider>
-                    <App />
-                  </ArchivesContextProvider>
-                </MyJobsContextProvider>
-              </JobsContextProvider>
-            </ContactsContextProvider>
-          </StatusesContextProvider>
-        </UsersContextProvider>
-      </FeesContextProvider>
-    </AuthContextProvider>
-  </React.StrictMode>
+  // <React.StrictMode>
+  <AuthContextProvider>
+    <FeesContextProvider>
+      <UsersContextProvider>
+        <StatusesContextProvider>
+          <ContactsContextProvider>
+            <JobsContextProvider>
+              <MyJobsContextProvider>
+                <ArchivesContextProvider>
+                  <App />
+                </ArchivesContextProvider>
+              </MyJobsContextProvider>
+            </JobsContextProvider>
+          </ContactsContextProvider>
+        </StatusesContextProvider>
+      </UsersContextProvider>
+    </FeesContextProvider>
+  </AuthContextProvider>
+  // </React.StrictMode>
 );

@@ -99,6 +99,7 @@ const Login = () => {
                         <ActionButton
                             alignX='right'
                             isDisabled={isLoading}
+                            isLoading={isLoading}
                             text={(isLoading ? 'Logging in...' : 'Login')}
                             type='submit'
                         />
