@@ -83,7 +83,7 @@ function App() {
         </div>
       </BrowserRouter>
       <footer className='d-flex flex-wrap justify-content-center text-center text-secondary mt-3 px-4 pb-3 w-100 smallPrint'>
-        <span className='mx-1'>Copyright <i className='bi bi-c-circle'></i> {new Date().getFullYear()} Moving Forward, LLC.</span><span>All Rights Reserved</span>
+        <span className='mx-1'><i className='bi bi-c-circle'></i> {new Date().getFullYear()} Moving Forward, LLC.</span><span>All Rights Reserved</span>
       </footer>
     </div>
   );

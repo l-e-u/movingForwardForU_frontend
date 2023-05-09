@@ -16,7 +16,7 @@ const contactSchema = new Schema(
         createdBy: {
             type: Schema.Types.ObjectId,
             ref: 'User',
-            require: true
+            required: true
         },
         defaultFees: [{
             ref: 'Fee',
