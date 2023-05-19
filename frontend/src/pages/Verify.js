@@ -33,11 +33,9 @@ const Verify = () => {
             // don't want to show the error if user is trying to rectify, so null error at the start
             setError(null);
 
-            const passwordReset = resetPassword ? '/1' : '/0';
-
             // on mount, check if the token is valid, if invalid, show error
             // if the user is already verified, then direct them to login
-            const response = await fetch('/api/users/verify/' + emailToken + passwordReset, { method: 'POST' });
+            const response = await fetch(`/api/users/verify/${emailToken}/${resetPassword}`, { method: 'POST' });
 
             // expecting a found user
             const json = await response.json();
