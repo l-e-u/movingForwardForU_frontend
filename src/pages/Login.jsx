@@ -7,18 +7,38 @@ import Card from '../components/Card';
 
 // hooks
 import { useLogin } from '../hooks/useLogin';
+import { useResetPassword } from '../hooks/useResetPassword';
 
 const Login = () => {
-   const API_BASE_URL = process.env.API_BASE_URL;
    const [email, setEmail] = useState('');
    const [password, setPassword] = useState('');
-   const [showForgotPassEmailSent, setShowForgotPassEmailSent] = useState(null);
    const { login, error, isLoading } = useLogin();
+   const { resetPassword, resetPasswordEmailSent, isLoading: isLoadingResetPassword } = useResetPassword();
 
-   const handleSubmit = async (e) => {
+   // uses the input's validitay function to check if email pattern is valid
+   const emailIsValid = () => {
+      const emailInput = document.getElementById('formLogin').email;
+      const isValid = emailInput.checkValidity();
+
+      if (!isValid) emailInput.reportValidity();
+
+      return isValid;
+   };
+
+   const handleSubmit = (e) => {
       e.preventDefault();
 
-      await login(email, password);
+      if (!emailIsValid()) return;
+
+      login(email, password);
+   };
+
+   const handleResetPassword = (e) => {
+      e.preventDefault();
+
+      if (!emailIsValid()) return;
+
+      resetPassword(email);
    };
 
    return (
@@ -26,9 +46,9 @@ const Login = () => {
          <Card
             header={<h2 className='fs-3'>Login</h2>}
             body={
-               <form className='login' onSubmit={handleSubmit}>
+               <form id='formLogin' className='login' onSubmit={handleSubmit}>
 
-
+                  {/* email input */}
                   <div className='form-floating mb-2'>
                      <input
                         className='form-control'
@@ -39,11 +59,17 @@ const Login = () => {
                         onChange={(e) => setEmail(e.target.value)}
                         value={email} />
                      <label htmlFor='email'>
-                        Email
-                        {error?.email && <span className='ms-1 text-danger'>{': ' + error.email.message}</span>}
+                        {error?.email ?
+                           <span className='ms-1 text-danger'>{error?.message}</span>
+                           :
+                           'Email'
+                        }
+                        {/* Email
+                        {error?.email && <span className='ms-1 text-danger'>{': ' + error.message}</span>} */}
                      </label>
                   </div>
 
+                  {/* password input */}
                   <div className='form-floating mb-2'>
                      <input
                         className='form-control'
@@ -55,30 +81,17 @@ const Login = () => {
                         value={password}
                      />
                      <label htmlFor='password'>
-                        Password
-                        {error?.password && <span className='ms-1 text-danger'>{': ' + error.password.message}</span>}
+                        {error?.password ?
+                           <span className='ms-1 text-danger'>{error?.message}</span>
+                           :
+                           'Password'
+                        }
                      </label>
                   </div>
                   <div>
                      <button
                         className='border-0 text-action d-flex ms-auto'
-                        onClick={() => {
-                           setShowForgotPassEmailSent(false);
-
-                           if (email) {
-                              (async () => {
-                                 const response = await fetch(`${API_BASE_URL}/api/users/resetPassword`, {
-                                    body: JSON.stringify({ email }),
-                                    headers: { 'Content-Type': 'application/json' },
-                                    method: 'POST',
-                                 })
-
-                                 if (response.ok) {
-                                    setShowForgotPassEmailSent(true);
-                                 }
-                              })();
-                           }
-                        }}
+                        onClick={handleResetPassword}
                         style={{ backgroundColor: 'transparent' }}
                         type='button'
                      >
@@ -86,7 +99,7 @@ const Login = () => {
                      </button>
                   </div>
 
-                  {showForgotPassEmailSent &&
+                  {resetPasswordEmailSent &&
                      <CSSTransition
                         appear={true}
                         classNames='fade-'

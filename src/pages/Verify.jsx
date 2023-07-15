@@ -67,10 +67,10 @@ const Verify = () => {
       return () => clearTimeout(timeoutId);
    }, [user, error]);
 
-   const handleSubmit = async (e) => {
+   const handleSubmit = (e) => {
       e.preventDefault();
 
-      await verify({
+      verify({
          _id: user._id,
          password,
          confirmPassword
@@ -85,7 +85,8 @@ const Verify = () => {
          };
       });
    };
-
+   console.log('error:', error);
+   console.log('verify error:', verifyError)
    return (
       <PageContentWrapper>
          <div className='flex-grow-1 mx-auto my-3' style={{ maxWidth: '1000px' }}>
@@ -103,9 +104,6 @@ const Verify = () => {
 
                   {/* show error when token has expired */}
                   {error?.token && <p>Oops! This link has expired.</p>}
-
-                  {/* any server errors during verifying user */}
-                  {verifyError && <p>Something went wrong. Please refresh the page and try again.</p>}
 
                   {/* succesful confirmation */}
                   {user?.isVerified && <p>You're good to go!</p>}
@@ -138,8 +136,7 @@ const Verify = () => {
                               value={password}
                            />
                            <label htmlFor='password'>
-                              Password
-                              {error?.password && <span className='ms-1 text-danger'>{': ' + error.password.message}</span>}
+                              {verifyError?.password ? <span className='ms-1 text-danger'>{verifyError.message}</span> : 'Password'}
                            </label>
                         </div>
 
@@ -154,8 +151,8 @@ const Verify = () => {
                               value={confirmPassword}
                            />
                            <label htmlFor='confirmPassword'>
-                              Confirm Password
-                              {error?.password && <span className='ms-1 text-danger'>{': ' + error.password.message}</span>}
+                              {verifyError?.confirmPassword ? <span className='ms-1 text-danger'>{verifyError.message}</span> : 'Confirm Password'}
+
                            </label>
                         </div>
 
