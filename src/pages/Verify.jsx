@@ -26,6 +26,9 @@ const Verify = () => {
    const [passwordIsValid, setPasswordIsValid] = useState(false);
    const [user, setUser] = useState(null);
 
+   const errorPasswordInput = verifyError?.path === 'password';
+   const errorConfirmPasswordInput = verifyError?.path === 'confirmPassword';
+
    // on first mount only, check if the email token is still valid and get user
    useEffect(() => {
       (async () => {
@@ -85,8 +88,7 @@ const Verify = () => {
          };
       });
    };
-   console.log('error:', error);
-   console.log('verify error:', verifyError)
+
    return (
       <PageContentWrapper>
          <div className='flex-grow-1 mx-auto my-3' style={{ maxWidth: '1000px' }}>
@@ -136,7 +138,7 @@ const Verify = () => {
                               value={password}
                            />
                            <label htmlFor='password'>
-                              {verifyError?.password ? <span className='ms-1 text-danger'>{verifyError.message}</span> : 'Password'}
+                              {errorPasswordInput ? <span className='ms-1 text-danger'>{verifyError.message}</span> : 'Password'}
                            </label>
                         </div>
 
@@ -151,7 +153,7 @@ const Verify = () => {
                               value={confirmPassword}
                            />
                            <label htmlFor='confirmPassword'>
-                              {verifyError?.confirmPassword ? <span className='ms-1 text-danger'>{verifyError.message}</span> : 'Confirm Password'}
+                              {errorConfirmPasswordInput ? <span className='ms-1 text-danger'>{verifyError.message}</span> : 'Confirm Password'}
 
                            </label>
                         </div>

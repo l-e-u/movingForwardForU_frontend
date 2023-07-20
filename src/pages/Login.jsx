@@ -13,7 +13,10 @@ const Login = () => {
    const [email, setEmail] = useState('');
    const [password, setPassword] = useState('');
    const { login, error, isLoading } = useLogin();
-   const { resetPassword, resetPasswordEmailSent, isLoading: isLoadingResetPassword } = useResetPassword();
+   const { resetPassword, resetPasswordEmailSent, error: resetPasswordError, isLoading: isLoadingResetPassword } = useResetPassword();
+
+   const errorEmailInput = error?.path === 'email' || resetPasswordError?.path === 'email';
+   const errorPasswordInput = error?.path === 'password';
 
    // uses the input's validitay function to check if email pattern is valid
    const emailIsValid = () => {
@@ -59,13 +62,11 @@ const Login = () => {
                         onChange={(e) => setEmail(e.target.value)}
                         value={email} />
                      <label htmlFor='email'>
-                        {error?.email ?
-                           <span className='ms-1 text-danger'>{error?.message}</span>
+                        {errorEmailInput ?
+                           <span className='ms-1 text-danger'>{error?.message || resetPasswordError?.message}</span>
                            :
                            'Email'
                         }
-                        {/* Email
-                        {error?.email && <span className='ms-1 text-danger'>{': ' + error.message}</span>} */}
                      </label>
                   </div>
 
@@ -81,22 +82,26 @@ const Login = () => {
                         value={password}
                      />
                      <label htmlFor='password'>
-                        {error?.password ?
-                           <span className='ms-1 text-danger'>{error?.message}</span>
+                        {errorPasswordInput ?
+                           <span className='ms-1 text-danger'>{error.message}</span>
                            :
                            'Password'
                         }
                      </label>
                   </div>
                   <div>
-                     <button
-                        className='border-0 text-action d-flex ms-auto'
-                        onClick={handleResetPassword}
-                        style={{ backgroundColor: 'transparent' }}
-                        type='button'
-                     >
-                        Forgot Password?
-                     </button>
+                     {isLoadingResetPassword && <span className='spinner-border spinner-border-sm me-1' role='status' aria-hidden='true'></span>}
+
+                     {(!isLoadingResetPassword && !resetPasswordEmailSent) &&
+                        <button
+                           className='border-0 text-action d-flex ms-auto'
+                           onClick={handleResetPassword}
+                           style={{ backgroundColor: 'transparent' }}
+                           type='button'
+                        >
+                           Forgot Password?
+                        </button>
+                     }
                   </div>
 
                   {resetPasswordEmailSent &&
@@ -112,7 +117,7 @@ const Login = () => {
                   <br />
                   <ActionButton
                      alignX='right'
-                     isDisabled={isLoading}
+                     isDisabled={isLoading || isLoadingResetPassword}
                      isLoading={isLoading}
                      text={(isLoading ? 'Logging in...' : 'Login')}
                      type='submit'

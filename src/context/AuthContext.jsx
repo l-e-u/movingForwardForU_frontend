@@ -24,6 +24,8 @@ export const AuthContextProvider = ({ children }) => {
 
    // at first load, check if there's a user's token in local storage that has not been expired
    useEffect(() => {
+
+      console.log('trying to autoLogin')
       const item = localStorage.getItem('token');
 
       if (!item) return;
@@ -49,8 +51,8 @@ export const AuthContextProvider = ({ children }) => {
 
          // If JWT malformed or expired. navigate user to the login screen
          if (!response.ok) {
-            // remove user form storage
             localStorage.removeItem('token');
+            console.log('Something went wrong, try logging back in.');
             <Navigate to='/login' />
          };
       };

@@ -4,12 +4,13 @@ export const useResetPassword = () => {
    const API_BASE_URL = process.env.API_BASE_URL;
    const [resetPasswordEmailSent, setResetPasswordEmailSent] = useState(false);
    const [isLoading, setIsLoading] = useState(false);
+   const [error, setError] = useState(null);
 
    const resetPassword = async (email) => {
       setIsLoading(true);
 
-      // don't want to show the error if user is trying to rectify, so null error at the start
       setResetPasswordEmailSent(false);
+      setError(null);
 
       const response = await fetch(`${API_BASE_URL}/api/users/resetPassword`, {
          method: 'POST',
@@ -21,16 +22,18 @@ export const useResetPassword = () => {
       const json = await response.json();
 
       if (!response.ok) {
-         console.log('error')
+         console.log(json.error)
+         setError(json.error)
          setResetPasswordEmailSent(false);
       };
 
       if (response.ok) {
+         setError(null)
          setResetPasswordEmailSent(true);
       };
 
       setIsLoading(false);
    };
 
-   return { resetPassword, isLoading, resetPasswordEmailSent };
+   return { resetPassword, error, isLoading, resetPasswordEmailSent };
 };

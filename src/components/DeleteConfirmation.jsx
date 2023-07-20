@@ -29,6 +29,8 @@ const DeleteConfirmation = ({
    const [getIsLoading, setGetIsLoading] = useState(null);
    const [references, setReferences] = useState([]);
 
+   const cannotDeleteError = error?.path === 'ObjectID';
+
    // 'checkReference' value is a property on the job model that is a mongoose object id. fetch will return an array of filtered jobs based on the doc_id
    useEffect(() => {
       if (checkReference) {
@@ -72,7 +74,7 @@ const DeleteConfirmation = ({
             {/* show spinner with actively fetching data */}
             {getIsLoading && <div className='my-5'><LoadingDocuments /></div>}
 
-            {error?.server && <p>{'Could not delete. ' + error.server.message + ' Refresh and try again.'}</p>}
+            {cannotDeleteError && <span>{'Could not delete. ' + error.message + ' Refresh and try again.'}</span>}
 
             {(references.length > 0) &&
                <p className='m-0 px-3 pt-3 pb-2'>{`This ${model.toLowerCase()} is referenced on one or more jobs, you must delete, archive, or update the job(s) in order to delete this document.`}</p>

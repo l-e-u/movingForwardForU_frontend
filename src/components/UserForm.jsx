@@ -15,9 +15,9 @@ const UserForm = ({
    user,
    isEditing = false,
 }) => {
-   const errorFromEmailInput = error?.email;
-   const errorFromFirstNameInput = error?.firstName;
-   const errorFromLastNameInput = error?.lastName;
+   const errorFromEmailInput = error?.path === 'email';
+   const errorFromFirstNameInput = error?.path === 'firstName';
+   const errorFromLastNameInput = error?.path === 'lastName';
 
    return (
       <form onSubmit={handleSubmit} className='d-flex flex-column gap-2'>
