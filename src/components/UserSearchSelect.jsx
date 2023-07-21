@@ -21,6 +21,17 @@ const UserSearchSelect = ({ drivers, setJob }) => {
    const inputErrorMessage = 'Has already been added.';
    const hasAddedDrivers = drivers.length > 0;
 
+   // gather a list of user documents to list as drivers.
+   const listOfDrivers = users?.filter(u => {
+      // do not collect if the user is inactive or unverified
+      if (!u.isVerified || !u.isActive) return false;
+
+      return drivers.every(driver => {
+         // return the user only if they haven't been assigned as a driver already
+         return u._id !== driver._id
+      })
+   });
+
    // on first mount only, get documents
    useEffect(() => {
       (async () => {
@@ -59,14 +70,14 @@ const UserSearchSelect = ({ drivers, setJob }) => {
             setJob={setJob}
             handleOnClickListItem={doc => {
                return () => {
-                  setInputError(null);
+                  // setInputError(null);
 
                   // check if the user hasn't already been added. throw an error to avoid duplicates
                   setJob(prev => {
-                     if (prev.drivers.some(driver => driver._id === doc._id)) {
-                        setInputError(true);
-                        return prev;
-                     };
+                     // if (prev.drivers.some(driver => driver._id === doc._id)) {
+                     //    setInputError(true);
+                     //    return prev;
+                     // };
 
                      const updated = { ...prev };
                      updated.drivers = [...prev.drivers, doc];
@@ -81,7 +92,7 @@ const UserSearchSelect = ({ drivers, setJob }) => {
             }}
             inputError={inputError}
             inputErrorMessage={inputErrorMessage}
-            documents={users?.filter(u => drivers.every(driver => u._id !== driver._id)) ?? []}
+            documents={listOfDrivers ?? []}
             errorLoading={error}
             isLoading={isLoading} />
 

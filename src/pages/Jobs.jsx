@@ -75,6 +75,7 @@ const Jobs = ({ filters, setFilters }) => {
          };
 
          if (response.ok) {
+            console.log('count:', json.count, 'totalPages:', json.totalPages);
             setError(null);
             setIsLoading(false);
             setTotalPages(json.totalPages);
