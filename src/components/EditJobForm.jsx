@@ -54,7 +54,7 @@ const EditJobForm = ({
          // OR if the note was found and now it doesn't have attachments
          // OR the found note has attachments with new file(s)
          if (!note || !note.attachments[0] || note.attachments[0]?.file) {
-            prevNote.attachments.forEach(attachment => filesToDelete.push({ id: attachment.files_id }));
+            prevNote.attachments.forEach(attachment => filesToDelete.push({ id: attachment._id }));
          };
       });
    };
