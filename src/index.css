@@ -9,6 +9,18 @@
   --action: rgb(255, 97, 123);
   --error: #e7195a;
   --darkBlue: rgb(20, 20, 69);
+
+  --mainHue: 220;
+
+  --mainPalette1: hsl(var(--mainHue), 80%, 10%);
+  --mainPalette2: hsl(var(--mainHue), 80%, 20%);
+  --mainPalette3: hsl(var(--mainHue), 80%, 30%);
+  --mainPalette4: hsl(var(--mainHue), 80%, 40%);
+  --mainPalette5: hsl(var(--mainHue), 80%, 50%);
+  --mainPalette6: hsl(var(--mainHue), 80%, 60%);
+  --mainPalette7: hsl(var(--mainHue), 80%, 70%);
+  --mainPalette8: hsl(var(--mainHue), 80%, 80%);
+  --mainPalette9: hsl(var(--mainHue), 80%, 90%);
 }
 
 * {
