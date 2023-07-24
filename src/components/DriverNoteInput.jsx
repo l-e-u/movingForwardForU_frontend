@@ -59,19 +59,12 @@ const DriverNoteInput = ({ job_id }) => {
             >
                <>
                   <div
-                     className='position-relative border rounded mb-2'
+                     className='position-relative rounded mb-2'
                      style={{ backgroundColor: 'var(--bs-gray-100' }}
                   >
                      <div className='position-absolute top-0 end-0 text-action'>
                         <XButton handleOnClick={() => setNote(null)} />
                      </div>
-                     <input
-                        className='form-control-plaintext background-white text-reset py-1 px-2'
-                        onBlur={e => setNote(prev => ({ ...prev, subject: e.target.value.trim() }))}
-                        onChange={e => setNote(prev => ({ ...prev, subject: e.target.value }))}
-                        placeholder='Subject'
-                        value={note?.subject ?? ''}
-                     />
                      <GrowingTextArea
                         className='form-control-plaintext smallPrint text-reset px-2'
                         onBlur={e => setNote(prev => ({ ...prev, message: e.target.value.trim() }))}

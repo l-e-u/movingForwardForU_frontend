@@ -77,7 +77,7 @@ const NotesInput = ({
             <ul className='list-group d-flex flex-row flex-wrap gap-3 overflow-scroll rounded-0 py-2' ref={notesRef} style={{ maxHeight: '400px', borderTop: '1px solid var(--darkBlue)', borderBottom: '1px solid var(--darkBlue)' }}>
                {notes.map((note, index) => {
                   const { _id, attachments } = note;
-                  const inputNoteError = error?.path === `notes.${index}.subject`
+                  const inputNoteError = error?.path === `notes.${index}.message`
 
                   return (
                      <CSSTransition
@@ -87,36 +87,29 @@ const NotesInput = ({
                         timeout={500}
                         key={_id || index}
                      >
-                        <li className='position-relative border rounded' style={{ backgroundColor: 'var(--bs-gray-100)', flex: '1 1 300px', maxWidth: '600px' }}>
+                        <li className='position-relative rounded' style={{ backgroundColor: 'var(--bs-gray-100)', flex: '1 1 300px', maxWidth: '600px' }}>
                            {/* the X buttons removes the note from the job */}
                            <div className='position-absolute top-0 end-0 text-action'>
                               <XButton handleOnClick={() => handleDeleteOnClick(index)} />
                            </div>
 
-                           {/* input for the subject line and message textarea */}
-                           <input
-                              className={'form-control-plaintext text-reset required text-break background-white ps-2 py-1 pe-0' + (inputNoteError ? ' is-invalid' : '')}
-                              placeholder={'* ' + (inputNoteError ? error.message : 'Subject')}
-                              onBlur={e => handleOnChange({ subject: e.target.value.trim() }, index)}
-                              onChange={e => handleOnChange({ subject: e.target.value }, index)}
-                              value={note.subject}
-                           />
                            <GrowingTextArea
                               value={note.message}
-                              className='form-control-plaintext px-2 smallPrint text-reset'
-                              placeholder='Message'
+                              className={'form-control-plaintext px-2 text-reset required' + (inputNoteError ? ' is-invalid' : '')}
+                              placeholder={`* ${inputNoteError ? error.message : 'Message'}`}
                               onBlur={e => handleOnChange({ message: e.target.value.trim() }, index)}
                               onChange={e => handleOnChange({ message: e.target.value }, index)}
                            />
 
                            {/* only show the handler if the note already has attachments or it's within the limit */}
                            {(withinUploadSizeLimit || attachments.length > 0) &&
-                              <div className='px-2 pb-2'> <FileUploadHandler
-                                 files={attachments || []}
-                                 isResizingImages={isResizingImages}
-                                 setIsResizingImages={setIsResizingImages}
-                                 setFiles={({ images }) => handleOnChange({ attachments: images }, index)}
-                              />
+                              <div className='px-2 pb-2'>
+                                 <FileUploadHandler
+                                    files={attachments || []}
+                                    isResizingImages={isResizingImages}
+                                    setIsResizingImages={setIsResizingImages}
+                                    setFiles={({ images }) => handleOnChange({ attachments: images }, index)}
+                                 />
                               </div>
                            }
                         </li>

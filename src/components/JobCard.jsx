@@ -39,11 +39,13 @@ const JobCard = ({
    const numOfNotes = notes.length;
    const hasNotes = numOfNotes > 0;
 
+   console.log(notes)
+
    return (
       <Card
          header={<>
             <div className='mb-2'>{status.name}</div>
-            <div className='d-flex flex-wrap justify-content-between gap-2'>
+            <div className='d-flex d-md-block flex-wrap justify-content-between gap-2'>
                <h2 className='fs-5 m-0'>{customer.organization}</h2>
                {reference && <small className='text-action text-end align-self-end flex-grow-1'>{reference}</small>}
             </div>

@@ -99,6 +99,13 @@ button.page-link:disabled {
   background-color: var(--bs-white);
 }
 
+.note span {
+   white-space: nowrap;
+   overflow: hidden;
+   text-overflow: ellipsis;
+   display: block;
+}
+
 /* targets nav bar and overview containers */
 .theme-light {
   background-color: var(--bs-white);
@@ -275,6 +282,10 @@ button.page-link:disabled {
     border-bottom-left-radius: 0 !important;
   }
 
+  .w-md-20 {
+   width: 20% m !important;
+  }
+
   .w-md-25 {
     width: 25% !important;
   }
@@ -285,6 +296,10 @@ button.page-link:disabled {
 
   .w-md-75 {
     width: 75% !important;
+  }
+
+  .w-md-80 {
+   width: 80% !important;
   }
 }
 
