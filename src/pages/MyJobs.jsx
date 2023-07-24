@@ -16,6 +16,7 @@ import JobCard from '../components/JobCard';
 import LoadingDocuments from '../components/LoadingDocuments';
 import NavPagination from '../components/NavPagination';
 import PageContentWrapper from '../components/PageContentWrapper';
+import JobDetails from '../components/JobDetails';
 
 const MyJobs = ({ filters, setFilters }) => {
    const API_BASE_URL = process.env.API_BASE_URL;
@@ -66,6 +67,19 @@ const MyJobs = ({ filters, setFilters }) => {
          };
       })();
    }, [API_BASE_URL, currentPage, dispatch, filters, limit, user]);
+
+   return (
+      <>
+         {(myJobs && !isLoading) &&
+            myJobs.map((job) => {
+               return (
+                  <JobDetails {...job} key={job._id} singleNoteInput={true} />
+               );
+            })
+         }
+      </>
+   );
+
 
    return (
       <PageContentWrapper>

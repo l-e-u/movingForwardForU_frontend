@@ -21,68 +21,36 @@ const NavMenu = ({ selectedLink, setSelectedLink, setShowThisNav, user }) => {
    const { logout } = useLogout();
    const isAdmin = user?.isAdmin;
 
-   // when the menu is displayed. prevent the body from scrolling
-   useEffect(() => {
-      document.body.style.overflow = 'hidden';
+   return (
+      <nav aria-label='Pages navigation' className='d-flex flex-column text-secondary pt-5' style={{ width: '100px', minHeight: '800px' }}>
 
-      return () => {
-         document.body.style.overflow = 'auto';
-      }
-   });
-
-   return (<CSSTransition
-      appear={true}
-      classNames='fade-'
-      in={true}
-      timeout={500}
-   >
-      <nav aria-label='Pages navigation' className='position-fixed d-flex top-0 start-0 w-100 h-100 menu'>
-         <CSSTransition
-            appear={true}
-            classNames='slideFromLeft-'
-            in={true}
-            timeout={500}
-         >
-            <div className='theme-light d-flex flex-column w-lg-25 w-75 w-sm-50 p-4 overflow-auto'>
-               {user &&
-                  <div className='border-bottom py-3'>
-                     <p className='text-center m-0'>{user.firstName}</p>
+         {isAdmin && links.map((link, index) => {
+            return (
+               <Link
+                  key={index}
+                  to={link.path}
+                  className={`text-reset p-2 ${selectedLink === index ? 'selected' : ''}`}
+                  onClick={() => {
+                     setSelectedLink(index);
+                  }}>
+                  <div className='navIcon rounded-circle mx-auto d-flex justify-content-center align-items-center' style={{ width: '40px', height: '40px' }}>
+                     <i className={`bi ${link.icon}`}></i>
                   </div>
-               }
+               </Link>
+            )
+         })
+         }
 
-               {isAdmin && links.map((link, index) => {
-                  return (
-                     <Link
-                        key={index}
-                        to={link.path}
-                        className={(selectedLink === index ? 'selected' : '') + ' text-decoration-none text-action my-4 py-2 px-4'}
-                        onClick={() => {
-                           setSelectedLink(index);
-                           setShowThisNav(false);
-                        }}>
-                        <i className={'pe-3 bi ' + link.icon}></i><span>{link.name}</span>
-                     </Link>
-                  )
-               })
-               }
-
-               {/* LOGOUT BUTTON */}
-               <ActionButton
-                  alignX='center'
-                  alignY='bottom'
-                  handleOnClick={() => {
-                     setShowThisNav(false);
-                     logout();
-                  }}
-                  text='Logout'
-               />
-            </div>
-         </CSSTransition>
-         {/* on smaller screens, this area is clicked to close the nav menu */}
-
-         <div className='flex-grow-1 h-100 background' onClick={() => setShowThisNav(false)}></div>
+         {/* LOGOUT BUTTON */}
+         <button
+            className='border-0 text-reset mt-auto'
+            style={{ backgroundColor: 'transparent' }}
+            onClick={logout}
+            type='button'
+         >
+            <i className='bi bi-box-arrow-right'></i>
+         </button>
       </nav>
-   </CSSTransition>
    );
 };
 

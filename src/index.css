@@ -28,12 +28,11 @@
 }
 
 body {
-  background: var(--bs-gray-200);
+  background: white;
   margin: 0;
   font-family: 'Poppins' !important;
-  font-size: 16px;
-  /* color: var(--bs-gray-900); */
-  color: var(--darkBlue);
+  font-size: 14px;
+  color: var(--mainPalette1);
 }
 
 button.filter:hover {
@@ -45,15 +44,10 @@ input[type='file']:disabled {
   opacity: .25;
 }
 
-nav .selected {
-  background-color: var(--darkBlue) !important;
-  color: var(--bs-white) !important;
-  border-radius: var(--bs-border-radius-pill) !important;
-}
-
-nav.menu {
-  z-index: 2000;
-  background-color: rgba(0 0 0 / .75) !important;
+nav .selected .navIcon {
+   transition: all .2s ease-in-out;
+   background-color: var(--mainPalette5);
+   color:white;
 }
 
 .btn-action {
@@ -74,6 +68,11 @@ button.page-link:disabled {
   color: var(--bs-white) !important;
   opacity: 50% !important;
   pointer-events: none !important;
+}
+
+.dateTimeAddressDetails {
+   background-color: white;
+   outline: 1px solid  var(--bs-gray-300);
 }
 
 /* targets job form notes input, subject and message fields */
@@ -109,6 +108,10 @@ button.page-link:disabled {
 
 .background-white {
   background-color: var(--bs-white);
+}
+
+.jobDetailsCard .organization {
+   color: var(--mainPalette4);
 }
 
 .note span {
@@ -150,8 +153,8 @@ button.page-link:disabled {
   background: var(--bs-primary) !important;
 }
 
-.smallPrint {
-  font-size: .75rem;
+.fs-smaller {
+  font-size: .75rem !important;
 }
 
 .selectList {

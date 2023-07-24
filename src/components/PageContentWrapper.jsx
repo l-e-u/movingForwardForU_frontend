@@ -1,3 +1,11 @@
-const PageContentWrapper = ({ children }) => <div className='page maxWidth1400px w-100 flex-grow-1 p-3'>{children}</div>;
+const PageContentWrapper = ({ children }) => {
+   return (
+      <div
+         className='page border-top border-start flex-grow-1'
+         style={{ borderTopLeftRadius: '2.5rem', backgroundColor: 'var(--bs-gray-100)' }}>
+         {children}
+      </div>
+   );
+};
 
 export default PageContentWrapper;
