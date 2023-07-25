@@ -1,6 +1,4 @@
-import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { CSSTransition } from 'react-transition-group';
 
 // hooks
 import { useLogout } from '../hooks/useLogout';
@@ -8,21 +6,26 @@ import { useLogout } from '../hooks/useLogout';
 // components
 import ActionButton from './ActionButton'
 
-const NavMenu = ({ selectedLink, setSelectedLink, setShowThisNav, user }) => {
+// context
+import { useAuthContext } from '../hooks/useAuthContext';
+
+const NavMenu = ({ selectedLink, setSelectedLink }) => {
+   const { user } = useAuthContext();
+
    const links = [
       { name: 'My Jobs', path: '/', icon: 'bi-list-check' },
-      { name: 'Jobs', path: '/jobs', icon: 'bi-view-list' },
-      { name: 'Contacts', path: '/contacts', icon: 'bi-person-vcard' },
-      { name: 'Statuses', path: '/statuses', icon: 'bi-tags' },
-      { name: 'Users', path: '/users', icon: 'bi-people' },
-      { name: 'Fees', path: '/fees', icon: 'bi-currency-dollar' },
-      { name: 'Archives', path: '/archives', icon: 'bi-archive' },
+      // { name: 'Jobs', path: '/jobs', icon: 'bi-view-list' },
+      // { name: 'Contacts', path: '/contacts', icon: 'bi-person-vcard' },
+      // { name: 'Statuses', path: '/statuses', icon: 'bi-tags' },
+      // { name: 'Users', path: '/users', icon: 'bi-people' },
+      // { name: 'Fees', path: '/fees', icon: 'bi-currency-dollar' },
+      // { name: 'Archives', path: '/archives', icon: 'bi-archive' },
    ];
    const { logout } = useLogout();
    const isAdmin = user?.isAdmin;
 
    return (
-      <nav aria-label='Pages navigation' className='d-flex flex-column text-secondary pt-5' style={{ width: '100px', minHeight: '800px' }}>
+      <nav aria-label='Pages navigation' className='d-none d-md-flex flex-column text-secondary pt-5 pb-4' style={{ width: '75px', minHeight: '800px' }}>
 
          {isAdmin && links.map((link, index) => {
             return (

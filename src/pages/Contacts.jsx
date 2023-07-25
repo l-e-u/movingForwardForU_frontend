@@ -14,7 +14,7 @@ import ErrorLoadingDocuments from '../components/ErrorLoadingDocuments';
 import FlexBoxWrapper from '../components/FlexBoxWrapper';
 import LoadingDocuments from '../components/LoadingDocuments';
 import OptionsMenu from '../components/OptionsMenu';
-import PageContentWrapper from '../components/PageContentWrapper';
+import PageContentWrapper from '../components/Page';
 
 const Contacts = () => {
    const API_BASE_URL = process.env.API_BASE_URL;

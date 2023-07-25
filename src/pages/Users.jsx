@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from 'react';
 
 // components
-import PageContentWrapper from '../components/PageContentWrapper';
+import PageContentWrapper from '../components/Page';
 import CreatedInfo from '../components/CreatedInfo';
 import FlexBoxWrapper from '../components/FlexBoxWrapper';
 import ActionButton from '../components/ActionButton';

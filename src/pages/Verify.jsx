@@ -6,7 +6,7 @@ import ActionButton from '../components/ActionButton';
 import Card from '../components/Card';
 import PasswordChecklist from 'react-password-checklist';
 import LoadingDocuments from '../components/LoadingDocuments';
-import PageContentWrapper from '../components/PageContentWrapper';
+import PageContentWrapper from '../components/Page';
 
 // hooks
 import { useVerify } from '../hooks/useVerify';

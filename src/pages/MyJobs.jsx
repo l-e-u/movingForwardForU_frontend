@@ -15,10 +15,16 @@ import FlexBoxWrapper from '../components/FlexBoxWrapper';
 import JobCard from '../components/JobCard';
 import LoadingDocuments from '../components/LoadingDocuments';
 import NavPagination from '../components/NavPagination';
-import PageContentWrapper from '../components/PageContentWrapper';
+import Page from '../components/Page';
 import JobDetails from '../components/JobDetails';
+import JobsList from '../components/JobsList';
 
-const MyJobs = ({ filters, setFilters }) => {
+const MyJobs = ({
+   filters,
+   setFilters,
+   selectedLink,
+   setSelectedLink,
+}) => {
    const API_BASE_URL = process.env.API_BASE_URL;
    const { user } = useAuthContext();
    const { myJobs, dispatch } = useMyJobsContext();
@@ -69,20 +75,22 @@ const MyJobs = ({ filters, setFilters }) => {
    }, [API_BASE_URL, currentPage, dispatch, filters, limit, user]);
 
    return (
-      <>
+      <Page selectedLink={selectedLink} setSelectedLink={setSelectedLink}>
          {(myJobs && !isLoading) &&
             myJobs.map((job) => {
                return (
-                  <JobDetails {...job} key={job._id} singleNoteInput={true} />
+                  <JobDetails job={job} key={job._id} singleNoteInput={true} setFilters={setFilters} />
                );
             })
          }
-      </>
+
+         {/* <JobsList jobs={myJobs} /> */}
+      </Page>
    );
 
 
    return (
-      <PageContentWrapper>
+      <Page>
          <div className='d-flex flex-column gap-2 mb-3'>
             <NavPagination
                currentPage={currentPage}
@@ -116,7 +124,7 @@ const MyJobs = ({ filters, setFilters }) => {
                })}
             </FlexBoxWrapper>
          }
-      </PageContentWrapper>
+      </Page>
    );
 };
 

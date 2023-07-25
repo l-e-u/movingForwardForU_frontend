@@ -21,7 +21,7 @@ const AddressDisplay = ({
    }
 
    return (
-      <div className='dateTimeAddressDetails rounded-1 p-4'>
+      <div className='dateTimeAddressDetails'>
          {/* date */}
          <div className='d-flex gap-2'>
             <i className='bi bi-calendar-event'></i>

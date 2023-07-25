@@ -3,19 +3,46 @@ import CreatedInfo from './CreatedInfo';
 import FileDownloadButton from './FileDownloadLink';
 
 const NotesList = ({ list }) => {
-   console.log(list)
+
+   const listStyles = {
+      listStyle: 'none',
+      paddingInlineStart: '0px'
+   };
+
+   const paragraphStyles = {
+      whiteSpace: 'pre-wrap',
+   };
+
+   const noteJSX = list.map((note, index) => {
+      const { _id } = note;
+      const lastNote = index === list.length - 1;
+
+      return (
+         <li key={note._id}>
+            <p className='m-0 fs-smaller' style={paragraphStyles}>
+               {note.message + `kfjaoienfoaneiofa fkeagoanl a ioahgeoaeofj ijeoajfoaijef aijoeaifjioa joijeagfiojaoijkljdlafjlkdalfka kjldakf;j NEW LINE \n lkjdlkfajkd kdlfjadfklajdlfjalkdjfkl ajkldjf klajkdflj aklf   eoihgworighurghuieh ogrh a rba94h v949ha7g4b9 c  agc 94 joaigeja geeagio jogr`}
+            </p>
+            {!lastNote && <hr />}
+         </li>
+      );
+   });
+
    return (
-      <ul className='list-group list-group-flush d-flex flex-column gap-2 mt-1'>
+      <ul className='m-0' style={listStyles}>
+         {noteJSX}
+      </ul>
+   )
+   return (
+      <ul className=''>
          {list.map((note) => {
             const { _id, attachments, createdAt, createdBy, message } = note;
             const numOfAttachments = attachments.length;
             const hasAttachments = numOfAttachments > 0;
 
             return (
-               <li key={_id} className='note list-group-item p-0 text-reset'>
+               <li key={_id} className=''>
                   <button
-                     className='btn text-action rounded border-0 text-start d-flex py-1 w-100'
-                     style={{ backgroundColor: 'var(--bs-gray-100)' }}
+                     className='border-0'
                      type='button'
                      data-bs-toggle='collapse'
                      data-bs-target={'#collapseMsg' + _id}

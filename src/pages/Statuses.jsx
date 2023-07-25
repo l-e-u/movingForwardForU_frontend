@@ -9,7 +9,7 @@ import EditStatusForm from '../components/EditStatusForm';
 import CreateStatusForm from '../components/CreateStatusForm';
 import CreatedInfo from '../components/CreatedInfo';
 import FlexBoxWrapper from '../components/FlexBoxWrapper';
-import PageContentWrapper from '../components/PageContentWrapper';
+import PageContentWrapper from '../components/Page';
 import ActionButton from '../components/ActionButton';
 import LoadingDocuments from '../components/LoadingDocuments';
 import ErrorLoadingDocuments from '../components/ErrorLoadingDocuments';

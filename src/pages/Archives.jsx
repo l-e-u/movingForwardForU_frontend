@@ -13,7 +13,7 @@ import FilterAndASort from '../components/FilterAndSort';
 import FlexBoxWrapper from '../components/FlexBoxWrapper';
 import LoadingDocuments from '../components/LoadingDocuments';
 import NavPagination from '../components/NavPagination';
-import PageContentWrapper from '../components/PageContentWrapper'
+import PageContentWrapper from '../components/Page'
 import ArchiveCard from '../components/ArchiveCard';
 
 const Archives = ({ filters, setFilters }) => {

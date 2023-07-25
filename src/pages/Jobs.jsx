@@ -17,7 +17,7 @@ import JobCard from '../components/JobCard';
 import LoadingDocuments from '../components/LoadingDocuments';
 import NavPagination from '../components/NavPagination';
 import OptionsMenu from '../components/OptionsMenu';
-import PageContentWrapper from '../components/PageContentWrapper';
+import PageContentWrapper from '../components/Page';
 
 // functions
 // import formatDistanceToNow from 'date-fns/formatDistanceToNow';

@@ -1,64 +1,84 @@
-const ShowCreateFormButton = ({
-    alignX,
-    alignY,
-    handleOnClick,
-    text,
-    isDisabled = false,
-    isLoading = false,
-    type = 'button',
+import { motion } from 'framer-motion';
+
+const ActionButton = ({
+   alignX,
+   alignY,
+   text,
+   handleOnClick = () => { },
+   invertedColors = false,
+   isDisabled = false,
+   isLoading = false,
+   type = 'button',
 }) => {
-    let alignClass;
+   let alignClass;
 
-    // sets the horizontal alignment
-    switch (alignX) {
-        case 'left':
-            alignClass = ' me-auto';
-            break;
+   const buttonVariants = {
+      onHover: {
+         scale: 1.1,
+         transition: {
+            duration: 0.3,
+         },
+         boxShadow: invertedColors ? '0px 0px 8px var(--mainPalette3)' : '0px 0px 8px var(--mainPalette9)',
+      }
+   }
 
-        case 'center':
-            alignClass = ' mx-auto';
-            break;
+   const buttonStyles = {
+      backgroundColor: invertedColors ? 'var(--mainPalette3)' : 'var(--mainPalette9)',
+      color: invertedColors ? 'white' : 'var(--mainPalette4)'
+   };
 
-        case 'right':
-            alignClass = ' ms-auto';
-            break;
+   // sets the horizontal alignment
+   switch (alignX) {
+      case 'left':
+         alignClass = ' me-auto';
+         break;
 
-        default:
-            alignClass = '';
-            break;
-    }
+      case 'center':
+         alignClass = ' mx-auto';
+         break;
 
-    // sets vertical alignment
-    switch (alignY) {
-        case 'top':
-            alignClass += ' mb-auto';
-            break;
+      case 'right':
+         alignClass = ' ms-auto';
+         break;
 
-        case 'center':
-            alignClass += ' my-auto';
-            break;
+      default:
+         alignClass = '';
+         break;
+   }
 
-        case 'bottom':
-            alignClass += ' mt-auto';
-            break;
+   // sets vertical alignment
+   switch (alignY) {
+      case 'top':
+         alignClass += ' mb-auto';
+         break;
 
-        default:
-            alignClass += '';
-            break;
-    }
+      case 'center':
+         alignClass += ' my-auto';
+         break;
 
-    return (
-        <button
-            className={'rounded-pill d-block btn-action' + alignClass}
-            disabled={isDisabled}
-            onClick={handleOnClick}
-            style={{ width: '200px' }}
-            type={type}
-        >
-            {isLoading && <span className='spinner-border spinner-border-sm me-1' role='status' aria-hidden='true'></span>}
-            {text}
-        </button>
-    );
+      case 'bottom':
+         alignClass += ' mt-auto';
+         break;
+
+      default:
+         alignClass += '';
+         break;
+   }
+
+   return (
+      <motion.button
+         className={`rounded-pill border-0 d-block actionButton px-4 py-1 ${alignClass}`}
+         disabled={isDisabled}
+         onClick={handleOnClick}
+         style={buttonStyles}
+         type={type}
+         variants={buttonVariants}
+         whileHover='onHover'
+      >
+         {isLoading && <span className='spinner-border spinner-border-sm me-1' role='status' aria-hidden='true'></span>}
+         {text}
+      </motion.button>
+   );
 };
 
-export default ShowCreateFormButton;
+export default ActionButton;
