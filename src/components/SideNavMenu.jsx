@@ -21,28 +21,12 @@ const SideNavMenu = ({ selectedLink, setSelectedLink }) => {
    // width is set in index.css
    const navStyles = { minHeight: '800px', zIndex: '1031' };
 
-   // button to add new documents classes, styles, and framer-motion variants
-   const addButtonClasses = 'border-0 p-3 m-3 my-5 position-relative rounded d-flex justify-content-center align-items-center';
-   const addButtonStyles = { backgroundColor: 'var(--mainPalette9)', color: 'var(--mainPalette4)', height: '100px' };
-   const addButtonVariants = {
-      hidden: {
-         left: '-100%'
-      },
-      animation: {
-         left: '0'
-      }
-      ,
-      onHover: {
-         scale: 1.1,
-         transition: {
-            duration: 0.3,
-         },
-         boxShadow: '0px 0px 8px var(--mainPalette9)',
-      }
-   };
+   // styles for links
+   const linkClasses = 'text-reset p-2';
 
-   const linkClasses = 'navIcon rounded-circle mx-auto d-flex justify-content-center align-items-center';
-   const linkStyles = { width: '40px', height: '40px' };
+   // styles for icons
+   const iconContainerClasses = 'navIcon rounded-circle mx-auto d-flex justify-content-center align-items-center';
+   const iconContainerStyles = { width: '40px', height: '40px' };
 
    const linksJSX = links.map((link, index) => {
       const { name } = link;
@@ -51,13 +35,13 @@ const SideNavMenu = ({ selectedLink, setSelectedLink }) => {
          <Link
             key={index}
             to={link.path}
-            className={`text-reset p-2 ${selectedLink === name ? 'selected' : ''}`}
+            className={`${linkClasses}${selectedLink === name ? ' selected' : ''}`}
             onClick={() => setSelectedLink(name)}>
-            <div className={linkClasses} style={linkStyles}>
+            <div className={iconContainerClasses} style={iconContainerStyles}>
                <i className={`bi ${link.icon}`}></i>
             </div>
          </Link>
-      )
+      );
    });
 
    return (
@@ -65,19 +49,6 @@ const SideNavMenu = ({ selectedLink, setSelectedLink }) => {
 
          {/* navigation links to other pages */}
          {linksJSX}
-
-         <motion.button
-            className={addButtonClasses}
-            style={addButtonStyles}
-            onClick={() => console.log('add:', selectedLink)}
-            type='button'
-            variants={addButtonVariants}
-            initial='hidden'
-            animate='animation'
-            whileHover='onHover'
-         >
-            <i className='bi bi-plus'></i>
-         </motion.button>
 
          {/* LOGOUT BUTTON */}
          <button

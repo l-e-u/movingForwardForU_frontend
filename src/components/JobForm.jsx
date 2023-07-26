@@ -31,9 +31,12 @@ const JobForm = ({ job, setJob, handleSubmit, error, setError, isDisabled, isLoa
 
    const errorOther = error?.server;
 
-   return (<>
-      <RequiredFieldsText />
-      <form onSubmit={handleSubmit}>
+   const formClasses = 'formBackgroundGradient p-4 mx-md-3 rounded-4';
+
+   return (
+      <form className={formClasses} onSubmit={handleSubmit}>
+         <span className='display-5 text-white'>New Job</span>
+         <RequiredFieldsText />
          <div className='container-fluid'>
             <div className='row'>
                <div className='col-xl-3 col-sm-6 p-0 mb-2 pe-sm-2'>
@@ -221,7 +224,7 @@ const JobForm = ({ job, setJob, handleSubmit, error, setError, isDisabled, isLoa
          {/* any errors other than input validation */}
          {errorOther && <div className='text-danger mt-3 w-100'>{`${error.server.message} Refresh page. If problem persists, contact developer.`}</div>}
       </form>
-   </>);
+   );
 };
 
 export default JobForm;

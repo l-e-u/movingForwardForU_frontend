@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
 import * as XLSX from 'xlsx';
 
 // hooks
@@ -24,7 +25,6 @@ import PageContentWrapper from '../components/Page';
 import { urlQueryString } from '../utils/StringUtils';
 import ArchiveConfirmation from '../components/ArchiveConfirmation';
 import Page from '../components/Page';
-import { AnimatePresence } from 'framer-motion';
 import JobDetails from '../components/JobDetails';
 import JobsList from '../components/JobsList';
 
@@ -36,7 +36,7 @@ const Jobs = ({
 }) => {
    const API_BASE_URL = process.env.API_BASE_URL;
 
-   // user can click on a job from the list below and set the selectedJobID which is used to fill the information for the JobDetails component
+   // user can click on a job from the list below and set the selectedJob which is used to fill the information for the JobDetails component
    const [selectedJob, setSelectedJob] = useState(null);
 
    // context
@@ -64,6 +64,19 @@ const Jobs = ({
    const [currentPage, setCurrentPage] = useState(1);
    const [totalPages, setTotalPages] = useState(1);
    const [totalResults, setTotalResults] = useState(0);
+
+   // button to add new documents classes, styles, and framer-motion variants
+   const addButtonClasses = 'border-0 px-3 py-1 ms-auto position-relative rounded d-flex justify-content-center align-items-center';
+   const addButtonStyles = { backgroundColor: 'var(--mainPalette3)', color: 'white' };
+   const addButtonVariants = {
+      onHover: {
+         scale: 1.1,
+         transition: {
+            duration: 0.3,
+         },
+         boxShadow: '0px 0px 8px var(--mainPalette3)',
+      }
+   };
 
    // fetches results as the user chooses filters or changes limits for results
    useEffect(() => {
@@ -180,143 +193,160 @@ const Jobs = ({
 
    return (
       <Page selectedLink={selectedLink} setSelectedLink={setSelectedLink}>
+         <AnimatePresence mode='wait' onExitComplete={() => setShowCreateForm(false)}>
+            {showCreateForm && <CreateJobForm setShowThisForm={setShowCreateForm} setFilters={setFilters} />}
+         </AnimatePresence>
+
          <AnimatePresence mode='wait' onExitComplete={() => setSelectedJob(null)}>
             {selectedJob && <JobDetails job={selectedJob} setFilters={setFilters} />}
          </AnimatePresence>
 
-         <JobsList jobs={jobs} selectedJob={selectedJob} setSelectedJob={setSelectedJob} />
-      </Page>
-   )
+         <div className='px-3'>
+            <motion.button
+               className={addButtonClasses}
+               style={addButtonStyles}
+               onClick={() => setShowCreateForm(true)}
+               type='button'
+               variants={addButtonVariants}
+               whileHover='onHover'
+            >
+               <i className='bi bi-plus'></i>
+            </motion.button>
 
-   return (
-      <PageContentWrapper>
-         <div className='d-flex flex-column gap-2 mb-3'>
-            {showCreateForm ?
-               <CreateJobForm setShowThisForm={setShowCreateForm} setFilters={setFilters} /> :
-               // show the options show the create Job Form or to export the job list to excel
-               <div className='d-flex flex-column flex-sm-row gap-3 justify-content-between align-items-end'>
-                  {(!showCreateForm && !showEditForm && !showDeleteConfirmation) &&
-                     <div className='order-last order-sm-first'>
-                        {hasJobs &&
-                           <ActionButton
-                              handleOnClick={() => {
-                                 if (!isLoading) exportToExcel();
-                              }}
-                              text='Export Listed Jobs'
-                           />
-                        }
-                     </div>
-                  }
-                  {/* option to show the create Job Form */}
-                  <div className='order-first order-sm-last ms-auto'>
-                     <ActionButton
-                        handleOnClick={() => {
-                           if (!isLoading) {
-                              hideAllMenusAndForms();
-                              setShowCreateForm(true);
-                              setSelectedJobId(null);
-                           }
-                        }}
-                        text='Create a Job'
-                     />
-                  </div>
-               </div>
-            }
-
-            {/* user can select pagination page and limit for results */}
-            <NavPagination
-               currentPage={currentPage}
-               limit={limit}
-               setCurrentPage={setCurrentPage}
-               setLimit={setLimit}
-               setTotalPages={setTotalPages}
-               totalPages={totalPages}
-               totalResults={totalResults}
-            />
-
-            <FilterAndASort filters={filters} setFilters={setFilters} userIsAdmin={true} />
+            <JobsList jobs={jobs} selectedJob={selectedJob} setSelectedJob={setSelectedJob} />
          </div>
-
-         {/* show spinner with actively fetching data */}
-         {isLoading && <div className='my-5'><LoadingDocuments /></div>}
-
-         {error && <ErrorLoadingDocuments docType='Jobs' />}
-
-         {(jobs && !isLoading) &&
-            <FlexBoxWrapper>
-               {/* show a message when the results have loaded and there's not results */}
-               {(totalResults === 0) &&
-                  <div className='outline shadow-sm background-white p-3 text-center'>There are no results.</div>
-               }
-
-               {/* each elements has the option to show the job, edit form, or delete confirmation depending on the user's selection */}
-               {jobs.map((job) => {
-                  const { _id } = job;
-                  const isSelectedJob = selectedJobId === _id;
-
-                  // by default, an overview of the model is displayed, unless the user clicks on an option
-                  switch (true) {
-                     case (showArchiveConfirmation && isSelectedJob):
-                        return (<div className='position-relative' key={_id}>
-                           <ArchiveConfirmation job={job} setShowThisForm={setShowArchiveConfirmation} callBack={() => setTotalResults(prev => prev - 1)} />
-                        </div>);
-
-                     case (showEditForm && isSelectedJob):
-                        return (<div className='position-relative' key={_id} ref={editFormRef}>
-                           {/* the call back is to trigger a fetch for updated jobs list */}
-                           <EditJobForm prevJob={job} setShowThisForm={setShowEditForm} callBack={() => setFilters(prev => ({ ...prev }))} />
-                        </div>);
-
-                     case (showDeleteConfirmation && isSelectedJob):
-                        return (<div className='position-relative' key={_id}>
-                           <DeleteConfirmation
-                              callBack={() => setTotalResults(prev => prev - 1)}
-                              dispatch={dispatch}
-                              doc_id={_id}
-                              message={'Are you sure you want to delete this job?\nThis cannot be undone.'}
-                              model='JOB'
-                              route='jobs'
-                              setShowThisForm={setShowDeleteConfirmation}
-                           />
-                        </div>)
-
-                     default:
-                        return (<div className='position-relative' key={_id}>
-                           <OptionsMenu
-                              showMenu={showOptionsMenu && isSelectedJob}
-                              handleOnClickArchiveOption={() => {
-                                 hideAllMenusAndForms();
-                                 setShowArchiveConfirmation(true);
-                              }}
-                              handleOnClickCloseMenu={() => setShowOptionsMenu(false)}
-                              handleOnClickDeleteOption={() => {
-                                 hideAllMenusAndForms();
-                                 setShowDeleteConfirmation(true);
-                              }}
-                              handleOnClickEditOption={() => {
-                                 hideAllMenusAndForms();
-                                 setShowEditForm(true);
-                              }}
-                              handleOnClickMenu={() => {
-                                 hideAllMenusAndForms();
-                                 setSelectedJobId(_id);
-                                 setShowOptionsMenu(true);
-                              }}
-                           />
-                           <JobCard
-                              {...job}
-                              listBilling={true}
-                              listDrivers={true}
-                              listMileage={true}
-                              showCreatedDetails={true}
-                           />
-                        </div>);
-                  }
-               })}
-            </FlexBoxWrapper>
-         }
-      </PageContentWrapper>
+      </Page>
    );
+
+   //    return (
+   //       <PageContentWrapper>
+   //          <div className='d-flex flex-column gap-2 mb-3'>
+   //             {showCreateForm ?
+   //                <CreateJobForm setShowThisForm={setShowCreateForm} setFilters={setFilters} /> :
+   //                // show the options show the create Job Form or to export the job list to excel
+   //                <div className='d-flex flex-column flex-sm-row gap-3 justify-content-between align-items-end'>
+   //                   {(!showCreateForm && !showEditForm && !showDeleteConfirmation) &&
+   //                      <div className='order-last order-sm-first'>
+   //                         {hasJobs &&
+   //                            <ActionButton
+   //                               handleOnClick={() => {
+   //                                  if (!isLoading) exportToExcel();
+   //                               }}
+   //                               text='Export Listed Jobs'
+   //                            />
+   //                         }
+   //                      </div>
+   //                   }
+   //                   {/* option to show the create Job Form */}
+   //                   <div className='order-first order-sm-last ms-auto'>
+   //                      <ActionButton
+   //                         handleOnClick={() => {
+   //                            if (!isLoading) {
+   //                               hideAllMenusAndForms();
+   //                               setShowCreateForm(true);
+   //                               setSelectedJobId(null);
+   //                            }
+   //                         }}
+   //                         text='Create a Job'
+   //                      />
+   //                   </div>
+   //                </div>
+   //             }
+
+   //             {/* user can select pagination page and limit for results */}
+   //             <NavPagination
+   //                currentPage={currentPage}
+   //                limit={limit}
+   //                setCurrentPage={setCurrentPage}
+   //                setLimit={setLimit}
+   //                setTotalPages={setTotalPages}
+   //                totalPages={totalPages}
+   //                totalResults={totalResults}
+   //             />
+
+   //             <FilterAndASort filters={filters} setFilters={setFilters} userIsAdmin={true} />
+   //          </div>
+
+   //          {/* show spinner with actively fetching data */}
+   //          {isLoading && <div className='my-5'><LoadingDocuments /></div>}
+
+   //          {error && <ErrorLoadingDocuments docType='Jobs' />}
+
+   //          {(jobs && !isLoading) &&
+   //             <FlexBoxWrapper>
+   //                {/* show a message when the results have loaded and there's not results */}
+   //                {(totalResults === 0) &&
+   //                   <div className='outline shadow-sm background-white p-3 text-center'>There are no results.</div>
+   //                }
+
+   //                {/* each elements has the option to show the job, edit form, or delete confirmation depending on the user's selection */}
+   //                {jobs.map((job) => {
+   //                   const { _id } = job;
+   //                   const isSelectedJob = selectedJobId === _id;
+
+   //                   // by default, an overview of the model is displayed, unless the user clicks on an option
+   //                   switch (true) {
+   //                      case (showArchiveConfirmation && isSelectedJob):
+   //                         return (<div className='position-relative' key={_id}>
+   //                            <ArchiveConfirmation job={job} setShowThisForm={setShowArchiveConfirmation} callBack={() => setTotalResults(prev => prev - 1)} />
+   //                         </div>);
+
+   //                      case (showEditForm && isSelectedJob):
+   //                         return (<div className='position-relative' key={_id} ref={editFormRef}>
+   //                            {/* the call back is to trigger a fetch for updated jobs list */}
+   //                            <EditJobForm prevJob={job} setShowThisForm={setShowEditForm} callBack={() => setFilters(prev => ({ ...prev }))} />
+   //                         </div>);
+
+   //                      case (showDeleteConfirmation && isSelectedJob):
+   //                         return (<div className='position-relative' key={_id}>
+   //                            <DeleteConfirmation
+   //                               callBack={() => setTotalResults(prev => prev - 1)}
+   //                               dispatch={dispatch}
+   //                               doc_id={_id}
+   //                               message={'Are you sure you want to delete this job?\nThis cannot be undone.'}
+   //                               model='JOB'
+   //                               route='jobs'
+   //                               setShowThisForm={setShowDeleteConfirmation}
+   //                            />
+   //                         </div>)
+
+   //                      default:
+   //                         return (<div className='position-relative' key={_id}>
+   //                            <OptionsMenu
+   //                               showMenu={showOptionsMenu && isSelectedJob}
+   //                               handleOnClickArchiveOption={() => {
+   //                                  hideAllMenusAndForms();
+   //                                  setShowArchiveConfirmation(true);
+   //                               }}
+   //                               handleOnClickCloseMenu={() => setShowOptionsMenu(false)}
+   //                               handleOnClickDeleteOption={() => {
+   //                                  hideAllMenusAndForms();
+   //                                  setShowDeleteConfirmation(true);
+   //                               }}
+   //                               handleOnClickEditOption={() => {
+   //                                  hideAllMenusAndForms();
+   //                                  setShowEditForm(true);
+   //                               }}
+   //                               handleOnClickMenu={() => {
+   //                                  hideAllMenusAndForms();
+   //                                  setSelectedJobId(_id);
+   //                                  setShowOptionsMenu(true);
+   //                               }}
+   //                            />
+   //                            <JobCard
+   //                               {...job}
+   //                               listBilling={true}
+   //                               listDrivers={true}
+   //                               listMileage={true}
+   //                               showCreatedDetails={true}
+   //                            />
+   //                         </div>);
+   //                   }
+   //                })}
+   //             </FlexBoxWrapper>
+   //          }
+   //       </PageContentWrapper>
+   //    );
 };
 
 export default Jobs; 

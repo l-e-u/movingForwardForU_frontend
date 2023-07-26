@@ -45,8 +45,8 @@ input[type='file']:disabled {
 
 nav .selected .navIcon {
    transition: all .2s ease-in-out;
-   background-color: var(--mainPalette5);
-   color:white;
+   background-color: var(--mainPalette9);
+   color:var(--mainPalette4);
 }
 
 .actionButton:disabled,
@@ -68,6 +68,10 @@ button.page-link:disabled {
    color: var(--mainPalette3) !important;
 }
 
+.formBackgroundGradient {
+   background: linear-gradient(0deg, var(--mainPalette2) 0%, var(--mainPalette3) 100%);
+}
+
 .sideNavMenu {
    width: var(--sideNavWidth);
 }
@@ -80,47 +84,6 @@ hr {
 .form-control-plaintext.is-invalid::placeholder,
 .form-control-plaintext.is-invalid::-webkit-input-placeholder {
   color: var(--bs-danger) !important;
-}
-
-.item-hover:hover {
-  background-color: var(--bs-gray-200);
-  transition: all .2s;
-}
-
-.list-group li {
-  list-style: none;
-}
-
-.maxWidth1400px {
-  max-width: 1400px;
-}
-
-.text-action {
-  color: var(--action) !important;
-}
-
-.background-action {
-  background-color: var(--action) !important;
-}
-
-.background-navy {
-  background-color: var(--darkBlue);
-}
-
-.background-white {
-  background-color: var(--bs-white);
-}
-
-.note span {
-   white-space: nowrap;
-   overflow: hidden;
-   text-overflow: ellipsis;
-   display: block;
-}
-
-/* targets nav bar and overview containers */
-.theme-light {
-  background-color: var(--bs-white);
 }
 
 .inputError {

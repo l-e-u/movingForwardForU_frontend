@@ -19,7 +19,7 @@ const JobsList = ({
    };
 
    // styling for each item
-   const itemClasses = `border m-3 p-2`;
+   const itemClasses = `border`;
    const itemStyles = { cursor: 'pointer' };
 
    // creates all the rows needed for the data
@@ -28,10 +28,10 @@ const JobsList = ({
       const pickupDate = new Date(pickup.date);
       const deliveryDate = new Date(delivery.date);
 
-      const pickupDateString = pickupDate.toUTCString().substring(0, 17);
+      const pickupDateString = dateStringFormat(pickupDate).toUpperCase();
       const pickupTimeString = pickup.includeTime ? timeStringFormat(pickupDate, true) : '';
 
-      const deliveryDateString = deliveryDate.toUTCString().substring(0, 17);
+      const deliveryDateString = dateStringFormat(deliveryDate).toUpperCase();
       const deliveryTimeString = delivery.includeTime ? timeStringFormat(deliveryDate, true) : '';
 
       const isSelected = _id === selectedJob?._id;
@@ -46,7 +46,8 @@ const JobsList = ({
       // clicking on a row sets the selected job, clicking on the same row, nullifies the selected job
       return (
          <li key={_id} className={itemClasses} style={itemStyles} onClick={handleOnClickItem}>
-            <div>{status.name}</div>
+            <span className='me-3'>{status.name}</span>
+            <span>{reference}</span>
             <div>{customer.organization}</div>
             <div>{reference}</div>
             <div>{pickupTimeString}</div>

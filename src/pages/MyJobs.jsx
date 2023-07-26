@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { AnimatePresence } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 
 // hooks
 import { useMyJobsContext } from "../hooks/useMyJobsContext";
@@ -14,11 +14,11 @@ import ErrorLoadingDocuments from '../components/ErrorLoadingDocuments';
 import FilterAndASort from '../components/FilterAndSort';
 import FlexBoxWrapper from '../components/FlexBoxWrapper';
 import JobCard from '../components/JobCard';
+import JobDetails from '../components/JobDetails';
+import JobsList from '../components/JobsList';
 import LoadingDocuments from '../components/LoadingDocuments';
 import NavPagination from '../components/NavPagination';
 import Page from '../components/Page';
-import JobDetails from '../components/JobDetails';
-import JobsList from '../components/JobsList';
 
 const MyJobs = ({
    filters,
@@ -82,6 +82,7 @@ const MyJobs = ({
 
    return (
       <Page selectedLink={selectedLink} setSelectedLink={setSelectedLink}>
+
          <AnimatePresence mode='wait' onExitComplete={() => setSelectedJob(null)}>
             {selectedJob && <JobDetails job={selectedJob} singleNoteInput={true} setFilters={setFilters} />}
          </AnimatePresence>

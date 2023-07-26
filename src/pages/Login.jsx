@@ -3,7 +3,6 @@ import { CSSTransition } from 'react-transition-group';
 
 // componenets
 import ActionButton from '../components/ActionButton';
-import Card from '../components/Card';
 import Modal from '../components/Modal';
 
 // hooks
@@ -56,15 +55,14 @@ const Login = () => {
          </div>
 
          {/* modal is fixed and appears in the center of the screen */}
-         <Modal blurBackdrop={true}>
+         <Modal blurBackdrop={false}>
             <div
-               className='bg-white p-4 border rounded'
+               className='bg-white p-4 border rounded formBackgroundGradient'
                style={{
-                  background: 'linear-gradient(0deg, var(--mainPalette7) 0%,  var(--mainPalette8) 100%)',
                   width: '90vw',
                   maxWidth: '500px'
                }}>
-               <div className='display-5 mb-3'>Login</div>
+               <div className='display-5 mb-3 text-white'>Login</div>
                <form
                   id='formLogin'
                   className='login'
@@ -115,7 +113,7 @@ const Login = () => {
                         <button
                            className='border-0 d-flex ms-auto'
                            onClick={handleResetPassword}
-                           style={{ color: 'var(--mainPalette4)', backgroundColor: 'transparent' }}
+                           style={{ color: 'var(--mainPalette9)', backgroundColor: 'transparent' }}
                            type='button'
                         >
                            Forgot Password?
@@ -146,90 +144,6 @@ const Login = () => {
          </Modal>
       </>
    );
-
-   return (
-      <div className='flex-grow-1 mx-auto mt-5 mb-3 p-5' style={{ maxWidth: '750px' }}>
-         <Card
-            header={<h2 className='fs-3'>Login</h2>}
-            body={
-               <form id='formLogin' className='login' onSubmit={handleSubmit}>
-
-                  {/* email input */}
-                  <div className='form-floating mb-2'>
-                     <input
-                        className='form-control'
-                        placeholder='Email'
-                        type='email'
-                        name='email'
-                        id='email'
-                        onChange={(e) => setEmail(e.target.value)}
-                        value={email} />
-                     <label htmlFor='email'>
-                        {errorEmailInput ?
-                           <span className='ms-1 text-danger'>{error?.message || resetPasswordError?.message}</span>
-                           :
-                           'Email'
-                        }
-                     </label>
-                  </div>
-
-                  {/* password input */}
-                  <div className='form-floating mb-2'>
-                     <input
-                        className='form-control'
-                        placeholder='Password'
-                        type='password'
-                        name='password'
-                        id='password'
-                        onChange={(e) => setPassword(e.target.value)}
-                        value={password}
-                     />
-                     <label htmlFor='password'>
-                        {errorPasswordInput ?
-                           <span className='ms-1 text-danger'>{error.message}</span>
-                           :
-                           'Password'
-                        }
-                     </label>
-                  </div>
-                  <div>
-                     {isLoadingResetPassword && <span className='spinner-border spinner-border-sm me-1' role='status' aria-hidden='true'></span>}
-
-                     {(!isLoadingResetPassword && !resetPasswordEmailSent) &&
-                        <button
-                           className='border-0 text-action d-flex ms-auto'
-                           onClick={handleResetPassword}
-                           style={{ backgroundColor: 'transparent' }}
-                           type='button'
-                        >
-                           Forgot Password?
-                        </button>
-                     }
-                  </div>
-
-                  {resetPasswordEmailSent &&
-                     <CSSTransition
-                        appear={true}
-                        classNames='fade-'
-                        in={true}
-                        timeout={500}
-                     >
-                        <div className='alert alert-success py-1 mt-2'>Email sent. Please check your inbox.</div>
-                     </CSSTransition>
-                  }
-                  <br />
-                  <ActionButton
-                     alignX='right'
-                     isDisabled={isLoading || isLoadingResetPassword}
-                     isLoading={isLoading}
-                     text={(isLoading ? 'Logging in...' : 'Login')}
-                     type='submit'
-                  />
-               </form>
-            }
-         />
-      </div>
-   )
 };
 
 export default Login;
