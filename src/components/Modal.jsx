@@ -39,7 +39,7 @@ const Modal = ({ children, blurBackdrop = false }) => {
             exit='hidden'
          >
             <motion.div
-               className='content position-absolute start-50 translate-middle'
+               className='content position-absolute start-50 translate-middle shadow'
                variants={contentVariants}
             >
                {children}

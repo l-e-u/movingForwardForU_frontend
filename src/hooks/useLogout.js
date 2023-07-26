@@ -5,8 +5,9 @@ import { useStatusesContext } from "./useStatusesContext";
 import { useUsersContext } from "./useUsersContext";
 import { useMyJobsContext } from "./useMyJobsContext";
 import { useFeesContext } from './useFeesContext';
+import { useArchivesContext } from './useArchiveContext';
 
-// sets the user to null
+// sets the user to []
 export const useLogout = () => {
    const { dispatch: authDispatch } = useAuthContext();
    const { dispatch: jobsDispatch } = useJobsContext();
@@ -15,6 +16,7 @@ export const useLogout = () => {
    const { dispatch: statusesDispatch } = useStatusesContext();
    const { dispatch: usersDispatch } = useUsersContext();
    const { dispatch: feesDispatch } = useFeesContext();
+   const { dispatch: archivesDispatch } = useArchivesContext();
 
    const logout = () => {
       // remove user form storage
@@ -23,13 +25,14 @@ export const useLogout = () => {
       // dispatch the logout action
       authDispatch({ type: 'LOGOUT' });
 
-      // logging out dipatches all other contexts and sets to null
-      jobsDispatch({ type: 'SET_JOBS', payload: null });
-      myJobsDispatch({ type: 'SET_MYJOBS', payload: null });
-      contactsDispatch({ type: 'SET_CONTACTS', payload: null });
-      statusesDispatch({ type: 'SET_STATUSES', payload: null });
-      usersDispatch({ type: 'SET_USERS', payload: null });
-      feesDispatch({ type: 'SET_FEES', payload: null });
+      // logging out dipatches all other contexts and sets to []
+      jobsDispatch({ type: 'SET_JOBS', payload: [] });
+      myJobsDispatch({ type: 'SET_MYJOBS', payload: [] });
+      contactsDispatch({ type: 'SET_CONTACTS', payload: [] });
+      statusesDispatch({ type: 'SET_STATUSES', payload: [] });
+      usersDispatch({ type: 'SET_USERS', payload: [] });
+      feesDispatch({ type: 'SET_FEES', payload: [] });
+      archivesDispatch({ type: 'SET_ARCHIVES', payload: [] });
    };
 
    return { logout };

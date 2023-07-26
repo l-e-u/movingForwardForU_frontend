@@ -21,6 +21,8 @@
   --mainPalette7: hsl(var(--mainHue), 80%, 70%);
   --mainPalette8: hsl(var(--mainHue), 80%, 80%);
   --mainPalette9: hsl(var(--mainHue), 80%, 90%);
+
+  --sideNavWidth: 75px;
 }
 
 * {
@@ -64,6 +66,10 @@ button.page-link:disabled {
    border-bottom: 2px solid var(--mainPalette3) !important;
    font-weight: 600;
    color: var(--mainPalette3) !important;
+}
+
+.sideNavMenu {
+   width: var(--sideNavWidth);
 }
 
 hr {
@@ -286,6 +292,10 @@ hr {
 
   .rounded-md-bottom-start-0 {
     border-bottom-left-radius: 0 !important;
+  }
+
+  .page {
+   margin-left: var(--sideNavWidth);
   }
 
   .w-md-20 {

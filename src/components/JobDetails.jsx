@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
 
 // components
 import ActionButton from './ActionButton';
@@ -50,6 +51,9 @@ const JobDetails = ({
    const numOfNotes = notes.length;
    const hasNotes = numOfNotes > 0;
 
+   const jobDetailsCardClasses = `jobDetailsCard m-3 rounded-4 shadow`;
+   const jobDetailsCardStyles = { backgroundColor: 'var(--mainPalette9)', border: '1px solid rgba(0, 0, 0, .05)' };
+
    // styling for the buttons that switches between tab sections
    const tabButtonClasses = 'text-secondary postion-relative border-top-0 border-start-0 border-end-0 p-0 mx-2 mx-md-3 mx-lg-4';
    const tabButtonStyles = { backgroundColor: 'transparent', borderBottomColor: 'transparent' };
@@ -57,6 +61,44 @@ const JobDetails = ({
    // styling for the containers of the tab content
    const tabContentClasses = 'rounded bg-white p-3';
    const tabContentStyles = {};
+
+   // framer-motion variants for the card, initially it won't have any height, after the children have appeared, it will get 500px in height, and when it exits/unmounts, it fires after the children have faded away
+   const cardVariants = {
+      hidden: {
+         height: '0%',
+         padding: '0px'
+      },
+      animation: {
+         height: '500px',
+         padding: '1.5rem',
+         transition: {
+            when: 'beforeChildren',
+            staggerChildren: 0.2
+         }
+      },
+      unmount: {
+         height: '0px',
+         padding: '0px',
+         transition: {
+            when: 'afterChildren'
+         }
+      }
+   };
+
+   console.log(window.innerWidth)
+
+   // framer-motion variants for the children containers, on mount, they fade in after the parent has expanded, on unmount, they fade out before the parent
+   const contentVariants = {
+      hidden: {
+         opacity: 0,
+      },
+      animation: {
+         opacity: 1
+      },
+      unmount: {
+         opacity: 0
+      }
+   };
 
    // buttons that switch between section's content
    const tabButtonsJSX = tabNames.map((tabName, index) => {
@@ -90,10 +132,10 @@ const JobDetails = ({
    };
 
    return (
-      <div className='jobDetailsCard px-4 pt-3'>
+      <motion.div className={jobDetailsCardClasses} style={jobDetailsCardStyles} variants={cardVariants} initial='hidden' animate='animation' exit='unmount'>
 
          {/* status and reference are always showing */}
-         <table className='mb-1'>
+         <motion.table variants={contentVariants} className='mb-1'>
             <tbody>
                <tr>
                   <td className='py-0'> <SmallHeader text='Status' /></td>
@@ -104,12 +146,12 @@ const JobDetails = ({
                   <td className='py-0 ps-4'>{reference}</td>
                </tr>
             </tbody>
-         </table>
+         </motion.table>
 
          {/* organization name of the customer/business */}
-         <div className='organization fs-3 mb-2'>{customer.organization}</div>
+         <motion.div c variants={contentVariants} className='organization fs-3 mb-2'>{customer.organization}</motion.div>
 
-         <div className='sections'>
+         <motion.div c variants={contentVariants} className='sections'>
             {/* buttons to navigate the sections */}
             <div className='tabs d-flex ps-2'>
                {tabButtonsJSX}
@@ -180,14 +222,9 @@ const JobDetails = ({
                   <FeesList billing={billing} />
                </div>
             }
-         </div>
+         </motion.div>
 
-         <ActionButton
-            alignX='right'
-            invertedColors={true}
-            handleOnClick={() => setShowEditForm(true)}
-            text='Edit'
-         />
+
          {/* 
    
          {singleNoteInput &&
@@ -201,7 +238,7 @@ const JobDetails = ({
             <EditJobForm preJob={job} setShowThisForm={setShowEditForm} callBack={() => setFilters(prev => ({ ...prev }))} />
          }
 
-      </div>
+      </motion.div>
    );
 };
 

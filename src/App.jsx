@@ -5,7 +5,8 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { useAuthContext } from './hooks/useAuthContext';
 
 // components
-import Banner from './components/Banner.jsx'
+import Banner from './components/Banner.jsx';
+import SideNavMenu from './components/SideNavMenu.jsx';
 
 // pages
 import Archives from './pages/Archives.jsx';
@@ -24,18 +25,19 @@ function App() {
    const [archiveFilters, setArchiveFilters] = useState({});
    const [jobFilters, setJobFilters] = useState({});
    const [myJobFilters, setMyJobFilters] = useState({});
-   const [selectedLink, setSelectedLink] = useState(0)
+   const [selectedLink, setSelectedLink] = useState('My Jobs')
 
    useEffect(() => {
       // reset state when user changes
       setJobFilters({});
       setMyJobFilters({});
-      setSelectedLink(0);
+      setSelectedLink('My Jobs');
    }, [user])
 
    return (
-      <div className='App h-100'>
+      <div className='App'>
          <BrowserRouter>
+            {user && <SideNavMenu selectedLink={selectedLink} setSelectedLink={setSelectedLink} />}
             <Routes>
                <Route
                   path='/'
@@ -44,30 +46,34 @@ function App() {
                         <MyJobs filters={myJobFilters} setFilters={setMyJobFilters} selectedLink={selectedLink} setSelectedLink={setSelectedLink} /> :
                         <Navigate to='/login' />}
                />
-               {/* <Route
-                        path='/jobs'
-                        element={user ? <Jobs filters={jobFilters} setFilters={setJobFilters} /> : <Navigate to='/login' />}
-                     />
-                     <Route
-                        path='/statuses'
-                        element={user ? <Statuses /> : <Navigate to='/login' />}
-                     />
-                     <Route
-                        path='/contacts'
-                        element={user ? <Contacts /> : <Navigate to='/login' />}
-                     />
-                     <Route
-                        path='/users'
-                        element={user ? <Users /> : <Navigate to='/login' />}
-                     />
-                     <Route
-                        path='/fees'
-                        element={user ? <Fees /> : <Navigate to='/login' />}
-                     />
-                     <Route
-                        path='/archives'
-                        element={user ? <Archives filters={archiveFilters} setFilters={setArchiveFilters} /> : <Navigate to='/login' />}
-                     /> */}
+               <Route
+                  path='/jobs'
+                  element={
+                     user ?
+                        <Jobs filters={jobFilters} setFilters={setJobFilters} selectedLink={selectedLink} setSelectedLink={setSelectedLink} /> :
+                        <Navigate to='/login' />
+                  }
+               />
+               <Route
+                  path='/statuses'
+                  element={user ? <Statuses /> : <Navigate to='/login' />}
+               />
+               <Route
+                  path='/contacts'
+                  element={user ? <Contacts /> : <Navigate to='/login' />}
+               />
+               <Route
+                  path='/users'
+                  element={user ? <Users /> : <Navigate to='/login' />}
+               />
+               <Route
+                  path='/fees'
+                  element={user ? <Fees /> : <Navigate to='/login' />}
+               />
+               <Route
+                  path='/archives'
+                  element={user ? <Archives filters={archiveFilters} setFilters={setArchiveFilters} /> : <Navigate to='/login' />}
+               />
                <Route
                   path='/login'
                   element={!user ? <Login /> : <Navigate to='/' />}
@@ -82,14 +88,14 @@ function App() {
                </footer> */}
          </BrowserRouter>
       </div>
-   )
+   );
 
    return (
       <div className='App'>
          <BrowserRouter>
-            <Banner setShowNavMenu={setShowNavMenu} setSelectedLink={setSelectedLink} user={user} />
+            <Banner setShowSideNavMenu={setShowSideNavMenu} setSelectedLink={setSelectedLink} user={user} />
             <div className='mx-auto my-0 maxWidth1400px d-flex'>
-               {showNavMenu && <NavMenu selectedLink={selectedLink} setSelectedLink={setSelectedLink} setShowThisNav={setShowNavMenu} user={user} />}
+               {showSideNavMenu && <SideNavMenu selectedLink={selectedLink} setSelectedLink={setSelectedLink} setShowThisNav={setShowSideNavMenu} user={user} />}
                <Routes>
                   <Route
                      path='/'

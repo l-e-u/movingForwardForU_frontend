@@ -6,13 +6,24 @@ import { dateStringFormat, formatCurrency, timeStringFormat } from '../utils/Str
 import { addTwoCurrencies } from '../utils/NumberUtils';
 
 const JobsList = ({
-   selectedJobID,
-   setSelectedJobID,
+   selectedJob,
+   setSelectedJob,
    jobs = []
 }) => {
 
+   // styling for the list
+   const listClasses = 'm-0';
+   const listStyles = {
+      listStyle: 'none',
+      paddingInlineStart: '0px'
+   };
+
+   // styling for each item
+   const itemClasses = `border m-3 p-2`;
+   const itemStyles = { cursor: 'pointer' };
+
    // creates all the rows needed for the data
-   const rowsJSX = jobs.map((job, index) => {
+   const itemsJSX = jobs.map((job, index) => {
       const { _id, status, customer, reference, pickup, delivery, notes, billing, mileage, parcel } = job;
       const pickupDate = new Date(pickup.date);
       const deliveryDate = new Date(delivery.date);
@@ -23,15 +34,32 @@ const JobsList = ({
       const deliveryDateString = deliveryDate.toUTCString().substring(0, 17);
       const deliveryTimeString = delivery.includeTime ? timeStringFormat(deliveryDate, true) : '';
 
-      const isSelected = _id === selectedJobID;
+      const isSelected = _id === selectedJob?._id;
+
+      // clicking on an item sets the job which populates JobDetails component. clicking on an item that is selected will deselect it by setting to null
+      const handleOnClickItem = () => {
+         if (isSelected) return setSelectedJob(null);
+
+         setSelectedJob(job);
+      };
 
       // clicking on a row sets the selected job, clicking on the same row, nullifies the selected job
       return (
-         <ul>
-
-         </ul>
-      )
+         <li key={_id} className={itemClasses} style={itemStyles} onClick={handleOnClickItem}>
+            <div>{status.name}</div>
+            <div>{customer.organization}</div>
+            <div>{reference}</div>
+            <div>{pickupTimeString}</div>
+            <div>{pickupDateString}</div>
+         </li>
+      );
    });
-}
+
+   return (
+      <ul className={listClasses} style={listStyles}>
+         {itemsJSX}
+      </ul>
+   );
+};
 
 export default JobsList;

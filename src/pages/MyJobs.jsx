@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { AnimatePresence } from 'framer-motion';
 
 // hooks
 import { useMyJobsContext } from "../hooks/useMyJobsContext";
@@ -26,6 +27,11 @@ const MyJobs = ({
    setSelectedLink,
 }) => {
    const API_BASE_URL = process.env.API_BASE_URL;
+
+   // user can click on a job from the list below and set the selectedJobID which is used to fill the information for the JobDetails component
+   const [selectedJob, setSelectedJob] = useState(null);
+
+   // context
    const { user } = useAuthContext();
    const { myJobs, dispatch } = useMyJobsContext();
 
@@ -76,15 +82,11 @@ const MyJobs = ({
 
    return (
       <Page selectedLink={selectedLink} setSelectedLink={setSelectedLink}>
-         {(myJobs && !isLoading) &&
-            myJobs.map((job) => {
-               return (
-                  <JobDetails job={job} key={job._id} singleNoteInput={true} setFilters={setFilters} />
-               );
-            })
-         }
+         <AnimatePresence mode='wait' onExitComplete={() => setSelectedJob(null)}>
+            {selectedJob && <JobDetails job={selectedJob} singleNoteInput={true} setFilters={setFilters} />}
+         </AnimatePresence>
 
-         {/* <JobsList jobs={myJobs} /> */}
+         <JobsList jobs={myJobs} selectedJob={selectedJob} setSelectedJob={setSelectedJob} />
       </Page>
    );
 

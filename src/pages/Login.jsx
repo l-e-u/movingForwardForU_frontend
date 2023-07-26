@@ -50,10 +50,12 @@ const Login = () => {
 
    return (
       <>
-         <div className='topBar d-flex align-items-center p-2 ps-4' style={{ color: 'var(--mainPalette3)' }}>
+         <div className='d-flex align-items-center p-4 ps-5' style={{ color: 'var(--mainPalette3)' }}>
             <img style={{ height: '30px', width: '30px' }} src={logo} alt='SVG logo image' className='text-reset' />
             <h1 className='fs-5 m-0 ps-3'>Moving Forward for U</h1>
          </div>
+
+         {/* modal is fixed and appears in the center of the screen */}
          <Modal blurBackdrop={true}>
             <div
                className='bg-white p-4 border rounded'

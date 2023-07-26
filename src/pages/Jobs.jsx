@@ -23,9 +23,23 @@ import PageContentWrapper from '../components/Page';
 // import formatDistanceToNow from 'date-fns/formatDistanceToNow';
 import { urlQueryString } from '../utils/StringUtils';
 import ArchiveConfirmation from '../components/ArchiveConfirmation';
+import Page from '../components/Page';
+import { AnimatePresence } from 'framer-motion';
+import JobDetails from '../components/JobDetails';
+import JobsList from '../components/JobsList';
 
-const Jobs = ({ filters, setFilters }) => {
+const Jobs = ({
+   filters,
+   selectedLink,
+   setFilters,
+   setSelectedLink,
+}) => {
    const API_BASE_URL = process.env.API_BASE_URL;
+
+   // user can click on a job from the list below and set the selectedJobID which is used to fill the information for the JobDetails component
+   const [selectedJob, setSelectedJob] = useState(null);
+
+   // context
    const { user } = useAuthContext()
    const { jobs, dispatch } = useJobsContext();
 
@@ -163,6 +177,16 @@ const Jobs = ({ filters, setFilters }) => {
    const hideAllMenusAndForms = () => [setShowArchiveConfirmation, setShowEditForm, setShowCreateForm, setShowOptionsMenu, setShowDeleteConfirmation].forEach(setShow => setShow(false));
 
    const hasJobs = jobs ? jobs.length > 0 : false;
+
+   return (
+      <Page selectedLink={selectedLink} setSelectedLink={setSelectedLink}>
+         <AnimatePresence mode='wait' onExitComplete={() => setSelectedJob(null)}>
+            {selectedJob && <JobDetails job={selectedJob} setFilters={setFilters} />}
+         </AnimatePresence>
+
+         <JobsList jobs={jobs} selectedJob={selectedJob} setSelectedJob={setSelectedJob} />
+      </Page>
+   )
 
    return (
       <PageContentWrapper>
