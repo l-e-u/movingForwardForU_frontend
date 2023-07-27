@@ -5,6 +5,9 @@ const Modal = ({ children, blurBackdrop = false }) => {
    const modalClasses = 'myModal position-fixed d-flex top-0 start-0 w-100 h-100 overflow-auto';
    const modalStyles = { zIndex: '1050' };
 
+   const contentClasses = 'content position-relative m-auto';
+   const contentStyles = { backgroundColor: 'transparent' };
+
    const backdropVariants = {
       hidden: { opacity: 0 },
       animation: {
@@ -41,7 +44,8 @@ const Modal = ({ children, blurBackdrop = false }) => {
             exit='hidden'
          >
             <motion.div
-               className='content position-relative m-auto shadow'
+               className={contentClasses}
+               style={contentStyles}
                variants={contentVariants}
             >
                {children}

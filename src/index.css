@@ -72,6 +72,11 @@ button.page-link:disabled {
    background: linear-gradient(0deg, var(--mainPalette2) 0%, var(--mainPalette3) 100%);
 }
 
+/* #formLogin .formInput:focus-within {
+   transition: all .2s ease-in-out;
+   outline: 2px solid var(--mainPalette4);
+} */
+
 .sideNavMenu {
    width: var(--sideNavWidth);
 }
