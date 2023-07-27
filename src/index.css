@@ -50,10 +50,9 @@ nav .selected .navIcon {
 }
 
 .actionButton:disabled,
-button.page-link:disabled {
+button.page-link:disabled, .submitButton:disabled {
   background-color: var(--bs-secondary) !important;
   color: var(--bs-white) !important;
-  opacity: 50% !important;
   pointer-events: none !important;
 }
 
@@ -68,14 +67,10 @@ button.page-link:disabled {
    color: var(--mainPalette3) !important;
 }
 
-.formBackgroundGradient {
-   background: linear-gradient(0deg, var(--mainPalette2) 0%, var(--mainPalette3) 100%);
+.form-control:focus {
+   border-color: var(--mainPalette4) !important;
+   box-shadow: none;
 }
-
-/* #formLogin .formInput:focus-within {
-   transition: all .2s ease-in-out;
-   outline: 2px solid var(--mainPalette4);
-} */
 
 .sideNavMenu {
    width: var(--sideNavWidth);

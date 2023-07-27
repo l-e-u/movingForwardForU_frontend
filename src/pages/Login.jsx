@@ -2,9 +2,9 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 
 // componenets
-import ActionButton from '../components/ActionButton';
+import FormHeader from '../components/FormHeader';
 import Modal from '../components/Modal';
-import SmallHeader from '../components/SmallHeader';
+import SubmitButton from '../components/SubmitButton';
 
 // hooks
 import { useLogin } from '../hooks/useLogin';
@@ -50,16 +50,13 @@ const Login = () => {
 
    // classes, styling, and framer-motion variants for form
    const formClasses = 'login position-relative bg-white rounded-4 p-4 text-reset shadow';
-   const formStyles = {};
+   const formStyles = { width: '90vw', maxWidth: '400px' };
 
-   const inputContainerVariants = {
-      mount: {
-         border: '1px solid transparent'
-      },
-      onFocus: {
-         border: '1px solid var(--mainPalette4)'
-      }
-   };
+   const iconClasses = 'position-absolute top-50 translate-middle';
+   const iconStyles = { left: '1.5rem' };
+
+   const inputClasses = 'form-control rounded-4 mb-2';
+   const inputStyles = { borderColor: 'transparent', backgroundColor: 'var(--bs-gray-100)', paddingLeft: '2.5rem' };
 
    // styling for the submit button
    const submitButtonClasses = 'border-0 rounded-pill position-absolute top-100 start-50 text-white px-5 py-3';
@@ -80,27 +77,29 @@ const Login = () => {
 
    return (
       <>
-         <div className='d-flex align-items-center p-4 ps-5' style={{ color: 'var(--mainPalette3)' }}>
+         <div className='d-flex align-items-center justify-content-center justify-content-md-start pt-4 ps-0 ps-md-5' style={{ color: 'var(--mainPalette3)' }}>
             <img style={{ height: '30px', width: '30px' }} src={logo} alt='SVG logo image' className='text-reset' />
             <h1 className='fs-5 m-0 ps-3'>Moving Forward for U</h1>
          </div>
 
          <Modal blurBackdrop={false}>
-            <p></p>
             <form id='formLogin' className={formClasses} onSubmit={handleSubmit} style={formStyles}>
-               <div className='fs-6 mb-3' style={{ fontWeight: '500' }}>Login</div>
+
+               <FormHeader text='Login' />
 
                {/* email input */}
-               <div className='form-floating mb-2'>
+               <div className='form-floating position-relative'>
+                  <i className={`bi bi-envelope ${iconClasses}`} style={iconStyles}></i>
                   <input
-                     className='form-control'
-                     placeholder='Email'
-                     type='email'
-                     name='email'
+                     className={inputClasses}
                      id='email'
+                     name='email'
                      onChange={(e) => setEmail(e.target.value)}
+                     placeholder='Email'
+                     style={inputStyles}
+                     type='email'
                      value={email} />
-                  <label htmlFor='email'>
+                  <label htmlFor='email' className='ps-5'>
                      {errorEmailInput ?
                         <span className='ms-1 text-danger'>{error?.message || resetPasswordError?.message}</span>
                         :
@@ -109,31 +108,20 @@ const Login = () => {
                   </label>
                </div>
 
-               <motion.div className='formInput bg-light px-4 py-2 rounded-4' variants={inputContainerVariants} initial='mount' whileFocus='onFocus'>
-                  {/* <label className='d-block' htmlFor='email'><SmallHeader text='Email' /></label> */}
-                  <motion.input
-                     className='border-0'
-                     id='email'
-                     name='email'
-                     style={{ backgroundColor: 'transparent', outline: 'none' }}
-                     type='text'
-                     value={email}
-                     variants={inputContainerVariants}
-                  />
-               </motion.div>
-
                {/* password input */}
-               <div className='form-floating mb-2'>
+               <div className='form-floating position-relative'>
+                  <i className={`bi bi-shield-lock ${iconClasses}`} style={iconStyles}></i>
                   <input
-                     className='form-control'
-                     placeholder='Password'
-                     type='password'
-                     name='password'
+                     className={inputClasses}
                      id='password'
+                     name='password'
                      onChange={(e) => setPassword(e.target.value)}
+                     placeholder='Password'
+                     style={inputStyles}
+                     type='password'
                      value={password}
                   />
-                  <label htmlFor='password'>
+                  <label htmlFor='password' className='ps-5'>
                      {errorPasswordInput ?
                         <span className='ms-1 text-danger'>{error.message}</span>
                         :
@@ -156,28 +144,9 @@ const Login = () => {
                   }
                </div>
 
-               {resetPasswordEmailSent &&
-                  <CSSTransition
-                     appear={true}
-                     classNames='fade-'
-                     in={true}
-                     timeout={500}
-                  >
-                     <div className='alert alert-success py-1 mt-2'>Email sent. Please check your inbox.</div>
-                  </CSSTransition>
-               }
+               {resetPasswordEmailSent && <div className='alert alert-success py-1 mt-2'>Email sent. Please check your inbox.</div>}
 
-               <motion.button
-                  className={submitButtonClasses}
-                  disabled={(isLoading || isLoadingResetPassword) ? true : false}
-                  initial='mount'
-                  style={submitButtonStyles}
-                  type='submit'
-                  variants={submitButtonVariants}
-                  whileHover='onHover'
-               >
-                  {isLoading ? 'Logging in...' : 'Login'}
-               </motion.button>
+               <SubmitButton defaultText='Login' loadingText='Loggin In' isLoading={isLoading || isLoadingResetPassword} />
             </form>
          </Modal >
       </>

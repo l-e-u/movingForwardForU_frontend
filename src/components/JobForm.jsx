@@ -1,17 +1,24 @@
 import { useState } from 'react';
+import Input from 'react-select';
 
 // components
+import ContactSearchSelect from './ContactSearchSelect';
+import ContactSelect from './ContactSelect';
+import DriverSearchSelect from './UserSearchSelect';
+import ErrorAlert from './ErrorAlert';
+import FormHeader from './FormHeader';
+import FeeSearchSelect from './FeeSearchSelect';
+import NotesInput from './NotesInput';
+import PickupOrDeliveryInput from './PickupOrDeliveryInput';
 import RequiredFieldsText from './RequiredFieldsText';
 import StatusSearchSelect from './StatusSearchSelect';
-import ContactSearchSelect from './ContactSearchSelect';
-import DriverSearchSelect from './UserSearchSelect';
-import PickupOrDeliveryInput from './PickupOrDeliveryInput';
-import NotesInput from './NotesInput';
-import FeeSearchSelect from './FeeSearchSelect';
-import ActionButton from './ActionButton'
+import StatusSelect from './StatusSelect';
 
 // functions
 import { removeExtraSpaces } from '../utils/StringUtils';
+import SubmitButton from './SubmitButton';
+import TextInput from './TextInput';
+import SmallHeader from './SmallHeader';
 
 const JobForm = ({ job, setJob, handleSubmit, error, setError, isDisabled, isLoading }) => {
    const { status, customer, billing, mileage, reference, parcel, drivers, notes } = job;
@@ -29,14 +36,56 @@ const JobForm = ({ job, setJob, handleSubmit, error, setError, isDisabled, isLoa
    const totalSizeOfNewImagesToUpload = allNewFilesToUpload.reduce((total, { file }) => total + file.size, 0);
    const withinUploadSizeLimit = totalSizeOfNewImagesToUpload <= maxUploadSize;
 
-   const errorOther = error?.server;
+   // classes and styles for the form itself and all other elements within
+   const formClasses = 'newJob position-relative p-4 text-reset shadow bg-white rounded-4';
+   const formStyles = { width: '90vw', maxWidth: '600px' };
 
-   const formClasses = 'formBackgroundGradient p-4 mx-md-3 rounded-4';
 
    return (
-      <form className={formClasses} onSubmit={handleSubmit}>
-         <span className='display-5 text-white'>New Job</span>
+      <form className={formClasses} onSubmit={handleSubmit} style={formStyles}>
+         <FormHeader text='New Job' />
+
          <RequiredFieldsText />
+
+         <div className='container-fluid p-0'>
+
+            <div className='row mb-3'>
+               <div className='col-sm-2 d-flex justify-content-start justify-content-sm-end align-items-center'>
+                  <SmallHeader text='Status' isRequired={true} />
+               </div>
+               <div className='col-sm-10'>
+                  <StatusSelect setStatus={status => setJob(prev => ({ ...prev, status }))} />
+               </div>
+            </div>
+
+            <div className='row mb-3'>
+               <div className='col-sm-2 d-flex justify-content-start justify-content-sm-end align-items-center'>
+                  <SmallHeader text='Customer' isRequired={true} />
+               </div>
+               <div className='col-sm-10'>
+                  <ContactSelect setContact={contact => setJob(prev => ({ ...prev, customer: contact }))} />
+               </div>
+            </div>
+
+            <div className='row mb-3'>
+               <div className='col-sm-2 d-flex justify-content-start justify-content-sm-end align-items-center'>
+                  <SmallHeader text='Reference' />
+               </div>
+               <div className='col-sm-10'>
+                  <TextInput input={job.reference} setInput={input => setJob(prev => ({ ...prev, reference: input }))} />
+               </div>
+            </div>
+
+            <div className='row mb-3'>
+               <div className='col-sm-2 d-flex justify-content-start justify-content-sm-end align-items-center'>
+                  <SmallHeader text='Parcel' />
+               </div>
+               <div className='col-sm-10'>
+                  <TextInput input={job.parcel} setInput={input => setJob(prev => ({ ...prev, parcel: input }))} />
+               </div>
+            </div>
+         </div>
+
          <div className='container-fluid'>
             <div className='row'>
                <div className='col-xl-3 col-sm-6 p-0 mb-2 pe-sm-2'>
@@ -211,18 +260,9 @@ const JobForm = ({ job, setJob, handleSubmit, error, setError, isDisabled, isLoa
             withinUploadSizeLimit={withinUploadSizeLimit}
          />
 
-         <div className='mt-4 mt-sm-0'>
-            <ActionButton
-               alignX='right'
-               isDisabled={isDisabled || isResizingImages || !withinUploadSizeLimit}
-               isLoading={isLoading}
-               text={(isLoading ? 'Saving...' : 'Save')}
-               type='submit'
-            />
-         </div>
+         {error && <ErrorAlert message={error.message} />}
 
-         {/* any errors other than input validation */}
-         {errorOther && <div className='text-danger mt-3 w-100'>{`${error.server.message} Refresh page. If problem persists, contact developer.`}</div>}
+         <SubmitButton defaultText='Save' loadingText='Saving' isLoading={isLoading} isDisabled={isResizingImages} />
       </form>
    );
 };
