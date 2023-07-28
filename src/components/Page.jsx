@@ -1,19 +1,3 @@
-// assets
-import logo from '../assets/movingForwardArrows.svg';
-
-// components
-import NavMenu from './SideNavMenu';
-
-const Page = ({
-   children,
-   selectedLink,
-   setSelectedLink,
-}) => {
-   return (
-      <div className='page'>
-         {children}
-      </div >
-   );
-};
+const Page = ({ children, }) => <div className='page bg-white'>   {children} </div >;
 
 export default Page;

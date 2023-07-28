@@ -16,7 +16,7 @@ const SideNavMenu = ({ selectedLink, setSelectedLink }) => {
    ];
    const { logout } = useLogout();
 
-   const navClasses = 'sideNavMenu position-fixed d-none d-md-flex flex-column text-secondary top-0 start-0 pt-5 pb-4 border-end h-100';
+   const navClasses = 'sideNavMenu position-fixed d-none d-md-flex flex-column text-secondary bg-white top-0 start-0 pt-5 pb-4 border-end h-100';
    // z-index number comes from bootstrap v5 docs
    // width is set in index.css
    const navStyles = { minHeight: '800px', zIndex: '1031' };

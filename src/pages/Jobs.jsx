@@ -193,14 +193,16 @@ const Jobs = ({
 
    return (
       <Page selectedLink={selectedLink} setSelectedLink={setSelectedLink}>
-         <AnimatePresence mode='wait' onExitComplete={() => setShowCreateForm(false)}>
+
+         {/* form to add a new job */}
+         <AnimatePresence mode='wait' onExitComplete={() => setSelectedJob(null)}>
             {showCreateForm && <CreateJobForm setShowThisForm={setShowCreateForm} setFilters={setFilters} />}
          </AnimatePresence>
 
-         <AnimatePresence mode='wait' onExitComplete={() => setSelectedJob(null)}>
-            {selectedJob && <JobDetails job={selectedJob} setFilters={setFilters} />}
-         </AnimatePresence>
+         {/* user can click on a job in the list below and display its details in this card */}
+         <JobDetails job={selectedJob} setFilters={setFilters} />
 
+         {/* button to display the new job form */}
          <div className='px-3'>
             <motion.button
                className={addButtonClasses}

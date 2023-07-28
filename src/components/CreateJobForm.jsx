@@ -23,8 +23,21 @@ const CreateJobForm = ({ setShowThisForm, setFilters }) => {
       status: null,
    });
 
+   const closeButtonClasses = 'position-absolute top-0 end-0 fw-bold p-3 text-secondary border-0';
+   const closeButtonStyles = { background: 'transparent', zIndex: '1' };
+
+   const closeIconClasses = 'bi bi-x-lg';
+
    return (
       <Modal blurBackdrop={true}>
+         <button
+            className={closeButtonClasses}
+            onClick={() => setShowThisForm(false)}
+            style={closeButtonStyles}
+            type='button'
+         >
+            <i className={closeIconClasses}></i>
+         </button>
          <JobForm
             job={job}
             setJob={setJob}
