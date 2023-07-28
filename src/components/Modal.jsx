@@ -1,4 +1,4 @@
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 
 // Appears some time after order has been place, every time a page is switched via the browser arrows, the modal show is set to false
 const Modal = ({ children, blurBackdrop = false }) => {
@@ -23,7 +23,7 @@ const Modal = ({ children, blurBackdrop = false }) => {
       unmount: {
          opacity: 0,
          transition: {
-            duration: 3
+            duration: 0.5
          }
       }
    };
@@ -49,25 +49,22 @@ const Modal = ({ children, blurBackdrop = false }) => {
    if (blurBackdrop) modalStyles.backdropFilter = 'blur(3px)';
 
    return (
-      <AnimatePresence mode='wait'>
+      <motion.div
+         className={modalClasses}
+         style={modalStyles}
+         variants={backdropVariants}
+         initial='hidden'
+         animate='animation'
+         exit='unmount'
+      >
          <motion.div
-            className={modalClasses}
-            style={modalStyles}
-            variants={backdropVariants}
-            initial='hidden'
-            animate='animation'
-            exit='unmount'
+            className={contentClasses}
+            style={contentStyles}
+            variants={contentVariants}
          >
-            <motion.div
-               className={contentClasses}
-               style={contentStyles}
-               variants={contentVariants}
-            >
-               {children}
-            </motion.div>
-
+            {children}
          </motion.div>
-      </AnimatePresence>
+      </motion.div>
    )
 };
 

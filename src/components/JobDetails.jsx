@@ -51,7 +51,7 @@ const JobDetails = ({
    const numOfNotes = notes.length;
    const hasNotes = numOfNotes > 0;
 
-   const jobDetailsCardClasses = `jobDetailsCard m-3 rounded-4 sticky-top shadow`;
+   const jobDetailsCardClasses = `jobDetailsCard rounded-4 sticky-top shadow`;
    const jobDetailsCardStyles = { backgroundColor: 'var(--mainPalette9)', border: '1px solid rgba(0, 0, 0, .05)' };
 
    // styling for the buttons that switches between tab sections
@@ -64,13 +64,15 @@ const JobDetails = ({
 
    // framer-motion variants for the card, initially it won't have any height, after the children have appeared, it will get 500px in height, and when it exits/unmounts, it fires after the children have faded away
    const cardVariants = {
-      hidden: {
+      mount: {
          height: '0%',
-         padding: '0px'
+         padding: '0rem',
+         margin: '1rem',
       },
       animation: {
          height: '500px',
          padding: '1.5rem',
+         margin: '1rem',
          transition: {
             when: 'beforeChildren',
             staggerChildren: 0.2
@@ -78,16 +80,17 @@ const JobDetails = ({
       },
       unmount: {
          height: '0px',
-         padding: '0px',
+         padding: '0rem',
+         margin: '0rem',
          transition: {
-            when: 'afterChildren'
+            when: 'afterChildren',
          }
       }
    };
 
    // framer-motion variants for the children containers, on mount, they fade in after the parent has expanded, on unmount, they fade out before the parent
    const contentVariants = {
-      hidden: {
+      mount: {
          opacity: 0,
       },
       animation: {
@@ -130,101 +133,100 @@ const JobDetails = ({
    };
 
    return (
-      <AnimatePresence mode='wait'>
-         {job && <motion.div className={jobDetailsCardClasses} style={jobDetailsCardStyles} variants={cardVariants} initial='hidden' animate='animation' exit='unmount'>
+      <motion.div className={jobDetailsCardClasses} style={jobDetailsCardStyles} variants={cardVariants} initial='mount' animate='animation' exit='unmount'>
 
-            {/* status and reference are always showing */}
-            <motion.table variants={contentVariants} className='mb-1'>
-               <tbody>
-                  <tr>
-                     <td className='py-0'> <SmallHeader text='Status' /></td>
-                     <td className='py-0 ps-4'>{status.name}</td>
-                  </tr>
-                  <tr>
-                     <td className='py-0'> <SmallHeader text='Reference' /></td>
-                     <td className='py-0 ps-4'>{reference}</td>
-                  </tr>
-               </tbody>
-            </motion.table>
+         {/* status and reference are always showing */}
+         <motion.table variants={contentVariants} className='mb-1'>
+            <tbody>
+               <tr>
+                  <td className='py-0'> <SmallHeader text='Status' /></td>
+                  <td className='py-0 ps-4'>{status.name}</td>
+               </tr>
+               <tr>
+                  <td className='py-0'> <SmallHeader text='Reference' /></td>
+                  <td className='py-0 ps-4'>{reference}</td>
+               </tr>
+            </tbody>
+         </motion.table>
 
-            {/* organization name of the customer/business */}
-            <motion.div variants={contentVariants} className='organization fs-3 mb-2'>{customer.organization}</motion.div>
+         {/* organization name of the customer/business */}
+         <motion.div variants={contentVariants} className='organization fs-3 mb-2'>{customer.organization}</motion.div>
 
-            <motion.div variants={contentVariants} className='sections'>
-               {/* buttons to navigate the sections */}
-               <div className='tabs d-flex ps-2'>
-                  {tabButtonsJSX}
+         <motion.div variants={contentVariants} className='sections'>
+            {/* buttons to navigate the sections */}
+            <div className='tabs d-flex ps-2'>
+               {tabButtonsJSX}
+            </div>
+
+            {/* second tab content is details */}
+            {(selectedTab === 0) &&
+               <div className={tabContentClasses} style={tabContentStyles}>
+                  {/* pickup and delivery addresses */}
+                  <SmallHeader text='Pickup' />
+                  <AddressDisplay
+                     address={pickup.address}
+                     date={pickup.date}
+                     includeTime={pickup.includeTime}
+                     heading='Pickup'
+                  />
+                  <hr />
+                  <SmallHeader text='Delivery' />
+                  <AddressDisplay
+                     address={delivery.address}
+                     date={delivery.date}
+                     includeTime={delivery.includeTime}
+                     alignEnd={true}
+                     heading='Delivery'
+                  />
                </div>
+            }
 
-               {/* second tab content is details */}
-               {(selectedTab === 0) &&
-                  <div className={tabContentClasses} style={tabContentStyles}>
-                     {/* pickup and delivery addresses */}
-                     <SmallHeader text='Pickup' />
-                     <AddressDisplay
-                        address={pickup.address}
-                        date={pickup.date}
-                        includeTime={pickup.includeTime}
-                        heading='Pickup'
-                     />
-                     <hr />
-                     <SmallHeader text='Delivery' />
-                     <AddressDisplay
-                        address={delivery.address}
-                        date={delivery.date}
-                        includeTime={delivery.includeTime}
-                        alignEnd={true}
-                        heading='Delivery'
-                     />
-                  </div>
-               }
+            {/* first tab content is transport */}
+            {(selectedTab === 1) &&
+               <div className={tabContentClasses} style={tabContentStyles}>
+                  <table>
+                     <tbody>
+                        <tr>
+                           <td className='py-1'><SmallHeader text={`Driver${hasDrivers ? 's' : ''}`} /></td>
+                           <td className='py-1 ps-4'>{hasDrivers ? drivers[0].fullName : ''}</td>
+                        </tr>
+                        {additionalDriversJSX}
+                        <tr >
+                           <td className='py-1'><SmallHeader text='Mileage' /></td>
+                           <td className='py-1 ps-4'>{mileage}</td>
+                        </tr>
+                        <tr >
+                           <td className='py-1'><SmallHeader text='Parcel' /></td>
+                           <td className='py-1 ps-4'>{parcel}</td>
+                        </tr>
+                        <tr >
+                           <td className='py-1'><SmallHeader text='Created By' /></td>
+                           <td className='py-1 ps-4'>{createdBy.fullName}</td>
+                        </tr>
+                        <tr >
+                           <td className='py-1'><SmallHeader text='Created At' /></td>
+                           <td className='py-1 ps-4'>{new Date(createdAt).toDateString()}</td>
+                        </tr>
+                     </tbody>
+                  </table>
+               </div>
+            }
 
-               {/* first tab content is transport */}
-               {(selectedTab === 1) &&
-                  <div className={tabContentClasses} style={tabContentStyles}>
-                     <table>
-                        <tbody>
-                           <tr>
-                              <td className='py-1'><SmallHeader text={`Driver${hasDrivers ? 's' : ''}`} /></td>
-                              <td className='py-1 ps-4'>{hasDrivers ? drivers[0].fullName : ''}</td>
-                           </tr>
-                           {additionalDriversJSX}
-                           <tr >
-                              <td className='py-1'><SmallHeader text='Mileage' /></td>
-                              <td className='py-1 ps-4'>{mileage}</td>
-                           </tr>
-                           <tr >
-                              <td className='py-1'><SmallHeader text='Parcel' /></td>
-                              <td className='py-1 ps-4'>{parcel}</td>
-                           </tr>
-                           <tr >
-                              <td className='py-1'><SmallHeader text='Created By' /></td>
-                              <td className='py-1 ps-4'>{createdBy.fullName}</td>
-                           </tr>
-                           <tr >
-                              <td className='py-1'><SmallHeader text='Created At' /></td>
-                              <td className='py-1 ps-4'>{new Date(createdAt).toDateString()}</td>
-                           </tr>
-                        </tbody>
-                     </table>
-                  </div>
-               }
+            {(selectedTab === 2) &&
+               <div className={tabContentClasses} style={tabContentStyles}>
+                  <NotesList list={notes} />
+               </div>
+            }
 
-               {(selectedTab === 2) &&
-                  <div className={tabContentClasses} style={tabContentStyles}>
-                     <NotesList list={notes} />
-                  </div>
-               }
-
-               {(selectedTab === 3) &&
-                  <div className={tabContentClasses} style={tabContentStyles}>
-                     <FeesList billing={billing} />
-                  </div>
-               }
-            </motion.div>
+            {(selectedTab === 3) &&
+               <div className={tabContentClasses} style={tabContentStyles}>
+                  <FeesList billing={billing} />
+               </div>
+            }
+         </motion.div>
 
 
-            {/* 
+         {/* 
    
          {singleNoteInput &&
             <>
@@ -233,13 +235,11 @@ const JobDetails = ({
             </>
          } */}
 
-            {showEditForm &&
-               <EditJobForm preJob={job} setShowThisForm={setShowEditForm} callBack={() => setFilters(prev => ({ ...prev }))} />
-            }
-
-         </motion.div>
+         {showEditForm &&
+            <EditJobForm preJob={job} setShowThisForm={setShowEditForm} callBack={() => setFilters(prev => ({ ...prev }))} />
          }
-      </AnimatePresence>
+
+      </motion.div>
    );
 };
 
