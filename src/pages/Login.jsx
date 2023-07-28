@@ -58,23 +58,6 @@ const Login = () => {
    const inputClasses = 'form-control rounded-4 mb-2';
    const inputStyles = { borderColor: 'transparent', backgroundColor: 'var(--bs-gray-100)', paddingLeft: '2.5rem' };
 
-   // styling for the submit button
-   const submitButtonClasses = 'border-0 rounded-pill position-absolute top-100 start-50 text-white px-5 py-3';
-   const submitButtonStyles = { backgroundColor: 'var(--mainPalette4)' }
-   const submitButtonVariants = {
-      mount: {
-         transform: 'translate(-50%,-50%) scale(1)'
-      },
-      onHover: {
-         transform: 'translate(-50%,-50%) scale(1.1)',
-         transition: {
-            duration: 0.3,
-         },
-         boxShadow: '0px 0px 8px var(--mainPalette4)',
-      }
-   };
-
-
    return (
       <>
          <div className='d-flex align-items-center justify-content-center justify-content-md-start pt-4 ps-0 ps-md-5' style={{ color: 'var(--mainPalette3)' }}>
@@ -85,7 +68,8 @@ const Login = () => {
          <Modal blurBackdrop={false}>
             <form id='formLogin' className={formClasses} onSubmit={handleSubmit} style={formStyles}>
 
-               <FormHeader text='Login' />
+               <FormHeader text='Welcome back!' />
+               <p className='text-secondary fs-smaller'>Let's start by loggin into your account.</p>
 
                {/* email input */}
                <div className='form-floating position-relative'>

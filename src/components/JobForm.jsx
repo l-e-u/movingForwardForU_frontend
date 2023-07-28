@@ -5,11 +5,9 @@ import Input from 'react-select';
 import ContactSelect from './ContactSelect';
 import ErrorAlert from './ErrorAlert';
 import FormHeader from './FormHeader';
-import FeeSearchSelect from './FeeSearchSelect';
 import FeeSelect from './FeeSelect';
 import NotesInput from './NotesInput';
 import PickupOrDeliveryInput from './PickupOrDeliveryInput';
-import RequiredFieldsText from './RequiredFieldsText';
 import SmallHeader from './SmallHeader';
 import StatusSelect from './StatusSelect';
 import SubmitButton from './SubmitButton';
@@ -46,9 +44,9 @@ const JobForm = ({ job, setJob, handleSubmit, error, setError, isDisabled, isLoa
 
    return (
       <form className={formClasses} onSubmit={handleSubmit} style={formStyles}>
-         <FormHeader text='New Job' />
 
-         <RequiredFieldsText />
+         <FormHeader text='New Job' />
+         <p className='text-secondary fs-smaller'>This information is required to add a new job. The second step is optional.</p>
 
          <div className='container-fluid p-0'>
 
@@ -135,7 +133,6 @@ const JobForm = ({ job, setJob, handleSubmit, error, setError, isDisabled, isLoa
             </div>
 
          </div>
-
 
          <div className='container-fluid'>
             <div className='row'>
