@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { CSSTransition } from 'react-transition-group';
+import { AnimatePresence } from 'framer-motion';
 
 // hooks
 import { useCreateJob } from '../hooks/useCreateJob';
@@ -8,9 +8,8 @@ import { useCreateJob } from '../hooks/useCreateJob';
 import Modal from './Modal';
 import JobForm from './JobForm';
 
-const CreateJobForm = ({ setShowThisForm, setFilters }) => {
-   const { createJob, error, setError, isLoading } = useCreateJob();
-   const [job, setJob] = useState({
+const CreateJobForm = ({ hideForm, refreshJobList, showForm }) => {
+   const newJob = {
       billing: [],
       customer: null,
       delivery: { address: '', date: new Date(), includeTime: false },
@@ -21,60 +20,66 @@ const CreateJobForm = ({ setShowThisForm, setFilters }) => {
       pickup: { address: '', date: new Date(), includeTime: false },
       reference: '',
       status: null,
-   });
+   };
+
+   const { createJob, error, setError, isLoading } = useCreateJob();
+   const [job, setJob] = useState(newJob);
 
    const closeButtonClasses = 'position-absolute top-0 end-0 fw-bold p-3 text-secondary border-0';
    const closeButtonStyles = { background: 'transparent', zIndex: '1' };
 
    const closeIconClasses = 'bi bi-x-lg';
 
+   const clearInputs = () => setJob(newJob);
+
    return (
-      <Modal blurBackdrop={true}>
-         <button
-            className={closeButtonClasses}
-            onClick={() => setShowThisForm(false)}
-            style={closeButtonStyles}
-            type='button'
-         >
-            <i className={closeIconClasses}></i>
-         </button>
-         <JobForm
-            job={job}
-            setJob={setJob}
-            setError={setError}
-            error={error}
-            isDisabled={isLoading}
-            isLoading={isLoading}
-            handleSubmit={async (e) => {
-               e.preventDefault();
+      <AnimatePresence mode='wait' onExitComplete={clearInputs}>
+         {showForm &&
+            <Modal blurBackdrop={true}>
+               <button
+                  className={closeButtonClasses}
+                  onClick={hideForm}
+                  style={closeButtonStyles}
+                  type='button'
+               >
+                  <i className={closeIconClasses}></i>
+               </button>
+               <JobForm
+                  job={job}
+                  setJob={setJob}
+                  setError={setError}
+                  error={error}
+                  isDisabled={isLoading}
+                  isLoading={isLoading}
+                  handleSubmit={async (e) => {
+                     e.preventDefault();
 
-               await createJob({
-                  ...job,
-                  customer: job.customer?._id,
-                  drivers: job.drivers.map(d => d._id),
-                  mileage: Number(job.mileage),
-                  billing: job.billing.map(bill => {
-                     let adjustedAmount = bill.adjustedAmount
-                     if (adjustedAmount !== null) adjustedAmount = Number(adjustedAmount);
+                     const jobCreated = await createJob({
+                        ...job,
+                        customer: job.customer?._id,
+                        drivers: job.drivers.map(d => d._id),
+                        mileage: Number(job.mileage),
+                        billing: job.billing.map(bill => {
+                           let adjustedAmount = bill.adjustedAmount
+                           if (adjustedAmount !== null) adjustedAmount = Number(adjustedAmount);
 
-                     return {
-                        adjustedAmount,
-                        fee: bill.fee._id,
-                     }
-                  }),
-                  status: job.status?._id,
-               })
-                  .then(isCreated => {
-                     if (isCreated) {
-                        setShowThisForm(false);
+                           return {
+                              adjustedAmount,
+                              fee: bill.fee._id,
+                           }
+                        }),
+                        status: job.status?._id,
+                     });
 
-                        // this is to trigger Jobs to fetch with filters after a new job was created, that way the new job is listed if it satisfies current filters
-                        setFilters(prev => ({ ...prev }));
+                     if (jobCreated) {
+                        hideForm();
+                        refreshJobList();
                      };
-                  })
-            }}
-         />
-      </Modal>
+                  }}
+               />
+            </Modal>
+         }
+      </AnimatePresence>
    );
 };
 

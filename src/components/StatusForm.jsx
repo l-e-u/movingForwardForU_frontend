@@ -5,6 +5,10 @@ import ActionButton from './ActionButton'
 
 // utilities
 import { removeExtraSpaces } from '../utils/StringUtils';
+import FormHeader from './FormHeader';
+import SmallHeader from './SmallHeader';
+import TextInput from './TextInput';
+import SubmitButton from './SubmitButton';
 
 const StatusForm = ({ status, setStatus, handleSubmit, error, isDisabled, isLoading }) => {
    const { name, description } = status;
@@ -13,74 +17,46 @@ const StatusForm = ({ status, setStatus, handleSubmit, error, isDisabled, isLoad
    const errorFromNameInput = error?.path?.toLowerCase() === 'name';
    const errorFromDescriptionInput = error?.path?.toLowerCase() == 'description';
 
+   // styles for the form
+   const formClasses = 'newJob position-relative p-4 text-reset shadow bg-white rounded-4';
+   const formStyles = { width: '90vw', maxWidth: '500px' };
+
    return (
-      <form onSubmit={handleSubmit}>
-         <RequiredFieldsText />
+      <form className={formClasses} onSubmit={handleSubmit} style={formStyles}>
 
-         <div className='form-floating mb-3'>
-            <input
-               type='text'
-               className={'form-control' + (errorFromNameInput ? ' is-invalid' : '')}
-               name='name'
-               placeholder='Name'
-               id='name'
-               onChange={(e) => {
-                  setStatus(prev => {
-                     return {
-                        ...prev,
-                        name: removeExtraSpaces(e.target.value)
-                     }
-                  })
-               }}
-               onBlur={(e) => {
-                  setStatus(prev => {
-                     return {
-                        ...prev,
-                        name: e.target.value.trim()
-                     }
-                  })
-               }}
-               value={name} />
-            <label htmlFor='name' className='form-label required'>
-               {errorFromNameInput ? <span className='ms-1 text-danger'>{error.message}</span> : 'Name'}
-            </label>
+         <FormHeader text='New Status' />
+         <p className='text-secondary fs-smaller mb-4'>A status categorizes the state of a job.</p>
+
+         <div className='container-fluid p-0'>
+
+            {/* NAME */}
+            <div className='row mb-3'>
+               <div className='col-sm-3 d-flex justify-content-start justify-content-sm-end align-items-center'>
+                  <SmallHeader text='Name' />
+               </div>
+               <div className='col-sm-9'>
+                  <TextInput input={status.name} setInput={input => setStatus(prev => ({ ...prev, name: input }))} />
+               </div>
+            </div>
+
+            {/* DESCRIPTION */}
+            <div className='row mb-3'>
+               <div className='col-sm-3 d-flex justify-content-start justify-content-sm-end align-items-center'>
+                  <SmallHeader text='Description' />
+               </div>
+               <div className='col-sm-9'>
+                  <GrowingTextArea input={status.description} setInput={input => setStatus(prev => ({ ...prev, description: input }))} />
+               </div>
+            </div>
          </div>
 
-         <div className='form-floating mb-3'>
-            <GrowingTextArea
-               className={'form-control' + (errorFromDescriptionInput ? ' is-invalid' : '')}
-               name='description'
-               onBlur={(e) => {
-                  setStatus(prev => {
-                     return {
-                        ...prev,
-                        description: e.target.value.trim()
-                     }
-                  })
-               }}
-               onChange={(e) => {
-                  setStatus(prev => {
-                     return {
-                        ...prev,
-                        description: e.target.value
-                     }
-                  })
-               }}
-               placeholder='Description'
-               value={description}
-            />
-            <label htmlFor='description' className='form-label required'>
-               {errorFromDescriptionInput ? <span className='ms-1 text-danger'>{error.message}</span> : 'Description'}
-            </label>
-         </div>
-
-         <ActionButton
-            alignX='right'
-            text={(isLoading ? 'Saving...' : 'Save')}
-            type='submit'
-            isDisabled={isDisabled}
+         <SubmitButton
+            defaultText='Save'
+            loadingText='Saving'
+            isDisabled={isLoading}
+            isLoading={isLoading}
          />
-      </form>
+      </form >
    );
 };
 

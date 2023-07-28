@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
+import { motion } from 'framer-motion';
 
 // components
 import ActionButton from './ActionButton';
@@ -224,21 +224,6 @@ const JobDetails = ({
                </div>
             }
          </motion.div>
-
-
-         {/* 
-   
-         {singleNoteInput &&
-            <>
-               <br />
-               <DriverNoteInput job_id={_id} />
-            </>
-         } */}
-
-         {showEditForm &&
-            <EditJobForm preJob={job} setShowThisForm={setShowEditForm} callBack={() => setFilters(prev => ({ ...prev }))} />
-         }
-
       </motion.div>
    );
 };

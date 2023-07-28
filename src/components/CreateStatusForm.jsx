@@ -1,46 +1,59 @@
 import { useState } from 'react';
-import { CSSTransition } from 'react-transition-group';
+import { AnimatePresence } from 'framer-motion';
 
 // hooks
 import { useCreateStatus } from '../hooks/useCreateStatus';
 
 // components
 import FormHeader from './FormHeader';
+import Modal from './Modal';
 import StatusForm from './StatusForm';
 
 // Form to create a status for a job and description of what the status means.
-const CreateStatusForm = ({ setShowThisForm }) => {
+const CreateStatusForm = ({ hideForm, showForm }) => {
+   const newStatus = { name: '', description: '' };
    const { createStatus, error, isLoading } = useCreateStatus();
-   const [status, setStatus] = useState({ name: '', description: '' });
+   const [status, setStatus] = useState(newStatus);
+
+   // styling for the button that closes the form
+   const closeButtonClasses = 'position-absolute top-0 end-0 fw-bold p-3 text-secondary border-0';
+   const closeButtonStyles = { background: 'transparent', zIndex: '1' };
+
+   // close button X
+   const closeIconClasses = 'bi bi-x-lg';
+
+   const handleOnSubmit = async (e) => {
+      e.preventDefault();
+
+      let statusCreated = await createStatus(status);
+      if (statusCreated) hideForm();
+   };
+
+   const clearInputs = () => setStatus(newStatus);
 
    return (
-      <CSSTransition
-         appear={true}
-         classNames='scale-'
-         in={true}
-         timeout={500}
-      >
-         <div className='shadow'>
-            <FormHeader text='New Status' handleCloseForm={() => setShowThisForm(false)} />
+      <AnimatePresence mode='wait' onExitComplete={clearInputs}>
+         {showForm &&
+            <Modal blurBackdrop={true}>
+               <button
+                  className={closeButtonClasses}
+                  onClick={hideForm}
+                  style={closeButtonStyles}
+                  type='button'
+               >
+                  <i className={closeIconClasses}></i>
+               </button>
 
-            <div className='rounded-bottom background-white text-reset px-3 pb-3 pt-1'>
                <StatusForm
                   status={status}
                   setStatus={setStatus}
                   error={error}
                   isDisabled={isLoading}
                   isLoading={isLoading}
-                  handleSubmit={async (e) => {
-                     e.preventDefault();
-
-                     await createStatus(status)
-                        .then((isCreated) => {
-                           if (isCreated) setShowThisForm(false);
-                        });
-                  }} />
-            </div>
-         </div>
-      </CSSTransition>
+                  handleSubmit={handleOnSubmit} />
+            </Modal>
+         }
+      </AnimatePresence>
    );
 };
 

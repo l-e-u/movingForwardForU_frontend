@@ -23,6 +23,7 @@ const Modal = ({ children, blurBackdrop = false }) => {
       unmount: {
          opacity: 0,
          transition: {
+            when: 'afterChildren',
             duration: 0.5
          }
       }
@@ -43,6 +44,10 @@ const Modal = ({ children, blurBackdrop = false }) => {
             damping: 10,
             type: 'spring',
          }
+      },
+      unmount: {
+         opacity: 0,
+         top: '100%'
       }
    };
 
@@ -61,6 +66,7 @@ const Modal = ({ children, blurBackdrop = false }) => {
             className={contentClasses}
             style={contentStyles}
             variants={contentVariants}
+         // exit='hidden'
          >
             {children}
          </motion.div>

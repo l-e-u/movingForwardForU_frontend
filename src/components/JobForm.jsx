@@ -38,15 +38,11 @@ const JobForm = ({ job, setJob, handleSubmit, error, setError, isDisabled, isLoa
    const formClasses = 'newJob position-relative p-4 text-reset shadow bg-white rounded-4';
    const formStyles = { width: '90vw', maxWidth: '600px' };
 
-
-   console.log('jobs page:', job);
-
-
    return (
       <form className={formClasses} onSubmit={handleSubmit} style={formStyles}>
 
          <FormHeader text='New Job' />
-         <p className='text-secondary fs-smaller'>This information is required to add a new job. The second step is optional.</p>
+         <p className='text-secondary fs-smaller mb-4'>This information is required to add a new job. The second step is optional.</p>
 
          <div className='container-fluid p-0'>
 
