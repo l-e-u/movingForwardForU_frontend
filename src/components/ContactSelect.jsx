@@ -47,6 +47,7 @@ const ContactSelect = ({ setContact }) => {
          isClearable
          loadingMessage={() => 'Loading customers...'}
          noOptionsMessage={() => 'No results.'}
+         placeholder=''
          options={selectOptions}
          onChange={handleOnChange}
       />

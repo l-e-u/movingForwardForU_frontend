@@ -43,10 +43,11 @@ const StatusSelect = ({ setStatus }) => {
          hideSelectedOptions={true}
          isDisabled={isLoading}
          isLoading={isLoading}
-         isSearchable
          isClearable
+         isSearchable
          loadingMessage={() => 'Loading statuses...'}
          noOptionsMessage={() => 'No results.'}
+         placeholder=''
          options={selectOptions}
          onChange={handleOnChange}
       />

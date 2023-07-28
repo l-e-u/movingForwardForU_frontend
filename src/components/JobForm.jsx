@@ -2,23 +2,23 @@ import { useState } from 'react';
 import Input from 'react-select';
 
 // components
-import ContactSearchSelect from './ContactSearchSelect';
 import ContactSelect from './ContactSelect';
-import DriverSearchSelect from './UserSearchSelect';
 import ErrorAlert from './ErrorAlert';
 import FormHeader from './FormHeader';
 import FeeSearchSelect from './FeeSearchSelect';
+import FeeSelect from './FeeSelect';
 import NotesInput from './NotesInput';
 import PickupOrDeliveryInput from './PickupOrDeliveryInput';
 import RequiredFieldsText from './RequiredFieldsText';
-import StatusSearchSelect from './StatusSearchSelect';
+import SmallHeader from './SmallHeader';
 import StatusSelect from './StatusSelect';
+import SubmitButton from './SubmitButton';
+import TextInput from './TextInput';
+import UserSelect from './UserSelect';
 
 // functions
 import { removeExtraSpaces } from '../utils/StringUtils';
-import SubmitButton from './SubmitButton';
-import TextInput from './TextInput';
-import SmallHeader from './SmallHeader';
+import { useFeesContext } from '../hooks/useFeesContext';
 
 const JobForm = ({ job, setJob, handleSubmit, error, setError, isDisabled, isLoading }) => {
    const { status, customer, billing, mileage, reference, parcel, drivers, notes } = job;
@@ -41,6 +41,9 @@ const JobForm = ({ job, setJob, handleSubmit, error, setError, isDisabled, isLoa
    const formStyles = { width: '90vw', maxWidth: '600px' };
 
 
+   console.log('jobs page:', job);
+
+
    return (
       <form className={formClasses} onSubmit={handleSubmit} style={formStyles}>
          <FormHeader text='New Job' />
@@ -49,6 +52,7 @@ const JobForm = ({ job, setJob, handleSubmit, error, setError, isDisabled, isLoa
 
          <div className='container-fluid p-0'>
 
+            {/* STATUS SELECTIONS */}
             <div className='row mb-3'>
                <div className='col-sm-2 d-flex justify-content-start justify-content-sm-end align-items-center'>
                   <SmallHeader text='Status' isRequired={true} />
@@ -58,6 +62,7 @@ const JobForm = ({ job, setJob, handleSubmit, error, setError, isDisabled, isLoa
                </div>
             </div>
 
+            {/* CONTACT/CUSTOMER SELECTION */}
             <div className='row mb-3'>
                <div className='col-sm-2 d-flex justify-content-start justify-content-sm-end align-items-center'>
                   <SmallHeader text='Customer' isRequired={true} />
@@ -67,6 +72,7 @@ const JobForm = ({ job, setJob, handleSubmit, error, setError, isDisabled, isLoa
                </div>
             </div>
 
+            {/* REFERENCE INPUT */}
             <div className='row mb-3'>
                <div className='col-sm-2 d-flex justify-content-start justify-content-sm-end align-items-center'>
                   <SmallHeader text='Reference' />
@@ -76,6 +82,7 @@ const JobForm = ({ job, setJob, handleSubmit, error, setError, isDisabled, isLoa
                </div>
             </div>
 
+            {/* PARCEL INPUT */}
             <div className='row mb-3'>
                <div className='col-sm-2 d-flex justify-content-start justify-content-sm-end align-items-center'>
                   <SmallHeader text='Parcel' />
@@ -84,144 +91,54 @@ const JobForm = ({ job, setJob, handleSubmit, error, setError, isDisabled, isLoa
                   <TextInput input={job.parcel} setInput={input => setJob(prev => ({ ...prev, parcel: input }))} />
                </div>
             </div>
-         </div>
 
-         <div className='container-fluid'>
-            <div className='row'>
-               <div className='col-xl-3 col-sm-6 p-0 mb-2 pe-sm-2'>
-                  {/* STATUS */}
-                  <StatusSearchSelect
-                     status={status}
-                     setJob={setJob}
-                     inputError={error?.path === 'status'}
-                     inputErrorMessage={error?.message}
+            {/* DRIVER SELECTION */}
+            <div className='row mb-3'>
+               <div className='col-sm-2 d-flex justify-content-start justify-content-sm-end align-items-center'>
+                  <SmallHeader text='Drivers' />
+               </div>
+               <div className='col-sm-10'>
+                  <UserSelect setUser={drivers => setJob(prev => ({ ...prev, drivers }))}
                   />
-               </div>
-
-               <div className='col-xl-4 col-sm-6 p-0 mb-2 ps-sm-2 pe-xl-2'>
-
-                  {/* CUSTOMER / CONTACT */}
-                  <ContactSearchSelect
-                     customer={customer}
-                     setJob={setJob}
-                     inputError={error?.path === 'customer'}
-                     inputErrorMessage={error?.message}
-                  />
-               </div>
-
-               <div className='col-xl-3 col-sm-6 p-0 mb-2 pe-sm-2 ps-xl-2'>
-                  {/* PARCEL */}
-                  <div className='form-floating'>
-                     <input
-                        type='text'
-                        className='form-control'
-                        name='parcel'
-                        placeholder='Parcel'
-                        id='parcel'
-                        value={parcel ?? ''}
-                        onChange={(e) => {
-                           setJob(prev => {
-                              return {
-                                 ...prev,
-                                 parcel: e.target.value
-                              }
-                           })
-                        }}
-                        onBlur={(e) => {
-                           setJob(prev => {
-                              return {
-                                 ...prev,
-                                 parcel: removeExtraSpaces(e.target.value.trim())
-                              }
-                           })
-                        }} />
-                     <label htmlFor='parcel' className='form-label'>Parcel</label>
-                  </div>
-               </div>
-
-               <div className='col-xl-2 col-sm-6 p-0 mb-2 ps-sm-2'>
-                  {/* REFERENCE */}
-                  <div className='form-floating'>
-                     <input
-                        className='form-control'
-                        type='text'
-                        name='reference'
-                        id='reference'
-                        placeholder='Reference #'
-                        value={reference ?? ''}
-                        onChange={(e) => {
-                           setJob(prev => {
-                              return {
-                                 ...prev,
-                                 reference: e.target.value
-                              }
-                           })
-                        }}
-                        onBlur={(e) => {
-                           setJob(prev => {
-                              return {
-                                 ...prev,
-                                 reference: removeExtraSpaces(e.target.value.trim())
-                              }
-                           })
-                        }} />
-                     <label htmlFor='reference' className='form-label'>Reference #</label>
-                  </div>
                </div>
             </div>
+
+            {/* MILEAGE INPUT */}
+            <div className='row mb-3'>
+               <div className='col-sm-2 d-flex justify-content-start justify-content-sm-end align-items-center'>
+                  <SmallHeader text='Mileage' />
+               </div>
+               <div className='col-sm-10'>
+                  <TextInput input={job.mileage} setInput={input => setJob(prev => ({ ...prev, mileage: isNaN(input) ? 0 : Number(input) }))} />
+               </div>
+            </div>
+
+            {/* FEE SELECT */}
+            <div className='row mb-3'>
+               <div className='col-sm-2 d-flex justify-content-start justify-content-sm-end align-items-center'>
+                  <SmallHeader text='Fees' />
+               </div>
+               <div className='col-sm-10'>
+                  <FeeSelect selectedFees={job.billing.map(bill => bill.fee)} setFee={fee => {
+                     setJob(prev => ({
+                        ...prev,
+                        billing: [
+                           ...prev.billing,
+                           {
+                              adjustedAmount: null,
+                              fee
+                           }
+                        ]
+                     }))
+                  }} />
+               </div>
+            </div>
+
          </div>
 
 
          <div className='container-fluid'>
             <div className='row'>
-               <div className='col-xl-4 p-0 pe-xl-2'>
-                  <div className='container-fluid'>
-                     <div className='row mb-2'>
-                        {/* DRIVERS */}
-                        <div className='col-xl-8 col-sm-8 p-0 pe-sm-2 mb-2 mb-sm-0'>
-                           <DriverSearchSelect drivers={drivers} setJob={setJob} />
-                        </div>
-
-                        <div className='col-xl-4 col-sm-4 p-0 ps-sm-2'>
-                           {/* MILEAGE */}
-                           <div className='form-floating'>
-                              <input
-                                 className={'form-control' + (error?.mileage ? ' is-invalid' : '')}
-                                 id='mileage'
-                                 name='mileage'
-                                 onBlur={e => {
-                                    const input = e.target.value;
-
-                                    if (input === '') {
-                                       setJob(prev => {
-                                          return {
-                                             ...prev,
-                                             mileage: 0
-                                          }
-                                       })
-                                    }
-                                 }}
-                                 onChange={e => setJob(prev => {
-                                    return {
-                                       ...prev,
-                                       mileage: e.target.value
-                                    }
-                                 })}
-                                 placeholder='Mileage'
-                                 step={1}
-                                 title='Needs to be a number.'
-                                 type='number'
-                                 value={mileage}
-                              />
-                              <label htmlFor='mileage' className='form-label'>
-                                 Mileage
-                                 {error?.mileage && <span className='ms-1 text-danger'>{': ' + error.mileage.message}</span>}
-                              </label>
-                           </div>
-                        </div>
-                     </div>
-                  </div>
-               </div>
                <div className='col-xl-4 col-md-6 p-0 py-0 ps-xl-2 pe-md-2'>
                   {/* PICKUP ADDRESS/TIME */}
                   <PickupOrDeliveryInput
@@ -242,13 +159,6 @@ const JobForm = ({ job, setJob, handleSubmit, error, setError, isDisabled, isLoa
                </div>
             </div>
          </div>
-
-         <br />
-
-         {/* billing */}
-         <FeeSearchSelect billing={billing} setJob={setJob} />
-
-         <br />
 
          {/* notes */}
          <NotesInput
