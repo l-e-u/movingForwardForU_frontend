@@ -51,7 +51,10 @@ const Modal = ({ children, blurBackdrop = false }) => {
       }
    };
 
-   if (blurBackdrop) modalStyles.backdropFilter = 'blur(3px)';
+   if (blurBackdrop) {
+      modalStyles.backgroundColor = 'rgba(20, 30, 120, 0.2)';
+      modalStyles.backdropFilter = 'blur(2px)';
+   };
 
    return (
       <motion.div
@@ -66,7 +69,6 @@ const Modal = ({ children, blurBackdrop = false }) => {
             className={contentClasses}
             style={contentStyles}
             variants={contentVariants}
-         // exit='hidden'
          >
             {children}
          </motion.div>
