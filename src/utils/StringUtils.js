@@ -56,30 +56,30 @@ const formatCurrencyStringWithThousandsGrouping = (currencyString) => currencySt
 
 const filterDigitsFromString = (string) => string.replace(/\D/g, '');
 
-// accepts a number or string and returns a string that represents a currency with thousands grouping, and an option to ensure its fixed to 2 decimals
-export const formatToCurrencyString = ({ amount, setTwoDecimalPlaces = false }) => {
-   const value = removeCommasFromString(String(amount));
-   console.log(value)
-   //  return an empty string if value is NaN
-   if (isNaN(value) || !value) return;
+// formats a string to represent a currency with thousands grouping, and an option to round decimals to two places
+export const formatToCurrencyString = ({ 
+    amount, 
+    setTwoDecimalPlaces = false 
+}) => {
+   const value = removeCommasFromString(amount);
+   
+   //  return the value without the latest entry
+   if (isNaN(value) || !value) return value.substring(0,value.length-1);
 
-   const isNegative = value.charAt(0) === '-';
-   const decimalIndex = value.indexOf('.');
-   const hasDecimal = decimalIndex >= 0;
-   let numberString = value;
-
-   // if the string has a decimal, then separate string at the decimal position into left-side & right-side integers
-   if (hasDecimal) {
-      let leftIntegers = value.substring(0, decimalIndex);
-      let rightIntegers = value.substring(decimalIndex);
-   }
-   else {
-      if (setTwoDecimalPlaces) {
-         numberString = Number(value).toFixed(2);
-      };
+   let [integer,decimal]= value.split('.');
+   let numberString = formatCurrencyStringWithThousandsGrouping(integer);
+   
+   if(decimal.length >0){
+       numberString+='.';
    };
+   
+      if (setTwoDecimalPlaces) {
+         decimal = Number(decimal).toFixed(2);
+      };
+      
+      numberString+=decimal;
 
-   return formatCurrencyStringWithThousandsGrouping(numberString);
+   return numberString;
 };
 
 export const formatCurrency = (input, onBlur = false) => {

@@ -11,6 +11,7 @@ import ErrorAlert from './ErrorAlert';
 const FeeSelect = ({ selectedFees, setFee }) => {
    const { getFees, error, isLoading } = useGetFees();
    const { fees } = useFeesContext();
+   
    const selectedOptions = [];
 
    // only list fees that have not been selected to avoid duplicates
