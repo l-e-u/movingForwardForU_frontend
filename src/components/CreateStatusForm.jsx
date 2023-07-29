@@ -5,14 +5,13 @@ import { AnimatePresence } from 'framer-motion';
 import { useCreateStatus } from '../hooks/useCreateStatus';
 
 // components
-import FormHeader from './FormHeader';
 import Modal from './Modal';
 import StatusForm from './StatusForm';
 
 // Form to create a status for a job and description of what the status means.
 const CreateStatusForm = ({ hideForm, showForm }) => {
    const newStatus = { name: '', description: '' };
-   const { createStatus, error, isLoading } = useCreateStatus();
+   const { clearError, createStatus, error, isLoading } = useCreateStatus();
    const [status, setStatus] = useState(newStatus);
 
    // styling for the button that closes the form
@@ -29,10 +28,13 @@ const CreateStatusForm = ({ hideForm, showForm }) => {
       if (statusCreated) hideForm();
    };
 
-   const clearInputs = () => setStatus(newStatus);
+   const resetForm = () => {
+      setStatus(newStatus);
+      clearError();
+   };
 
    return (
-      <AnimatePresence mode='wait' onExitComplete={clearInputs}>
+      <AnimatePresence mode='wait' onExitComplete={resetForm}>
          {showForm &&
             <Modal blurBackdrop={true}>
                <button
@@ -45,12 +47,13 @@ const CreateStatusForm = ({ hideForm, showForm }) => {
                </button>
 
                <StatusForm
-                  status={status}
-                  setStatus={setStatus}
+                  {...status}
                   error={error}
+                  handleSubmit={handleOnSubmit}
                   isDisabled={isLoading}
                   isLoading={isLoading}
-                  handleSubmit={handleOnSubmit} />
+                  setStatus={setStatus}
+               />
             </Modal>
          }
       </AnimatePresence>

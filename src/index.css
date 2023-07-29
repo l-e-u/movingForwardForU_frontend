@@ -80,6 +80,10 @@ button.page-link:disabled, .submitButton:disabled {
    width: var(--sideNavWidth);
 }
 
+.text-pre-wrap {
+   white-space: pre-wrap;
+}
+
 hr {
    color: var(--mainPalette6);
 }

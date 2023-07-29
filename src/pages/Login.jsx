@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence } from 'framer-motion';
 
 // componenets
 import FormHeader from '../components/FormHeader';
@@ -16,10 +16,13 @@ import { useAuthContext } from '../hooks/useAuthContext';
 
 const Login = () => {
    const { user } = useAuthContext();
-   const [email, setEmail] = useState('');
-   const [password, setPassword] = useState('');
+
    const { login, error, isLoading } = useLogin();
    const { resetPassword, resetPasswordEmailSent, error: resetPasswordError, isLoading: isLoadingResetPassword } = useResetPassword();
+
+   // state to hold user input
+   const [email, setEmail] = useState('');
+   const [password, setPassword] = useState('');
 
    // uses the input's validitay function to check if email pattern is valid
    const emailIsValid = () => {

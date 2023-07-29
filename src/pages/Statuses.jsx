@@ -2,8 +2,6 @@ import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 
 // hooks
-import { useAuthContext } from '../hooks/useAuthContext';
-import { useStatusesContext } from '../hooks/useStatusesContext';
 import { useGetStatuses } from '../hooks/useGetStatuses';
 
 // components
@@ -11,10 +9,6 @@ import CreateStatusForm from '../components/CreateStatusForm';
 import Page from '../components/Page';
 
 const Statuses = () => {
-   const API_BASE_URL = process.env.API_BASE_URL;
-   const { statuses, dispatch } = useStatusesContext();
-   const { user } = useAuthContext();
-
    const { getStatuses, error, isLoading } = useGetStatuses();
 
    const [showCreateForm, setShowCreateForm] = useState(false);
@@ -53,7 +47,6 @@ const Statuses = () => {
             >
                <i className='bi bi-plus'></i>
             </motion.button>
-
          </div>
       </Page>
    );

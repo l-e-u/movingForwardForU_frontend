@@ -1,24 +1,22 @@
 // components
-import RequiredFieldsText from './RequiredFieldsText';
-import GrowingTextArea from './GrowingTextArea';
-import ActionButton from './ActionButton'
-
-// utilities
-import { removeExtraSpaces } from '../utils/StringUtils';
+import ErrorAlert from './ErrorAlert';
 import FormHeader from './FormHeader';
+import GrowingTextArea from './GrowingTextArea';
 import SmallHeader from './SmallHeader';
-import TextInput from './TextInput';
 import SubmitButton from './SubmitButton';
+import TextInput from './TextInput';
 
-const StatusForm = ({ status, setStatus, handleSubmit, error, isDisabled, isLoading }) => {
-   const { name, description } = status;
-
-   // error identification
-   const errorFromNameInput = error?.path?.toLowerCase() === 'name';
-   const errorFromDescriptionInput = error?.path?.toLowerCase() == 'description';
-
+const StatusForm = ({
+   name,
+   description,
+   setStatus,
+   handleSubmit,
+   error,
+   isDisabled,
+   isLoading
+}) => {
    // styles for the form
-   const formClasses = 'newJob position-relative p-4 text-reset shadow bg-white rounded-4';
+   const formClasses = 'newStatusForm position-relative p-4 pb-5 text-reset shadow bg-white rounded-4';
    const formStyles = { width: '90vw', maxWidth: '500px' };
 
    return (
@@ -35,7 +33,7 @@ const StatusForm = ({ status, setStatus, handleSubmit, error, isDisabled, isLoad
                   <SmallHeader text='Name' />
                </div>
                <div className='col-sm-9'>
-                  <TextInput input={status.name} setInput={input => setStatus(prev => ({ ...prev, name: input }))} />
+                  <TextInput input={name} setInput={input => setStatus(prev => ({ ...prev, name: input }))} />
                </div>
             </div>
 
@@ -45,10 +43,12 @@ const StatusForm = ({ status, setStatus, handleSubmit, error, isDisabled, isLoad
                   <SmallHeader text='Description' />
                </div>
                <div className='col-sm-9'>
-                  <GrowingTextArea input={status.description} setInput={input => setStatus(prev => ({ ...prev, description: input }))} />
+                  <GrowingTextArea input={description} setInput={input => setStatus(prev => ({ ...prev, description: input }))} />
                </div>
             </div>
          </div>
+
+         {error && <ErrorAlert message={error.message} />}
 
          <SubmitButton
             defaultText='Save'

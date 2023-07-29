@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import Input from 'react-select';
 
 // components
 import ContactSelect from './ContactSelect';

@@ -6,15 +6,14 @@ import { useFeesContext } from './useFeesContext';
 
 export const useCreateFee = () => {
    const API_BASE_URL = process.env.API_BASE_URL;
+   const { user } = useAuthContext();
+   const { dispatch } = useFeesContext();
+
    const [error, setError] = useState(null);
    const [isLoading, setIsLoading] = useState(null);
-   const { dispatch } = useFeesContext();
-   const { user } = useAuthContext();
 
    const createFee = async (fee) => {
       setIsLoading(true);
-
-      // don't want to show the error if the user is trying to rectify, so null error at the start
       setError(null);
 
       const response = await fetch(`${API_BASE_URL}/api/fees`, {
@@ -30,10 +29,9 @@ export const useCreateFee = () => {
       const json = await response.json();
 
       if (!response.ok) {
-         console.error(json);
-
          setError(json.error);
          setIsLoading(false);
+
          return false;
       };
 
@@ -46,5 +44,7 @@ export const useCreateFee = () => {
       };
    };
 
-   return { createFee, isLoading, error };
+   const clearError = () => setError(null);
+
+   return { createFee, clearError, isLoading, error };
 };

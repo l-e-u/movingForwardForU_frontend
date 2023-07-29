@@ -4,15 +4,15 @@ import { useStatusesContext } from "./useStatusesContext";
 
 export const useCreateStatus = () => {
    const API_BASE_URL = process.env.API_BASE_URL;
+
+   const { user } = useAuthContext();
+   const { dispatch } = useStatusesContext();
+
    const [error, setError] = useState(null);
    const [isLoading, setIsLoading] = useState(null);
-   const { dispatch } = useStatusesContext();
-   const { user } = useAuthContext();
 
    const createStatus = async (status) => {
       setIsLoading(true);
-
-      // don't want to show the error if the user is trying to rectify, so null error at the start
       setError(null);
 
       const response = await fetch(`${API_BASE_URL}/api/statuses`, {
@@ -28,8 +28,6 @@ export const useCreateStatus = () => {
       const json = await response.json();
 
       if (!response.ok) {
-         console.log(json);
-
          setError(json.error);
          setIsLoading(false);
          return false;
@@ -44,5 +42,7 @@ export const useCreateStatus = () => {
       };
    };
 
-   return { createStatus, isLoading, error };
+   const clearError = () => setError(null);
+
+   return { clearError, createStatus, isLoading, error };
 };

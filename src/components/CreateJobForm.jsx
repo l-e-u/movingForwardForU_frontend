@@ -23,6 +23,8 @@ const CreateJobForm = ({ hideForm, refreshJobList, showForm }) => {
    };
 
    const { createJob, error, setError, isLoading } = useCreateJob();
+
+   // state for user inputs
    const [job, setJob] = useState(newJob);
 
    const closeButtonClasses = 'position-absolute top-0 end-0 fw-bold p-3 text-secondary border-0';
