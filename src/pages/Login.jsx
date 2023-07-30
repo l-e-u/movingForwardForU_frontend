@@ -58,7 +58,7 @@ const Login = () => {
    const iconStyles = { left: '1.5rem' };
 
    const inputClasses = 'form-control rounded-4 mb-2';
-   const inputStyles = { borderColor: 'transparent', backgroundColor: 'var(--bs-gray-100)', paddingLeft: '2.5rem' };
+   const inputStyles = { borderColor: 'transparent', backgroundColor: 'var(--bs-gray-100)', paddingLeft: '2.5rem', fontSize: '14px' };
 
    // error identification
    const errorEmailInput = error?.path === 'email' || resetPasswordError?.path === 'email';
@@ -79,7 +79,7 @@ const Login = () => {
                   <form id='formLogin' className={formClasses} onSubmit={handleSubmit} style={formStyles}>
 
                      <FormHeader text='Welcome back!' />
-                     <p className='text-secondary fs-smaller'>Let's start by loggin into your account.</p>
+                     <p className='text-secondary fs-smaller'>Let's start by logging into your account.</p>
 
                      {/* email input */}
                      <div className='form-floating position-relative'>
