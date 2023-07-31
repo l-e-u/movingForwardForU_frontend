@@ -25,16 +25,14 @@ const FileDownloadButton = ({
    };
 
    return (
-      <small className='text-action text-end d-inline'>
-         <a
-            className='text-action d-block text-end'
-            href={`${API_BASE_URL}/api/attachments/download/` + filename}
-            rel='noreferrer'
-            target='_blank'
-         >
-            <span>Download</span><i className={'ms-1 bi ' + iconClassText}></i>
-         </a>
-      </small>
+      <a
+         className='d-block fs-smaller'
+         href={`${API_BASE_URL}/api/attachments/download/` + filename}
+         rel='noreferrer'
+         target='_blank'
+      >
+         <span>Download</span><i className={'ms-1 bi ' + iconClassText}></i>
+      </a>
    );
 };
 

@@ -56,13 +56,6 @@ button.page-link:disabled, .submitButton:disabled {
   pointer-events: none !important;
 }
 
-.jobCard .tabs .selected * {
-   transition: all .2s ease-in-out;
-   border-bottom: 2px solid var(--mainPalette3) !important;
-   font-weight: 600;
-   color: var(--mainPalette3) !important;
-}
-
 .lightGradient {
    background: linear-gradient(to left, var(--mainPalette8), var(--mainPalette9));
 }

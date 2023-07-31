@@ -15,7 +15,8 @@ import SmallHeader from './SmallHeader';
 
 // functions
 import { dateStringFormat, formatCurrency } from '../utils/StringUtils';
-import { addTwoCurrencies } from '../utils/NumberUtils';
+import { billingTotal } from '../utils/NumberUtils';
+
 
 const JobDetails = ({
    job,
@@ -41,26 +42,31 @@ const JobDetails = ({
       reference,
       status
    } = job;
-   const [selectedTab, setSetselectedTab] = useState(0);
+   const sectionIconPairs = new Map([
+      ['addresses', 'bi bi-truck'],
+      ['notes', 'bi bi-sticky'],
+      ['billing', 'bi bi-cash-stack']
+   ]);
+
+   // by default, set the first key as the selected section
+   const [selectedSection, setSelectedSection] = useState([...sectionIconPairs.keys()][0]);
    const [showEditForm, setShowEditForm] = useState(false);
 
-   const tabNames = ['Transport', 'Details', 'Notes', 'Billing'];
    const hasDrivers = drivers.length > 0;
    const numOfBills = billing.length;
    const hasBilling = numOfBills > 0;
    const numOfNotes = notes.length;
    const hasNotes = numOfNotes > 0;
 
-   const cardClasses = `jobCard rounded-3 sticky-top lightGradient d-flex flex-column`;
-   const cardStyles = { backgroundColor: 'var(--mainPalette9)', border: '1px solid rgba(0, 0, 0, .05)' };
+   const balance = formatCurrency(billingTotal(billing), true);
 
-   // styling for the buttons that switches between tab sections
-   const tabButtonClasses = 'text-secondary postion-relative border-top-0 border-start-0 border-end-0 p-0 mx-2 mx-md-3 mx-lg-4';
-   const tabButtonStyles = { backgroundColor: 'transparent', borderBottomColor: 'transparent' };
+   // styles for the balance display on third section
+   const statsClasses = 'd-flex fs-smaller bg-white text-secondary mt-2 mb-1 rounded-1 text-end px-2';
+   const statsStyles = { marginLeft: '-0.5rem', marginRight: '-0.5rem' };
 
-   // styling for the containers of the tab content
-   const tabContentClasses = 'rounded-2 px-3 py-2';
-   const tabContentStyles = {};
+   // styles for the job details card
+   const cardClasses = `jobCard rounded-3 sticky-top lightGradient d-flex flex-column shadow-sm`;
+   const cardStyles = { backgroundColor: 'var(--mainPalette9)' };
 
    // styling for input headers
    const headerStyles = { color: 'var(--mainPalette4)', fontWeight: '500' };
@@ -69,8 +75,26 @@ const JobDetails = ({
    const detailsFirstColumn = 'col-4 text-end';
    const detailsSecondColumn = 'col-8';
 
+   // styling for the hr line separator
+   const hrClasses = 'position-absolute d-none d-md-block m-0 top-0 start-50 translate-middle';
+   const hrStyles = { color: 'var(--mainPalette8)', width: 'calc(100% - 32px)' };
+
+   // setup for the sections and the buttons to switch between them
+   // styling for the section buttons
+   const sectionButtonsContainerClasses = 'd-flex justify-content-end gap-2 gap-sm-4 text-secondary';
+   const sectionButtonClasses = 'rounded';
+   const sectionButtonStyles = {
+      background: 'transparent',
+      borderWidth: '1px',
+      borderStyle: 'solid',
+      transition: 'all 0.25s ease-in-out'
+   };
+
+   // array that holds the buttons that allows the user to switch between sections
+   const sectionButtonsJSX = [];
+
    // framer-motion variants for the card, initially it won't have any height, after the children have appeared, it will get 500px in height, and when it exits/unmounts, it fires after the children have faded away
-   const cardVariants = {
+   const expandCollapseVariants = {
       mount: {
          height: '0px',
          padding: '0rem',
@@ -96,7 +120,7 @@ const JobDetails = ({
    };
 
    // framer-motion variants for the children containers, on mount, they fade in after the parent has expanded, on unmount, they fade out before the parent
-   const contentVariants = {
+   const fadeInOutVariants = {
       mount: {
          opacity: 0,
       },
@@ -108,22 +132,31 @@ const JobDetails = ({
       }
    };
 
-   // buttons that switch between section's content
-   const tabButtonsJSX = tabNames.map((tabName, index) => {
-      return (
+   let additionalDriversJSX = null;
+
+   // create the sections' buttons
+   for (const [sectionName, iconNameClasses] of sectionIconPairs.entries()) {
+      const isSelected = sectionName === selectedSection;
+
+      sectionButtonsJSX.push(
          <button
-            className={`${tabButtonClasses}${index === selectedTab ? ' selected' : ''}`}
-            key={tabName}
-            onClick={() => setSetselectedTab(index)}
-            style={tabButtonStyles}
+            className={sectionButtonClasses}
+            key={sectionName}
+            onClick={() => setSelectedSection(sectionName)}
+            style={
+               {
+                  ...sectionButtonStyles,
+                  borderColor: isSelected ? 'var(--mainPalette4)' : 'transparent',
+                  color: isSelected ? 'var(--mainPalette4)' : 'var(--bs-secondary)',
+                  padding: isSelected ? '0 2rem' : '0 1rem'
+               }
+            }
             type='button'
          >
-            <SmallHeader text={tabName} />
-         </button>
-      )
-   });
-
-   let additionalDriversJSX = null;
+            <i className={iconNameClasses}></i>
+         </button >
+      );
+   };
 
    // if there's 2 drivers or more, it will add more rows to preserve the table format
    if (drivers.length > 1) {
@@ -143,13 +176,13 @@ const JobDetails = ({
       <motion.div
          className={cardClasses}
          style={cardStyles}
-         variants={cardVariants}
+         variants={expandCollapseVariants}
          initial='mount'
          animate='animation'
          exit='unmount'
       >
          {/* organization name of the customer/business */}
-         <motion.div className='container-fluid' variants={contentVariants}>
+         <motion.div className='container-fluid' variants={fadeInOutVariants}>
             <div style={headerStyles}>
                <SmallHeader text='Organization' />
             </div>
@@ -163,9 +196,11 @@ const JobDetails = ({
             <div className='row'>
 
                {/* Job Details */}
-               <div className='col-md d-grid position-relative'>
-                  <hr className='position-absolute m-0 top-0 start-50 translate-middle' style={{ width: 'calc(100% - 32px)' }} />
-                  <motion.div variants={contentVariants} className='container-fluid align-self-center pt-2 pt-md-0'>
+               <div className='detailsColumn col-md col-lg-5 d-grid position-relative py-2'>
+
+                  <motion.hr variants={fadeInOutVariants} className={hrClasses} style={hrStyles} />
+
+                  <motion.div variants={fadeInOutVariants} className='container-fluid align-self-center'>
 
                      {/* status name */}
                      <div className='row mb-2'>
@@ -208,7 +243,7 @@ const JobDetails = ({
                      </div>
 
                      {/* date and time of creation */}
-                     <div className='row mb-2'>
+                     <div className='row'>
                         <div className={detailsFirstColumn} style={headerStyles}>
                            <SmallHeader text='Created' />
                         </div>
@@ -218,128 +253,61 @@ const JobDetails = ({
                   </motion.div>
                </div>
 
-               <div className='col-md'>
-                  <motion.div variants={contentVariants} className='rounded-2' style={{ backgroundColor: 'rgba(255, 255, 255, 0.75)' }}>
-                     <div className={tabContentClasses} style={tabContentStyles}>
-                        {/* pickup and delivery addresses */}
-                        <div className='mb-2' style={headerStyles}><SmallHeader text='Pickup' /></div>
-                        <AddressDisplay
-                           address={pickup.address}
-                           date={pickup.date}
-                           includeTime={pickup.includeTime}
-                           heading='Pickup'
-                        />
-                        <hr />
-                        <div className='mb-2' style={headerStyles}><SmallHeader text='Delivery' /></div>
-                        <AddressDisplay
-                           address={delivery.address}
-                           date={delivery.date}
-                           includeTime={delivery.includeTime}
-                           alignEnd={true}
-                           heading='Delivery'
-                        />
-                     </div>
+               <div className='sectionsColumn col-md col-lg-7'>
+                  <motion.div variants={fadeInOutVariants} className='rounded-2 py-2 px-3 h-100' style={{ backgroundColor: 'rgba(255, 255, 255, 0.75)' }}>
+
+                     {/* BUTTONS for content selection */}
+                     <div className={sectionButtonsContainerClasses}>{sectionButtonsJSX}</div>
+
+                     {/* SECTIONS */}
+                     {/* SECTION 1: pickup and delivery addresses */}
+                     {(selectedSection === 'addresses') &&
+                        <>
+                           <div className='mb-2' style={headerStyles}><SmallHeader text='Pickup' /></div>
+                           <AddressDisplay
+                              address={pickup.address}
+                              date={pickup.date}
+                              includeTime={pickup.includeTime}
+                              heading='Pickup'
+                           />
+                           <hr />
+                           <div className='mb-2' style={headerStyles}><SmallHeader text='Delivery' /></div>
+                           <AddressDisplay
+                              address={delivery.address}
+                              date={delivery.date}
+                              includeTime={delivery.includeTime}
+                              alignEnd={true}
+                              heading='Delivery'
+                           />
+                        </>
+                     }
+
+                     {/* SECTION 2: notes */}
+                     {(selectedSection === 'notes') &&
+                        <>
+                           <div className={statsClasses} style={statsStyles}>
+                              <span>{`# of Notes: ${notes.length}`}</span>
+                           </div>
+                           <NotesList list={notes} />
+                        </>
+                     }
+
+                     {/* SECTION 3: billing */}
+                     {(selectedSection === 'billing') &&
+                        <>
+                           <div className={statsClasses} style={statsStyles}>
+                              <span>{`# of Fees: ${billing.length}`}</span><span className='ms-auto'>{`Balance: $${balance}`}</span>
+                           </div>
+                           <FeesList billing={billing} />
+                        </>
+                     }
+
                   </motion.div>
                </div>
 
             </div>
          </div>
-      </motion.div>
-   );
-
-   return (
-      <motion.div className={cardClasses} style={cardStyles} variants={cardVariants} initial='mount' animate='animation' exit='unmount'>
-
-         {/* status and reference are always showing */}
-         <motion.table variants={contentVariants} className='mb-1'>
-            <tbody>
-               <tr>
-                  <td className='py-0'> <SmallHeader text='Status' /></td>
-                  <td className='py-0 ps-4'>{status.name}</td>
-               </tr>
-               <tr>
-                  <td className='py-0'> <SmallHeader text='Reference' /></td>
-                  <td className='py-0 ps-4'>{reference}</td>
-               </tr>
-            </tbody>
-         </motion.table>
-
-         {/* organization name of the customer/business */}
-         <motion.div variants={contentVariants} className='organization fs-3 mb-2'>{customer.organization}</motion.div>
-
-         <motion.div variants={contentVariants} className='sections'>
-            {/* buttons to navigate the sections */}
-            <div className='tabs d-flex ps-2'>
-               {tabButtonsJSX}
-            </div>
-
-            {/* second tab content is details */}
-            {(selectedTab === 0) &&
-               <div className={tabContentClasses} style={tabContentStyles}>
-                  {/* pickup and delivery addresses */}
-                  <SmallHeader text='Pickup' />
-                  <AddressDisplay
-                     address={pickup.address}
-                     date={pickup.date}
-                     includeTime={pickup.includeTime}
-                     heading='Pickup'
-                  />
-                  <hr />
-                  <SmallHeader text='Delivery' />
-                  <AddressDisplay
-                     address={delivery.address}
-                     date={delivery.date}
-                     includeTime={delivery.includeTime}
-                     alignEnd={true}
-                     heading='Delivery'
-                  />
-               </div>
-            }
-
-            {/* first tab content is transport */}
-            {(selectedTab === 1) &&
-               <div className={tabContentClasses} style={tabContentStyles}>
-                  <table>
-                     <tbody>
-                        <tr>
-                           <td className='py-1'><SmallHeader text={`Driver${hasDrivers ? 's' : ''}`} /></td>
-                           <td className='py-1 ps-4'>{hasDrivers ? drivers[0].fullName : ''}</td>
-                        </tr>
-                        {additionalDriversJSX}
-                        <tr >
-                           <td className='py-1'><SmallHeader text='Mileage' /></td>
-                           <td className='py-1 ps-4'>{mileage}</td>
-                        </tr>
-                        <tr >
-                           <td className='py-1'><SmallHeader text='Parcel' /></td>
-                           <td className='py-1 ps-4'>{parcel}</td>
-                        </tr>
-                        <tr >
-                           <td className='py-1'><SmallHeader text='Created By' /></td>
-                           <td className='py-1 ps-4'>{createdBy.fullName}</td>
-                        </tr>
-                        <tr >
-                           <td className='py-1'><SmallHeader text='Created At' /></td>
-                           <td className='py-1 ps-4'>{new Date(createdAt).toDateString()}</td>
-                        </tr>
-                     </tbody>
-                  </table>
-               </div>
-            }
-
-            {(selectedTab === 2) &&
-               <div className={tabContentClasses} style={tabContentStyles}>
-                  <NotesList list={notes} />
-               </div>
-            }
-
-            {(selectedTab === 3) &&
-               <div className={tabContentClasses} style={tabContentStyles}>
-                  <FeesList billing={billing} />
-               </div>
-            }
-         </motion.div>
-      </motion.div>
+      </motion.div >
    );
 };
 

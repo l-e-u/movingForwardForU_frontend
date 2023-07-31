@@ -2,32 +2,39 @@
 import { formatCurrency } from '../utils/StringUtils';
 
 const FeesList = ({ billing }) => {
-    billing.sort((a, b) => {
-        if (a.fee.name < b.fee.name) return -1;
-        if (a.fee.name > b.fee.name) return 1;
-        return 0;
-    });
+   // styling for the main list
+   const listClasses = 'billingList m-0 p-0';
+   const listStyles = { listStyle: 'none' };
 
-    return (
-        <ul className='m-0 list-group'>
-            {billing.map(bill => {
+   // styling for listed items
+   const itemClasses = 'd-flex justify-content-between';
 
-                const { adjustedAmount, fee } = bill;
-                const amount = adjustedAmount === null ? fee.amount : adjustedAmount;
-                let currency = formatCurrency(amount, true);
+   // sort the list of fees alphabetically by fee name
+   billing.sort((a, b) => {
+      if (a.fee.name < b.fee.name) return -1;
+      if (a.fee.name > b.fee.name) return 1;
+      return 0;
+   });
 
-                if (amount < 0) currency = '(' + currency + ')';
+   return (
+      <ul className={listClasses} style={listStyles}>
+         {billing.map(bill => {
+            const { adjustedAmount, fee } = bill;
+            const isAdjusted = adjustedAmount !== null;
+            const amount = isAdjusted ? adjustedAmount : fee.amount;
+            let currency = formatCurrency(amount, true);
 
-                return (
-                    <li key={fee._id} className='list-group-item d-flex border-0 p-0 text-reset item-hover'>
-                        <span>{fee.name}</span>
-                        {(adjustedAmount !== null) && <span className='smallPrint text-secondary ms-1'>&#8224;</span>}
-                        <span className='flex-grow-1 text-end text-nowrap'>{'$ ' + currency}</span>
-                    </li>
-                )
-            })}
-        </ul>
-    );
+            if (amount < 0) currency = `(-${currency})`;
+
+            return (
+               <li key={fee._id} className={itemClasses}>
+                  <span>{fee.name}</span>
+                  <span >{currency}</span>
+               </li>
+            )
+         })}
+      </ul>
+   );
 };
 
 export default FeesList;
