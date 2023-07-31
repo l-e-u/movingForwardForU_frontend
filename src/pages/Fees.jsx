@@ -3,25 +3,23 @@ import { motion } from 'framer-motion';
 
 // components
 import CreateFeeForm from '../components/CreateFeeForm';
+import GradientCard from '../components/GradientCard';
+import SmallHeader from '../components/SmallHeader';
 import Page from '../components/Page';
 
 // hooks
-import { useFeesContext } from '../hooks/useFeesContext';
 import { useGetFees } from '../hooks/useGetFees';
-import { useGetStatuses } from '../hooks/useGetStatuses';
-
-// functions
-import { formatCurrency } from '../utils/StringUtils';
+import { useFeesContext } from '../hooks/useFeesContext';
 
 const Fees = () => {
    const { getFees, error, isLoading } = useGetFees();
-   const { fees, dispatch } = useFeesContext();
+   const { fees } = useFeesContext();
 
    const [showCreateForm, setShowCreateForm] = useState(false);
 
    // button to add new documents classes, styles, and framer-motion variants
-   const addButtonClasses = 'border-0 px-5 py-1 my-3 ms-auto position-relative rounded d-flex justify-content-center align-items-center';
-   const addButtonStyles = { backgroundColor: 'var(--mainPalette9)', color: 'var(--mainPalette4)' };
+   const addButtonClasses = 'px-5 py-1 ms-auto position-relative rounded d-flex justify-content-center align-items-center';
+   const addButtonStyles = { backgroundColor: 'var(--mainPalette9)', border: '1px solid var(--mainPalette8)', color: 'var(--mainPalette4)' };
    const addButtonVariants = {
       onHover: {
          scale: 1.1,
@@ -32,6 +30,49 @@ const Fees = () => {
       }
    };
 
+   // styling for the list container
+   const listClasses = 'feeList d-flex flex-wrap gap-3 p-3 m-0';
+   const listStyles = { listStyle: 'none' };
+
+   // styling for an item in the list
+   const itemClasses = 'feeItem rounded-3 px-1 pb-1 pt-3 lightGradient';
+   const itemStyles = {
+      flex: '1 1 350px',
+      maxWidth: '600px'
+   };
+
+   // styling for input headers
+   const headerStyles = { color: 'var(--mainPalette4)', fontWeight: '500' };
+
+   const listOfFeesJSX = fees.map(fee => {
+      const { _id, amount, name, description } = fee;
+      return (
+         <li key={_id} className={itemClasses} style={itemStyles}>
+            {/* <GradientCard> */}
+            <div className='container-fluid h-100 d-flex flex-column'>
+
+               <div className='row mb-2'>
+                  <div className='col-sm-2' style={headerStyles}><SmallHeader text='Name' /></div>
+                  <div className='col-sm-10'>{name}</div>
+               </div>
+
+               <div className='row mb-2'>
+                  <div className='col-sm-2' style={headerStyles}><SmallHeader text='Amount' /></div>
+                  <div className='col-sm-10'>{`$ ${amount.toFixed(2)}`}</div>
+               </div>
+
+               <div className='row flex-grow-1 rounded-2 py-2' style={{ backgroundColor: 'rgba(255, 255, 255, 0.75)' }}>
+                  <div className='col-sm-12'>
+                     <span style={headerStyles}><SmallHeader text='Description' /></span>
+                     <div>{description}</div>
+                  </div>
+               </div>
+            </div>
+            {/* </GradientCard> */}
+         </li>
+      )
+   });
+
    useEffect(() => {
       getFees();
    }, []);
@@ -41,7 +82,7 @@ const Fees = () => {
          <CreateFeeForm hideForm={() => setShowCreateForm(false)} showForm={showCreateForm} />
 
          {/* button to display the new job form */}
-         <div className='px-3'>
+         <div className='px-3 pt-3'>
             <motion.button
                className={addButtonClasses}
                style={addButtonStyles}
@@ -53,6 +94,7 @@ const Fees = () => {
                <i className='bi bi-plus'></i>
             </motion.button>
          </div>
+         <ul className={listClasses} style={listStyles}>{listOfFeesJSX}</ul>
       </Page>
    );
 };

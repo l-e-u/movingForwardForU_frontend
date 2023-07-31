@@ -14,7 +14,7 @@ const CreateFeeForm = ({ hideForm, showForm }) => {
    const [fee, setFee] = useState(newFee);
 
    // styling for the button that closes the form
-   const closeButtonClasses = 'position-absolute top-0 end-0 fw-bold p-3 text-secondary border-0';
+   const closeButtonClasses = 'position-absolute border-0 top-0 end-0 fw-bold p-3 text-secondary';
    const closeButtonStyles = { background: 'transparent', zIndex: '1' };
 
    // close button X

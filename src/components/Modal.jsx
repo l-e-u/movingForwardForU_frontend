@@ -2,8 +2,11 @@ import { motion } from 'framer-motion';
 
 // Appears some time after order has been place, every time a page is switched via the browser arrows, the modal show is set to false
 const Modal = ({ children, blurBackdrop = false }) => {
-   const modalClasses = 'myModal position-fixed d-flex top-0 start-0 w-100 h-100 overflow-auto';
-   const modalStyles = { zIndex: '1050' };
+   const modalClasses = 'myModal background position-fixed d-flex top-0 start-0 w-100 h-100 overflow-auto';
+   const modalStyles = {
+      background: 'linear-gradient(0deg, rgba(193,228,255,1) 0%, rgba(229,239,255,1) 29%, rgba(255,255,255,0) 100%)',
+      zIndex: '1050'
+   };
 
    const contentClasses = 'content position-relative m-auto';
    const contentStyles = { backgroundColor: 'transparent' };
@@ -52,8 +55,8 @@ const Modal = ({ children, blurBackdrop = false }) => {
    };
 
    if (blurBackdrop) {
-      modalStyles.backgroundColor = 'rgba(20, 30, 120, 0.2)';
       modalStyles.backdropFilter = 'blur(2px)';
+      modalStyles.WebkitBackdropFilter = 'blur(2px)';
    };
 
    return (

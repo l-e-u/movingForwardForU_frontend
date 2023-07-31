@@ -42,7 +42,7 @@ const FeeForm = ({
 
             {/* AMOUNT */}
             <div className='row mb-3'>
-               <div className='col-sm-3 d-flex justify-content-start justify-content-sm-end align-items-center'>
+               <div className='col-sm-3 d-flex justify-content-start justify-content-sm-end align-items-center text-secondary'>
                   <SmallHeader text='Amount' />
                </div>
                <div className='col-sm-9'>
@@ -55,7 +55,7 @@ const FeeForm = ({
 
             {/* NAME */}
             <div className='row mb-3'>
-               <div className='col-sm-3 d-flex justify-content-start justify-content-sm-end align-items-center'>
+               <div className='col-sm-3 d-flex justify-content-start justify-content-sm-end align-items-center text-secondary'>
                   <SmallHeader text='Name' />
                </div>
                <div className='col-sm-9'>
@@ -65,7 +65,7 @@ const FeeForm = ({
 
             {/* DESCRIPTION */}
             <div className='row mb-3'>
-               <div className='col-sm-3 d-flex justify-content-start justify-content-sm-end align-items-center'>
+               <div className='col-sm-3 d-flex justify-content-start justify-content-sm-end align-items-center text-secondary'>
                   <SmallHeader text='Description' />
                </div>
                <div className='col-sm-9'>

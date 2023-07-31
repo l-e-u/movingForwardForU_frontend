@@ -34,10 +34,8 @@ function App() {
       setSelectedLink('My Jobs');
    }, [user])
 
-   const appClasses = `App h-100${user ? '' : ' backgroundGradient'}`;
-
    return (
-      <div className={appClasses}>
+      <div className='App h-100'>
          <BrowserRouter>
             {user && <SideNavMenu selectedLink={selectedLink} setSelectedLink={setSelectedLink} />}
             <Routes>

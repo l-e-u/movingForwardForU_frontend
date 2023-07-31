@@ -14,7 +14,7 @@ import NotesList from './NotesList';
 import SmallHeader from './SmallHeader';
 
 // functions
-import { formatCurrency } from '../utils/StringUtils';
+import { dateStringFormat, formatCurrency } from '../utils/StringUtils';
 import { addTwoCurrencies } from '../utils/NumberUtils';
 
 const JobDetails = ({
@@ -51,8 +51,8 @@ const JobDetails = ({
    const numOfNotes = notes.length;
    const hasNotes = numOfNotes > 0;
 
-   const jobDetailsCardClasses = `jobDetailsCard rounded-4 sticky-top shadow`;
-   const jobDetailsCardStyles = { backgroundColor: 'var(--mainPalette9)', border: '1px solid rgba(0, 0, 0, .05)' };
+   const cardClasses = `jobCard rounded-3 sticky-top lightGradient d-flex flex-column`;
+   const cardStyles = { backgroundColor: 'var(--mainPalette9)', border: '1px solid rgba(0, 0, 0, .05)' };
 
    // styling for the buttons that switches between tab sections
    const tabButtonClasses = 'text-secondary postion-relative border-top-0 border-start-0 border-end-0 p-0 mx-2 mx-md-3 mx-lg-4';
@@ -62,6 +62,9 @@ const JobDetails = ({
    const tabContentClasses = 'rounded bg-white p-3';
    const tabContentStyles = {};
 
+   // styling for input headers
+   const headerStyles = { color: 'var(--mainPalette4)', fontWeight: '500' };
+
    // framer-motion variants for the card, initially it won't have any height, after the children have appeared, it will get 500px in height, and when it exits/unmounts, it fires after the children have faded away
    const cardVariants = {
       mount: {
@@ -70,8 +73,8 @@ const JobDetails = ({
          margin: '1rem',
       },
       animation: {
-         height: '500px',
-         padding: '1.5rem',
+         height: '100%',
+         padding: '1rem 0.25rem 0.25rem 0.25rem',
          margin: '1rem',
          transition: {
             when: 'beforeChildren',
@@ -133,7 +136,90 @@ const JobDetails = ({
    };
 
    return (
-      <motion.div className={jobDetailsCardClasses} style={jobDetailsCardStyles} variants={cardVariants} initial='mount' animate='animation' exit='unmount'>
+      <motion.div
+         className={cardClasses}
+         style={cardStyles}
+         variants={cardVariants}
+         initial='mount'
+         animate='animation'
+         exit='unmount'
+      >
+         {/* organization name of the customer/business */}
+         <motion.div className='container-fluid' variants={contentVariants}>
+            <span style={headerStyles}>
+               <SmallHeader text='Organization' />
+            </span>
+            <div className='organization fs-3 mb-2'>
+               {customer.organization}
+            </div>
+         </motion.div>
+
+         {/* job details and tab/content, this layout swaps from column to row in larger screens */}
+         <div className=''>
+
+            {/* Job Details */}
+            <motion.div variants={contentVariants} className='container-fluid'>
+
+               {/* status name */}
+               <div className='row mb-2'>
+                  <div className='col-sm-4 col-lg-3 text-sm-end' style={headerStyles}>
+                     <SmallHeader text='Status' />
+                  </div>
+                  <div className='col-sm-8 col-lg-9'>{status.name}</div>
+               </div>
+
+               {/* reference number */}
+               <div className='row mb-2'>
+                  <div className='col-sm-4 col-lg-3 text-sm-end' style={headerStyles}>
+                     <SmallHeader text='Reference' />
+                  </div>
+                  <div className='col-sm-8 col-lg-9'>{reference}</div>
+               </div>
+
+               {/* parcel */}
+               <div className='row mb-2'>
+                  <div className='col-sm-4 col-lg-3 text-sm-end' style={headerStyles}>
+                     <SmallHeader text='Parcel' />
+                  </div>
+                  <div className='col-sm-8 col-lg-9'>{parcel}</div>
+               </div>
+
+               {/* mileage */}
+               <div className='row mb-2'>
+                  <div className='col-sm-4 col-lg-3 text-sm-end' style={headerStyles}>
+                     <SmallHeader text='Mileage' />
+                  </div>
+                  <div className='col-sm-8 col-lg-9'>{mileage}</div>
+               </div>
+
+               {/* creator of the job */}
+               <div className='row mb-2'>
+                  <div className='col-sm-4 col-lg-3 text-sm-end' style={headerStyles}>
+                     <SmallHeader text='Creator' />
+                  </div>
+                  <div className='col-sm-8 col-lg-9'>{createdBy.fullName}</div>
+               </div>
+
+               {/* date and time of creation */}
+               <div className='row mb-2'>
+                  <div className='col-sm-4 col-lg-3 text-sm-end' style={headerStyles}>
+                     <SmallHeader text='Created' />
+                  </div>
+                  <div className='col-sm-8 col-lg-9'>{dateStringFormat(new Date(createdAt))}</div>
+               </div>
+
+            </motion.div>
+
+            <motion.div variants={contentVariants} className='rounded-2' style={{ backgroundColor: 'rgba(255, 255, 255, 0.75)' }}>
+               tabs
+            </motion.div>
+
+         </div>
+      </motion.div>
+   );
+
+   return (
+      <motion.div className={cardClasses} style={cardStyles} variants={cardVariants} initial='mount' animate='animation' exit='unmount'>
 
          {/* status and reference are always showing */}
          <motion.table variants={contentVariants} className='mb-1'>

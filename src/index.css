@@ -25,7 +25,7 @@
   --sideNavWidth: 75px;
 }
 
-* {
+*, *::after, *::before {
   box-sizing: border-box;
 }
 
@@ -39,10 +39,6 @@ body {
   height: 100svh;
 }
 
-.backgroundGradient {
-   background: linear-gradient(0deg, rgba(193,228,255,1) 0%, rgba(229,239,255,1) 29%, rgba(255,255,255,1) 100%) !important;
-}
-
 input[type='file']:disabled {
   opacity: .25;
 }
@@ -51,6 +47,7 @@ nav .selected .navIcon {
    transition: all .2s ease-in-out;
    background-color: var(--mainPalette9);
    color:var(--mainPalette4);
+   border:1px solid var(--mainPalette8) !important;
 }
 
 .actionButton:disabled,
@@ -64,12 +61,32 @@ button.page-link:disabled, .submitButton:disabled {
    color: var(--mainPalette5) !important;
 }
 
-.jobDetailsCard .tabs .selected * {
+.jobCard .tabs .selected * {
    transition: all .2s ease-in-out;
    border-bottom: 2px solid var(--mainPalette3) !important;
    font-weight: 600;
    color: var(--mainPalette3) !important;
 }
+
+.lightGradient {
+   background: linear-gradient(to left, var(--mainPalette8), var(--mainPalette9));
+}
+
+/* .gradientCard::before {
+   content: '';
+   position: absolute;
+   inset: 0;
+   backdrop-filter: blur(80px);
+   -webkit-backdrop-filter: blur(80px);
+   z-index: 1;
+}; */
+
+/* .gradientCard .content::before {
+   content: '';
+   position: absolute;
+   inset:0;
+   filter: blur(30px);
+} */
 
 .form-control:focus {
    border-color: var(--mainPalette4) !important;
@@ -96,11 +113,6 @@ hr {
 
 .inputError {
   margin-left: .25rem;
-  color: var(--bs-danger);
-}
-
-.required::before {
-  content: '* ';
   color: var(--bs-danger);
 }
 
