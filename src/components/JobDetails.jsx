@@ -59,16 +59,20 @@ const JobDetails = ({
    const tabButtonStyles = { backgroundColor: 'transparent', borderBottomColor: 'transparent' };
 
    // styling for the containers of the tab content
-   const tabContentClasses = 'rounded bg-white p-3';
+   const tabContentClasses = 'rounded-2 px-3 py-2';
    const tabContentStyles = {};
 
    // styling for input headers
    const headerStyles = { color: 'var(--mainPalette4)', fontWeight: '500' };
 
+   // styling for the first column of job details
+   const detailsFirstColumn = 'col-4 text-end';
+   const detailsSecondColumn = 'col-8';
+
    // framer-motion variants for the card, initially it won't have any height, after the children have appeared, it will get 500px in height, and when it exits/unmounts, it fires after the children have faded away
    const cardVariants = {
       mount: {
-         height: '0%',
+         height: '0px',
          padding: '0rem',
          margin: '1rem',
       },
@@ -146,74 +150,99 @@ const JobDetails = ({
       >
          {/* organization name of the customer/business */}
          <motion.div className='container-fluid' variants={contentVariants}>
-            <span style={headerStyles}>
+            <div style={headerStyles}>
                <SmallHeader text='Organization' />
-            </span>
-            <div className='organization fs-3 mb-2'>
+            </div>
+            <div className='organization fs-3'>
                {customer.organization}
             </div>
          </motion.div>
 
          {/* job details and tab/content, this layout swaps from column to row in larger screens */}
-         <div className=''>
+         <div className='container-fluid p-0'>
+            <div className='row'>
 
-            {/* Job Details */}
-            <motion.div variants={contentVariants} className='container-fluid'>
+               {/* Job Details */}
+               <div className='col-md d-grid position-relative'>
+                  <hr className='position-absolute m-0 top-0 start-50 translate-middle' style={{ width: 'calc(100% - 32px)' }} />
+                  <motion.div variants={contentVariants} className='container-fluid align-self-center pt-2 pt-md-0'>
 
-               {/* status name */}
-               <div className='row mb-2'>
-                  <div className='col-sm-4 col-lg-3 text-sm-end' style={headerStyles}>
-                     <SmallHeader text='Status' />
-                  </div>
-                  <div className='col-sm-8 col-lg-9'>{status.name}</div>
+                     {/* status name */}
+                     <div className='row mb-2'>
+                        <div className={detailsFirstColumn} style={headerStyles}>
+                           <SmallHeader text='Status' />
+                        </div>
+                        <div className={detailsSecondColumn}>{status.name}</div>
+                     </div>
+
+                     {/* reference number */}
+                     <div className='row mb-2'>
+                        <div className={detailsFirstColumn} style={headerStyles}>
+                           <SmallHeader text='Reference' />
+                        </div>
+                        <div className={detailsSecondColumn}>{reference}</div>
+                     </div>
+
+                     {/* parcel */}
+                     <div className='row mb-2'>
+                        <div className={detailsFirstColumn} style={headerStyles}>
+                           <SmallHeader text='Parcel' />
+                        </div>
+                        <div className={detailsSecondColumn}>{parcel}</div>
+                     </div>
+
+                     {/* mileage */}
+                     <div className='row mb-2'>
+                        <div className={detailsFirstColumn} style={headerStyles}>
+                           <SmallHeader text='Mileage' />
+                        </div>
+                        <div className={detailsSecondColumn}>{mileage}</div>
+                     </div>
+
+                     {/* creator of the job */}
+                     <div className='row mb-2'>
+                        <div className={detailsFirstColumn} style={headerStyles}>
+                           <SmallHeader text='Creator' />
+                        </div>
+                        <div className={detailsSecondColumn}>{createdBy.fullName}</div>
+                     </div>
+
+                     {/* date and time of creation */}
+                     <div className='row mb-2'>
+                        <div className={detailsFirstColumn} style={headerStyles}>
+                           <SmallHeader text='Created' />
+                        </div>
+                        <div className={detailsSecondColumn}>{dateStringFormat(new Date(createdAt))}</div>
+                     </div>
+
+                  </motion.div>
                </div>
 
-               {/* reference number */}
-               <div className='row mb-2'>
-                  <div className='col-sm-4 col-lg-3 text-sm-end' style={headerStyles}>
-                     <SmallHeader text='Reference' />
-                  </div>
-                  <div className='col-sm-8 col-lg-9'>{reference}</div>
+               <div className='col-md'>
+                  <motion.div variants={contentVariants} className='rounded-2' style={{ backgroundColor: 'rgba(255, 255, 255, 0.75)' }}>
+                     <div className={tabContentClasses} style={tabContentStyles}>
+                        {/* pickup and delivery addresses */}
+                        <div className='mb-2' style={headerStyles}><SmallHeader text='Pickup' /></div>
+                        <AddressDisplay
+                           address={pickup.address}
+                           date={pickup.date}
+                           includeTime={pickup.includeTime}
+                           heading='Pickup'
+                        />
+                        <hr />
+                        <div className='mb-2' style={headerStyles}><SmallHeader text='Delivery' /></div>
+                        <AddressDisplay
+                           address={delivery.address}
+                           date={delivery.date}
+                           includeTime={delivery.includeTime}
+                           alignEnd={true}
+                           heading='Delivery'
+                        />
+                     </div>
+                  </motion.div>
                </div>
 
-               {/* parcel */}
-               <div className='row mb-2'>
-                  <div className='col-sm-4 col-lg-3 text-sm-end' style={headerStyles}>
-                     <SmallHeader text='Parcel' />
-                  </div>
-                  <div className='col-sm-8 col-lg-9'>{parcel}</div>
-               </div>
-
-               {/* mileage */}
-               <div className='row mb-2'>
-                  <div className='col-sm-4 col-lg-3 text-sm-end' style={headerStyles}>
-                     <SmallHeader text='Mileage' />
-                  </div>
-                  <div className='col-sm-8 col-lg-9'>{mileage}</div>
-               </div>
-
-               {/* creator of the job */}
-               <div className='row mb-2'>
-                  <div className='col-sm-4 col-lg-3 text-sm-end' style={headerStyles}>
-                     <SmallHeader text='Creator' />
-                  </div>
-                  <div className='col-sm-8 col-lg-9'>{createdBy.fullName}</div>
-               </div>
-
-               {/* date and time of creation */}
-               <div className='row mb-2'>
-                  <div className='col-sm-4 col-lg-3 text-sm-end' style={headerStyles}>
-                     <SmallHeader text='Created' />
-                  </div>
-                  <div className='col-sm-8 col-lg-9'>{dateStringFormat(new Date(createdAt))}</div>
-               </div>
-
-            </motion.div>
-
-            <motion.div variants={contentVariants} className='rounded-2' style={{ backgroundColor: 'rgba(255, 255, 255, 0.75)' }}>
-               tabs
-            </motion.div>
-
+            </div>
          </div>
       </motion.div>
    );

@@ -35,7 +35,7 @@ function App() {
    }, [user])
 
    return (
-      <div className='App h-100'>
+      <div className='App'>
          <BrowserRouter>
             {user && <SideNavMenu selectedLink={selectedLink} setSelectedLink={setSelectedLink} />}
             <Routes>
