@@ -37,7 +37,7 @@ const Fees = () => {
    // styling for an item in the list
    const itemClasses = 'feeItem rounded-3 px-1 pb-1 pt-3 lightGradient';
    const itemStyles = {
-      flex: '1 1 350px',
+      flex: '1 1 300px',
       maxWidth: '600px'
    };
 
@@ -63,7 +63,7 @@ const Fees = () => {
 
                <div className='row flex-grow-1 rounded-2 py-2' style={{ backgroundColor: 'rgba(255, 255, 255, 0.75)' }}>
                   <div className='col-sm-12'>
-                     <span style={headerStyles}><SmallHeader text='Description' /></span>
+                     <span className='text-secondary'><SmallHeader text='Description' /></span>
                      <div>{description}</div>
                   </div>
                </div>

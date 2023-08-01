@@ -12,41 +12,38 @@
 
   --mainHue: 220;
 
-  --mainPalette1: hsl(var(--mainHue), 80%, 10%);
-  --mainPalette2: hsl(var(--mainHue), 80%, 20%);
-  --mainPalette3: hsl(var(--mainHue), 80%, 30%);
-  --mainPalette4: hsl(var(--mainHue), 80%, 40%);
-  --mainPalette5: hsl(var(--mainHue), 80%, 50%);
-  --mainPalette6: hsl(var(--mainHue), 80%, 60%);
-  --mainPalette7: hsl(var(--mainHue), 80%, 70%);
-  --mainPalette8: hsl(var(--mainHue), 80%, 80%);
-  --mainPalette9: hsl(var(--mainHue), 80%, 90%);
-
-  --sideNavWidth: 75px;
+  --mainPalette0: hsl(var(--mainHue), 80%, 10%);
+  --mainPalette1: hsl(var(--mainHue), 80%, 20%);
+  --mainPalette2: hsl(var(--mainHue), 80%, 30%);
+  --mainPalette3: hsl(var(--mainHue), 80%, 40%);
+  --mainPalette4: hsl(var(--mainHue), 80%, 50%);
+  --mainPalette5: hsl(var(--mainHue), 80%, 60%);
+  --mainPalette6: hsl(var(--mainHue), 80%, 70%);
+  --mainPalette7: hsl(var(--mainHue), 80%, 80%);
+  --mainPalette8: hsl(var(--mainHue), 80%, 90%);
+  --mainPalette9: hsl(var(--mainHue), 80%, 95%);
 }
 
 *, *::after, *::before {
   box-sizing: border-box;
 }
+ #root {
+   height: 100%;
+ }
 
 body {
   background: white;
-  margin: 0;
+  margin: 0 auto;
   font-family: 'Poppins' !important;
   font-size: 14px;
   color: var(--mainPalette1);
   height: 100svh;
+  min-height: 600px;
+  max-width: 1440px;
 }
 
 input[type='file']:disabled {
   opacity: .25;
-}
-
-nav .selected .navIcon {
-   transition: all .2s ease-in-out;
-   background-color: var(--mainPalette9);
-   color:var(--mainPalette4);
-   border:1px solid var(--mainPalette8) !important;
 }
 
 .actionButton:disabled,
@@ -54,6 +51,10 @@ button.page-link:disabled, .submitButton:disabled {
   background-color: var(--bs-secondary) !important;
   color: var(--bs-white) !important;
   pointer-events: none !important;
+}
+
+.bg-none {
+   background-color: transparent;
 }
 
 .lightGradient {
@@ -81,9 +82,6 @@ button.page-link:disabled, .submitButton:disabled {
    box-shadow: none;
 }
 
-.sideNavMenu {
-   width: var(--sideNavWidth);
-}
 
 .text-pre-wrap {
    white-space: pre-wrap;
@@ -263,10 +261,6 @@ hr {
 
   .rounded-md-bottom-start-0 {
     border-bottom-left-radius: 0 !important;
-  }
-
-  .page {
-   margin-left: var(--sideNavWidth);
   }
 
   .w-md-20 {

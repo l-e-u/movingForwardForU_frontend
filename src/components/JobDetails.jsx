@@ -52,15 +52,9 @@ const JobDetails = ({
    const [selectedSection, setSelectedSection] = useState([...sectionIconPairs.keys()][0]);
    const [showEditForm, setShowEditForm] = useState(false);
 
-   const hasDrivers = drivers.length > 0;
-   const numOfBills = billing.length;
-   const hasBilling = numOfBills > 0;
-   const numOfNotes = notes.length;
-   const hasNotes = numOfNotes > 0;
-
+   // styles for the balance display on third section
    const balance = formatCurrency(billingTotal(billing), true);
 
-   // styles for the balance display on third section
    const statsClasses = 'd-flex fs-smaller bg-white text-secondary mt-2 mb-1 rounded-1 text-end px-2';
    const statsStyles = { marginLeft: '-0.5rem', marginRight: '-0.5rem' };
 
@@ -92,6 +86,8 @@ const JobDetails = ({
 
    // array that holds the buttons that allows the user to switch between sections
    const sectionButtonsJSX = [];
+
+   const driversJSX = drivers.map(driver => <div key={driver._id}>{driver.fullName}</div>);
 
    // framer-motion variants for the card, initially it won't have any height, after the children have appeared, it will get 500px in height, and when it exits/unmounts, it fires after the children have faded away
    const expandCollapseVariants = {
@@ -132,8 +128,6 @@ const JobDetails = ({
       }
    };
 
-   let additionalDriversJSX = null;
-
    // create the sections' buttons
    for (const [sectionName, iconNameClasses] of sectionIconPairs.entries()) {
       const isSelected = sectionName === selectedSection;
@@ -156,20 +150,6 @@ const JobDetails = ({
             <i className={iconNameClasses}></i>
          </button >
       );
-   };
-
-   // if there's 2 drivers or more, it will add more rows to preserve the table format
-   if (drivers.length > 1) {
-      additionalDriversJSX = [];
-
-      for (let x = 1; x < drivers.length; x++) {
-         additionalDriversJSX.push(
-            <tr key={drivers[x].email}>
-               <td className='py-1'></td>
-               <td className='py-1 ps-4'>{drivers[x].fullName}</td>
-            </tr>
-         );
-      };
    };
 
    return (
@@ -218,6 +198,16 @@ const JobDetails = ({
                         <div className={detailsSecondColumn}>{reference}</div>
                      </div>
 
+                     {/* driver(s) */}
+                     <div className='row mb-2'>
+                        <div className={detailsFirstColumn} style={headerStyles}>
+                           <SmallHeader text={`Driver${drivers.length > 1 ? 's' : ''}`} />
+                        </div>
+                        <div className={detailsSecondColumn}>
+                           {driversJSX}
+                        </div>
+                     </div>
+
                      {/* parcel */}
                      <div className='row mb-2'>
                         <div className={detailsFirstColumn} style={headerStyles}>
@@ -253,6 +243,7 @@ const JobDetails = ({
                   </motion.div>
                </div>
 
+               {/* buttons and sections to swap between addresses, notes, and billing */}
                <div className='sectionsColumn col-md col-lg-7'>
                   <motion.div variants={fadeInOutVariants} className='rounded-2 py-2 px-3 h-100' style={{ backgroundColor: 'rgba(255, 255, 255, 0.75)' }}>
 
@@ -263,7 +254,7 @@ const JobDetails = ({
                      {/* SECTION 1: pickup and delivery addresses */}
                      {(selectedSection === 'addresses') &&
                         <>
-                           <div className='mb-2' style={headerStyles}><SmallHeader text='Pickup' /></div>
+                           <div className='text-secondary mb-1'><SmallHeader text='Pickup' /></div>
                            <AddressDisplay
                               address={pickup.address}
                               date={pickup.date}
@@ -271,7 +262,7 @@ const JobDetails = ({
                               heading='Pickup'
                            />
                            <hr />
-                           <div className='mb-2' style={headerStyles}><SmallHeader text='Delivery' /></div>
+                           <div className='text-secondary mb-1'><SmallHeader text='Delivery' /></div>
                            <AddressDisplay
                               address={delivery.address}
                               date={delivery.date}

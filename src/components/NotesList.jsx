@@ -32,7 +32,7 @@ const NotesList = ({ list }) => {
             </p>
             {attachments.map((attachment, index) => {
                return (
-                  <div className='d-flex justify-content-end mt-2'>
+                  <div key={attachment._id} className='d-flex justify-content-end mt-2'>
                      <span className='text-secondary fs-smaller me-1'>{`${index + 1}. `}</span>
                      <FileDownloadButton key={attachment._id} {...attachment} />
                   </div>

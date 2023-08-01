@@ -36,8 +36,8 @@ const Statuses = () => {
    // styling for an item in the list
    const itemClasses = 'feeItem rounded-3 px-1 pb-1 pt-3 lightGradient';
    const itemStyles = {
-      flex: '1 1 500px',
-      maxWidth: '1000px'
+      flex: '1 1 250px',
+      maxWidth: '500px'
    };
 
    // styling for input headers
@@ -75,13 +75,13 @@ const Statuses = () => {
                         <div className='container-fluid h-100 d-flex flex-column'>
 
                            <div className='row mb-2'>
-                              <div className='col-sm-1' style={headerStyles}><SmallHeader text='Name' /></div>
-                              <div className='col-sm-11'>{name}</div>
+                              <div className='col-sm-2' style={headerStyles}><SmallHeader text='Name' /></div>
+                              <div className='col-sm-10'>{name}</div>
                            </div>
 
                            <div className='row flex-grow-1 rounded-2 py-2' style={{ backgroundColor: 'rgba(255, 255, 255, 0.75)' }}>
                               <div className='col-sm-12'>
-                                 <span style={headerStyles}><SmallHeader text='Description' /></span>
+                                 <span className='text-secondary'><SmallHeader text='Description' /></span>
                                  <div>{description}</div>
                               </div>
                            </div>

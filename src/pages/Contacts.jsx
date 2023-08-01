@@ -1,152 +1,132 @@
-import { useState, useEffect, useRef } from 'react';
+import { useEffect } from 'react';
+import { motion } from 'framer-motion';
 
 // hooks
-import { useAuthContext } from '../hooks/useAuthContext';
-import { useContactsContext } from '../hooks/useContactsContext'
+import { useContactsContext } from '../hooks/useContactsContext';
+import { useGetContacts } from '../hooks/useGetContacts';
 
 // components
-import ActionButton from '../components/ActionButton';
-import CreateContactForm from '../components/CreateContactForm';
-import ContactCard from '../components/ContactCard';
-import DeleteConfirmation from '../components/DeleteConfirmation';
-import EditContactForm from '../components/EditContactForm';
-import ErrorLoadingDocuments from '../components/ErrorLoadingDocuments';
-import FlexBoxWrapper from '../components/FlexBoxWrapper';
-import LoadingDocuments from '../components/LoadingDocuments';
-import OptionsMenu from '../components/OptionsMenu';
-import PageContentWrapper from '../components/Page';
+import Page from '../components/Page';
+import SmallHeader from '../components/SmallHeader';
 
 const Contacts = () => {
-   const API_BASE_URL = process.env.API_BASE_URL;
-   const { contacts, dispatch } = useContactsContext();
-   const { user } = useAuthContext();
+   const { getContacts, error, isLoading } = useGetContacts();
+   const { contacts } = useContactsContext();
 
-   const editFormRef = useRef(null);
 
-   // local state
-   const [error, setError] = useState(null);
-   const [isLoading, setIsLoading] = useState(null);
-   const [selectedContactId, setSelectedContactId] = useState(null);
-   const [showCreateForm, setShowCreateForm] = useState(false);
-   const [showEditForm, setShowEditForm] = useState(false);
-   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
-   const [showOptionsMenu, setShowOptionsMenu] = useState(false);
-
-   useEffect(() => {
-      (async () => {
-         setIsLoading(true);
-         setError(null);
-
-         const response = await fetch(`${API_BASE_URL}/api/contacts`, {
-            headers: {
-               'Content-Type': 'application/json',
-               'Authentication': `Bearer ${user.token}`
-            }
-         });
-
-         // expecting all contacts
-         const json = await response.json();
-
-         if (!response.ok) {
-            console.error(json);
-            setError(json.error);
-            setIsLoading(false);
-         };
-
-         if (response.ok) {
-            setError(null);
-            setIsLoading(false);
-            dispatch({ type: 'SET_CONTACTS', payload: json });
-         };
-      })();
-   }, [API_BASE_URL, dispatch, user]);
-
-   useEffect(() => {
-      if (showEditForm) scrollToBottom();
-   }, [showEditForm]);
-
-   const scrollToBottom = () => {
-      editFormRef.current?.scrollIntoView({ behavior: 'smooth' });
+   // button to add new documents classes, styles, and framer-motion variants
+   const addButtonClasses = 'px-5 py-1 ms-auto position-relative rounded d-flex justify-content-center align-items-center';
+   const addButtonStyles = { backgroundColor: 'var(--mainPalette9)', border: '1px solid var(--mainPalette8)', color: 'var(--mainPalette4)' };
+   const addButtonVariants = {
+      onHover: {
+         scale: 1.1,
+         transition: {
+            duration: 0.3,
+         },
+         boxShadow: '0px 0px 8px var(--mainPalette9)',
+      }
    };
 
-   // sets all the forms and menus show setters to false
-   const hideAllMenusAndForms = () => [setShowEditForm, setShowCreateForm, setShowOptionsMenu, setShowDeleteConfirmation].forEach(setShow => setShow(false));
+   // styling for the horizontal line
+   const hrClasses = 'my-1';
+
+   // styling for the list container
+   const listClasses = 'contactList d-flex flex-wrap gap-3 p-3 m-0';
+   const listStyles = { listStyle: 'none' };
+
+   // styling for an item in the list
+   const itemClasses = 'contactItem rounded-3 px-1 pb-1 pt-3 lightGradient';
+   const itemStyles = {
+      flex: '1 1 500px',
+      maxWidth: '1000px'
+   };
+
+   // styling for input headers
+   const headerStyles = { color: 'var(--mainPalette4)', fontWeight: '500' };
+
+   const listOfContactsJSX = contacts.map(contact => {
+      const { _id, organization, name, misc, phoneNumber, phoneExt, email, address, billingAddress, defaultFees } = contact;
+      const defaultFeesJSX = defaultFees.map(fee => <span>{fee.name}</span>);
+
+      return (
+         <li key={_id} className={itemClasses} style={itemStyles}>
+            <div className='container-fluid'>
+
+               <div style={headerStyles}><SmallHeader text='Organization' /></div>
+               <div className='fs-3'>{organization}</div>
+
+               <hr className={hrClasses} />
+
+               <div className='row mb-2'>
+                  <div className='col-sm-2 text-sm-end' style={headerStyles}><SmallHeader text='Address' /></div>
+                  <div className='col-sm-10'>{address}</div>
+               </div>
+
+               <div className='row mb-2'>
+                  <div className='col-sm-2 text-sm-end' style={headerStyles}><SmallHeader text='Billing' /></div>
+                  <div className='col-sm-10'>{billingAddress}</div>
+               </div>
+
+               <div className='row mb-2'>
+                  <div className='col-sm-2 text-sm-end' style={headerStyles}><SmallHeader text='Name' /></div>
+                  <div className='col-sm-10'>{name}</div>
+               </div>
+
+               <div className='row mb-2'>
+                  <div className='col-sm-2 text-sm-end' style={headerStyles}><SmallHeader text='Phone' /></div>
+                  <div className='col-sm-10'>{phoneNumber}</div>
+               </div>
+
+               <div className='row mb-2'>
+                  <div className='col-sm-2 text-sm-end' style={headerStyles}><SmallHeader text='Ext' /></div>
+                  <div className='col-sm-10'>{phoneExt}</div>
+               </div>
+
+               <div className='row mb-2'>
+                  <div className='col-sm-2 text-sm-end' style={headerStyles}><SmallHeader text='Email' /></div>
+                  <div className='col-sm-10'>{email}</div>
+               </div>
+
+               <div className='row rounded-2 py-2' style={{ backgroundColor: 'rgba(255, 255, 255, 0.75)' }}>
+                  <div className='text-secondary'><SmallHeader text='Default Fees' /></div>
+                  {defaultFeesJSX}
+               </div>
+
+               <div className='row rounded-2 py-2 mt-1' style={{ backgroundColor: 'rgba(255, 255, 255, 0.75)' }}>
+                  <div className='col-sm-12'>
+                     <div className='text-secondary'><SmallHeader text='Miscellaneous' /></div>
+                     <div>{misc}</div>
+                  </div>
+               </div>
+
+            </div>
+         </li >
+      )
+   });
+
+   useEffect(() => {
+      getContacts();
+   }, []);
 
    return (
-      <PageContentWrapper>
-         <div className='mb-3 position-relative' style={{ zIndex: '2' }}>
-            {showCreateForm ?
-               <CreateContactForm setShowThisForm={setShowCreateForm} /> :
-               <ActionButton
-                  alignX='right'
-                  handleOnClick={() => {
-                     hideAllMenusAndForms();
-                     setShowCreateForm(true);
-                     setSelectedContactId(null);
-                  }}
-                  text='Create a Contact'
-               />
-            }
+      <Page >
+         {/* <CreateFeeForm hideForm={() => setShowCreateForm(false)} showForm={showCreateForm} /> */}
+
+         {/* button to display the new job form */}
+         <div className='px-3 pt-3'>
+            <motion.button
+               className={addButtonClasses}
+               style={addButtonStyles}
+               onClick={() => setShowCreateForm(true)}
+               type='button'
+               variants={addButtonVariants}
+               whileHover='onHover'
+            >
+               <i className='bi bi-plus'></i>
+            </motion.button>
          </div>
-
-         {/* show spinner with actively fetching data */}
-         {isLoading && <div className='my-5'><LoadingDocuments /></div>}
-
-         {error && <ErrorLoadingDocuments docType='Jobs' />}
-
-         {contacts &&
-            <FlexBoxWrapper>
-               {contacts.map((contact) => {
-                  const { _id } = contact;
-                  const isSelectedContact = selectedContactId === _id;
-
-                  // by default, an overview of the model is displayed, unless the user clicks on an option
-                  switch (true) {
-                     case (showEditForm && isSelectedContact):
-                        return (<div className='position-relative' style={{ zIndex: '2' }} key={_id} ref={editFormRef}>
-                           <EditContactForm prevContact={contact} setShowThisForm={setShowEditForm} />
-                        </div>);
-
-                     case (showDeleteConfirmation && isSelectedContact):
-                        return (<div className='position-relative' key={_id}>
-                           <DeleteConfirmation
-                              dispatch={dispatch}
-                              doc_id={_id}
-                              message={'Are you sure you want to delete this contact?\nThis cannot be undone.'}
-                              model='CONTACT'
-                              checkReference='customer'
-                              route='contacts'
-                              setShowThisForm={setShowDeleteConfirmation}
-                           />
-                        </div>);
-
-                     default:
-                        return (<div className='position-relative' key={_id}>
-                           <OptionsMenu
-                              showMenu={showOptionsMenu && isSelectedContact}
-                              handleOnClickCloseMenu={() => setShowOptionsMenu(false)}
-                              handleOnClickDeleteOption={() => {
-                                 hideAllMenusAndForms();
-                                 setShowDeleteConfirmation(true);
-                              }}
-                              handleOnClickEditOption={() => {
-                                 hideAllMenusAndForms();
-                                 setShowEditForm(true);
-
-                              }}
-                              handleOnClickMenu={() => {
-                                 hideAllMenusAndForms();
-                                 setSelectedContactId(_id);
-                                 setShowOptionsMenu(true);
-                              }}
-                           />
-                           <ContactCard {...contact} />
-                        </div>);
-                  }
-               })}
-            </FlexBoxWrapper>
-         }
-      </PageContentWrapper>
+         <ul className={listClasses} style={listStyles}>{listOfContactsJSX}</ul>
+      </Page>
    );
 };
 

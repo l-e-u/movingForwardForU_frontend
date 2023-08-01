@@ -9,10 +9,10 @@ import SubmitButton from '../components/SubmitButton';
 // hooks
 import { useLogin } from '../hooks/useLogin';
 import { useResetPassword } from '../hooks/useResetPassword';
+import { useAuthContext } from '../hooks/useAuthContext';
 
 // assets
 import logo from '../assets/movingForwardArrows.svg';
-import { useAuthContext } from '../hooks/useAuthContext';
 
 const Login = () => {
    const { user } = useAuthContext();
@@ -68,7 +68,7 @@ const Login = () => {
 
    return (
       <>
-         <div className='d-flex align-items-center justify-content-center justify-content-md-start pt-4 ps-0 ps-md-5' style={{ color: 'var(--mainPalette3)' }}>
+         <div className='d-flex align-items-center justify-content-center justify-content-md-start bg-white pt-4 ps-0 ps-md-5' style={{ color: 'var(--mainPalette3)' }}>
             <img style={{ height: '30px', width: '30px' }} src={logo} alt='SVG logo image' className='text-reset' />
             <h1 className='fs-5 m-0 ps-3'>Moving Forward for U</h1>
          </div>
