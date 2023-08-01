@@ -6,13 +6,14 @@ import { useContactsContext } from '../hooks/useContactsContext';
 import { useGetContacts } from '../hooks/useGetContacts';
 
 // components
-import Page from '../components/Page';
 import SmallHeader from '../components/SmallHeader';
+
+// utilities
+import { phoneNumberFormatted } from '../utils/StringUtils';
 
 const Contacts = () => {
    const { getContacts, error, isLoading } = useGetContacts();
    const { contacts } = useContactsContext();
-
 
    // button to add new documents classes, styles, and framer-motion variants
    const addButtonClasses = 'px-5 py-1 ms-auto position-relative rounded d-flex justify-content-center align-items-center';
@@ -27,89 +28,44 @@ const Contacts = () => {
       }
    };
 
-   // styling for the horizontal line
-   const hrClasses = 'my-1';
-
    // styling for the list container
-   const listClasses = 'contactList d-flex flex-wrap gap-3 p-3 m-0';
-   const listStyles = { listStyle: 'none' };
-
-   // styling for an item in the list
-   const itemClasses = 'contactItem rounded-3 px-1 pb-1 pt-3 lightGradient';
-   const itemStyles = {
-      flex: '1 1 500px',
-      maxWidth: '1000px'
+   const listClasses = 'feeList d-flex flex-wrap gap-3 p-3 m-0';
+   const listVariants = {
+      mount: {
+         listStyle: 'none'
+      },
+      animation: {
+         transition: {
+            when: 'beforeChildren',
+            staggerChildren: 0.1
+         }
+      }
    };
 
-   // styling for input headers
-   const headerStyles = { color: 'var(--mainPalette4)', fontWeight: '500' };
+   // styling for an item in the list
+   const itemClasses = 'feeItem bg-white container rounded p-3';
+   const itemVariants = {
+      mount: {
+         opacity: 0,
+      },
+      animation: {
+         opacity: 1,
+         boxShadow: '0 .125rem .25rem var(--mainPalette8)'
+      }
+   };
 
-   const listOfContactsJSX = contacts.map(contact => {
-      const { _id, organization, name, misc, phoneNumber, phoneExt, email, address, billingAddress, defaultFees } = contact;
-      const defaultFeesJSX = defaultFees.map(fee => <span>{fee.name}</span>);
+   // styling for the columns
+   const firstColumnClasses = 'col-sm-3 text-secondary text-sm-end';
+   const firstColumnStyles = { fontWeight: '500' }
 
-      return (
-         <li key={_id} className={itemClasses} style={itemStyles}>
-            <div className='container-fluid'>
-
-               <div style={headerStyles}><SmallHeader text='Organization' /></div>
-               <div className='fs-3'>{organization}</div>
-
-               <hr className={hrClasses} />
-
-               <div className='row mb-2'>
-                  <div className='col-sm-2 text-sm-end' style={headerStyles}><SmallHeader text='Address' /></div>
-                  <div className='col-sm-10'>{address}</div>
-               </div>
-
-               <div className='row mb-2'>
-                  <div className='col-sm-2 text-sm-end' style={headerStyles}><SmallHeader text='Billing' /></div>
-                  <div className='col-sm-10'>{billingAddress}</div>
-               </div>
-
-               <div className='row mb-2'>
-                  <div className='col-sm-2 text-sm-end' style={headerStyles}><SmallHeader text='Name' /></div>
-                  <div className='col-sm-10'>{name}</div>
-               </div>
-
-               <div className='row mb-2'>
-                  <div className='col-sm-2 text-sm-end' style={headerStyles}><SmallHeader text='Phone' /></div>
-                  <div className='col-sm-10'>{phoneNumber}</div>
-               </div>
-
-               <div className='row mb-2'>
-                  <div className='col-sm-2 text-sm-end' style={headerStyles}><SmallHeader text='Ext' /></div>
-                  <div className='col-sm-10'>{phoneExt}</div>
-               </div>
-
-               <div className='row mb-2'>
-                  <div className='col-sm-2 text-sm-end' style={headerStyles}><SmallHeader text='Email' /></div>
-                  <div className='col-sm-10'>{email}</div>
-               </div>
-
-               <div className='row rounded-2 py-2' style={{ backgroundColor: 'rgba(255, 255, 255, 0.75)' }}>
-                  <div className='text-secondary'><SmallHeader text='Default Fees' /></div>
-                  {defaultFeesJSX}
-               </div>
-
-               <div className='row rounded-2 py-2 mt-1' style={{ backgroundColor: 'rgba(255, 255, 255, 0.75)' }}>
-                  <div className='col-sm-12'>
-                     <div className='text-secondary'><SmallHeader text='Miscellaneous' /></div>
-                     <div>{misc}</div>
-                  </div>
-               </div>
-
-            </div>
-         </li >
-      )
-   });
+   const secondColumnClasses = 'col-sm-9'
 
    useEffect(() => {
       getContacts();
    }, []);
 
    return (
-      <Page >
+      < >
          {/* <CreateFeeForm hideForm={() => setShowCreateForm(false)} showForm={showCreateForm} /> */}
 
          {/* button to display the new job form */}
@@ -125,8 +81,41 @@ const Contacts = () => {
                <i className='bi bi-plus'></i>
             </motion.button>
          </div>
-         <ul className={listClasses} style={listStyles}>{listOfContactsJSX}</ul>
-      </Page>
+
+         {/* each item on the list will be staggered as they fade in */}
+         <motion.ul className={listClasses} variants={listVariants} initial='mount' animate='animation'>
+            {
+               contacts.map(contact => (
+                  <motion.li key={contact._id} className={itemClasses} variants={itemVariants} >
+                     <div className='row mb-2'>
+                        <div className={firstColumnClasses + ' mt-auto'}><SmallHeader text='Organization' /></div>
+                        <div className={secondColumnClasses + ' fs-5'} style={firstColumnStyles}>{contact.organization}</div>
+                     </div>
+
+                     <div className='row mb-2'>
+                        <div className={firstColumnClasses}><SmallHeader text='Address' /></div>
+                        <div className={secondColumnClasses}>{contact.address}</div>
+                     </div>
+
+                     <div className='row mb-2'>
+                        <div className={firstColumnClasses}><SmallHeader text='Phone' /></div>
+                        <div className={secondColumnClasses}>{phoneNumberFormatted(contact.phoneNumber)}</div>
+                     </div>
+
+                     <div className='row mb-2'>
+                        <div className={firstColumnClasses}><SmallHeader text='Ext' /></div>
+                        <div className={secondColumnClasses}>{contact.phoneExt}</div>
+                     </div>
+
+                     <div className='row'>
+                        <div className={firstColumnClasses}><SmallHeader text='Email' /></div>
+                        <div className={secondColumnClasses + ' word-break-all'} style={{ whiteSpace: '' }}>{contact.email}</div>
+                     </div>
+                  </motion.li>
+               ))
+            }
+         </motion.ul>
+      </>
    );
 };
 

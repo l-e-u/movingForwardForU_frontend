@@ -61,27 +61,14 @@ button.page-link:disabled, .submitButton:disabled {
    background: linear-gradient(to left, var(--mainPalette8), var(--mainPalette9));
 }
 
-/* .gradientCard::before {
-   content: '';
-   position: absolute;
-   inset: 0;
-   backdrop-filter: blur(80px);
-   -webkit-backdrop-filter: blur(80px);
-   z-index: 1;
-}; */
-
-/* .gradientCard .content::before {
-   content: '';
-   position: absolute;
-   inset:0;
-   filter: blur(30px);
-} */
-
 .form-control:focus {
    border-color: var(--mainPalette4) !important;
    box-shadow: none;
 }
 
+.word-break-all {
+   word-break: break-all;
+};
 
 .text-pre-wrap {
    white-space: pre-wrap;

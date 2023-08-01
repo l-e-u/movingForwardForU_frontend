@@ -6,7 +6,7 @@ import { useAuthContext } from './hooks/useAuthContext';
 
 // components
 import Banner from './components/Banner.jsx';
-import SideNavMenu from './components/SideNavMenu.jsx';
+import NavMenu from './components/NavMenu.jsx';
 
 // pages
 import Archives from './pages/Archives.jsx';
@@ -38,7 +38,7 @@ function App() {
    return (
       <div className='App d-md-flex h-100'>
          <BrowserRouter>
-            {user && <SideNavMenu selectedLink={selectedLink} setSelectedLink={setSelectedLink} />}
+            {user && <NavMenu selectedLink={selectedLink} setSelectedLink={setSelectedLink} />}
             <Page>
                <Routes>
                   <Route
@@ -96,9 +96,9 @@ function App() {
    return (
       <div className='App'>
          <BrowserRouter>
-            <Banner setShowSideNavMenu={setShowSideNavMenu} setSelectedLink={setSelectedLink} user={user} />
+            <Banner setShowNavMenu={setShowNavMenu} setSelectedLink={setSelectedLink} user={user} />
             <div className='mx-auto my-0 maxWidth1400px d-flex'>
-               {showSideNavMenu && <SideNavMenu selectedLink={selectedLink} setSelectedLink={setSelectedLink} setShowThisNav={setShowSideNavMenu} user={user} />}
+               {showNavMenu && <NavMenu selectedLink={selectedLink} setSelectedLink={setSelectedLink} setShowThisNav={setShowNavMenu} user={user} />}
                <Routes>
                   <Route
                      path='/'

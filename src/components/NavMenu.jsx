@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { AnimatePresence, color, motion } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 
 // hooks
 import { useLogout } from '../hooks/useLogout';
@@ -8,7 +8,7 @@ import { useLogout } from '../hooks/useLogout';
 // assets
 import logo from '../assets/movingForwardArrows.svg';
 
-const SideNavMenu = ({ selectedLink, setSelectedLink }) => {
+const NavMenu = ({ selectedLink, setSelectedLink }) => {
    const links = [
       { name: 'My Jobs', path: '/', icon: 'bi-list-check' },
       { name: 'Jobs', path: '/jobs', icon: 'bi-view-list' },
@@ -164,4 +164,4 @@ const SideNavMenu = ({ selectedLink, setSelectedLink }) => {
    );
 };
 
-export default SideNavMenu;
+export default NavMenu;

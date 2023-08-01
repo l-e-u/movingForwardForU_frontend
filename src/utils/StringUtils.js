@@ -148,3 +148,11 @@ export const urlQueryString = (filter) => {
 // for the filters when setting the value of existing dates chosen for the date inputs
 export const dateStringFormat_YYYY_MM_DD = (date) => `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')
    }`;
+
+// returns a formatted phone number
+export const phoneNumberFormatted = (phoneNumber) => {
+   if (!phoneNumber) return '';
+
+   const digits = phoneNumber.split('');
+   return `(${digits[0]}${digits[1]}${digits[2]}) ${digits[3]}${digits[4]}${digits[5]}-${digits[6]}${digits[7]}${digits[8]}${digits[9]}`;
+};
