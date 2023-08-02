@@ -30,7 +30,7 @@ const Statuses = () => {
    };
 
    // styling for the list container
-   const listClasses = 'feeList d-flex flex-wrap gap-3 p-3 m-0';
+   const listClasses = 'statusesList px-md-5 py-0 px-3 m-0';
    const listVariants = {
       mount: {
          listStyle: 'none'
@@ -44,7 +44,7 @@ const Statuses = () => {
    };
 
    // styling for an item in the list
-   const itemClasses = 'feeItem bg-white container rounded p-3';
+   const itemClasses = 'statusItem bg-white container rounded py-3 px-4 mb-3';
    const itemVariants = {
       mount: {
          opacity: 0,

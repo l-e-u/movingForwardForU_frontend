@@ -36,7 +36,7 @@ function App() {
    }, [user])
 
    return (
-      <div className='App d-md-flex h-100'>
+      <div className='App'>
          <BrowserRouter>
             {user && <NavMenu selectedLink={selectedLink} setSelectedLink={setSelectedLink} />}
             <Page>

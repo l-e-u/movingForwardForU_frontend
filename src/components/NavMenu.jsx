@@ -101,14 +101,18 @@ const NavMenu = ({ selectedLink, setSelectedLink }) => {
    );
 
    return (
-      <nav aria-label='Navigation Menu' className='navMenu bg-white'>
+      <nav aria-label='Navigation Menu' className='navMenu'>
 
          {/* displayed on smaller screens */}
          <div className='smallMenu d-md-none position-relative'>
-            <div className='d-flex justify-content-between align-items-center'>
-               <span className='fs-6 d-md-none ps-2'>{selectedLink}</span>
+            <div className='d-flex position-relative justify-content-between align-items-center bg-white py-2' style={{ zIndex: '2' }}>
+
+               {/* current page name */}
+               <span className='fs-6 d-md-none ps-3'>{selectedLink}</span>
+
+               {/* menu button */}
                <button
-                  className='bg-none border-0 p-2'
+                  className='bg-none border-0 py-2 px-3'
                   onClick={() => setExpandMenu(!expandMenu)}
                   type='button'
                >
@@ -120,7 +124,7 @@ const NavMenu = ({ selectedLink, setSelectedLink }) => {
             <AnimatePresence mode='wait' onExitComplete={() => setExpandMenu(false)}>
                {expandMenu &&
                   <motion.div
-                     className='d-flex flex-column rounded-bottom position-absolute bg-white w-100 top-100 start-0 text-secondary pb-2'
+                     className='d-flex flex-column rounded-bottom position-absolute bg-white w-100 top-100 start-0 text-secondary shadow-lg pb-2'
                      variants={expandCollapseVariants}
                      initial='mount'
                      animate='animation'
@@ -136,8 +140,9 @@ const NavMenu = ({ selectedLink, setSelectedLink }) => {
             </AnimatePresence>
          </div>
 
+
          {/* displayed on larger screens */}
-         <div className='largeMenu d-none d-md-flex flex-column p-3 h-100'>
+         <div className='largeMenu d-none d-md-flex flex-column p-3 position-fixed top-0 start-0 overflow-auto h-100 bg-white' style={{ width: '200px' }}>
             <span
                className='text-center mb-2'
                style={{ fontWeight: '500' }}
