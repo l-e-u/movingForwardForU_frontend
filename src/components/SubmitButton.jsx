@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 
 // used in forms only, absolute positioned so the form has to be positioned something other than static
-const SubmitButton = ({ defaultText, isLoading, loadingText, isDisabled = false }) => {
+const SubmitButton = ({ buttonText, isSubmittingForm, isDisabled = false }) => {
    const [ellipsis, setEllipsis] = useState('');
 
    // styling
@@ -38,7 +38,7 @@ const SubmitButton = ({ defaultText, isLoading, loadingText, isDisabled = false 
    return (
       <motion.button
          className={submitButtonClasses}
-         disabled={isLoading || isDisabled}
+         disabled={isSubmittingForm || isDisabled}
          initial='mount'
          style={submitButtonStyles}
          type='submit'
@@ -46,8 +46,8 @@ const SubmitButton = ({ defaultText, isLoading, loadingText, isDisabled = false 
          whileHover='onHover'
       >
          <div className={textContainerClasses}>
-            {isLoading ? loadingText : defaultText}
-            {isLoading && <span className={ellipsisClasses}>{ellipsis}</span>}
+            {buttonText}
+            {isSubmittingForm && <span className={ellipsisClasses}>{ellipsis}</span>}
          </div>
       </motion.button>
    )

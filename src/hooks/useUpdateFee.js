@@ -6,8 +6,10 @@ import { useFeesContext } from "./useFeesContext";
 
 export const useUpdateFee = () => {
    const API_BASE_URL = process.env.API_BASE_URL;
+
    const [error, setError] = useState(null);
    const [isLoading, setIsLoading] = useState(null);
+
    const { dispatch } = useFeesContext();
    const { user } = useAuthContext();
 
@@ -30,10 +32,9 @@ export const useUpdateFee = () => {
       const json = await response.json();
 
       if (!response.ok) {
-         console.log(json);
-
          setError(json.error);
          setIsLoading(false);
+
          return false;
       };
 

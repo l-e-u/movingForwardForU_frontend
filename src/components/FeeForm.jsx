@@ -1,13 +1,8 @@
-import { useEffect } from 'react';
-
-// functions
-import { formatCurrency, removeExtraSpaces } from '../utils/StringUtils';
-
 // components
 import GrowingTextArea from './GrowingTextArea';
-import FormHeader from './FormHeader';
 import CurrencyInput from './CurrencyInput';
 import ErrorAlert from './ErrorAlert';
+import FormHeader from './FormHeader';
 import SmallHeader from './SmallHeader';
 import SubmitButton from './SubmitButton';
 import TextInput from './TextInput';
@@ -17,10 +12,13 @@ const FeeForm = ({
    description,
    error,
    handleSubmit,
-   isDisabled,
-   isLoading,
+   heading,
+   isFetching,
    name,
    setFee,
+   subHeading,
+   submitButtonText,
+   submitButtonIsDisabled,
 }) => {
    // styles for the form
    const formClasses = 'newFeeForm position-relative p-4 pb-5 text-reset shadow bg-white rounded-4';
@@ -33,13 +31,10 @@ const FeeForm = ({
    return (
       <form className={formClasses} onSubmit={handleSubmit} style={formStyles} >
 
-         <FormHeader text='New Fee' />
-         <p className='text-secondary text-pre-wrap fs-smaller mb-4'>
-            {`Fees make up the billing of a job.\n\nThis amount is the fee's default value. When adding a fee to a job, you have the option to adjust the amount for that job.`}
-         </p>
+         <FormHeader text={heading} />
+         <p className='text-secondary whiteSpace-preWrap fs-smaller mb-4'>{subHeading}</p>
 
          <div className='container-fluid p-0'>
-
             {/* AMOUNT */}
             <div className='row mb-3'>
                <div className='col-sm-3 d-flex justify-content-start justify-content-sm-end align-items-center text-secondary'>
@@ -78,10 +73,9 @@ const FeeForm = ({
          {error && <ErrorAlert message={error.message} />}
 
          <SubmitButton
-            defaultText='Save'
-            loadingText='Saving'
-            isDisabled={isLoading}
-            isLoading={isLoading}
+            buttonText={submitButtonText}
+            isDisabled={submitButtonIsDisabled}
+            isSubmittingForm={isFetching}
          />
       </form>
    );

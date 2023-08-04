@@ -6,11 +6,14 @@ import { useFeesContext } from './useFeesContext';
 
 export const useCreateFee = () => {
    const API_BASE_URL = process.env.API_BASE_URL;
+
    const { user } = useAuthContext();
    const { dispatch } = useFeesContext();
 
    const [error, setError] = useState(null);
    const [isLoading, setIsLoading] = useState(null);
+
+   const clearError = () => setError(null);
 
    const createFee = async (fee) => {
       setIsLoading(true);
@@ -43,8 +46,6 @@ export const useCreateFee = () => {
          return true;
       };
    };
-
-   const clearError = () => setError(null);
 
    return { createFee, clearError, isLoading, error };
 };

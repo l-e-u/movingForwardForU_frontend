@@ -27,6 +27,7 @@
 *, *::after, *::before {
   box-sizing: border-box;
 }
+
  #root {
    height: 100%;
  }
@@ -56,6 +57,10 @@ button.page-link:disabled, .submitButton:disabled {
    background-color: transparent;
 }
 
+.cursor-pointer {
+   cursor: pointer;
+}
+
 .lightGradient {
    background: linear-gradient(to left, var(--mainPalette8), var(--mainPalette9));
 }
@@ -67,20 +72,14 @@ button.page-link:disabled, .submitButton:disabled {
 
 .word-break-all {
    word-break: break-all;
-};
+}
 
-.text-pre-wrap {
-   white-space: pre-wrap;
+.whiteSpace-preWrap {
+   white-space: pre-wrap !important;
 }
 
 hr {
    color: var(--mainPalette6);
-}
-
-/* targets job form notes input, subject and message fields */
-.form-control-plaintext.is-invalid::placeholder,
-.form-control-plaintext.is-invalid::-webkit-input-placeholder {
-  color: var(--bs-danger) !important;
 }
 
 .inputError {
@@ -105,7 +104,13 @@ hr {
   background: var(--bs-primary) !important;
 }
 
-.fs-smaller {
+.myTextInput::placeholder,
+.myTextInput::-webkit-input-placeholder {
+   font-size: .75rem !important;
+   opacity: 0.5;
+}
+
+.fs-smaller  {
   font-size: .75rem !important;
 }
 
@@ -277,6 +282,10 @@ hr {
 
 /* large screen and above */
 @media screen and (min-width: 992px) {
+   .border-bottom-lg-0 {
+      border-bottom: none !important;
+   }
+
   .w-lg-25 {
     width: 25% !important;
   }
@@ -292,4 +301,10 @@ hr {
   .w-lg-100 {
     width: 100% !important;
   }
+}
+
+@media screen and (min-width: 1200px){
+   .border-bottom-xl-0 {
+      border-bottom: none !important;
+   }
 }

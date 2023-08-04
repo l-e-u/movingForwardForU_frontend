@@ -15,7 +15,7 @@ const NavMenu = ({ selectedLink, setSelectedLink }) => {
       { name: 'Contacts', path: '/contacts', icon: 'bi-person-vcard' },
       { name: 'Statuses', path: '/statuses', icon: 'bi-tags' },
       { name: 'Users', path: '/users', icon: 'bi-people' },
-      { name: 'Fees', path: '/fees', icon: 'bi-currency-dollar' },
+      { name: 'Fees', path: '/fees', icon: 'bi-cash-coin' },
       { name: 'Archives', path: '/archives', icon: 'bi-archive' },
    ];
    const [expandMenu, setExpandMenu] = useState(false);

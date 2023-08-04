@@ -1,16 +1,13 @@
 import { useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 
-// utilities
-import { removeExtraSpaces } from '../utils/StringUtils';
-
 const GrowingTextArea = ({ input, setInput }) => {
    const textAreaRef = useRef(null);
 
    const textAreaClasses = 'w-100 rounded-1 p-2';
-   const textAreaStyles = { border: '1px solid var(--bs-gray-400)', resize: 'none' };
    const textAreaVariants = {
       mount: {
+         border: '1px solid var(--bs-gray-400)',
          outline: '2px solid transparent'
       },
       onFocus: {
@@ -27,7 +24,7 @@ const GrowingTextArea = ({ input, setInput }) => {
 
          // set the height directly, outside of the render loop
          // trying to set this with state or a ref will produce an incorrect value.
-         textAreaRef.current.style.height = scrollHeight + 6 + 'px';
+         textAreaRef.current.style.height = scrollHeight + 'px';
       };
    });
 
@@ -35,8 +32,7 @@ const GrowingTextArea = ({ input, setInput }) => {
       <motion.textarea
          className={textAreaClasses}
          onChange={e => setInput(e.target.value)}
-         onBlur={e => setInput(removeExtraSpaces(e.target.value.trim()))}
-         style={textAreaStyles}
+         onBlur={e => setInput(e.target.value.trim())}
          ref={textAreaRef}
          rows={1}
          value={input}

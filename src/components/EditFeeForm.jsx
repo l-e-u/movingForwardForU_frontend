@@ -1,59 +1,85 @@
 import { useState } from 'react';
-import { CSSTransition } from 'react-transition-group';
 
 // hooks
 import { useUpdateFee } from '../hooks/useUpdateFee';
 
-// functions
-import { formatCurrency, noCharChanges } from '../utils/StringUtils';
-
 // components
 import FeeForm from './FeeForm';
-import FormHeader from './FormHeader'
+import Modal from './Modal';
 
-const EditFeeForm = ({ prev, setShowThisForm }) => {
+const EditFeeForm = ({ currentFee, hideForm }) => {
    const { updateFee, error, isLoading } = useUpdateFee();
-   const [fee, setFee] = useState(prev);
-   const updatedProperties = {};
 
-   // check if any property values have changed
-   if (!noCharChanges(prev.name, fee.name)) updatedProperties.name = fee.name;
-   if (formatCurrency(prev.amount) !== formatCurrency(fee.amount)) updatedProperties.amount = Number(fee.amount);
-   if (prev.description !== fee.description) updatedProperties.description = fee.description;
+   // get the document id that's being edited
+   const { _id } = currentFee;
 
-   // check if there were any set properties that have been changed
-   const noInputChanges = Object.keys(updatedProperties).length === 0;
+   // make a copy of the current fee to compare updated fields when submitting
+   const [editedFee, setEditededFee] = useState({
+      amount: currentFee.amount.toString(),
+      name: currentFee.name,
+      description: currentFee.description
+   });
+
+   // defining form options
+   const formHeading = 'Edit Fee';
+   const formSubHeading = `Changes will be reflected across all categories except archives.`;
+
+   // changes value depending of the form is fetching or not
+   const submitButtonText = isLoading ? 'Updating' : 'Update';
+
+   // styling for the button that closes/cancels the form
+   const closeButtonClasses = 'position-absolute border-0 bg-none top-0 end-0 fw-bold p-3 text-secondary';
+   const closeButtonStyles = { zIndex: '1' };
+
+   // close button X icon
+   const closeIconClasses = 'bi bi-x-lg';
+
+   // before submitting, check all the fields and only send the fields that have been updated by the user
+   const handleOnSubmit = async (e) => {
+      e.preventDefault();
+
+      const updatedFields = {};
+
+      for (const property of Object.keys(editedFee)) {
+         const currentValue = currentFee[property];
+         const editedValue = editedFee[property];
+
+         if (currentValue.toString().trim() !== editedValue.toString().trim()) {
+            updatedFields[property] = editedValue;
+         };
+      };
+
+      const feeWasUpdated = await updateFee({
+         _id,
+         fee: updatedFields
+      });
+
+      if (feeWasUpdated) hideForm();
+   };
 
    return (
-      <CSSTransition
-         appear={true}
-         classNames='scale-'
-         in={true}
-         timeout={500}
-      >
-         <div className='shadow'>
-            <FormHeader text='Edit Fee' handleCloseForm={() => setShowThisForm(false)} />
+      <Modal blurBackdrop={true}>
+         <button
+            className={closeButtonClasses}
+            onClick={hideForm}
+            style={closeButtonStyles}
+            type='button'
+         >
+            <i className={closeIconClasses}></i>
+         </button>
 
-            <div className='rounded-bottom background-white text-reset px-3 pb-3 pt-1'>
-               <FeeForm
-                  {...fee}
-                  error={error}
-                  handleSubmit={async () => {
-                     await updateFee({
-                        _id: prev._id,
-                        fee: { ...updatedProperties }
-                     })
-                        .then(wasUpdated => {
-                           if (wasUpdated) setShowThisForm(false);
-                        })
-                  }}
-                  isDisabled={isLoading || noInputChanges}
-                  isLoading={isLoading}
-                  setFee={setFee}
-               />
-            </div>
-         </div>
-      </CSSTransition>
+         <FeeForm
+            {...editedFee}
+            error={error}
+            heading={formHeading}
+            handleSubmit={handleOnSubmit}
+            setFee={setEditededFee}
+            subHeading={formSubHeading}
+            submitButtonText={submitButtonText}
+            submitButtonIsDisabled={isLoading}
+            isFetching={isLoading}
+         />
+      </Modal>
    );
 };
 

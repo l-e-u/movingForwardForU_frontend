@@ -1,6 +1,8 @@
-import { useState } from "react"
-import { useAuthContext } from "./useAuthContext";
-import { useStatusesContext } from "./useStatusesContext";
+import { useState } from 'react'
+
+// context
+import { useAuthContext } from './useAuthContext';
+import { useStatusesContext } from './useStatusesContext';
 
 export const useCreateStatus = () => {
    const API_BASE_URL = process.env.API_BASE_URL;
@@ -10,6 +12,8 @@ export const useCreateStatus = () => {
 
    const [error, setError] = useState(null);
    const [isLoading, setIsLoading] = useState(null);
+
+   const clearError = () => setError(null);
 
    const createStatus = async (status) => {
       setIsLoading(true);
@@ -41,8 +45,6 @@ export const useCreateStatus = () => {
          return true;
       };
    };
-
-   const clearError = () => setError(null);
 
    return { clearError, createStatus, isLoading, error };
 };

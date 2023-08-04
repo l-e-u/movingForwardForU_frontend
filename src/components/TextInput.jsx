@@ -3,11 +3,11 @@ import { motion } from 'framer-motion';
 // utilities
 import { removeExtraSpaces } from '../utils/StringUtils';
 
-const TextInput = ({ input, setInput }) => {
-   const inputClasses = 'w-100 rounded-1 p-2';
-   const inputStyles = { border: '1px solid var(--bs-gray-400)' };
+const TextInput = ({ input, placeholder, setInput }) => {
+   const inputClasses = 'myTextInput w-100 rounded-1 p-2';
    const inputVariants = {
       mount: {
+         border: '1px solid var(--bs-gray-400)',
          outline: '2px solid transparent'
       },
       onFocus: {
@@ -19,12 +19,12 @@ const TextInput = ({ input, setInput }) => {
       <motion.input
          className={inputClasses}
          onBlur={e => setInput(removeExtraSpaces(e.target.value.trim()))}
+         initial='mount'
          onChange={e => setInput(e.target.value)}
-         style={inputStyles}
+         placeholder={placeholder || ''}
          type='text'
          value={input}
          variants={inputVariants}
-         initial='mount'
          whileFocus='onFocus'
       />
    );

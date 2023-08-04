@@ -11,7 +11,6 @@ const ContactDetails = ({ contact }) => {
    const [expandAdditionalInfo, setExpandAdditionalInfo] = useState(false);
 
    const {
-      _id,
       address,
       billingAddress,
       defaultFees,
@@ -24,7 +23,7 @@ const ContactDetails = ({ contact }) => {
 
    // delete and edit buttons are identical, expandContract button will have the same hover effects, but when its additional info is expanded, it will maintain its hover colors
    const actionButtonVariants = {
-      action: {
+      actionButton: {
          background: 'transparent',
          borderWidth: '1px',
          borderStyle: 'solid',
@@ -33,7 +32,7 @@ const ContactDetails = ({ contact }) => {
          scale: 1,
          opacity: 0.5
       },
-      expandContract: {
+      expandContractButton: {
          background: 'transparent',
          borderWidth: '1px',
          borderStyle: 'solid',
@@ -62,12 +61,12 @@ const ContactDetails = ({ contact }) => {
          {/* contains all actions for the document and button to expand the additional info element */}
          <div className='position-absolute top-0 end-0 pt-1 pe-1'>
             {/* delete document button */}
-            <motion.button className='rounded' onClick={() => { }} type='button' variants={actionButtonVariants} initial='action' whileHover='onHover' >
+            <motion.button className='rounded' onClick={() => { }} type='button' variants={actionButtonVariants} initial='actionButton' whileHover='onHover' >
                <i className='bi bi-trash3'></i>
             </motion.button>
 
             {/* edit document button */}
-            <motion.button className='rounded mx-4 mx-lg-5' onClick={() => { }} type='button' variants={actionButtonVariants} initial='action' whileHover='onHover' >
+            <motion.button className='rounded mx-4 mx-lg-5' onClick={() => { }} type='button' variants={actionButtonVariants} initial='actionButton' whileHover='onHover' >
                <i className='bi bi-pencil'></i>
             </motion.button>
 
@@ -76,7 +75,7 @@ const ContactDetails = ({ contact }) => {
                className='bg-none rounded'
                onClick={() => setExpandAdditionalInfo(!expandAdditionalInfo)}
                type='button' variants={actionButtonVariants}
-               initial='expandContract'
+               initial='expandContractButton'
                whileHover='onHover'
             >
                <i className={`bi bi-chevron-${expandAdditionalInfo ? 'contract' : 'expand'}`}></i>
@@ -84,9 +83,9 @@ const ContactDetails = ({ contact }) => {
          </div>
 
          {/* organization/business name display */}
-         <div className='organization d-md-flex align-items-baseline gap-2 mb-2'>
+         <div className='organization d-xl-flex align-items-baseline gap-2 mb-2'>
             <div className='text-secondary'><SmallHeader text='Organization' /></div>
-            <div className={'fs-5'} style={{ fontWeight: '500' }}>{organization}</div>
+            <div className='fs-5' style={{ fontWeight: '500' }}>{organization}</div>
          </div>
 
 
@@ -139,7 +138,7 @@ const ContactDetails = ({ contact }) => {
 
                <div className='row'>
                   <div className='col-md-2 text-md-end text-secondary'><SmallHeader text='Misc' /></div>
-                  <div className='col-md-10'>{misc}</div>
+                  <div className='col-md-10 whiteSpace-preWrap'>{misc}</div>
                </div>
             </div>
          }

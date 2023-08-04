@@ -1,257 +1,226 @@
+import { useState } from 'react';
+
 // components
-import ActionButton from './ActionButton';
-import FeesSelect from './FeesSelect';
+import ErrorAlert from './ErrorAlert';
+import FeeSelect from './FeeSelect';
+import FormHeader from './FormHeader';
 import GrowingTextArea from './GrowingTextArea';
-import RequiredFieldsText from './RequiredFieldsText';
+import SmallHeader from './SmallHeader';
+import SubmitButton from './SubmitButton';
+import TextInput from './TextInput';
 
-// functions
-import { removeExtraSpaces } from '../utils/StringUtils';
 
-const ContactForm = ({ contact, setContact, handleSubmit, error, isDisabled, isLoading }) => {
-   const { name, misc, address, billingAddress, organization, email, phoneNumber, phoneExt, defaultFees = [] } = contact;
+const ContactForm = ({
+   contact,
+   error,
+   handleSubmit,
+   heading,
+   isFetching,
+   setContact,
+   subHeading,
+   submitButtonText,
+   submitButtonIsDisabled,
+}) => {
+   const {
+      address,
+      billingAddress,
+      defaultFees,
+      email,
+      misc,
+      name,
+      organization,
+      phoneExt,
+      phoneNumber,
+      website,
+   } = contact;
+   const [selectedTab, setSelectedTab] = useState('Info');
+   const tabs = [
+      {
+         name: 'Info',
+         icon: 'bi bi-person-rolodex'
+      },
+      {
+         name: 'Fees',
+         icon: 'bi bi-cash-stack'
+      },
+      {
+         name: 'Note',
+         icon: 'bi bi-sticky'
+      }
+   ];
 
-   // error identification on fields with validation
-   const errorFromOrganizationInput = error?.path === 'organization';
-   const errorFromAddressInput = error?.path === 'address';
-   const errorFromEmailInput = error?.path === 'email';
-   const errorFromPhoneNumberInput = error?.path === 'phoneNumber';
+   // styles for the form
+   const formClasses = 'newFeeForm position-relative p-4 pb-5 text-reset shadow bg-white rounded-4';
+   const formStyles = { width: '90vw', maxWidth: '700px' };
+
+   // as the user selects fees, the list gets populated
+   const defaultFeesListClasses = 'defaultFeesList d-md-flex flex-md-wrap gap-2 rounded m-0 px-2 py-1 py-md-2 fs-smaller justify-content-between';
+   const defaultFeesListStyles = { backgroundColor: 'var(--mainPalette9)', listStyle: 'none' };
+
+   // items have the option to clear it off the default-selection list
+   const defaultFeesItemClasses = 'd-flex align-items-center rounded-pill my-2 my-md-0';
+   const defaultFeesItemStyles = {
+      border: '1px solid var(--mainPalette4)',
+      color: 'var(--mainPalette4)'
+   };
+
+   const handleRemoveDefaultFee = (_id) => {
+      return () => {
+         setContact({
+            ...contact,
+            defaultFees: defaultFees.filter(fee => _id !== fee._id)
+         })
+      }
+   };
 
    return (
-      <form onSubmit={handleSubmit} className='d-flex flex-column gap-2'>
-         <RequiredFieldsText />
+      <form className={formClasses} onSubmit={handleSubmit} style={formStyles} >
+         <FormHeader text={heading} />
+         <p className='text-secondary whiteSpace-preWrap fs-smaller mb-4'>{subHeading}</p>
 
-         {/* ORGANIZATION */}
-         <div className='form-floating'>
-            <input
-               type='text'
-               className={'form-control' + (errorFromOrganizationInput ? ' is-invalid' : '')}
-               name='organization'
-               id='organization'
-               placeholder='Organization'
-               value={organization ?? ''}
-               onChange={(e) => {
-                  setContact(prev => {
-                     return {
-                        ...prev,
-                        organization: removeExtraSpaces(e.target.value)
-                     }
-                  })
-               }}
-               onBlur={(e) => {
-                  setContact(prev => {
-                     return {
-                        ...prev,
-                        organization: e.target.value.trim()
-                     }
-                  })
-               }} />
-            <label htmlFor='organization' className='form-label required'>
-               {errorFromOrganizationInput ? <span className='inputError'>{error.message}</span> : 'Organization'}
-            </label>
-         </div>
+         <div className='container-fluid p-0'>
 
-         {/* ADDRESS */}
-         <div className='d-flex flex-column flex-lg-row gap-2'>
-            <div className='form-floating flex-grow-1'>
-               <input
-                  type='text'
-                  className={'form-control' + (errorFromAddressInput ? ' is-invalid' : '')}
-                  name='address'
-                  placeholder='Address'
-                  id='address'
-                  value={address ?? ''}
-                  onChange={(e) => {
-                     setContact(prev => {
-                        return {
-                           ...prev,
-                           address: removeExtraSpaces(e.target.value)
-                        }
-                     })
-                  }}
-                  onBlur={(e) => {
-                     setContact(prev => {
-                        return {
-                           ...prev,
-                           address: e.target.value.trim()
-                        }
-                     })
-                  }} />
-               <label htmlFor='address' className='form-label required'>
-                  {errorFromAddressInput ? <span className='inputError'>{error.message}</span> : 'Address'}
-               </label>
+            {/* ORGANIZATION */}
+            <div className='organization row mb-3'>
+               <div className='col-sm-3 col-md-2 d-flex justify-content-start justify-content-sm-end align-items-center text-secondary'>
+                  <SmallHeader text='Organization' />
+               </div>
+               <div className='col-sm-9 col-md-10'>
+                  <TextInput
+                     input={organization}
+                     placeholder='Required'
+                     setInput={input => setContact({ ...contact, organization: input })}
+                  />
+               </div>
+            </div>
+
+            {/* ADDRESS */}
+            <div className='address row mb-3'>
+               <div className='col-sm-3 col-md-2 d-flex justify-content-start justify-content-sm-end align-items-center text-secondary'>
+                  <SmallHeader text='Address' />
+               </div>
+               <div className='col-sm-9 col-md-10'>
+                  <TextInput
+                     input={address}
+                     placeholder='Required'
+                     setInput={input => setContact({ ...contact, address: input })}
+                  />
+               </div>
+            </div>
+
+            {/* TABS AND CONTENT */}
+
+            <div className='tabs d-flex text-secondary fs-smaller mb-3 mt-4'>
+               {
+                  tabs.map(tab => {
+                     const { name, icon } = tab;
+                     const isSelected = selectedTab === name;
+
+                     return (
+                        <button
+                           key={name}
+                           className='text-center bg-none border-top-0 border-end-0 border-start-0 cursor-pointer flex-grow-1'
+                           onClick={() => setSelectedTab(name)}
+                           style={{
+                              borderBottomWidth: '1px',
+                              borderBottomStyle: 'solid',
+                              borderBottomColor: isSelected ? 'var(--mainPalette4)' : 'transparent',
+                              color: isSelected ? 'var(--mainPalette4)' : 'inherit',
+                              opacity: isSelected ? '1' : '0.5',
+                              transition: 'all 0.2s ease-in-out'
+                           }}
+                           type='button'
+                        >
+                           <i className={icon}></i><span className='ms-2'>{name}</span>
+                        </button>
+                     )
+                  })
+               }
             </div>
 
             {/* BILLING ADDRESS */}
-            <div className='form-floating flex-grow-1'>
-               <input
-                  type='text'
-                  className='form-control'
-                  name='billing'
-                  placeholder='Billing Address'
-                  id='billing'
-                  value={billingAddress ?? ''}
-                  onChange={(e) => {
-                     setContact(prev => {
-                        return {
-                           ...prev,
-                           billingAddress: removeExtraSpaces(e.target.value)
-                        }
-                     })
-                  }}
-                  onBlur={(e) => {
-                     setContact(prev => {
-                        return {
-                           ...prev,
-                           billingAddress: e.target.value.trim()
-                        }
-                     })
-                  }} />
-               <label htmlFor='address' className='form-label'>Billing Address</label>
-            </div>
-         </div>
-
-         <div className='d-flex flex-wrap gap-2'>
-            {/* NAME */}
-            <div className='form-floating' style={{ flex: '1 1 400px' }}>
-               <input
-                  type='text'
-                  className='form-control'
-                  name='name'
-                  id='name'
-                  placeholder='Name'
-                  value={name ?? ''}
-                  onChange={(e) => {
-                     setContact(prev => {
-                        return {
-                           ...prev,
-                           name: removeExtraSpaces(e.target.value)
-                        }
-                     })
-                  }}
-                  onBlur={(e) => {
-                     setContact(prev => {
-                        return {
-                           ...prev,
-                           name: e.target.value.trim()
-                        }
-                     })
-                  }} />
-               <label htmlFor='name' className='form-label'>Name</label>
-            </div>
-
-            {/* EMAIL */}
-            <div className='form-floating' style={{ flex: '1 1 400px' }}>
-               <input
-                  type='email'
-                  className={'form-control' + (errorFromEmailInput ? ' is-invalid' : '')}
-                  id='email'
-                  placeholder='name@example.com'
-                  value={email ?? ''}
-                  onChange={(e) => {
-                     setContact(prev => {
-                        return {
-                           ...prev,
-                           email: removeExtraSpaces(e.target.value)
-                        }
-                     })
-                  }}
-                  onBlur={(e) => {
-                     setContact(prev => {
-                        return {
-                           ...prev,
-                           email: e.target.value.trim()
-                        }
-                     })
-                  }} />
-               <label htmlFor='email' className='form-label'>
-                  {errorFromEmailInput ? <span className='inputError'>{error.message}</span> : 'Email'}
-               </label>
-            </div>
-
-            <div className='d-flex flex-column flex-sm-row gap-2' style={{ flex: '1 1 300px' }}>
-               {/* PHONE NUMBER */}
-               <div className='form-floating flex-grow-1'>
-                  <input
-                     type='text'
-                     className={'form-control' + (errorFromPhoneNumberInput ? ' is-invalid' : '')}
-                     name='phoneNumber'
-                     placeholder='Phone'
-                     id='phoneNumber'
-                     value={phoneNumber ?? ''}
-                     onChange={(e) => {
-                        setContact(prev => {
-                           return {
-                              ...prev,
-                              phoneNumber: removeExtraSpaces(e.target.value)
-                           }
-                        })
-                     }}
-                     onBlur={(e) => {
-                        setContact(prev => {
-                           return {
-                              ...prev,
-                              phoneNumber: e.target.value.trim()
-                           }
-                        })
-                     }} />
-                  <label htmlFor='phoneNumber' className='form-label'>
-                     {errorFromPhoneNumberInput ? <span className='inputError'>{error.message}</span> : 'Phone'}
-                  </label>
+            <div className='billingAddress row mb-3'>
+               <div className='col-sm-3 col-md-2 d-flex justify-content-start justify-content-sm-end align-items-center text-secondary'>
+                  <SmallHeader text='Billing Address' />
                </div>
-
-               {/* PHONE EXT */}
-               <div className='form-floating'>
-                  <input
-                     type='number'
-                     min={0}
-                     className='form-control'
-                     name='phoneExt'
-                     placeholder='Ext'
-                     id='phoneExt'
-                     value={phoneExt ?? ''}
-                     onChange={(e) => {
-                        setContact(prev => {
-                           return {
-                              ...prev,
-                              phoneExt: removeExtraSpaces(e.target.value)
-                           }
-                        })
-                     }}
-                     onBlur={(e) => {
-                        setContact(prev => {
-                           return {
-                              ...prev,
-                              phoneExt: e.target.value.trim()
-                           }
-                        })
-                     }} />
-                  <label htmlFor='PhoneExt' className='form-label'>Ext</label>
+               <div className='col-sm-9 col-md-10'>
+                  <TextInput
+                     input={billingAddress}
+                     setInput={input => setContact({ ...contact, billingAddress: input })}
+                  />
                </div>
             </div>
+
+            {/* WEBSITE */}
+            <div className='website row mb-3'>
+               <div className='col-sm-3 col-md-2 d-flex justify-content-start justify-content-sm-end align-items-center text-secondary'>
+                  <SmallHeader text='Website' />
+               </div>
+               <div className='col-sm-9 col-md-10'>
+                  <TextInput
+                     input={website}
+                     setInput={input => setContact({ ...contact, website: input })}
+                  />
+               </div>
+            </div>
+
+            {/* FEE SELECT */}
+            <div className='feeSelect row mb-3'>
+               <div className='col-sm-3 col-md-2 d-flex justify-content-start justify-content-sm-end align-items-center text-secondary'>
+                  <SmallHeader text='Fee Select' />
+               </div>
+               <div className='col-sm-9 col-md-10'>
+                  <FeeSelect selectedFees={defaultFees} setFee={fee => {
+                     setContact(prev => ({
+                        ...prev,
+                        defaultFees: [
+                           ...prev.defaultFees,
+                           fee
+                        ]
+                     }))
+                  }}
+                  />
+               </div>
+            </div>
+
+            {/* DEFAULT FEES */}
+            <div className='misc row mb-3'>
+               <div className='col-sm-3 col-md-2 d-flex justify-content-start justify-content-sm-end align-items-top text-secondary'>
+                  <SmallHeader text='Default Fees' />
+               </div>
+               <div className='col-sm-9 col-md-10'>
+                  <ul className={defaultFeesListClasses} style={defaultFeesListStyles}  >
+                     {
+                        defaultFees.map(fee => (
+                           <li key={fee._id} className={defaultFeesItemClasses} style={defaultFeesItemStyles}>
+                              <span className='px-3'>{fee.name}</span>
+                              <span>{`$${fee.amount.toFixed(2)}`}</span>
+                              <i className='bi bi-x ms-auto ps-3 pe-2 py-1' onClick={handleRemoveDefaultFee(fee._id)}></i>
+                           </li>
+                        ))
+                     }
+                  </ul>
+               </div>
+            </div>
+
+            {/* MISC */}
+            <div className='misc row mb-3'>
+               <div className='col-sm-3 col-md-2 d-flex justify-content-start justify-content-sm-end align-items-center text-secondary'>
+                  <SmallHeader text='Misc' />
+               </div>
+               <div className='col-sm-9 col-md-10'>
+                  <GrowingTextArea input={misc} setInput={input => setContact({ ...contact, misc: input })} />
+               </div>
+            </div>
+
          </div>
 
-         <FeesSelect defaultFees={defaultFees} setDefaultFees={(fees) => setContact(prev => ({ ...prev, defaultFees: [...fees] }))} />
+         {error && <ErrorAlert message={error.message} />}
 
-         {/* MISC */}
-         <div className='form-floating'>
-            <GrowingTextArea
-               className='form-control'
-               name='miscTextarea'
-               onChange={e => setContact(prev => {
-                  return { ...prev, misc: e.target.value };
-               })}
-               placeholder='Miscellaneous'
-               value={misc ?? ''}
-            />
-            <label htmlFor='miscTextarea' className='form-label'>Miscellaneous</label>
-         </div>
-
-         <ActionButton
-            alignX='right'
-            isDisabled={isDisabled}
-            isLoading={isLoading}
-            text={(isLoading ? 'Saving...' : 'Save')}
-            type='submit'
+         <SubmitButton
+            buttonText={submitButtonText}
+            isDisabled={submitButtonIsDisabled}
+            isSubmittingForm={isFetching}
          />
       </form>
    );
