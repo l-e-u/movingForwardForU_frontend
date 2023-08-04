@@ -41,10 +41,7 @@ const FeeForm = ({
                   <SmallHeader text='Amount' />
                </div>
                <div className='col-sm-9'>
-                  <div className={currencyContainerClasses} style={currencyContainerStyles}>
-                     <span className={currencySymbolContainerClasses}>$</span>
-                     <CurrencyInput input={amount} setInput={input => setFee({ description, name, amount: input })} />
-                  </div>
+                  <CurrencyInput input={amount} setInput={input => setFee({ description, name, amount: input })} />
                </div>
             </div>
 

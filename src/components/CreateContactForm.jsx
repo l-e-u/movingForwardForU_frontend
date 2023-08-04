@@ -33,7 +33,7 @@ const CreateContactForm = ({ hideForm }) => {
    const closeIconClasses = 'bi bi-x-lg';
 
    const formHeading = 'New Contact';
-   const formSubHeading = `When selecting this contact on jobs, its information can complete fields automatically.\n\nThe address can be used for pickup or delivery, and the default fees list is added to a jobs billing.`;
+   const formSubHeading = `The address can be used for pickup or delivery when selecting this contact on a job.`;
 
    // changes value depending of the form is fetching or not
    const submitButtonText = isLoading ? 'Saving' : 'Save';

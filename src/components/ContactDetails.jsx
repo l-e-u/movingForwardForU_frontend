@@ -42,8 +42,8 @@ const ContactDetails = ({ contact }) => {
          opacity: expandAdditionalInfo ? 1 : 0.5
       },
       onHover: {
-         borderColor: 'var(--mainPalette4)',
-         color: 'var(--mainPalette4)',
+         borderColor: 'var(--mainPalette4) !important',
+         color: 'var(--mainPalette4) !important',
          scale: 1.1,
          opacity: 1,
          transition: {
@@ -74,8 +74,9 @@ const ContactDetails = ({ contact }) => {
             <motion.button
                className='bg-none rounded'
                onClick={() => setExpandAdditionalInfo(!expandAdditionalInfo)}
-               type='button' variants={actionButtonVariants}
                initial='expandContractButton'
+               type='button'
+               variants={actionButtonVariants}
                whileHover='onHover'
             >
                <i className={`bi bi-chevron-${expandAdditionalInfo ? 'contract' : 'expand'}`}></i>

@@ -33,7 +33,7 @@ const Contacts = () => {
    };
 
    // styling for the list container
-   const listClasses = 'contacts pt-3 px-3 pb-0 px-md-5';
+   const listClasses = 'contacts px-3 pb-0 px-md-5';
    const listVariants = {
       mount: {
          listStyle: 'none',

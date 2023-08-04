@@ -31,7 +31,10 @@ const NavMenu = ({ selectedLink, setSelectedLink }) => {
          height: '300px',
          transition: {
             when: 'beforeChildren',
-            staggerChildren: 0.1
+            staggerChildren: 0.1,
+            height: {
+               duration: 0.25
+            }
          }
       },
       unmount: {

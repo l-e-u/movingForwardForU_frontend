@@ -7,6 +7,7 @@ import { useAuthContext } from './hooks/useAuthContext';
 
 // components
 import NavMenu from './components/NavMenu.jsx';
+import Page from './components/Page';
 
 // pages
 import Archives from './pages/Archives.jsx';
@@ -18,7 +19,6 @@ import MyJobs from './pages/MyJobs.jsx';
 import Statuses from './pages/Statuses.jsx';
 import Users from './pages/Users.jsx';
 import Verify from './pages/Verify.jsx';
-import Page from './components/Page';
 
 function App() {
    const { user } = useAuthContext();

@@ -42,10 +42,6 @@ body {
   max-width: 1440px;
 }
 
-input[type='file']:disabled {
-  opacity: .25;
-}
-
 .actionButton:disabled,
 button.page-link:disabled, .submitButton:disabled {
   background-color: var(--bs-secondary) !important;
@@ -65,31 +61,12 @@ button.page-link:disabled, .submitButton:disabled {
    background: linear-gradient(to left, var(--mainPalette8), var(--mainPalette9));
 }
 
-.form-control:focus {
-   border-color: var(--mainPalette4) !important;
-   box-shadow: none;
-}
-
 .word-break-all {
    word-break: break-all;
 }
 
 .whiteSpace-preWrap {
    white-space: pre-wrap !important;
-}
-
-hr {
-   color: var(--mainPalette6);
-}
-
-.inputError {
-  margin-left: .25rem;
-  color: var(--bs-danger);
-}
-
-.outline {
-  outline: var(--bs-border-width) var(--bs-border-style) var(--bs-border-color);
-  border-radius: var(--bs-border-radius) !important;
 }
 
 .scrollBar::-webkit-scrollbar {

@@ -1,12 +1,22 @@
+import { motion } from 'framer-motion';
+
 // utilities
 import { formatToCurrencyString, removeCommasFromString } from '../utils/StringUtils';
 
-// takes the amount and formats it to a string representing a currency (0,000,000.00). when the input is empty, the value set is null, when the amount is null, the currncy string is empty
+// formats the value to a string that represents a currency
+// doesn't allow additional decimals points and number of decimals
+// automatically formats value to have thousands-grouping as user types
+// on blur, it formats the value to 1 decimal places
 const CurrencyInput = ({ input, setInput }) => {
-   const inputClasses = 'w-100 border-0';
-   const inputStyles = { outline: 'none' };
+   const inputWrapperClasses = 'position-relative';
+
+   const prefixClasses = 'position-absolute ps-2 top-50 start-0 translate-middle-y text-secondary';
+   const prefixStyles = { opacity: '0.5' };
+
+   const inputClasses = 'myCurrencyInput w-100 rounded-1 py-2 ps-4 pe-2';
    const inputVariants = {
       mount: {
+         border: '1px solid var(--bs-gray-400)',
          outline: '2px solid transparent'
       },
       onFocus: {
@@ -32,15 +42,20 @@ const CurrencyInput = ({ input, setInput }) => {
    const formatValue = (value) => isNaN(value) ? value : formatToCurrencyString({ amount: value });
 
    return (
-      <input
-         className={inputClasses}
-         style={inputStyles}
-         onBlur={handleOnBlur}
-         onChange={handleOnChange}
-         title='Needs to be a currency.'
-         type='text'
-         value={formatValue(input)}
-      />
+      <div className={inputWrapperClasses}>
+         <span className={prefixClasses} style={prefixStyles}>$</span>
+         <motion.input
+            className={inputClasses}
+            initial='mount'
+            onBlur={handleOnBlur}
+            onChange={handleOnChange}
+            title='Needs to be a currency.'
+            type='text'
+            value={formatValue(input)}
+            variants={inputVariants}
+            whileFocus='onFocus'
+         />
+      </div>
    );
 };
 

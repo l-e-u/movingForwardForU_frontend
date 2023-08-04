@@ -144,7 +144,11 @@ const Login = () => {
 
                      {resetPasswordEmailSent && <div className='alert alert-success py-1 mt-2'>Email sent. Please check your inbox.</div>}
 
-                     <SubmitButton defaultText='Login' loadingText='Loggin In' isLoading={isLoading || isLoadingResetPassword} />
+                     <SubmitButton
+                        buttonText={isLoading ? 'Logging in' : 'Log in'}
+                        isSubmittingForm={isLoading || isLoadingResetPassword}
+                        isDisabled={isLoading || isLoadingResetPassword}
+                     />
                   </form>
                </Modal >
             }
