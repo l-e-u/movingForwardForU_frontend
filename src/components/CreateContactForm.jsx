@@ -17,7 +17,7 @@ const CreateContactForm = ({ hideForm }) => {
       billingAddress: '',
       defaultFees: [],
       email: '',
-      misc: '',
+      note: '',
       name: '',
       organization: '',
       phoneExt: '',

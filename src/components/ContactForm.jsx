@@ -26,7 +26,7 @@ const ContactForm = ({
       billingAddress,
       defaultFees,
       email,
-      misc,
+      note,
       name,
       organization,
       phoneExt,
@@ -266,7 +266,7 @@ const ContactForm = ({
             {/* CONTENT 3: THIS IS DISPLAYED WHEN SELECTING TAB 1: NOTE */}
             {
                (selectedTab === tabs[2].name) &&
-               <GrowingTextArea input={misc} setInput={input => setContact({ ...contact, misc: input })} />
+               <GrowingTextArea input={note} setInput={input => setContact({ ...contact, note: input })} />
             }
 
          </div>

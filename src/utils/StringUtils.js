@@ -54,7 +54,7 @@ export const removeCommasFromString = (string) => string.replace(/,/g, '');
 
 const formatCurrencyStringWithThousandsGrouping = (currencyString) => currencyString.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 
-const filterDigitsFromString = (string) => string.replace(/\D/g, '');
+export const filterDigitsFromString = (string) => string.replace(/\D/g, '');
 
 // formats a string to represent a currency with thousands grouping, and an option to round decimals to two places
 export const formatToCurrencyString = ({

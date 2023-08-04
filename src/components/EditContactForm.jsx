@@ -1,99 +1,134 @@
 import { useState } from 'react';
-import { CSSTransition } from 'react-transition-group';
 
 // hooks
 import { useUpdateContact } from '../hooks/useUpdateContact';
 
-// functions
-import { noCharChanges } from '../utils/StringUtils';
-
 // components
 import ContactForm from './ContactForm';
-import FormHeader from './FormHeader';
-import CautionNotice from './CautionNotice';
+import Modal from './Modal';
+
+// utilities
+import { filterDigitsFromString } from '../utils/StringUtils';
 
 // Form to create a contact for a job and description of what the contact means.
-const EditContactForm = ({ prevContact, setShowThisForm }) => {
+const EditContactForm = ({ currentContact, hideForm }) => {
    const { updateContact, error, isLoading } = useUpdateContact();
-   const [contact, setContact] = useState(prevContact);
-   const {
-      organization,
-      name,
-      address,
-      billingAddress,
-      email,
-      phoneNumber,
-      phoneExt,
-      misc
-   } = contact;
-   const {
-      organization: prevOrganization,
-      name: prevName,
-      address: prevAddress,
-      billingAddress: prevBillingAddress,
-      email: prevEmail,
-      phoneNumber: prevPhoneNumber,
-      phoneExt: prevPhoneExt,
-      misc: prevNote
-   } = prevContact;
 
-   // user cannot update a doc that has not character changes, this disables the update button
-   const organizationHasChanged = !noCharChanges(prevOrganization ?? '', organization ?? '');
-   const nameHasChanged = !noCharChanges(prevName ?? '', name ?? '');
-   const addressHasChanged = !noCharChanges(prevAddress ?? '', address ?? '');
-   const billingAddressHasChanged = !noCharChanges(prevBillingAddress ?? '', billingAddress ?? '');
-   const emailHasChanged = !noCharChanges(prevEmail ?? '', email ?? '');
-   const phoneNumberHasChanged = !noCharChanges(prevPhoneNumber ?? '', phoneNumber ?? '');
-   const phoneExtHasChanged = !noCharChanges(prevPhoneExt ?? '', phoneExt ?? '');
-   const miscHasChanged = !noCharChanges(prevNote ?? '', misc ?? '');
-   const defaultFeesHasChanged = JSON.stringify(prevContact.defaultFees) !== JSON.stringify(contact.defaultFees);
-   const noInputChanges = !organizationHasChanged && !nameHasChanged && !addressHasChanged && !billingAddressHasChanged && !emailHasChanged && !phoneNumberHasChanged && !phoneExtHasChanged && !miscHasChanged && !defaultFeesHasChanged;
+   // get the document id that's being edited
+   const { _id } = currentContact;
+
+   // make a copy of the current contact to compare updated fields when submitting
+   // some optional fields may be null, default to empty string
+   const [editedContact, setEditedContact] = useState({
+      address: currentContact.address,
+      billingAddress: currentContact.billingAddress || '',
+      defaultFees: currentContact.defaultFees,
+      email: currentContact.email || '',
+      note: currentContact.note || '',
+      name: currentContact.name || '',
+      organization: currentContact.organization,
+      phoneExt: currentContact.phoneExt || '',
+      phoneNumber: currentContact.phoneNumber || '',
+      website: currentContact.website || '',
+   });
+
+   // styling for the button that closes the form
+   const closeButtonClasses = 'position-absolute border-0 top-0 end-0 fw-bold p-3 text-secondary';
+   const closeButtonStyles = { background: 'transparent', zIndex: '1' };
+
+   // close button X
+   const closeIconClasses = 'bi bi-x-lg';
+
+   const formHeading = 'New Contact';
+   const formSubHeading = `The address can be used for pickup or delivery when selecting this contact on a job.`;
+
+   // changes value depending of the form is fetching or not
+   const submitButtonText = isLoading ? 'Saving' : 'Save';
+
+   const handleOnSubmit = async (e) => {
+      e.preventDefault();
+
+      const updatedFields = {};
+      let defaultFeesHaveChanged = false;
+
+      // check if there has been any changes in the fields
+      [
+         'organization',
+         'address',
+         'billingAddress',
+         'email',
+         'name',
+         'phoneExt',
+         'phoneNumber',
+         'website',
+         'note'
+      ].forEach(property => {
+         let currentValue = currentContact[property] || '';
+         let editedValue = editedContact[property];
+
+         if (property === 'phoneNumber') {
+            currentValue = filterDigitsFromString(currentValue);
+            editedValue = filterDigitsFromString(editedValue);
+         };
+
+         if (currentValue !== editedValue) {
+            updatedFields[property] = editedValue;
+         };
+      });
+
+      // check for changes in selected default fees
+      // having a different length is clear that was a change
+      if (currentContact.defaultFees.length !== editedContact.defaultFees.length) {
+         defaultFeesHaveChanged = true;
+      }
+      else {
+         // since new fees are added at the end of the array, start at the end of the editedContact list
+         for (let index = editedContact.length - 1; index > 0; index--) {
+            const { _id } = editedContact.defaultFees[index];
+
+            // check if it still exists in the currentContact list
+            const found = currentContact.defaultFees.find(currentFee => _id === currentFee._id);
+
+            // if this fails, then default fee list has been updated, and the loop is broken
+            if (!found) {
+               defaultFeesHaveChanged = true;
+               break;
+            };
+         };
+      };
+
+      if (defaultFeesHaveChanged) updatedFields.defaultFees = editedContact.defaultFees;
+
+      const contactUpdated = await updateContact({
+         _id,
+         updatedFields
+      });
+      if (contactUpdated) hideForm();
+   };
 
    return (
-      <CSSTransition
-         appear={true}
-         classNames='scale-'
-         in={true}
-         timeout={500}
-      >
-         <div>
-            <FormHeader text='Edit Contact' handleCloseForm={() => setShowThisForm(false)} />
+      <Modal blurBackdrop={true}>
+         <button
+            className={closeButtonClasses}
+            onClick={hideForm}
+            style={closeButtonStyles}
+            type='button'
+         >
+            <i className={closeIconClasses}></i>
+         </button>
 
-            <div className='rounded-bottom background-white text-reset px-3 pb-3 pt-1'>
-               <br />
-               <CautionNotice text='Changes will be reflected on jobs with this contact set as a customer.' />
-
-               <ContactForm
-                  contact={contact}
-                  setContact={setContact}
-                  error={error}
-                  isDisabled={isLoading || noInputChanges}
-                  isLoading={isLoading}
-                  handleSubmit={async (e) => {
-                     e.preventDefault();
-
-                     // when patching, only update the data that has been changed, any undefined values will be ignored in the backend
-                     await updateContact({
-                        _id: prevContact._id,
-                        contact: {
-                           address: addressHasChanged ? address : undefined,
-                           billingAddress: billingAddressHasChanged ? billingAddress : undefined,
-                           defaultFees: defaultFeesHasChanged ? contact.defaultFees.map(dFee => dFee._id) : undefined,
-                           email: emailHasChanged ? email : undefined,
-                           misc: miscHasChanged ? misc : undefined,
-                           name: nameHasChanged ? name : undefined,
-                           organization: organizationHasChanged ? organization : undefined,
-                           phoneExt: phoneExtHasChanged ? phoneExt : undefined,
-                           phoneNumber: phoneNumberHasChanged ? phoneNumber : undefined,
-                        }
-                     })
-                        .then(isUpdated => {
-                           if (isUpdated) setShowThisForm(false);
-                        });
-                  }} />
-            </div>
-         </div>
-      </CSSTransition>
+         <ContactForm
+            contact={editedContact}
+            error={error}
+            heading={formHeading}
+            handleSubmit={handleOnSubmit}
+            setContact={setEditedContact}
+            subHeading={formSubHeading}
+            submitButtonText={submitButtonText}
+            submitButtonIsDisabled={isLoading}
+            isFetching={isLoading}
+         />
+      </Modal>
    );
 };
 

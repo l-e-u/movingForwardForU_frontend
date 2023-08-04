@@ -7,7 +7,7 @@ import SmallHeader from './SmallHeader';
 // utilities
 import { formatCurrency, phoneNumberFormatted } from '../utils/StringUtils';
 
-const ContactDetails = ({ contact }) => {
+const ContactDetails = ({ contact, showEditForm }) => {
    const [expandAdditionalInfo, setExpandAdditionalInfo] = useState(false);
 
    const {
@@ -15,7 +15,7 @@ const ContactDetails = ({ contact }) => {
       billingAddress,
       defaultFees,
       email,
-      misc,
+      note,
       organization,
       phoneExt,
       phoneNumber
@@ -66,7 +66,7 @@ const ContactDetails = ({ contact }) => {
             </motion.button>
 
             {/* edit document button */}
-            <motion.button className='rounded mx-4 mx-lg-5' onClick={() => { }} type='button' variants={actionButtonVariants} initial='actionButton' whileHover='onHover' >
+            <motion.button className='rounded mx-4 mx-lg-5' onClick={showEditForm} type='button' variants={actionButtonVariants} initial='actionButton' whileHover='onHover' >
                <i className='bi bi-pencil'></i>
             </motion.button>
 
@@ -138,8 +138,8 @@ const ContactDetails = ({ contact }) => {
                </div>
 
                <div className='row'>
-                  <div className='col-md-2 text-md-end text-secondary'><SmallHeader text='Misc' /></div>
-                  <div className='col-md-10 whiteSpace-preWrap'>{misc}</div>
+                  <div className='col-md-2 text-md-end text-secondary'><SmallHeader text='Note' /></div>
+                  <div className='col-md-10 whiteSpace-preWrap'>{note}</div>
                </div>
             </div>
          }

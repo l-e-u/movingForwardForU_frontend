@@ -8,6 +8,7 @@ import { useGetContacts } from '../hooks/useGetContacts';
 // components
 import CreateContactForm from '../components/CreateContactForm';
 import ContactDetails from '../components/ContactDetails';
+import EditContactForm from '../components/EditContactForm';
 
 
 const Contacts = () => {
@@ -78,6 +79,13 @@ const Contacts = () => {
             }
          </AnimatePresence>
 
+         <AnimatePresence>
+            {
+               selectedContact &&
+               <EditContactForm currentContact={selectedContact} hideForm={() => setSelectedContact(null)} />
+            }
+         </AnimatePresence>
+
          {/* button to display the new contact form */}
          <div className='p-2'>
             <motion.button
@@ -97,7 +105,7 @@ const Contacts = () => {
             {
                contacts.map(contact => (
                   <motion.li key={contact._id} variants={itemVariants} >
-                     <ContactDetails contact={contact} />
+                     <ContactDetails contact={contact} showEditForm={() => setSelectedContact(contact)} />
                   </motion.li>
                ))
             }
