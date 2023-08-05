@@ -8,7 +8,7 @@ import { useContactsContext } from '../hooks/useContactsContext';
 // components
 import ErrorAlert from './ErrorAlert';
 
-const ContactSelect = ({ setContact }) => {
+const ContactSelect = ({ placeholder, setContact }) => {
    const { getContacts, error, isLoading } = useGetContacts();
    const { contacts } = useContactsContext();
 
@@ -38,16 +38,16 @@ const ContactSelect = ({ setContact }) => {
 
    return (
       <Select
-         className='text-reset'
+         classNamePrefix='mySelectInput'
          closeMenuOnSelect={true}
          hideSelectedOptions={true}
          isDisabled={isLoading}
          isLoading={isLoading}
          isSearchable
          isClearable
-         loadingMessage={() => 'Loading customers...'}
+         loadingMessage={() => 'Loading...'}
          noOptionsMessage={() => 'No results.'}
-         placeholder=''
+         placeholder={placeholder || ''}
          options={selectOptions}
          onChange={handleOnChange}
       />

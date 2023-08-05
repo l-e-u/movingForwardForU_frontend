@@ -82,7 +82,8 @@ button.page-link:disabled, .submitButton:disabled {
 }
 
 .myTextInput::placeholder,
-.myTextInput::-webkit-input-placeholder {
+.myTextInput::-webkit-input-placeholder,
+.mySelectInput__placeholder {
    font-size: .75rem !important;
    opacity: 0.5;
 }

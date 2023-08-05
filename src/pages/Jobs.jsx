@@ -11,9 +11,7 @@ import JobDetails from '../components/JobDetails';
 
 const Jobs = ({
    filters,
-   selectedLink,
    setFilters,
-   setSelectedLink,
 }) => {
    const { getJobs, error, isLoading } = useGetJobs();
    const { jobs } = useJobsContext();
@@ -86,10 +84,12 @@ const Jobs = ({
 
    return (
       <>
-         <AnimatePresence></AnimatePresence>
-
-         {/* form to add a new job */}
-         <CreateJobForm hideForm={() => setShowCreateForm(false)} refreshJobList={() => setFilters(prev => ({ ...prev }))} showForm={showCreateForm} />
+         <AnimatePresence>
+            {
+               showCreateForm &&
+               <CreateJobForm hideForm={() => setShowCreateForm(false)} />
+            }
+         </AnimatePresence>
 
          {/* button to display the new job form */}
          <div className='p-2'>

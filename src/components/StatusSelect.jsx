@@ -8,7 +8,7 @@ import { useStatusesContext } from '../hooks/useStatusesContext';
 // components
 import ErrorAlert from './ErrorAlert';
 
-const StatusSelect = ({ setStatus }) => {
+const StatusSelect = ({ placeholder, setStatus }) => {
    const { getStatuses, error, isLoading } = useGetStatuses();
    const { statuses } = useStatusesContext();
 
@@ -38,16 +38,16 @@ const StatusSelect = ({ setStatus }) => {
 
    return (
       <Select
-         className='text-reset'
+         classNamePrefix='mySelectInput'
          closeMenuOnSelect={true}
          hideSelectedOptions={true}
          isDisabled={isLoading}
          isLoading={isLoading}
          isClearable
          isSearchable
-         loadingMessage={() => 'Loading statuses...'}
+         loadingMessage={() => 'Loading...'}
          noOptionsMessage={() => 'No results.'}
-         placeholder=''
+         placeholder={placeholder || ''}
          options={selectOptions}
          onChange={handleOnChange}
       />

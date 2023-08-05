@@ -96,8 +96,8 @@ const JobDetails = ({
          opacity: expandAdditionalInfo ? 1 : 0.5
       },
       onHover: {
-         borderColor: 'var(--mainPalette4) !important',
-         color: 'var(--mainPalette4) !important',
+         borderColor: 'var(--mainPalette4)',
+         color: 'var(--mainPalette4)',
          scale: 1.1,
          opacity: 1,
          transition: {

@@ -8,7 +8,7 @@ import { useUsersContext } from '../hooks/useUsersContext';
 // components
 import ErrorAlert from './ErrorAlert';
 
-const UserSelect = ({ setUser }) => {
+const UserSelect = ({ placeholder, setUser }) => {
    const { getUsers, error, isLoading } = useGetUsers();
    const { users } = useUsersContext();
 
@@ -43,7 +43,7 @@ const UserSelect = ({ setUser }) => {
 
    return (
       <Select
-         className='text-reset'
+         classNamePrefix='mySelectInput'
          closeMenuOnSelect={true}
          hideSelectedOptions={true}
          isDisabled={isLoading}
@@ -51,9 +51,9 @@ const UserSelect = ({ setUser }) => {
          isClearable
          isSearchable
          isMulti
-         loadingMessage={() => 'Loading drivers...'}
+         loadingMessage={() => 'Loading...'}
          noOptionsMessage={() => 'No results.'}
-         placeholder=''
+         placeholder={placeholder || ''}
          options={selectOptions}
          onChange={handleOnChange}
       />

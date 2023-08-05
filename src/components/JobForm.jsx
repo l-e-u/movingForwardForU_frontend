@@ -10,15 +10,31 @@ import PickupOrDeliveryInput from './PickupOrDeliveryInput';
 import SmallHeader from './SmallHeader';
 import StatusSelect from './StatusSelect';
 import SubmitButton from './SubmitButton';
+import Tabs from './Tabs';
 import TextInput from './TextInput';
 import UserSelect from './UserSelect';
 
-// functions
-import { removeExtraSpaces } from '../utils/StringUtils';
-import { useFeesContext } from '../hooks/useFeesContext';
-
-const JobForm = ({ job, setJob, handleSubmit, error, setError, isDisabled, isLoading }) => {
-   const { status, customer, billing, mileage, reference, parcel, drivers, notes } = job;
+const JobForm = ({
+   job,
+   error,
+   handleSubmit,
+   heading,
+   isFetching,
+   subHeading,
+   submitButtonIsDisabled,
+   submitButtonText,
+   setJob,
+}) => {
+   const {
+      status,
+      customer,
+      billing,
+      mileage,
+      reference,
+      parcel,
+      drivers,
+      notes
+   } = job;
 
    const [isResizingImages, setIsResizingImages] = useState(false);
 
@@ -40,34 +56,39 @@ const JobForm = ({ job, setJob, handleSubmit, error, setError, isDisabled, isLoa
    return (
       <form className={formClasses} onSubmit={handleSubmit} style={formStyles}>
 
-         <FormHeader text='New Job' />
-         <p className='text-secondary fs-smaller mb-4'>This information is required to add a new job. The second step is optional.</p>
+         <FormHeader text={heading} />
+         <p className='text-secondary fs-smaller mb-4'>{subHeading}</p>
 
          <div className='container-fluid p-0'>
 
             {/* STATUS SELECTIONS */}
             <div className='row mb-3'>
-               <div className='col-sm-2 d-flex justify-content-start justify-content-sm-end align-items-center'>
+               <div className='col-sm-2 d-flex justify-content-start justify-content-sm-end align-items-center text-secondary'>
                   <SmallHeader text='Status' isRequired={true} />
                </div>
-               <div className='col-sm-10'>
-                  <StatusSelect setStatus={status => setJob(prev => ({ ...prev, status }))} />
+               <div className='col-sm-10 text-reset'>
+                  <StatusSelect
+                     placeholder='Required'
+                     setStatus={status => setJob(prev => ({ ...prev, status }))}
+                  />
                </div>
             </div>
 
             {/* CONTACT/CUSTOMER SELECTION */}
             <div className='row mb-3'>
-               <div className='col-sm-2 d-flex justify-content-start justify-content-sm-end align-items-center'>
+               <div className='col-sm-2 d-flex justify-content-start justify-content-sm-end align-items-center text-secondary'>
                   <SmallHeader text='Customer' isRequired={true} />
                </div>
                <div className='col-sm-10'>
-                  <ContactSelect setContact={contact => setJob(prev => ({ ...prev, customer: contact }))} />
+                  <ContactSelect
+                     placeholder='Required'
+                     setContact={contact => setJob({ ...job, customer: contact })} />
                </div>
             </div>
 
             {/* REFERENCE INPUT */}
             <div className='row mb-3'>
-               <div className='col-sm-2 d-flex justify-content-start justify-content-sm-end align-items-center'>
+               <div className='col-sm-2 d-flex justify-content-start justify-content-sm-end align-items-center text-secondary'>
                   <SmallHeader text='Reference' />
                </div>
                <div className='col-sm-10'>
@@ -77,7 +98,7 @@ const JobForm = ({ job, setJob, handleSubmit, error, setError, isDisabled, isLoa
 
             {/* PARCEL INPUT */}
             <div className='row mb-3'>
-               <div className='col-sm-2 d-flex justify-content-start justify-content-sm-end align-items-center'>
+               <div className='col-sm-2 d-flex justify-content-start justify-content-sm-end align-items-center text-secondary'>
                   <SmallHeader text='Parcel' />
                </div>
                <div className='col-sm-10'>
@@ -87,7 +108,7 @@ const JobForm = ({ job, setJob, handleSubmit, error, setError, isDisabled, isLoa
 
             {/* DRIVER SELECTION */}
             <div className='row mb-3'>
-               <div className='col-sm-2 d-flex justify-content-start justify-content-sm-end align-items-center'>
+               <div className='col-sm-2 d-flex justify-content-start justify-content-sm-end align-items-center text-secondary'>
                   <SmallHeader text='Drivers' />
                </div>
                <div className='col-sm-10'>
@@ -98,7 +119,7 @@ const JobForm = ({ job, setJob, handleSubmit, error, setError, isDisabled, isLoa
 
             {/* MILEAGE INPUT */}
             <div className='row mb-3'>
-               <div className='col-sm-2 d-flex justify-content-start justify-content-sm-end align-items-center'>
+               <div className='col-sm-2 d-flex justify-content-start justify-content-sm-end align-items-center text-secondary'>
                   <SmallHeader text='Mileage' />
                </div>
                <div className='col-sm-10'>
@@ -106,65 +127,71 @@ const JobForm = ({ job, setJob, handleSubmit, error, setError, isDisabled, isLoa
                </div>
             </div>
 
-            {/* FEE SELECT */}
-            <div className='row mb-3'>
-               <div className='col-sm-2 d-flex justify-content-start justify-content-sm-end align-items-center'>
-                  <SmallHeader text='Fees' />
-               </div>
-               <div className='col-sm-10'>
-                  <FeeSelect selectedFees={job.billing.map(bill => bill.fee)} setFee={fee => {
-                     setJob(prev => ({
-                        ...prev,
-                        billing: [
-                           ...prev.billing,
-                           {
-                              adjustedAmount: null,
-                              fee
-                           }
-                        ]
-                     }))
-                  }} />
-               </div>
-            </div>
-
          </div>
 
-         <div className='container-fluid'>
-            <div className='row'>
-               <div className='col-xl-4 col-md-6 p-0 py-0 ps-xl-2 pe-md-2'>
-                  {/* PICKUP ADDRESS/TIME */}
+         {/* <Tabs tabs={[
+            {
+               name: 'Pickup',
+               icon: 'bi bi-arrow-bar-up',
+               contentJSX: (
                   <PickupOrDeliveryInput
                      isPickup={true}
                      error={error?.path === 'pickup.address' ? error : null}
                      job={job}
                      setJob={setJob}
                   />
-               </div>
-               <div className='col-xl-4 col-md-6 p-0 py-0 pe-0 ps-md-2 mt-2 mt-md-0'>
-                  {/* DELIVERY ADDRESS/TIME */}
+               )
+            },
+            {
+               name: 'Delivery',
+               icon: 'bi bi-arrow-bar-down',
+               contentJSX: (
                   <PickupOrDeliveryInput
                      isPickup={false}
                      error={error?.path === 'delivery.address' ? error : null}
                      job={job}
                      setJob={setJob}
                   />
-               </div>
-            </div>
-         </div>
+               )
+            }
+         ]}
+         /> */}
 
-         {/* notes */}
-         <NotesInput
-            error={error}
-            isResizingImages={isResizingImages}
-            notes={notes} setJob={setJob}
-            setError={setError}
-            setIsResizingImages={setIsResizingImages}
-            withinUploadSizeLimit={withinUploadSizeLimit}
-         />
+         <Tabs tabs={[
+            {
+               name: 'Notes',
+               icon: 'bi bi-sticky',
+               contentJSX: (
+                  <div>notes here</div>
+               )
+            },
+            {
+               name: 'Billing',
+               icon: 'bi bi-receipt-cutoff',
+               contentJSX: (
+                  <FeeSelect selectedFees={job.billing.map(bill => bill.fee)} setFee={fee => {
+                     setJob({
+                        ...job,
+                        billing: [
+                           ...job.billing,
+                           {
+                              adjustedAmount: null,
+                              fee
+                           }
+                        ]
+                     })
+                  }} />
+               )
+            }
+         ]} />
 
          {error && <ErrorAlert message={error.message} />}
 
-         <SubmitButton defaultText='Save' loadingText='Saving' isLoading={isLoading} isDisabled={isResizingImages} />
+         <SubmitButton
+            buttonText={submitButtonText}
+            isSubmittingForm={isFetching}
+            isDisabled={submitButtonIsDisabled || isResizingImages}
+         />
       </form>
    );
 };

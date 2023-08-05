@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { AnimatePresence } from 'framer-motion';
 
 // hooks
 import { useCreateJob } from '../hooks/useCreateJob';
@@ -8,7 +7,7 @@ import { useCreateJob } from '../hooks/useCreateJob';
 import Modal from './Modal';
 import JobForm from './JobForm';
 
-const CreateJobForm = ({ hideForm, refreshJobList, showForm }) => {
+const CreateJobForm = ({ hideForm }) => {
    const newJob = {
       billing: [],
       customer: null,
@@ -21,8 +20,8 @@ const CreateJobForm = ({ hideForm, refreshJobList, showForm }) => {
       reference: '',
       status: null,
    };
-
-   const { createJob, error, setError, isLoading } = useCreateJob();
+   console.log(hideForm)
+   const { createJob, error, isLoading } = useCreateJob();
 
    // state for user inputs
    const [job, setJob] = useState(newJob);
@@ -32,56 +31,56 @@ const CreateJobForm = ({ hideForm, refreshJobList, showForm }) => {
 
    const closeIconClasses = 'bi bi-x-lg';
 
-   const clearInputs = () => setJob(newJob);
+   const formHeading = 'New Job';
+   const formSubHeading = `As a dispatcher, you can see all jobs, but a driver will only see jobs that have been assigned to them.`;
 
    return (
-      <AnimatePresence mode='wait' onExitComplete={clearInputs}>
-         {showForm &&
-            <Modal blurBackdrop={true} topMarginIsFixed={true}>
-               <button
-                  className={closeButtonClasses}
-                  onClick={hideForm}
-                  style={closeButtonStyles}
-                  type='button'
-               >
-                  <i className={closeIconClasses}></i>
-               </button>
-               <JobForm
-                  job={job}
-                  setJob={setJob}
-                  setError={setError}
-                  error={error}
-                  isDisabled={isLoading}
-                  isLoading={isLoading}
-                  handleSubmit={async (e) => {
-                     e.preventDefault();
+      <Modal blurBackdrop={true} topMarginIsFixed={true}>
+         <button
+            className={closeButtonClasses}
+            onClick={hideForm}
+            style={closeButtonStyles}
+            type='button'
+         >
+            <i className={closeIconClasses}></i>
+         </button>
 
-                     const jobCreated = await createJob({
-                        ...job,
-                        customer: job.customer?._id,
-                        drivers: job.drivers.map(d => d._id),
-                        mileage: Number(job.mileage),
-                        billing: job.billing.map(bill => {
-                           let adjustedAmount = bill.adjustedAmount
-                           if (adjustedAmount !== null) adjustedAmount = Number(adjustedAmount);
+         <JobForm
+            heading={formHeading}
+            job={job}
+            error={error}
+            handleSubmit={async (e) => {
+               e.preventDefault();
 
-                           return {
-                              adjustedAmount,
-                              fee: bill.fee._id,
-                           }
-                        }),
-                        status: job.status?._id,
-                     });
+               const jobCreated = await createJob({
+                  ...job,
+                  customer: job.customer?._id,
+                  drivers: job.drivers.map(d => d._id),
+                  mileage: Number(job.mileage),
+                  billing: job.billing.map(bill => {
+                     let adjustedAmount = bill.adjustedAmount
+                     if (adjustedAmount !== null) adjustedAmount = Number(adjustedAmount);
 
-                     if (jobCreated) {
-                        hideForm();
-                        refreshJobList();
-                     };
-                  }}
-               />
-            </Modal>
-         }
-      </AnimatePresence>
+                     return {
+                        adjustedAmount,
+                        fee: bill.fee._id,
+                     }
+                  }),
+                  status: job.status?._id,
+               });
+
+               if (jobCreated) {
+                  hideForm();
+                  refreshJobList();
+               };
+            }}
+            isFetching={isLoading}
+            setJob={setJob}
+            subHeading={formSubHeading}
+            submitButtonIsDisabled={isLoading}
+            submitButtonText={isLoading ? 'Saving' : 'Save'}
+         />
+      </Modal>
    );
 };
 

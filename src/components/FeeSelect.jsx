@@ -8,7 +8,7 @@ import { useFeesContext } from '../hooks/useFeesContext';
 // components
 import ErrorAlert from './ErrorAlert';
 
-const FeeSelect = ({ selectedFees, setFee }) => {
+const FeeSelect = ({ placeholder, selectedFees, setFee }) => {
    const { getFees, error, isLoading } = useGetFees();
    const { fees } = useFeesContext();
 
@@ -40,15 +40,15 @@ const FeeSelect = ({ selectedFees, setFee }) => {
 
    return (
       <Select
-         className='text-reset'
+         classNamePrefix='mySelectInpu'
          hideSelectedOptions={true}
          isDisabled={isLoading}
          isLoading={isLoading}
          isClearable
          isSearchable
-         loadingMessage={() => 'Loading fees...'}
+         loadingMessage={() => 'Loading...'}
          noOptionsMessage={() => 'No results.'}
-         placeholder=''
+         placeholder={placeholder || ''}
          options={selectedOptions}
          onChange={handleOnChange}
          styles={{
