@@ -11,7 +11,7 @@ import { urlQueryString } from '../utils/StringUtils';
 
 // components
 import ErrorLoadingDocuments from '../components/ErrorLoadingDocuments';
-import FilterAndASort from '../components/FilterAndSort';
+// import FilterAndASort from '../components/FilterAndSort';
 import FlexBoxWrapper from '../components/FlexBoxWrapper';
 import JobCard from '../components/JobCard';
 import JobDetails from '../components/JobDetails';
@@ -83,11 +83,11 @@ const MyJobs = ({
    return (
       <Page selectedLink={selectedLink} setSelectedLink={setSelectedLink}>
 
-         <AnimatePresence mode='wait' onExitComplete={() => setSelectedJob(null)}>
+         {/* <AnimatePresence mode='wait' onExitComplete={() => setSelectedJob(null)}>
             {selectedJob && <JobDetails job={selectedJob} singleNoteInput={true} setFilters={setFilters} />}
          </AnimatePresence>
 
-         <JobsList jobs={myJobs} selectedJob={selectedJob} setSelectedJob={setSelectedJob} />
+         <JobsList jobs={myJobs} selectedJob={selectedJob} setSelectedJob={setSelectedJob} /> */}
       </Page>
    );
 

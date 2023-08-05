@@ -14,12 +14,8 @@ const Tabs = ({ tabs }) => {
    const tabButtonsContainerClasses = 'tabs d-flex fs-smaller mb-2';
 
    // variants and styles for the tab buttons
-   const tabButtonClasses = 'text-center rounded-top border-top-0 border-end-0 border-start-0 cursor-pointer flex-grow-1';
-   const tabButtonsVariants = {
-      onHover: {
-         opacity: 1
-      }
-   };
+   const tabButtonClasses = 'text-center rounded-top border-top-0 border-end-0 border-start-0 cursor-pointer flex-grow-1 pt-1';
+
    const setTabButtonStyles = (tabIsSelected) => ({
       borderBottomWidth: '1px',
       borderBottomStyle: 'solid',
@@ -42,19 +38,16 @@ const Tabs = ({ tabs }) => {
                   const isSelected = selectedTabIndex === index;
 
                   return (
-                     <motion.button
-                        animate
+                     <button
                         key={name}
                         className={tabButtonClasses}
                         style={setTabButtonStyles(isSelected)}
                         onClick={handleTabOnClick(index)}
                         type='button'
-                        variants={tabButtonsVariants}
-                        whileHover={'onHover'}
                      >
                         <i className={`${iconClasses} ${icon}`}></i>
                         <span>{name}</span>
-                     </motion.button>
+                     </button>
                   );
                })
             }

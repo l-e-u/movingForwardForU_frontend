@@ -7,12 +7,14 @@ import FormHeader from './FormHeader';
 import FeeSelect from './FeeSelect';
 import NotesInput from './NotesInput';
 import PickupOrDeliveryInput from './PickupOrDeliveryInput';
+import MilitaryTimeInput from './MilitaryTimeInput';
 import SmallHeader from './SmallHeader';
 import StatusSelect from './StatusSelect';
 import SubmitButton from './SubmitButton';
 import Tabs from './Tabs';
 import TextInput from './TextInput';
 import UserSelect from './UserSelect';
+import DateInput from './DateInput';
 
 const JobForm = ({
    job,
@@ -26,15 +28,20 @@ const JobForm = ({
    setJob,
 }) => {
    const {
-      status,
-      customer,
       billing,
-      mileage,
-      reference,
-      parcel,
+      customer,
+      delivery,
       drivers,
-      notes
+      mileage,
+      notes,
+      parcel,
+      pickup,
+      reference,
+      status,
    } = job;
+
+   const [addressRadio, setAddressRadio] = useState('pickup');
+   const [searchRadio, setSearchRadio] = useState('contacts');
 
    const [isResizingImages, setIsResizingImages] = useState(false);
 
@@ -86,34 +93,110 @@ const JobForm = ({
                </div>
             </div>
 
+            {/* RADIO BUTTONS: PICKUP AND DELIVERY SELECTIONS */}
+            <div className='d-flex justify-content-between justify-content-sm-around'>
+
+               <div className='d-flex align-items-center gap-2'>
+                  <input
+                     checked={addressRadio === 'pickup'}
+                     className='form-check-input fs-smaller cursor-pointer'
+                     id='addressRadioPickup'
+                     onChange={() => setAddressRadio('pickup')}
+                     type='radio'
+                  />
+                  <label className='form-check-label text-secondary cursor-pointer' htmlFor='addressRadioPickup'>
+                     <SmallHeader text='Pickup' />
+                  </label>
+               </div>
+
+               <div className='d-flex align-items-center gap-2'>
+                  <input
+                     checked={addressRadio === 'delivery'}
+                     className='form-check-input fs-smaller cursor-pointer'
+                     id='addressRadioDelivery'
+                     onChange={() => setAddressRadio('delivery')}
+                     type='radio'
+                  />
+                  <label className='form-check-label text-secondary cursor-pointer' htmlFor='addressRadioDelivery'>
+                     <SmallHeader text='Delivery' />
+                  </label>
+               </div>
+
+            </div>
+
+
             {/* PICKUP AND DELIVERY */}
-            <Tabs tabs={[
-               {
-                  name: 'Pickup',
-                  icon: 'bi bi-arrow-bar-up',
-                  contentJSX: (
-                     <PickupOrDeliveryInput
-                        isPickup={true}
-                        error={error?.path === 'pickup.address' ? error : null}
-                        job={job}
-                        setJob={setJob}
-                     />
-                  )
-               },
-               {
-                  name: 'Delivery',
-                  icon: 'bi bi-arrow-bar-down',
-                  contentJSX: (
-                     <PickupOrDeliveryInput
-                        isPickup={false}
-                        error={error?.path === 'delivery.address' ? error : null}
-                        job={job}
-                        setJob={setJob}
-                     />
-                  )
-               }
-            ]}
-            />
+            <div className='row mb-3'>
+               <div className='col-sm-2 d-flex justify-content-start justify-content-sm-end align-items-center text-secondary'>
+                  <SmallHeader text='Date' />
+               </div>
+               <div className='col-sm-10'>
+                  <DateInput
+                     input={pickup.date}
+                     setInput={(input) => {
+                        setJob({
+                           ...job,
+                           pickup: {
+                              ...job.pickup,
+                              date: input
+                           }
+                        })
+                     }}
+                  />
+               </div>
+            </div>
+
+            <div className='row mb-3'>
+               <div className='col-sm-2 d-flex justify-content-start justify-content-sm-end align-items-center text-secondary'>
+                  <SmallHeader text='Time' />
+               </div>
+               <div className='col-sm-10'>
+                  <MilitaryTimeInput
+                     input={pickup.date}
+                     setInput={(input) => {
+                        setJob({
+                           ...job,
+                           pickup: {
+                              ...job.pickup,
+                              date: input
+                           }
+                        })
+                     }}
+                  />
+               </div>
+            </div>
+
+            {/* RADIO BUTTONS: CONTACT AND GOOGLE SELECTIONS */}
+            <div className='d-flex justify-content-between justify-content-sm-around'>
+
+               <div className='d-flex align-items-center gap-2'>
+                  <input
+                     checked={searchRadio === 'contacts'}
+                     className='form-check-input fs-smaller cursor-pointer'
+                     id='searchRadioPickup'
+                     onChange={() => setAddressRadio('contacts')}
+                     type='radio'
+                  />
+                  <label className='form-check-label text-secondary cursor-pointer' htmlFor='searchRadioPickup'>
+                     <SmallHeader text='Contacts' />
+                  </label>
+               </div>
+
+               <div className='d-flex align-items-center gap-2'>
+                  <input
+                     checked={searchRadio === 'google'}
+                     className='form-check-input fs-smaller cursor-pointer'
+                     id='searchRadioDelivery'
+                     onChange={() => setAddressRadio('google')}
+                     type='radio'
+                  />
+                  <label className='form-check-label text-secondary cursor-pointer' htmlFor='searchRadioDelivery'>
+                     <SmallHeader text='Google' />
+                  </label>
+               </div>
+
+            </div>
+
 
             {/* REFERENCE INPUT */}
             <div className='row mb-3'>

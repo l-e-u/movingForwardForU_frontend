@@ -180,8 +180,8 @@ export const urlQueryString = (filter) => {
    return query;
 };
 
-// for the filters when setting the value of existing dates chosen for the date inputs
-export const dateStringFormat_YYYY_MM_DD = (date) => `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')
+// date input value only accepts strings in YYYY-MM-dd format
+export const dateObjectToFormattedString__YYYY_MM_DD = (date) => `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')
    }`;
 
 // returns a formatted phone number

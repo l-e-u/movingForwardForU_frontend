@@ -14,3 +14,10 @@ export const billingTotal = (billing) => {
       return addTwoCurrencies(total, amount);
    }, 0);
 };
+
+export const militaryTimeNumber = (dateObject) => {
+   const hours = dateObject.getHours() * 100;
+   const minutes = dateObject.getMinutes();
+
+   return hours + minutes;
+}

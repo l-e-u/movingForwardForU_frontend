@@ -20,7 +20,7 @@ const CreateJobForm = ({ hideForm }) => {
       reference: '',
       status: null,
    };
-   console.log(hideForm)
+
    const { createJob, error, isLoading } = useCreateJob();
 
    // state for user inputs

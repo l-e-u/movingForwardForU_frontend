@@ -92,6 +92,10 @@ button.page-link:disabled, .submitButton:disabled {
   font-size: .75rem !important;
 }
 
+input[type='date']::-webkit-calendar-picker-indicator{
+   opacity: 0.5;
+}
+
 .selectList {
   position: absolute;
   z-index: 100;
