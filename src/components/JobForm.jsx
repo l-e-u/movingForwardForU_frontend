@@ -86,6 +86,35 @@ const JobForm = ({
                </div>
             </div>
 
+            {/* PICKUP AND DELIVERY */}
+            <Tabs tabs={[
+               {
+                  name: 'Pickup',
+                  icon: 'bi bi-arrow-bar-up',
+                  contentJSX: (
+                     <PickupOrDeliveryInput
+                        isPickup={true}
+                        error={error?.path === 'pickup.address' ? error : null}
+                        job={job}
+                        setJob={setJob}
+                     />
+                  )
+               },
+               {
+                  name: 'Delivery',
+                  icon: 'bi bi-arrow-bar-down',
+                  contentJSX: (
+                     <PickupOrDeliveryInput
+                        isPickup={false}
+                        error={error?.path === 'delivery.address' ? error : null}
+                        job={job}
+                        setJob={setJob}
+                     />
+                  )
+               }
+            ]}
+            />
+
             {/* REFERENCE INPUT */}
             <div className='row mb-3'>
                <div className='col-sm-2 d-flex justify-content-start justify-content-sm-end align-items-center text-secondary'>
@@ -106,6 +135,16 @@ const JobForm = ({
                </div>
             </div>
 
+            {/* MILEAGE INPUT */}
+            <div className='row mb-3'>
+               <div className='col-sm-2 d-flex justify-content-start justify-content-sm-end align-items-center text-secondary'>
+                  <SmallHeader text='Mileage' />
+               </div>
+               <div className='col-sm-10'>
+                  <TextInput input={job.mileage} setInput={input => setJob(prev => ({ ...prev, mileage: isNaN(input) ? 0 : Number(input) }))} />
+               </div>
+            </div>
+
             {/* DRIVER SELECTION */}
             <div className='row mb-3'>
                <div className='col-sm-2 d-flex justify-content-start justify-content-sm-end align-items-center text-secondary'>
@@ -117,45 +156,7 @@ const JobForm = ({
                </div>
             </div>
 
-            {/* MILEAGE INPUT */}
-            <div className='row mb-3'>
-               <div className='col-sm-2 d-flex justify-content-start justify-content-sm-end align-items-center text-secondary'>
-                  <SmallHeader text='Mileage' />
-               </div>
-               <div className='col-sm-10'>
-                  <TextInput input={job.mileage} setInput={input => setJob(prev => ({ ...prev, mileage: isNaN(input) ? 0 : Number(input) }))} />
-               </div>
-            </div>
-
          </div>
-
-         {/* <Tabs tabs={[
-            {
-               name: 'Pickup',
-               icon: 'bi bi-arrow-bar-up',
-               contentJSX: (
-                  <PickupOrDeliveryInput
-                     isPickup={true}
-                     error={error?.path === 'pickup.address' ? error : null}
-                     job={job}
-                     setJob={setJob}
-                  />
-               )
-            },
-            {
-               name: 'Delivery',
-               icon: 'bi bi-arrow-bar-down',
-               contentJSX: (
-                  <PickupOrDeliveryInput
-                     isPickup={false}
-                     error={error?.path === 'delivery.address' ? error : null}
-                     job={job}
-                     setJob={setJob}
-                  />
-               )
-            }
-         ]}
-         /> */}
 
          <Tabs tabs={[
             {
