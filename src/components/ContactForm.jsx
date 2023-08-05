@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { motion } from 'framer-motion';
 
 // components
 import ErrorAlert from './ErrorAlert';
@@ -54,14 +55,14 @@ const ContactForm = ({
    const formStyles = { width: '90vw', maxWidth: '700px' };
 
    // as the user selects fees, the list gets populated
-   const defaultFeesListClasses = 'defaultFeesList d-md-flex flex-md-wrap gap-2 rounded m-0 p-0 fs-smaller justify-content-between';
+   const defaultFeesListClasses = 'defaultFeesList rounded m-0 p-0 fs-smaller';
    const defaultFeesListStyles = { listStyle: 'none' };
 
    // items have the option to clear it off the default-selection list
-   const defaultFeesItemClasses = 'd-flex align-items-center rounded-pill mb-2 mb-md-0';
+   const defaultFeesItemClasses = 'd-flex align-items-center rounded-pill mb-2';
    const defaultFeesItemStyles = {
       border: '1px solid var(--mainPalette4)',
-      color: 'var(--mainPalette4)'
+      color: 'var(--mainPalette3)'
    };
 
    const handleRemoveDefaultFee = (_id) => {
@@ -252,8 +253,20 @@ const ContactForm = ({
                               defaultFees.map(fee => (
                                  <li key={fee._id} className={defaultFeesItemClasses} style={defaultFeesItemStyles}>
                                     <span className='px-3'>{fee.name}</span>
-                                    <span className='ms-auto'>{`$ ${fee.amount.toFixed(2)}`}</span>
-                                    <i className='bi bi-x ps-4 pe-2 py-1' onClick={handleRemoveDefaultFee(fee._id)}></i>
+                                    <span className='text-nowrap ms-auto'>{`$ ${fee.amount.toFixed(2)}`}</span>
+                                    <motion.i
+                                       className='bi bi-x ps-4 pe-2 py-1 cursor-pointer'
+                                       onClick={handleRemoveDefaultFee(fee._id)}
+                                       initial={{
+                                          scale: 1,
+                                          color: 'inherit'
+                                       }}
+                                       whileHover={{
+                                          scale: 1.1,
+                                          color: 'red',
+                                       }}
+                                    >
+                                    </motion.i>
                                  </li>
                               ))
                            }

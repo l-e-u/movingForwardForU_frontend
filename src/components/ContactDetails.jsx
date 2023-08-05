@@ -90,14 +90,15 @@ const ContactDetails = ({ contact, showEditForm }) => {
          </div>
 
 
+         {/* DEFAULT VIEW FOR QUICK READING */}
          {/* address, phone, and email, this layout will flex depending on the screen size */}
          <div className='row pb-2'>
-            <div className='address col-lg d-flex gap-2 justify-content-lg-center mb-2 mb-lg-0'>
+            <div className='address col-lg d-flex gap-2 justify-content-lg-center mb-1 mb-lg-0'>
                <i className='bi bi-geo-alt text-secondary'></i>
                <div>{address}</div>
             </div>
 
-            <div className='phone col-lg d-flex gap-2 justify-content-lg-center mb-2 mb-lg-0'>
+            <div className='phone col-lg d-flex gap-2 justify-content-lg-center mb-1 mb-lg-0'>
                <i className='bi bi-telephone text-secondary'></i>
                <div>
                   {`${phoneNumberFormatted(phoneNumber)}${phoneExt ? ' x' + phoneExt : ''}`}

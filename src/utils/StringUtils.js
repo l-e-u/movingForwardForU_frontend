@@ -29,7 +29,42 @@ export const dateStringFormat = (date) => {
    return `${day} ${month} ${year}`;
 };
 
-export const timeStringFormat = (date, showMilitary, showTimezone = false) => {
+export const datePrettyString = ({ dateString }) => {
+   const date = new Date(dateString);
+   const monthNames = [
+      { abbr: 'jan', full: 'january' },
+      { abbr: 'feb', full: 'february' },
+      { abbr: 'mar', full: 'march' },
+      { abbr: 'apr', full: 'april' },
+      { abbr: 'may', full: 'may' },
+      { abbr: 'jun', full: 'june' },
+      { abbr: 'jul', full: 'july' },
+      { abbr: 'aug', full: 'august' },
+      { abbr: 'sep', full: 'september' },
+      { abbr: 'oct', full: 'october' },
+      { abbr: 'nov', full: 'november' },
+      { abbr: 'dec', full: 'december' }
+   ];
+   const weekdayNames = [
+      { abbr: 'sun', full: 'sunday' },
+      { abbr: 'mon', full: 'monday' },
+      { abbr: 'tue', full: 'tuesday' },
+      { abbr: 'wed', full: 'wednesday' },
+      { abbr: 'thu', full: 'thursday' },
+      { abbr: 'fri', full: 'friday' },
+      { abbr: 'sat', full: 'saturday' },
+   ];
+
+   const year = date.getFullYear();
+   const month = monthNames[date.getMonth()].full.padStart(2, '0');
+   const day = date.getDate().toString().padStart(2, '0');
+   const weekday = weekdayNames[date.getDay()].full;
+
+   return `${weekday}, ${day} ${month} ${year}`;
+};
+
+export const timeStringFormat = ({ dateString, showMilitary, showTimezone = false }) => {
+   const date = new Date(dateString);
    const militaryHr = date.getHours();
    const hr = militaryHr > 12 ? militaryHr % 12 : militaryHr;
    const meridiem = militaryHr < 12 ? 'A' : 'P';

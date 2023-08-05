@@ -1,17 +1,13 @@
-import { useState, useEffect, useRef } from 'react';
-import { motion } from 'framer-motion';
+import { useState, useEffect } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
 
 // hooks
 import { useJobsContext } from '../hooks/useJobsContext';
-import { useAuthContext } from '../hooks/useAuthContext';
+import { useGetJobs } from '../hooks/useGetJobs';
 
 // components
-import CreateJobForm from '../components/CreateJobForm'
-import JobsList from '../components/JobsList';
-import Page from '../components/Page';
-
-// utilities
-import { urlQueryString } from '../utils/StringUtils';
+import CreateJobForm from '../components/CreateJobForm';
+import JobDetails from '../components/JobDetails';
 
 const Jobs = ({
    filters,
@@ -19,30 +15,11 @@ const Jobs = ({
    setFilters,
    setSelectedLink,
 }) => {
-   const API_BASE_URL = process.env.API_BASE_URL;
+   const { getJobs, error, isLoading } = useGetJobs();
+   const { jobs } = useJobsContext();
 
-   // user can click on a job from the list below and set the selectedJob which is used to fill the information for the JobDetails component
-   const [selectedJob, setSelectedJob] = useState(null);
-
-   // context
-   const { user } = useAuthContext()
-   const { jobs, dispatch } = useJobsContext();
-
-   const editFormRef = useRef(null);
-
-   // used during fetching
-   const [error, setError] = useState(null);
-   const [isLoading, setIsLoading] = useState(null);
-
-   // sets when user clicks on an option menu, then user can choose one of the options
-   const [selectedJobId, setSelectedJobId] = useState(null);
-
-   // sets when user selects menu or option, displays corresponding form
-   const [showArchiveConfirmation, setShowArchiveConfirmation] = useState(false);
    const [showCreateForm, setShowCreateForm] = useState(false);
-   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
-   const [showEditForm, setShowEditForm] = useState(false);
-   const [showOptionsMenu, setShowOptionsMenu] = useState(false);
+   const [selectedJob, setSelectedJob] = useState(null);
 
    // pagination state
    const [limit, setLimit] = useState(10);
@@ -51,77 +28,94 @@ const Jobs = ({
    const [totalResults, setTotalResults] = useState(0);
 
    // button to add new documents classes, styles, and framer-motion variants
-   const addButtonClasses = 'border-0 px-5 py-1 my-3 ms-auto position-relative rounded d-flex justify-content-center align-items-center';
-   const addButtonStyles = { backgroundColor: 'var(--mainPalette9)', color: 'var(--mainPalette4)' };
+   const addButtonClasses = 'px-3 py-1 ms-auto position-relative border-0 rounded text-white d-flex justify-content-center align-items-center gap-1';
    const addButtonVariants = {
+      mount: {
+         backgroundColor: 'var(--mainPalette4)',
+      },
       onHover: {
          scale: 1.1,
          transition: {
             duration: 0.3,
          },
-         boxShadow: '0px 0px 8px var(--mainPalette9)',
+         boxShadow: '0px 0px 8px var(--mainPalette4)',
+      }
+   };
+
+   // styling for the list container
+   const listClasses = 'jobsList px-3 pb-0 px-md-5';
+   const listVariants = {
+      mount: {
+         listStyle: 'none',
+         margin: '0',
+         padding: '0'
+      },
+      animation: {
+         transition: {
+            when: 'beforeChildren',
+            staggerChildren: 0.1
+         }
+      }
+   };
+
+   // styling for an item in the list
+   const itemVariants = {
+      mount: {
+         opacity: 0,
+         marginBottom: '0'
+      },
+      animation: {
+         opacity: 1,
+         marginBottom: '1rem',
+         transition: {
+            marginBottom: {
+               delay: 0.5
+            }
+         }
       }
    };
 
    // fetches results as the user chooses filters or changes limits for results
    useEffect(() => {
-      const timeout = setTimeout(async () => {
-         setIsLoading(true);
-         setError(null);
-
-         const filterQuery = urlQueryString(filters);
-
-         const response = await fetch(`${API_BASE_URL}/api/jobs?page=${currentPage}&limit=${limit}${filterQuery}`, {
-            headers: {
-               'Authentication': `Bearer ${user.token}`
-            }
-         });
-
-         // expecting the list of jobs depending on page and limit
-         const json = await response.json();
-
-         if (!response.ok) {
-            console.error(json);
-            setError(json.error);
-            setIsLoading(false);
-         };
-
-         if (response.ok) {
-            console.log('count:', json.count, 'totalPages:', json.totalPages);
-            setError(null);
-            setIsLoading(false);
-            setTotalPages(json.totalPages);
-            setTotalResults(json.count);
-            dispatch({ type: 'SET_JOBS', payload: json.results });
-
-         };
-      }, 250);
-
-      return () => clearTimeout(timeout);
-   }, [API_BASE_URL, currentPage, dispatch, filters, limit, user]);
+      getJobs({
+         currentPage,
+         limit,
+         filters
+      });
+   }, [currentPage, filters, limit]);
 
    return (
-      <Page selectedLink={selectedLink} setSelectedLink={setSelectedLink}>
+      <>
+         <AnimatePresence></AnimatePresence>
 
          {/* form to add a new job */}
          <CreateJobForm hideForm={() => setShowCreateForm(false)} refreshJobList={() => setFilters(prev => ({ ...prev }))} showForm={showCreateForm} />
 
          {/* button to display the new job form */}
-         <div className='px-3'>
+         <div className='p-2'>
             <motion.button
                className={addButtonClasses}
-               style={addButtonStyles}
                onClick={() => setShowCreateForm(true)}
                type='button'
                variants={addButtonVariants}
+               initial='mount'
                whileHover='onHover'
             >
                <i className='bi bi-plus'></i>
+               <i className='bi bi-person-vcard'></i>
             </motion.button>
-
-            <JobsList jobs={jobs} selectedJob={selectedJob} setSelectedJob={setSelectedJob} />
          </div>
-      </Page>
+
+         <motion.ul className={listClasses} variants={listVariants} initial='mount' animate='animation'>
+            {
+               jobs.map(job => (
+                  <motion.li key={job._id} variants={itemVariants}>
+                     <JobDetails job={job} showEditForm={() => setSelectedJob(job)} />
+                  </motion.li>
+               ))
+            }
+         </motion.ul>
+      </>
    );
 };
 

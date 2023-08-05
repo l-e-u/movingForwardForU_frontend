@@ -1,14 +1,26 @@
+import { useEffect } from 'react';
 import { motion } from 'framer-motion';
 
 // Appears some time after order has been place, every time a page is switched via the browser arrows, the modal show is set to false
-const Modal = ({ children, blurBackdrop = false }) => {
+const Modal = ({ children, blurBackdrop = false, topMarginIsFixed = false }) => {
+
+   // on mount, prevent the body from scrolling
+   useEffect(() => {
+      document.body.classList.add('overflow-hidden');
+
+      // on unmount, allow the body to scroll
+      return () => document.body.classList.remove('overflow-hidden');
+   }, []);
+
    const modalClasses = 'myModal background position-fixed d-flex top-0 start-0 w-100 h-100 overflow-auto';
    const modalStyles = {
       background: 'linear-gradient(0deg, rgba(193,228,255,1) 0%, rgba(229,239,255,1) 29%, rgba(255,255,255,0) 100%)',
       zIndex: '1050'
    };
 
-   const contentClasses = 'content position-relative m-auto';
+   // modals that change their height, will have a fixed height to prevent the modal being 
+   const contentMarginClasses = topMarginIsFixed ? 'mt-3 mt-md-5 mx-auto mb-0' : 'm-auto';
+   const contentClasses = `content position-relative ${contentMarginClasses}`;
    const contentStyles = { backgroundColor: 'transparent' };
 
    // backdrop will fade in before its children

@@ -1,44 +1,55 @@
-import {useState} from 'react';
+import { useState } from 'react';
 
 // utilities
-import {urlQueryString} from '../utils/StringUtils.js';
+import { urlQueryString } from '../utils/StringUtils.js';
 
-const useGetJobs =()=>{
-const [error, setError]=useState(null);
-const [isLoading,setIsLoading]=useState(false);
+// context
+import { useAuthContext } from './useAuthContext.js';
+import { useJobsContext } from './useJobsContext.js';
 
-const getJobs=(filter)=>{
-    setIsLoading(true);
-    setError(null);
-    
-    const filterQuery=urlQueryString(filter);
-    
-const response = await fetch(`${API_BASE_URL}/api/jobs?page=${currentPage}&limit=${limit}${filterQuery}`, {
-            headers: {
-               'Authentication': `Bearer ${user.token}`
-            }
-         });
+export const useGetJobs = () => {
+   const API_BASE_URL = process.env.API_BASE_URL;
 
-         // expecting the list of jobs depending on page and limit
-         const json = await response.json();
+   const { user } = useAuthContext();
+   const { dispatch } = useJobsContext();
 
-         if (!response.ok) {
-            setError(json.error);
-            setIsLoading(false);
-         };
+   const [error, setError] = useState(null);
+   const [isLoading, setIsLoading] = useState(false);
 
-         if (response.ok) {
-             const{count,totalPages,results}=json;
-            
-            setError(null);
-            setIsLoading(false);
-            
- 
-            dispatch({ type: 'SET_JOBS', payload: results });
-                        return {count,totalPages};
+   const clearError = () => setError(null);
 
-         };
-};
+   const getJobs = async ({ filters, currentPage, limit }) => {
+      setIsLoading(true);
+      setError(null);
 
-return {getJobs, error, isLoading};
+      const filtersQuery = urlQueryString(filters);
+
+      const response = await fetch(`${API_BASE_URL}/api/jobs?page=${currentPage}&limit=${limit}${filtersQuery}`, {
+         headers: {
+            'Authentication': `Bearer ${user.token}`
+         }
+      });
+
+      // expecting the list of jobs depending on page and limit
+      const json = await response.json();
+
+      if (!response.ok) {
+         setError(json.error);
+         setIsLoading(false);
+      };
+
+      if (response.ok) {
+         const { count, totalPages, results } = json;
+
+         setError(null);
+         setIsLoading(false);
+
+
+         dispatch({ type: 'SET_JOBS', payload: results });
+         return { count, totalPages };
+
+      };
+   };
+
+   return { clearError, getJobs, error, isLoading };
 };

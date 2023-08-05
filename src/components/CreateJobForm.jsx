@@ -37,7 +37,7 @@ const CreateJobForm = ({ hideForm, refreshJobList, showForm }) => {
    return (
       <AnimatePresence mode='wait' onExitComplete={clearInputs}>
          {showForm &&
-            <Modal blurBackdrop={true}>
+            <Modal blurBackdrop={true} topMarginIsFixed={true}>
                <button
                   className={closeButtonClasses}
                   onClick={hideForm}

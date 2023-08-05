@@ -14,13 +14,14 @@ import NotesList from './NotesList';
 import SmallHeader from './SmallHeader';
 
 // functions
-import { dateStringFormat, formatCurrency } from '../utils/StringUtils';
+import { datePrettyString, dateStringFormat, formatCurrency, timeStringFormat } from '../utils/StringUtils';
 import { billingTotal } from '../utils/NumberUtils';
 
 
 const JobDetails = ({
    job,
    setFilters,
+   showEditForm,
    listDrivers = false,
    listBilling = false,
    listMileage = false,
@@ -42,263 +43,237 @@ const JobDetails = ({
       reference,
       status
    } = job;
-   const sectionIconPairs = new Map([
-      ['addresses', 'bi bi-truck'],
-      ['notes', 'bi bi-sticky'],
-      ['billing', 'bi bi-cash-stack']
-   ]);
 
-   // by default, set the first key as the selected section
-   const [selectedSection, setSelectedSection] = useState([...sectionIconPairs.keys()][0]);
-   const [showEditForm, setShowEditForm] = useState(false);
+   const tabs = [
+      {
+         name: 'Info',
+         icon: 'bi bi-person-rolodex'
+      },
+      {
+         name: 'Billing',
+         icon: 'bi bi-receipt-cutoff'
+      },
+      {
+         name: 'Notes',
+         icon: 'bi bi-sticky'
+      }
+   ];
 
-   // styles for the balance display on third section
+   // by default, the first tab is to be displayed
+   const [selectedTab, setSelectedTab] = useState(tabs[0].name);
+
+   // expands the additional info of a job
+   const [expandAdditionalInfo, setExpandAdditionalInfo] = useState(false);
+
+   // formatting strings for date and time
    const balance = formatCurrency(billingTotal(billing), true);
+   const pickupTimeString = pickup.includeTime ?
+      timeStringFormat({ dateString: pickup.date, showMilitary: true }) :
+      '--:--';
+   const deliveryTimeString = delivery.includeTime ?
+      timeStringFormat({ dateString: delivery.date, showMilitary: true }) :
+      '--:--';
 
-   const statsClasses = 'd-flex fs-smaller bg-white text-secondary mt-2 mb-1 rounded-1 text-end px-2';
-   const statsStyles = { marginLeft: '-0.5rem', marginRight: '-0.5rem' };
 
-   // styles for the job details card
-   const cardClasses = `jobCard rounded-3 sticky-top lightGradient d-flex flex-column shadow-sm`;
-   const cardStyles = { backgroundColor: 'var(--mainPalette9)' };
-
-   // styling for input headers
-   const headerStyles = { color: 'var(--mainPalette4)', fontWeight: '500' };
-
-   // styling for the first column of job details
-   const detailsFirstColumn = 'col-4 text-end';
-   const detailsSecondColumn = 'col-8';
-
-   // styling for the hr line separator
-   const hrClasses = 'position-absolute d-none d-md-block m-0 top-0 start-50 translate-middle';
-   const hrStyles = { color: 'var(--mainPalette8)', width: 'calc(100% - 32px)' };
-
-   // setup for the sections and the buttons to switch between them
-   // styling for the section buttons
-   const sectionButtonsContainerClasses = 'd-flex justify-content-end gap-2 gap-sm-4 text-secondary';
-   const sectionButtonClasses = 'rounded';
-   const sectionButtonStyles = {
-      background: 'transparent',
-      borderWidth: '1px',
-      borderStyle: 'solid',
-      transition: 'all 0.25s ease-in-out'
-   };
-
-   // array that holds the buttons that allows the user to switch between sections
-   const sectionButtonsJSX = [];
-
-   const driversJSX = drivers.map(driver => <div key={driver._id}>{driver.fullName}</div>);
-
-   // framer-motion variants for the card, initially it won't have any height, after the children have appeared, it will get 500px in height, and when it exits/unmounts, it fires after the children have faded away
-   const expandCollapseVariants = {
-      mount: {
-         height: '0px',
-         padding: '0rem',
-         margin: '1rem',
+   // delete and edit buttons are identical, expandContract button will have the same hover effects, but when its additional info is expanded, it will maintain its hover colors
+   const actionButtonVariants = {
+      actionButton: {
+         background: 'transparent',
+         borderWidth: '1px',
+         borderStyle: 'solid',
+         borderColor: 'var(--bs-secondary)',
+         color: 'var(--bs-secondary)',
+         scale: 1,
+         opacity: 0.5
       },
-      animation: {
-         height: '100%',
-         padding: '1rem 0.25rem 0.25rem 0.25rem',
-         margin: '1rem',
-         transition: {
-            when: 'beforeChildren',
-            staggerChildren: 0.2
-         }
+      expandContractButton: {
+         background: 'transparent',
+         borderWidth: '1px',
+         borderStyle: 'solid',
+         borderColor: expandAdditionalInfo ? 'var(--mainPalette4)' : 'var(--bs-secondary)',
+         color: expandAdditionalInfo ? 'var(--mainPalette4)' : 'var(--bs-secondary)',
+         scale: 1,
+         opacity: expandAdditionalInfo ? 1 : 0.5
       },
-      unmount: {
-         height: '0px',
-         padding: '0rem',
-         margin: '0rem',
+      onHover: {
+         borderColor: 'var(--mainPalette4) !important',
+         color: 'var(--mainPalette4) !important',
+         scale: 1.1,
+         opacity: 1,
          transition: {
-            when: 'afterChildren',
+            duration: 0.2,
          }
       }
-   };
-
-   // framer-motion variants for the children containers, on mount, they fade in after the parent has expanded, on unmount, they fade out before the parent
-   const fadeInOutVariants = {
-      mount: {
-         opacity: 0,
-      },
-      animation: {
-         opacity: 1
-      },
-      unmount: {
-         opacity: 0
-      }
-   };
-
-   // create the sections' buttons
-   for (const [sectionName, iconNameClasses] of sectionIconPairs.entries()) {
-      const isSelected = sectionName === selectedSection;
-
-      sectionButtonsJSX.push(
-         <button
-            className={sectionButtonClasses}
-            key={sectionName}
-            onClick={() => setSelectedSection(sectionName)}
-            style={
-               {
-                  ...sectionButtonStyles,
-                  borderColor: isSelected ? 'var(--mainPalette4)' : 'transparent',
-                  color: isSelected ? 'var(--mainPalette4)' : 'var(--bs-secondary)',
-                  padding: isSelected ? '0 2rem' : '0 1rem'
-               }
-            }
-            type='button'
-         >
-            <i className={iconNameClasses}></i>
-         </button >
-      );
    };
 
    return (
-      <motion.div
-         className={cardClasses}
-         style={cardStyles}
-         variants={expandCollapseVariants}
-         initial='mount'
-         animate='animation'
-         exit='unmount'
+      <div
+         className='jobDetails position-relative bg-white container rounded px-4 py-2'
+         style={{ boxShadow: '0 .125rem .25rem var(--mainPalette8)' }}
       >
-         {/* organization name of the customer/business */}
-         <motion.div className='container-fluid' variants={fadeInOutVariants}>
-            <div style={headerStyles}>
-               <SmallHeader text='Organization' />
-            </div>
-            <div className='organization fs-3'>
-               {customer.organization}
-            </div>
-         </motion.div>
 
-         {/* job details and tab/content, this layout swaps from column to row in larger screens */}
-         <div className='container-fluid p-0'>
-            <div className='row'>
+         {/* ACTION BUTTONS: for the document and button to expand the additional info element */}
+         <div className='position-absolute top-0 end-0 pt-1 pe-1'>
+            {/* delete document button */}
+            <motion.button className='rounded' onClick={() => { }} type='button' variants={actionButtonVariants} initial='actionButton' whileHover='onHover' >
+               <i className='bi bi-trash3'></i>
+            </motion.button>
 
-               {/* Job Details */}
-               <div className='detailsColumn col-md col-lg-5 d-grid position-relative py-2'>
+            {/* edit document button */}
+            <motion.button className='rounded mx-4 mx-lg-5' onClick={showEditForm} type='button' variants={actionButtonVariants} initial='actionButton' whileHover='onHover' >
+               <i className='bi bi-pencil'></i>
+            </motion.button>
 
-                  <motion.hr variants={fadeInOutVariants} className={hrClasses} style={hrStyles} />
+            {/* user can expand and contract the additional info element */}
+            <motion.button
+               className='bg-none rounded'
+               onClick={() => setExpandAdditionalInfo(!expandAdditionalInfo)}
+               initial='expandContractButton'
+               type='button'
+               variants={actionButtonVariants}
+               whileHover='onHover'
+            >
+               <i className={`bi bi-chevron-${expandAdditionalInfo ? 'contract' : 'expand'}`}></i>
+            </motion.button>
+         </div>
 
-                  <motion.div variants={fadeInOutVariants} className='container-fluid align-self-center'>
+         {/* CUSTOMER / CLIENT / ORGANIZATION */}
+         <div className='customer name d-xl-flex align-items-baseline gap-2 mb-1'>
+            <div className='text-secondary'><SmallHeader text='Customer' /></div>
+            <div className='fs-5' style={{ fontWeight: '500' }}>{customer.organization}</div>
+         </div>
 
-                     {/* status name */}
-                     <div className='row mb-2'>
-                        <div className={detailsFirstColumn} style={headerStyles}>
-                           <SmallHeader text='Status' />
-                        </div>
-                        <div className={detailsSecondColumn}>{status.name}</div>
-                     </div>
+         {/* DEFAULT VIEW FOR QUICK READING */}
+         <div className='row'>
 
-                     {/* reference number */}
-                     <div className='row mb-2'>
-                        <div className={detailsFirstColumn} style={headerStyles}>
-                           <SmallHeader text='Reference' />
-                        </div>
-                        <div className={detailsSecondColumn}>{reference}</div>
-                     </div>
-
-                     {/* driver(s) */}
-                     <div className='row mb-2'>
-                        <div className={detailsFirstColumn} style={headerStyles}>
-                           <SmallHeader text={`Driver${drivers.length > 1 ? 's' : ''}`} />
-                        </div>
-                        <div className={detailsSecondColumn}>
-                           {driversJSX}
-                        </div>
-                     </div>
-
-                     {/* parcel */}
-                     <div className='row mb-2'>
-                        <div className={detailsFirstColumn} style={headerStyles}>
-                           <SmallHeader text='Parcel' />
-                        </div>
-                        <div className={detailsSecondColumn}>{parcel}</div>
-                     </div>
-
-                     {/* mileage */}
-                     <div className='row mb-2'>
-                        <div className={detailsFirstColumn} style={headerStyles}>
-                           <SmallHeader text='Mileage' />
-                        </div>
-                        <div className={detailsSecondColumn}>{mileage}</div>
-                     </div>
-
-                     {/* creator of the job */}
-                     <div className='row mb-2'>
-                        <div className={detailsFirstColumn} style={headerStyles}>
-                           <SmallHeader text='Creator' />
-                        </div>
-                        <div className={detailsSecondColumn}>{createdBy.fullName}</div>
-                     </div>
-
-                     {/* date and time of creation */}
-                     <div className='row'>
-                        <div className={detailsFirstColumn} style={headerStyles}>
-                           <SmallHeader text='Created' />
-                        </div>
-                        <div className={detailsSecondColumn}>{dateStringFormat(new Date(createdAt))}</div>
-                     </div>
-
-                  </motion.div>
+            <div className='col-xl-3 mb-1 my-xl-auto'>
+               <div className='my-auto'>
+                  {/* STATUS NAME */}
+                  <i className='bi bi-stars text-secondary me-2'></i>
+                  <span>{status.name}</span>
+                  <br />
+                  {/* REFERENCE */}
+                  <i className='bi bi-hash text-secondary me-2'></i>
+                  <span>{reference}</span>
                </div>
+            </div>
 
-               {/* buttons and sections to swap between addresses, notes, and billing */}
-               <div className='sectionsColumn col-md col-lg-7'>
-                  <motion.div variants={fadeInOutVariants} className='rounded-2 py-2 px-3 h-100' style={{ backgroundColor: 'rgba(255, 255, 255, 0.75)' }}>
+            {/* PICKUP DETAILS */}
+            <div className='col-lg col-xl mb-2 mb-lg-0'>
+               <div className='text-secondary mb-1' style={{ opacity: '0.5' }}><SmallHeader text='Pickup Details' /></div>
 
-                     {/* BUTTONS for content selection */}
-                     <div className={sectionButtonsContainerClasses}>{sectionButtonsJSX}</div>
-
-                     {/* SECTIONS */}
-                     {/* SECTION 1: pickup and delivery addresses */}
-                     {(selectedSection === 'addresses') &&
-                        <>
-                           <div className='text-secondary mb-1'><SmallHeader text='Pickup' /></div>
-                           <AddressDisplay
-                              address={pickup.address}
-                              date={pickup.date}
-                              includeTime={pickup.includeTime}
-                              heading='Pickup'
-                           />
-                           <hr />
-                           <div className='text-secondary mb-1'><SmallHeader text='Delivery' /></div>
-                           <AddressDisplay
-                              address={delivery.address}
-                              date={delivery.date}
-                              includeTime={delivery.includeTime}
-                              alignEnd={true}
-                              heading='Delivery'
-                           />
-                        </>
-                     }
-
-                     {/* SECTION 2: notes */}
-                     {(selectedSection === 'notes') &&
-                        <>
-                           <div className={statsClasses} style={statsStyles}>
-                              <span>{`# of Notes: ${notes.length}`}</span>
-                           </div>
-                           <NotesList list={notes} />
-                        </>
-                     }
-
-                     {/* SECTION 3: billing */}
-                     {(selectedSection === 'billing') &&
-                        <>
-                           <div className={statsClasses} style={statsStyles}>
-                              <span>{`# of Fees: ${billing.length}`}</span><span className='ms-auto'>{`Balance: $${balance}`}</span>
-                           </div>
-                           <FeesList billing={billing} />
-                        </>
-                     }
-
-                  </motion.div>
+               <div className='pickup'>
+                  <i className='bi bi-clock text-secondary me-2'></i>
+                  <span style={{ letterSpacing: '2px' }}>{pickupTimeString}</span>
+                  <br />
+                  <i className='bi bi-calendar4-event text-secondary me-2'></i>
+                  <span className='text-capitalize'>{datePrettyString({ dateString: pickup.date })}</span>
+                  <br />
+                  <i className='bi bi-geo-alt text-secondary me-2'></i>
+                  <span>{pickup.address}</span>
                </div>
+            </div>
 
+            {/* DELIVERY DETAILS */}
+            <div className='col-lg col-xl'>
+               <div className='text-secondary mb-1' style={{ opacity: '0.5' }}><SmallHeader text='Delivery Details' /></div>
+
+               <div className='delivery'>
+                  <i className='bi bi-clock text-secondary me-2'></i>
+                  <span style={{ letterSpacing: '2px' }}>{deliveryTimeString}</span>
+                  <br />
+                  <i className='bi bi-calendar4-event text-secondary me-2'></i>
+                  <span className='text-capitalize'>{datePrettyString({ dateString: delivery.date })}</span>
+                  <br />
+                  <i className='bi bi-geo-alt text-secondary me-2'></i>
+                  <span>{delivery.address}</span>
+               </div>
             </div>
          </div>
-      </motion.div >
+
+         {expandAdditionalInfo &&
+            <div className='additionalInfo mt-3'>
+               {/* TABS AND CONTENT */}
+               <div className='tabs d-flex text-secondary fs-smaller mb-2'>
+                  {
+                     tabs.map(tab => {
+                        const { name, icon } = tab;
+                        const isSelected = selectedTab === name;
+
+                        return (
+                           <button
+                              key={name}
+                              className='text-center border-top-0 border-end-0 border-start-0 cursor-pointer flex-grow-1'
+                              onClick={() => setSelectedTab(name)}
+                              style={{
+                                 backgroundColor: isSelected ? 'var(--mainPalette9)' : 'transparent',
+                                 borderBottomWidth: '1px',
+                                 borderBottomStyle: 'solid',
+                                 borderBottomColor: isSelected ? 'var(--mainPalette4)' : 'var(--bs-gray-300)',
+                                 color: isSelected ? 'var(--mainPalette4)' : 'inherit',
+                                 opacity: isSelected ? '1' : '0.5',
+                                 transition: 'all 0.2s ease-in-out'
+                              }}
+                              type='button'
+                           >
+                              <i className={icon}></i><span className='ms-2'>{name}</span>
+                           </button>
+                        )
+                     })
+                  }
+               </div>
+
+               {/* CONTENT 1: THIS IS DISPLAYED WHEN SELECTING TAB 1: INFO */}
+               {
+                  (selectedTab === tabs[0].name) &&
+                  <>
+                     {/* PARCEL */}
+                     <div className='row mb-1'>
+                        <div className='col-sm-2 text-sm-end text-secondary'>
+                           <SmallHeader text='Parcel' />
+                        </div>
+                        <div className='col-sm-10'>
+                           {parcel}
+                        </div>
+                     </div>
+                     {/* DRIVERS */}
+                     <div className='row mb-1'>
+                        <div className='col-sm-2 text-sm-end text-secondary'>
+                           <SmallHeader text={`Driver${drivers.length > 1 ? 's' : ''}`} />
+                        </div>
+                        <div className='col-sm-10'>
+                           {
+                              drivers.map(driver => (
+                                 <div key={driver._id}>{driver.fullName}</div>
+                              ))
+                           }
+                        </div>
+                     </div>
+
+                     {/* CREATED BY */}
+                     <div className='row mb-1'>
+                        <div className='col-sm-2 text-sm-end text-secondary'>
+                           <SmallHeader text='Creator' />
+                        </div>
+                        <div className='col-sm-10'>
+                           {createdBy.fullName}
+                        </div>
+                     </div>
+
+                     {/* CREATED AT */}
+                     <div className='row'>
+                        <div className='col-sm-2 text-sm-end text-secondary'>
+                           <SmallHeader text='Created' />
+                        </div>
+                        <div className='col-sm-10 text-capitalize'>
+                           {datePrettyString({ dateString: createdAt })}
+                        </div>
+                     </div>
+                  </>
+               }
+            </div>
+         }
+      </div>
    );
 };
 

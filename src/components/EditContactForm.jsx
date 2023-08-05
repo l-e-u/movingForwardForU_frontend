@@ -107,7 +107,7 @@ const EditContactForm = ({ currentContact, hideForm }) => {
    };
 
    return (
-      <Modal blurBackdrop={true}>
+      <Modal blurBackdrop={true} topMarginIsFixed={true}>
          <button
             className={closeButtonClasses}
             onClick={hideForm}
