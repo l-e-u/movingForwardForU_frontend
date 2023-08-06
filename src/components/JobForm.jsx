@@ -7,7 +7,7 @@ import FormHeader from './FormHeader';
 import FeeSelect from './FeeSelect';
 import NotesInput from './NotesInput';
 import PickupOrDeliveryInput from './PickupOrDeliveryInput';
-import MilitaryTimeInput from './MilitaryTimeInput';
+import MilitaryTimeSelect from './MilitaryTimeSelect';
 import SmallHeader from './SmallHeader';
 import StatusSelect from './StatusSelect';
 import SubmitButton from './SubmitButton';
@@ -94,12 +94,12 @@ const JobForm = ({
             </div>
 
             {/* RADIO BUTTONS: PICKUP AND DELIVERY SELECTIONS */}
-            <div className='d-flex justify-content-between justify-content-sm-around'>
+            <div className='d-flex justify-content-between justify-content-sm-around mb-2'>
 
                <div className='d-flex align-items-center gap-2'>
                   <input
                      checked={addressRadio === 'pickup'}
-                     className='form-check-input fs-smaller cursor-pointer'
+                     className='form-check-input fs-smaller cursor-pointer m-0'
                      id='addressRadioPickup'
                      onChange={() => setAddressRadio('pickup')}
                      type='radio'
@@ -112,7 +112,7 @@ const JobForm = ({
                <div className='d-flex align-items-center gap-2'>
                   <input
                      checked={addressRadio === 'delivery'}
-                     className='form-check-input fs-smaller cursor-pointer'
+                     className='form-check-input fs-smaller cursor-pointer m-0'
                      id='addressRadioDelivery'
                      onChange={() => setAddressRadio('delivery')}
                      type='radio'
@@ -132,12 +132,12 @@ const JobForm = ({
                </div>
                <div className='col-sm-10'>
                   <DateInput
-                     input={pickup.date}
+                     input={job[addressRadio].date}
                      setInput={(input) => {
                         setJob({
                            ...job,
-                           pickup: {
-                              ...job.pickup,
+                           [addressRadio]: {
+                              ...job[addressRadio],
                               date: input
                            }
                         })
@@ -146,19 +146,20 @@ const JobForm = ({
                </div>
             </div>
 
+            {/* TIME */}
             <div className='row mb-3'>
                <div className='col-sm-2 d-flex justify-content-start justify-content-sm-end align-items-center text-secondary'>
                   <SmallHeader text='Time' />
                </div>
                <div className='col-sm-10'>
-                  <MilitaryTimeInput
-                     input={pickup.date}
-                     setInput={(input) => {
+                  <MilitaryTimeSelect
+                     date={job[addressRadio].date}
+                     setTime={date => {
                         setJob({
                            ...job,
-                           pickup: {
-                              ...job.pickup,
-                              date: input
+                           [addressRadio]: {
+                              ...job[addressRadio],
+                              date
                            }
                         })
                      }}
@@ -167,12 +168,12 @@ const JobForm = ({
             </div>
 
             {/* RADIO BUTTONS: CONTACT AND GOOGLE SELECTIONS */}
-            <div className='d-flex justify-content-between justify-content-sm-around'>
+            <div className='d-flex justify-content-between justify-content-sm-around mb-2'>
 
                <div className='d-flex align-items-center gap-2'>
                   <input
                      checked={searchRadio === 'contacts'}
-                     className='form-check-input fs-smaller cursor-pointer'
+                     className='form-check-input fs-smaller cursor-pointer m-0'
                      id='searchRadioPickup'
                      onChange={() => setAddressRadio('contacts')}
                      type='radio'
@@ -185,7 +186,7 @@ const JobForm = ({
                <div className='d-flex align-items-center gap-2'>
                   <input
                      checked={searchRadio === 'google'}
-                     className='form-check-input fs-smaller cursor-pointer'
+                     className='form-check-input fs-smaller cursor-pointer m-0'
                      id='searchRadioDelivery'
                      onChange={() => setAddressRadio('google')}
                      type='radio'
@@ -197,51 +198,57 @@ const JobForm = ({
 
             </div>
 
-
-            {/* REFERENCE INPUT */}
-            <div className='row mb-3'>
-               <div className='col-sm-2 d-flex justify-content-start justify-content-sm-end align-items-center text-secondary'>
-                  <SmallHeader text='Reference' />
-               </div>
-               <div className='col-sm-10'>
-                  <TextInput input={job.reference} setInput={input => setJob(prev => ({ ...prev, reference: input }))} />
-               </div>
-            </div>
-
-            {/* PARCEL INPUT */}
-            <div className='row mb-3'>
-               <div className='col-sm-2 d-flex justify-content-start justify-content-sm-end align-items-center text-secondary'>
-                  <SmallHeader text='Parcel' />
-               </div>
-               <div className='col-sm-10'>
-                  <TextInput input={job.parcel} setInput={input => setJob(prev => ({ ...prev, parcel: input }))} />
-               </div>
-            </div>
-
-            {/* MILEAGE INPUT */}
-            <div className='row mb-3'>
-               <div className='col-sm-2 d-flex justify-content-start justify-content-sm-end align-items-center text-secondary'>
-                  <SmallHeader text='Mileage' />
-               </div>
-               <div className='col-sm-10'>
-                  <TextInput input={job.mileage} setInput={input => setJob(prev => ({ ...prev, mileage: isNaN(input) ? 0 : Number(input) }))} />
-               </div>
-            </div>
-
-            {/* DRIVER SELECTION */}
-            <div className='row mb-3'>
-               <div className='col-sm-2 d-flex justify-content-start justify-content-sm-end align-items-center text-secondary'>
-                  <SmallHeader text='Drivers' />
-               </div>
-               <div className='col-sm-10'>
-                  <UserSelect setUser={drivers => setJob(prev => ({ ...prev, drivers }))}
-                  />
-               </div>
-            </div>
-
          </div>
 
          <Tabs tabs={[
+            {
+               name: 'Optional',
+               icon: 'bi bi-plus-slash-minus',
+               contentJSX: (
+                  <>
+                     {/* DRIVER SELECTION */}
+                     <div className='row mb-3'>
+                        <div className='col-sm-2 d-flex justify-content-start justify-content-sm-end align-items-center text-secondary'>
+                           <SmallHeader text='Drivers' />
+                        </div>
+                        <div className='col-sm-10'>
+                           <UserSelect setUser={drivers => setJob(prev => ({ ...prev, drivers }))}
+                           />
+                        </div>
+                     </div>
+
+                     {/* REFERENCE INPUT */}
+                     <div className='row mb-3'>
+                        <div className='col-sm-2 d-flex justify-content-start justify-content-sm-end align-items-center text-secondary'>
+                           <SmallHeader text='Reference' />
+                        </div>
+                        <div className='col-sm-10'>
+                           <TextInput input={job.reference} setInput={input => setJob(prev => ({ ...prev, reference: input }))} />
+                        </div>
+                     </div>
+
+                     {/* PARCEL INPUT */}
+                     <div className='row mb-3'>
+                        <div className='col-sm-2 d-flex justify-content-start justify-content-sm-end align-items-center text-secondary'>
+                           <SmallHeader text='Parcel' />
+                        </div>
+                        <div className='col-sm-10'>
+                           <TextInput input={job.parcel} setInput={input => setJob(prev => ({ ...prev, parcel: input }))} />
+                        </div>
+                     </div>
+
+                     {/* MILEAGE INPUT */}
+                     <div className='row mb-3'>
+                        <div className='col-sm-2 d-flex justify-content-start justify-content-sm-end align-items-center text-secondary'>
+                           <SmallHeader text='Mileage' />
+                        </div>
+                        <div className='col-sm-10'>
+                           <TextInput input={job.mileage} setInput={input => setJob(prev => ({ ...prev, mileage: isNaN(input) ? 0 : Number(input) }))} />
+                        </div>
+                     </div>
+                  </>
+               )
+            },
             {
                name: 'Notes',
                icon: 'bi bi-sticky',

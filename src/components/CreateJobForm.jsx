@@ -51,7 +51,7 @@ const CreateJobForm = ({ hideForm }) => {
             error={error}
             handleSubmit={async (e) => {
                e.preventDefault();
-
+               return console.log(job)
                const jobCreated = await createJob({
                   ...job,
                   customer: job.customer?._id,

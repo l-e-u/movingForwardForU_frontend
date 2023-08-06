@@ -11,7 +11,7 @@ const Tabs = ({ tabs }) => {
    };
 
    // contains all the tab buttons
-   const tabButtonsContainerClasses = 'tabs d-flex fs-smaller mb-2';
+   const tabButtonsContainerClasses = 'tabs d-flex fs-smaller mb-3';
 
    // variants and styles for the tab buttons
    const tabButtonClasses = 'text-center rounded-top border-top-0 border-end-0 border-start-0 cursor-pointer flex-grow-1 pt-1';

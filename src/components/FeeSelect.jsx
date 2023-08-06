@@ -8,26 +8,60 @@ import { useFeesContext } from '../hooks/useFeesContext';
 // components
 import ErrorAlert from './ErrorAlert';
 
-const FeeSelect = ({ placeholder, selectedFees, setFee }) => {
+const FeeSelect = ({ selectedFees, setFees }) => {
    const { getFees, error, isLoading } = useGetFees();
    const { fees } = useFeesContext();
 
-   const selectedOptions = [];
+   const feeOptions = [];
 
-   // only list fees that have not been selected to avoid duplicates
-   for (let index = 0; index < fees.length; index++) {
-      const { _id, name, amount } = fees[index];
+   // return all the fees that match the options the user has selected
+   const handleOnChange = (selectedOptions) => {
+      setFees(
+         fees.filter(fee => (
+            selectedOptions.find(option => (
+               fee._id === option.value._id
+            ))
+         ))
+      );
+   };
 
-      // label is what is listed on the options
-      if (selectedFees.find(selectedFee => _id === selectedFee._id)) continue;
-      selectedOptions.push({
-         label: `${name}\n$${amount.toFixed(2)}`,
-         value: _id
+   // return all the options that match the fees the user has selected
+   const getSelectedOptions = () => (
+      feeOptions.filter(option => (
+         selectedFees.find(fee => (
+            option.value._id === fee._id
+         ))
+      ))
+   );
+
+   const feeSelectStyles = {
+      option: (base) => ({
+         ...base,
+         whiteSpace: 'pre-wrap'
+      }),
+      multiValue: (base) => ({
+         ...base,
+         backgroundColor: 'var(--bs-gray-100)'
+      }),
+      multiValueLabel: (base) => ({
+         ...base,
+         color: 'var(--mainPalette2)',
+      }),
+      multiValueRemove: (base) => ({
+         ...base,
+         color: 'red'
       })
    };
 
-   // fee can selected multiple drivers, clearing returns an array
-   const handleOnChange = (selectedOption) => setFee(fees.find(fee => selectedOption.value === fee._id));
+   // create the fee options to be listed
+   fees.forEach(fee => {
+      const { amount, name } = fee;
+
+      feeOptions.push({
+         label: `${name}\n$${amount.toFixed(2)}`,
+         value: fee
+      })
+   });
 
    // only on initial mount, fetch fees
    useEffect(() => {
@@ -40,24 +74,20 @@ const FeeSelect = ({ placeholder, selectedFees, setFee }) => {
 
    return (
       <Select
-         classNamePrefix='mySelectInpu'
+         classNamePrefix='mySelectInput'
          hideSelectedOptions={true}
+         isClearable={false}
          isDisabled={isLoading}
          isLoading={isLoading}
-         isClearable
+         isMulti
          isSearchable
          loadingMessage={() => 'Loading...'}
          noOptionsMessage={() => 'No results.'}
-         placeholder={placeholder || ''}
-         options={selectedOptions}
          onChange={handleOnChange}
-         styles={{
-            option: (base) => ({
-               ...base,
-               whiteSpace: 'pre-wrap'
-            })
-         }}
-         value={null}
+         options={feeOptions}
+         placeholder=''
+         styles={feeSelectStyles}
+         value={getSelectedOptions()}
       />
    )
 };
