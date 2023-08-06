@@ -9,7 +9,7 @@ const TextInput = ({ input, placeholder, prefixText, setInput, type }) => {
    const prefixClasses = 'position-absolute ps-2 top-50 start-0 translate-middle-y text-secondary';
    const prefixStyles = { opacity: '0.5' };
 
-   const inputClasses = 'myTextInput w-100 rounded-1';
+   const inputClasses = 'myTextInput w-100 rounded-1 text-reset';
    const inputVariants = {
       mount: {
          border: '1px solid var(--bs-gray-400)',

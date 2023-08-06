@@ -45,7 +45,7 @@ const FeeSelect = ({ selectedFees, setFees }) => {
       }),
       multiValueLabel: (base) => ({
          ...base,
-         color: 'var(--mainPalette2)',
+         color: 'var(--mainPalette1)',
       }),
       multiValueRemove: (base) => ({
          ...base,

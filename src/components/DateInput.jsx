@@ -21,17 +21,7 @@ const DateInput = ({ input, setInput }) => {
       <motion.input
          className={inputClasses}
          initial='mount'
-         onChange={e => {
-            const date = e.target.valueAsDate;
-
-            // date input is based on UTC
-            // this will bring the time to midnight on today's date in local timezone
-            if (date) {
-               date.setMinutes(date.getMinutes() + date.getTimezoneOffset());
-            };
-
-            setInput(date);
-         }}
+         onChange={e => setInput(e.target.valueAsDate)}
          type='date'
          value={valueString}
          variants={inputVariants}

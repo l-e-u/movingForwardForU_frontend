@@ -1,7 +1,8 @@
 import Select from 'react-select';
+import SmallHeader from './SmallHeader';
 
 // accepts a date object and adjusts the time
-const MilitaryTimeSelect = ({ date, setTime }) => {
+const MilitaryTimeSelect = ({ date, isDisabled, setTime }) => {
    const dateCopy = new Date(date);
    const hours = dateCopy.getHours();
    const minutes = dateCopy.getMinutes();
@@ -26,7 +27,6 @@ const MilitaryTimeSelect = ({ date, setTime }) => {
    dateCopy.setSeconds(0);
    dateCopy.setMilliseconds(0);
 
-   console.log(dateCopy)
    // create the selectable options for the hours
    for (let hr = 0; hr < 24; hr++) {
       hourOptions.push({
@@ -44,31 +44,37 @@ const MilitaryTimeSelect = ({ date, setTime }) => {
    };
 
    return (
-      <div className='container-fluid p-0'>
-         <div className='row'>
-            <div className='col-6 col-sm-7'>
-               <Select
-                  classNamePrefix='mySelectInput'
-                  closeMenuOnSelect={true}
-                  isSearchable
-                  noOptionsMessage={() => 'Invalid.'}
-                  onChange={handleOnChange({ forHours: true })}
-                  options={hourOptions}
-                  value={hourOptions[hours]}
-               />
-            </div>
+      <div className='d-flex justify-content-center gap-3'>
+         <div className='flex-grow-1' >
+            <span className='text-secondary' style={{ opacity: '0.5' }}>
+               <SmallHeader text='24Hr' />
+            </span>
+            <Select
+               classNamePrefix='mySelectInput'
+               closeMenuOnSelect={true}
+               isDisabled={isDisabled}
+               isSearchable
+               noOptionsMessage={() => 'Invalid.'}
+               onChange={handleOnChange({ forHours: true })}
+               options={hourOptions}
+               value={hourOptions[hours]}
+            />
+         </div>
 
-            <div className='col-6 col-sm-5'>
-               <Select
-                  classNamePrefix='mySelectInput'
-                  closeMenuOnSelect={true}
-                  isSearchable
-                  noOptionsMessage={() => 'Invalid.'}
-                  onChange={handleOnChange({ forMinutes: true })}
-                  options={minuteOptions}
-                  value={minuteOptions[minutes]}
-               />
-            </div>
+         <div className='flex-grow-1'>
+            <span className='text-secondary' style={{ opacity: '0.5' }}>
+               <SmallHeader text='Min' />
+            </span>
+            <Select
+               classNamePrefix='mySelectInput'
+               closeMenuOnSelect={true}
+               isDisabled={isDisabled}
+               isSearchable
+               noOptionsMessage={() => 'Invalid.'}
+               onChange={handleOnChange({ forMinutes: true })}
+               options={minuteOptions}
+               value={minuteOptions[minutes]}
+            />
          </div>
       </div>
    )
