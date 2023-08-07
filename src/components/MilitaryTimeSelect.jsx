@@ -44,37 +44,39 @@ const MilitaryTimeSelect = ({ date, isDisabled, setTime }) => {
    };
 
    return (
-      <div className='d-flex justify-content-center gap-3'>
-         <div className='flex-grow-1' >
-            <span className='text-secondary' style={{ opacity: '0.5' }}>
-               <SmallHeader text='24Hr' />
-            </span>
-            <Select
-               classNamePrefix='mySelectInput'
-               closeMenuOnSelect={true}
-               isDisabled={isDisabled}
-               isSearchable
-               noOptionsMessage={() => 'Invalid.'}
-               onChange={handleOnChange({ forHours: true })}
-               options={hourOptions}
-               value={hourOptions[hours]}
-            />
-         </div>
+      <div className='container-fluid p-0'>
+         <div className='row'>
+            <div className='col-6' >
+               <span className='text-secondary' style={{ opacity: '0.5' }}>
+                  <SmallHeader text='24Hr' />
+               </span>
+               <Select
+                  classNamePrefix='mySelectInput'
+                  closeMenuOnSelect={true}
+                  isDisabled={isDisabled}
+                  isSearchable
+                  noOptionsMessage={() => 'Invalid.'}
+                  onChange={handleOnChange({ forHours: true })}
+                  options={hourOptions}
+                  value={hourOptions[hours]}
+               />
+            </div>
 
-         <div className='flex-grow-1'>
-            <span className='text-secondary' style={{ opacity: '0.5' }}>
-               <SmallHeader text='Min' />
-            </span>
-            <Select
-               classNamePrefix='mySelectInput'
-               closeMenuOnSelect={true}
-               isDisabled={isDisabled}
-               isSearchable
-               noOptionsMessage={() => 'Invalid.'}
-               onChange={handleOnChange({ forMinutes: true })}
-               options={minuteOptions}
-               value={minuteOptions[minutes]}
-            />
+            <div className='col-6'>
+               <span className='text-secondary' style={{ opacity: '0.5' }}>
+                  <SmallHeader text='Min' />
+               </span>
+               <Select
+                  classNamePrefix='mySelectInput'
+                  closeMenuOnSelect={true}
+                  isDisabled={isDisabled}
+                  isSearchable
+                  noOptionsMessage={() => 'Invalid.'}
+                  onChange={handleOnChange({ forMinutes: true })}
+                  options={minuteOptions}
+                  value={minuteOptions[minutes]}
+               />
+            </div>
          </div>
       </div>
    )

@@ -11,19 +11,23 @@ const Tabs = ({ tabs }) => {
    };
 
    // contains all the tab buttons
-   const tabButtonsContainerClasses = 'tabs d-flex fs-smaller mb-3';
+   const tabButtonsContainerClasses = 'tabs d-flex fs-smaller';
+
+   const contentContainerClasses = 'border-top-0 border-start-0 rounded-bottom p-3';
+   const contentContainerStyles = {
+      borderBottom: '1px solid var(--mainPalette7)',
+      borderRight: '1px solid var(--mainPalette7)',
+      backgroundColor: 'var(--mainPalette9)'
+   }
 
    // variants and styles for the tab buttons
-   const tabButtonClasses = 'text-center rounded-top border-top-0 border-end-0 border-start-0 cursor-pointer flex-grow-1 pt-1';
+   const tabButtonClasses = 'text-center border-top-0 border-start-0 rounded-top cursor-pointer flex-grow-1 pt-2 pb-1';
 
    const setTabButtonStyles = (tabIsSelected) => ({
-      borderBottomWidth: '1px',
-      borderBottomStyle: 'solid',
-      transition: 'all 0.2s ease-in-out',
-      backgroundColor: tabIsSelected ? 'var(--mainPalette9)' : 'transparent',
-      borderBottomColor: tabIsSelected ? 'var(--mainPalette4)' : 'var(--bs-gray-500)',
+      borderBottom: tabIsSelected ? '1px solid transparent' : '1px solid var(--mainPalette7)',
+      borderRight: tabIsSelected ? '1px solid var(--mainPalette7)' : '1px solid var(--bs-gray-400)',
+      backgroundColor: tabIsSelected ? 'var(--mainPalette9)' : 'var(--bs-gray-100)',
       color: tabIsSelected ? 'var(--mainPalette4)' : 'var(--bs-secondary)',
-      opacity: tabIsSelected ? 1 : 0.5,
    });
 
    // icon on the tab button
@@ -45,16 +49,16 @@ const Tabs = ({ tabs }) => {
                         onClick={handleTabOnClick(index)}
                         type='button'
                      >
-                        <i className={`${iconClasses} ${icon}`}></i>
-                        <span>{name}</span>
+                        <i className={`${iconClasses} ${icon}`} style={{ opacity: isSelected ? '1' : '0.5' }}></i>
+                        <span style={{ opacity: isSelected ? '1' : '0.5' }}>{name}</span>
                      </button>
                   );
                })
             }
          </div>
-         <>
+         <div className={contentContainerClasses} style={contentContainerStyles}>
             {tabs[selectedTabIndex].contentJSX}
-         </>
+         </div>
       </>
    )
 };
