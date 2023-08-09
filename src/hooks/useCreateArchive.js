@@ -39,11 +39,11 @@ export const useCreateArchive = () => {
             }
          }),
          billing: job.billing.map(bill => {
-            const amountIsAdjusted = (bill.adjustedAmount !== null);
+            const amountIsAdjusted = (bill.overrideAmount !== null);
             return {
-               feeName: bill.fee.name,
-               baseAmount: bill.fee.amount,
-               finalAmount: amountIsAdjusted ? bill.adjustedAmount : bill.fee.amount
+               feeName: bill.name,
+               baseAmount: bill.amount,
+               finalAmount: amountIsAdjusted ? bill.overrideAmount : bill.amount
             }
          })
       }

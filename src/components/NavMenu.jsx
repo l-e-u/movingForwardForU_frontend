@@ -11,7 +11,7 @@ import logo from '../assets/movingForwardArrows.svg';
 const NavMenu = ({ selectedLink, setSelectedLink }) => {
    const links = [
       { name: 'My Jobs', path: '/', icon: 'bi-list-check' },
-      { name: 'Jobs', path: '/jobs', icon: 'bi-view-list' },
+      { name: 'Jobs', path: '/jobs', icon: 'bi-truck' },
       { name: 'Contacts', path: '/contacts', icon: 'bi-person-vcard' },
       { name: 'Statuses', path: '/statuses', icon: 'bi-tags' },
       { name: 'Users', path: '/users', icon: 'bi-people' },
@@ -73,9 +73,15 @@ const NavMenu = ({ selectedLink, setSelectedLink }) => {
                }}
             >
                <div
-                  className='navItem rounded px-4 py-1 d-flex justify-content-start align-items-center'
+                  className='navItem rounded px-3 py-1 d-flex justify-content-start align-items-center'
                   style={{
                      transition: 'all .2s ease-in-out',
+                     borderWidth: '1px',
+                     borderStyle: 'solid',
+                     borderTopColor: 'transparent',
+                     borderRightColor: isSelected ? 'var(--mainPalette7)' : 'transparent',
+                     borderBottomColor: isSelected ? 'var(--mainPalette7)' : 'transparent',
+                     borderLeftColor: 'transparent',
                      color: isSelected ? 'var(--mainPalette4)' : 'var(--bs-secondary)',
                      backgroundColor: isSelected ? 'var(--mainPalette8)' : 'transparent',
                      opacity: isSelected ? '1' : '0.5',

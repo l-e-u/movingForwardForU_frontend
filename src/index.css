@@ -88,6 +88,10 @@ button.page-link:disabled, .submitButton:disabled {
    opacity: 0.5;
 }
 
+.mySelectInput__control--menu-is-open .myOptionEditButton {
+   display: none !important;
+}
+
 .fs-smaller  {
   font-size: .75rem !important;
 }

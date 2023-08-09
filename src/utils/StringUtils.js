@@ -29,8 +29,11 @@ export const dateStringFormat = (date) => {
    return `${day} ${month} ${year}`;
 };
 
-export const datePrettyString = ({ dateString }) => {
-   const date = new Date(dateString);
+export const datePrettyString = ({ dateObject, dateString, includeTime }) => {
+   let date = dateObject;
+
+   if (dateString) date = new Date(dateString);
+
    const monthNames = [
       { abbr: 'jan', full: 'january' },
       { abbr: 'feb', full: 'february' },
@@ -59,8 +62,21 @@ export const datePrettyString = ({ dateString }) => {
    const month = monthNames[date.getMonth()].full.padStart(2, '0');
    const day = date.getDate().toString().padStart(2, '0');
    const weekday = weekdayNames[date.getDay()].full;
+   const prettyDate = `${weekday}, ${day} ${month} ${year}`;
+   let prettyTime = '';
 
-   return `${weekday}, ${day} ${month} ${year}`;
+   if (includeTime) {
+      let hours = date.getHours();
+      const meridiem = hours < 12 ? 'AM' : 'PM';
+      const minutes = date.getMinutes();
+
+      hours %= 12;
+
+      if (hours === 0) hours = 12;
+      prettyTime = `${hours}:${minutes} ${meridiem}, `;
+   };
+
+   return prettyTime + prettyDate;
 };
 
 export const timeStringFormat = ({ dateString, showMilitary, showTimezone = false }) => {

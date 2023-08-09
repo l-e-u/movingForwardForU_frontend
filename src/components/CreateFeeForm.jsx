@@ -7,6 +7,9 @@ import { useCreateFee } from '../hooks/useCreateFee';
 import FeeForm from './FeeForm';
 import Modal from './Modal';
 
+// utilities
+import { removeCommasFromString } from '../utils/StringUtils';
+
 const CreateFeeForm = ({ hideForm }) => {
    const { createFee, error, isLoading } = useCreateFee();
 
@@ -28,7 +31,11 @@ const CreateFeeForm = ({ hideForm }) => {
    const handleOnSubmit = async (e) => {
       e.preventDefault();
 
-      const feeCreated = await createFee(fee);
+      const feeCreated = await createFee({
+         ...fee,
+         amount: removeCommasFromString(fee.amount)
+      });
+
       if (feeCreated) hideForm();
    };
 

@@ -19,9 +19,9 @@ const FeesList = ({ billing }) => {
    return (
       <ul className={listClasses} style={listStyles}>
          {billing.map(bill => {
-            const { adjustedAmount, fee } = bill;
-            const isAdjusted = adjustedAmount !== null;
-            const amount = isAdjusted ? adjustedAmount : fee.amount;
+            const { overrideAmount, fee } = bill;
+            const isAdjusted = overrideAmount !== null;
+            const amount = isAdjusted ? overrideAmount : fee.amount;
             let currency = formatCurrency(amount, true);
 
             if (amount < 0) currency = `(-${currency})`;

@@ -26,10 +26,12 @@ const Jobs = ({
    const [totalResults, setTotalResults] = useState(0);
 
    // button to add new documents classes, styles, and framer-motion variants
-   const addButtonClasses = 'px-3 py-1 ms-auto position-relative border-0 rounded text-white d-flex justify-content-center align-items-center gap-1';
+   const addButtonClasses = 'px-3 py-1 ms-auto position-relative border-start-0 border-top-0 rounded text-white d-flex justify-content-center align-items-center gap-1';
    const addButtonVariants = {
       mount: {
          backgroundColor: 'var(--mainPalette4)',
+         borderRight: '1px solid var(--mainPalette2)',
+         borderBottom: '1px solid var(--mainPalette2)'
       },
       onHover: {
          scale: 1.1,
@@ -82,6 +84,8 @@ const Jobs = ({
       });
    }, [currentPage, filters, limit]);
 
+   console.log(jobs)
+
    return (
       <>
          <AnimatePresence>
@@ -102,7 +106,7 @@ const Jobs = ({
                whileHover='onHover'
             >
                <i className='bi bi-plus'></i>
-               <i className='bi bi-person-vcard'></i>
+               <i className='bi bi-truck'></i>
             </motion.button>
          </div>
 

@@ -1,6 +1,3 @@
-import { useState } from 'react';
-import { motion } from 'framer-motion';
-
 // components
 import ErrorAlert from './ErrorAlert';
 import FeeSelect from './FeeSelect';
@@ -8,8 +5,12 @@ import FormHeader from './FormHeader';
 import GrowingTextArea from './GrowingTextArea';
 import SmallHeader from './SmallHeader';
 import SubmitButton from './SubmitButton';
+import Tabs from './Tabs';
 import TextInput from './TextInput';
 
+// utilities
+import { feesTotal } from '../utils/NumberUtils';
+import { formatToCurrencyString } from '../utils/StringUtils';
 
 const ContactForm = ({
    contact,
@@ -34,28 +35,13 @@ const ContactForm = ({
       phoneNumber,
       website,
    } = contact;
-   const [selectedTab, setSelectedTab] = useState('Info');
-   const tabs = [
-      {
-         name: 'Info',
-         icon: 'bi bi-person-rolodex'
-      },
-      {
-         name: 'Fees',
-         icon: 'bi bi-cash-stack'
-      },
-      {
-         name: 'Note',
-         icon: 'bi bi-sticky'
-      }
-   ];
-
-   // styles for the form
-   const formClasses = 'newFeeForm position-relative p-4 pb-5 text-reset shadow bg-white rounded-4';
-   const formStyles = { width: '90vw', maxWidth: '700px' };
 
    return (
-      <form className={formClasses} onSubmit={handleSubmit} style={formStyles} >
+      <form
+         className='newFeeForm position-relative p-4 pb-5 text-reset shadow bg-white rounded-4'
+         onSubmit={handleSubmit}
+         style={{ width: '90vw', maxWidth: '700px' }}
+      >
          <FormHeader text={heading} />
          <p className='text-secondary whiteSpace-preWrap fs-smaller mb-4'>{subHeading}</p>
 
@@ -75,8 +61,8 @@ const ContactForm = ({
                </div>
             </div>
 
-            {/* ADDRESS */}
-            <div className='address row mb-3'>
+            {/* BILLING ADDRESS */}
+            <div className='address row mb-4'>
                <div className='col-sm-3 col-md-2 d-flex justify-content-start justify-content-sm-end align-items-center text-secondary'>
                   <SmallHeader text='Address' />
                </div>
@@ -90,139 +76,138 @@ const ContactForm = ({
             </div>
 
             {/* TABS AND CONTENT */}
-            <div className='tabs d-flex text-secondary fs-smaller mb-3 mt-4'>
+            <Tabs tabs={[
                {
-                  tabs.map(tab => {
-                     const { name, icon } = tab;
-                     const isSelected = selectedTab === name;
+                  name: 'Info',
+                  icon: 'bi bi-person-rolodex',
+                  contentJSX: (
+                     <>
+                        <div className='billingAddress row mb-3'>
+                           <div className='col-sm-3 col-md-2 d-flex justify-content-start justify-content-sm-end align-items-center text-secondary text-end'>
+                              <SmallHeader text='Billing Address' />
+                           </div>
+                           <div className='col-sm-9 col-md-10'>
+                              <TextInput
+                                 input={billingAddress}
+                                 setInput={input => setContact({ ...contact, billingAddress: input })}
+                              />
+                           </div>
+                        </div>
 
-                     return (
-                        <button
-                           key={name}
-                           className='text-center border-top-0 border-end-0 border-start-0 cursor-pointer flex-grow-1'
-                           onClick={() => setSelectedTab(name)}
-                           style={{
-                              backgroundColor: isSelected ? 'var(--mainPalette9)' : 'transparent',
-                              borderBottomWidth: '1px',
-                              borderBottomStyle: 'solid',
-                              borderBottomColor: isSelected ? 'var(--mainPalette4)' : 'var(--bs-gray-300)',
-                              color: isSelected ? 'var(--mainPalette4)' : 'inherit',
-                              opacity: isSelected ? '1' : '0.5',
-                              transition: 'all 0.2s ease-in-out'
-                           }}
-                           type='button'
-                        >
-                           <i className={icon}></i><span className='ms-2'>{name}</span>
-                        </button>
-                     )
-                  })
+                        {/* NAME */}
+                        <div className='name row mb-3 mb-sm-2'>
+                           <div className='col-sm-3 col-md-2 d-flex justify-content-start justify-content-sm-end align-items-center text-secondary'>
+                              <SmallHeader text='Name' />
+                           </div>
+                           <div className='col-sm-9 col-md-10'>
+                              <TextInput
+                                 input={name}
+                                 setInput={input => setContact({ ...contact, name: input })}
+                              />
+                           </div>
+                        </div>
+
+                        {/* PHONE NUMBER AND EXTENTION */}
+                        <div className='phone row mb-3'>
+                           <div className='col-sm-3 col-md-2 d-flex justify-content-start justify-content-sm-end align-items-center text-secondary'>
+                              <span className='mt-auto mb-sm-2'>
+                                 <SmallHeader text='Phone' />
+                              </span>
+                           </div>
+                           <div className='col-sm-9 col-md-10'>
+
+                              <div className='container-fluid p-0'>
+                                 <div className='number ext row'>
+                                    <div className='col-8'>
+                                       <span className='text-secondary' style={{ opacity: '0.5' }}>
+                                          <SmallHeader text='Number' />
+                                       </span>
+                                       <TextInput
+                                          input={phoneNumber}
+                                          prefixText='+1'
+                                          setInput={input => setContact({ ...contact, phoneNumber: input })}
+                                       />
+                                    </div>
+
+                                    <div className='col-4'>
+                                       <span className='text-secondary' style={{ opacity: '0.5' }}>
+                                          <SmallHeader text='Ext' />
+                                       </span>
+                                       <TextInput
+                                          input={phoneExt}
+                                          setInput={input => setContact({ ...contact, phoneExt: input })}
+                                       />
+                                    </div>
+                                 </div>
+                              </div>
+
+                           </div>
+                        </div>
+
+                        {/* EMAIL */}
+                        <div className='email row mb-3'>
+                           <div className='col-sm-3 col-md-2 d-flex justify-content-start justify-content-sm-end align-items-center text-secondary'>
+                              <SmallHeader text='Email' />
+                           </div>
+                           <div className='col-sm-9 col-md-10'>
+                              <TextInput
+                                 input={email}
+                                 setInput={input => setContact({ ...contact, email: input })}
+                                 type='email'
+                              />
+                           </div>
+                        </div>
+
+                        {/* WEBSITE */}
+                        <div className='website row'>
+                           <div className='col-sm-3 col-md-2 d-flex justify-content-start justify-content-sm-end align-items-center text-secondary'>
+                              <SmallHeader text='Website' />
+                           </div>
+                           <div className='col-sm-9 col-md-10'>
+                              <TextInput
+                                 input={website}
+                                 setInput={input => setContact({ ...contact, website: input })}
+                              />
+                           </div>
+                        </div>
+                     </>
+                  )
+               },
+               {
+                  name: 'Fees',
+                  icon: 'bi bi-cash-stack',
+                  contentJSX: (
+                     <>
+                        <p className='fs-smaller text-secondary mb-2'>
+                           The fees selected here will automatically be added to the billing whenever this contact is selected as a customer on a job.
+                        </p>
+
+                        <div className='text-secondary text-end pe-2 pe-sm-5 mb-1'>
+                           <SmallHeader text={`Balance: $ ${formatToCurrencyString({ amount: feesTotal(defaultFees).toString(), setTwoDecimalPlaces: true })}`} />
+                        </div>
+
+                        <div className='defaultFeeSelect row mb-3'>
+                           <div className='col-sm-3 col-md-2 d-flex justify-content-start justify-content-sm-end align-items-center text-secondary'>
+                              <SmallHeader text='Default Fees' />
+                           </div>
+
+                           <div className='col-sm-9 col-md-10'>
+                              <FeeSelect
+                                 selectedFees={defaultFees}
+                                 setFees={fees => setContact({ ...contact, defaultFees: fees })}
+                              />
+                           </div>
+                        </div>
+                     </>
+                  )
+               },
+               {
+                  name: 'Note',
+                  icon: 'bi bi-sticky',
+                  contentJSX: <GrowingTextArea input={note} setInput={input => setContact({ ...contact, note: input })} />
                }
-            </div>
-
-            {/* CONTENT 1: THIS IS DISPLAYED WHEN SELECTING TAB 1: INFO */}
-            {
-               (selectedTab === tabs[0].name) &&
-               <>
-                  <div className='billingAddress row mb-3'>
-                     <div className='col-sm-3 col-md-2 d-flex justify-content-start justify-content-sm-end align-items-center text-secondary'>
-                        <SmallHeader text='Billing Address' />
-                     </div>
-                     <div className='col-sm-9 col-md-10'>
-                        <TextInput
-                           input={billingAddress}
-                           setInput={input => setContact({ ...contact, billingAddress: input })}
-                        />
-                     </div>
-                  </div>
-
-                  <div className='email row mb-3'>
-                     <div className='col-sm-3 col-md-2 d-flex justify-content-start justify-content-sm-end align-items-center text-secondary'>
-                        <SmallHeader text='Email' />
-                     </div>
-                     <div className='col-sm-9 col-md-10'>
-                        <TextInput
-                           input={email}
-                           setInput={input => setContact({ ...contact, email: input })}
-                           type='email'
-                        />
-                     </div>
-                  </div>
-
-                  <div className='name row mb-3'>
-                     <div className='col-sm-3 col-md-2 d-flex justify-content-start justify-content-sm-end align-items-center text-secondary'>
-                        <SmallHeader text='Name' />
-                     </div>
-                     <div className='col-sm-9 col-md-10'>
-                        <TextInput
-                           input={name}
-                           setInput={input => setContact({ ...contact, name: input })}
-                        />
-                     </div>
-                  </div>
-
-                  <div className='phoneNumber row mb-3'>
-                     <div className='col-sm-3 col-md-2 d-flex justify-content-start justify-content-sm-end align-items-center text-secondary'>
-                        <SmallHeader text='Phone' />
-                     </div>
-                     <div className='col-sm-9 col-md-10'>
-                        <TextInput
-                           input={phoneNumber}
-                           prefixText='+1'
-                           setInput={input => setContact({ ...contact, phoneNumber: input })}
-                        />
-                     </div>
-                  </div>
-
-                  <div className='phoneExt row mb-3'>
-                     <div className='col-sm-3 col-md-2 d-flex justify-content-start justify-content-sm-end align-items-center text-secondary'>
-                        <SmallHeader text='Ext' />
-                     </div>
-                     <div className='col-sm-9 col-md-10'>
-                        <TextInput
-                           input={phoneExt}
-                           setInput={input => setContact({ ...contact, phoneExt: input })}
-                        />
-                     </div>
-                  </div>
-
-                  <div className='website row'>
-                     <div className='col-sm-3 col-md-2 d-flex justify-content-start justify-content-sm-end align-items-center text-secondary'>
-                        <SmallHeader text='Website' />
-                     </div>
-                     <div className='col-sm-9 col-md-10'>
-                        <TextInput
-                           input={website}
-                           setInput={input => setContact({ ...contact, website: input })}
-                        />
-                     </div>
-                  </div>
-               </>
-            }
-
-            {/* CONTENT 2: THIS IS DISPLAYED WHEN SELECTING TAB 2: FEES */}
-            {
-               (selectedTab === tabs[1].name) &&
-               <>
-                  <p className='fs-smaller text-secondary'>The fees selected here will automatically be added to the billing whenever this contact is selected as a customer on a job.</p>
-                  <div className='feeSelect row mb-3'>
-                     <div className='col-sm-3 col-md-2 d-flex justify-content-start justify-content-sm-end align-items-center text-secondary'>
-                        <SmallHeader text='Default Fees' />
-                     </div>
-                     <div className='col-sm-9 col-md-10'>
-                        <FeeSelect
-                           selectedFees={defaultFees}
-                           setFees={fees => setContact({ ...contact, defaultFees: fees })}
-                        />
-                     </div>
-                  </div>
-               </>
-            }
-
-            {/* CONTENT 3: THIS IS DISPLAYED WHEN SELECTING TAB 1: NOTE */}
-            {
-               (selectedTab === tabs[2].name) &&
-               <GrowingTextArea input={note} setInput={input => setContact({ ...contact, note: input })} />
-            }
+            ]}
+            />
 
          </div>
 

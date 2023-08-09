@@ -10,15 +10,6 @@ import { useAuthContext } from '../hooks/useAuthContext';
 import { urlQueryString } from '../utils/StringUtils';
 
 // components
-import ErrorLoadingDocuments from '../components/ErrorLoadingDocuments';
-// import FilterAndASort from '../components/FilterAndSort';
-import FlexBoxWrapper from '../components/FlexBoxWrapper';
-import JobCard from '../components/JobCard';
-import JobDetails from '../components/JobDetails';
-import JobsList from '../components/JobsList';
-import LoadingDocuments from '../components/LoadingDocuments';
-import NavPagination from '../components/NavPagination';
-import Page from '../components/Page';
 
 const MyJobs = ({
    filters,
@@ -81,54 +72,47 @@ const MyJobs = ({
    }, [API_BASE_URL, currentPage, dispatch, filters, limit, user]);
 
    return (
-      <Page selectedLink={selectedLink} setSelectedLink={setSelectedLink}>
-
-         {/* <AnimatePresence mode='wait' onExitComplete={() => setSelectedJob(null)}>
-            {selectedJob && <JobDetails job={selectedJob} singleNoteInput={true} setFilters={setFilters} />}
-         </AnimatePresence>
-
-         <JobsList jobs={myJobs} selectedJob={selectedJob} setSelectedJob={setSelectedJob} /> */}
-      </Page>
+      <></>
    );
 
 
-   return (
-      <Page>
-         <div className='d-flex flex-column gap-2 mb-3'>
-            <NavPagination
-               currentPage={currentPage}
-               limit={limit}
-               setCurrentPage={setCurrentPage}
-               setLimit={setLimit}
-               setTotalPages={setTotalPages}
-               totalPages={totalPages}
-               totalResults={totalResults}
-            />
+   //    return (
+   //       <Page>
+   //          <div className='d-flex flex-column gap-2 mb-3'>
+   //             <NavPagination
+   //                currentPage={currentPage}
+   //                limit={limit}
+   //                setCurrentPage={setCurrentPage}
+   //                setLimit={setLimit}
+   //                setTotalPages={setTotalPages}
+   //                totalPages={totalPages}
+   //                totalResults={totalResults}
+   //             />
 
-            <FilterAndASort filters={filters} setFilters={setFilters} />
-         </div>
+   //             <FilterAndASort filters={filters} setFilters={setFilters} />
+   //          </div>
 
-         {/* show spinner with actively fetching data */}
-         {isLoading && <div className='my-5'><LoadingDocuments /></div>}
+   //          {/* show spinner with actively fetching data */}
+   //          {isLoading && <div className='my-5'><LoadingDocuments /></div>}
 
-         {error && <ErrorLoadingDocuments docType='Jobs' />}
+   //          {error && <ErrorLoadingDocuments docType='Jobs' />}
 
-         {(myJobs && !isLoading) &&
-            <FlexBoxWrapper>
-               {/* show a message when the results have loaded and there's not results */}
-               {(totalResults === 0) &&
-                  <div className='outline shadow-sm background-white p-3 text-center'>There are no results.</div>
-               }
+   //          {(myJobs && !isLoading) &&
+   //             <FlexBoxWrapper>
+   //                {/* show a message when the results have loaded and there's not results */}
+   //                {(totalResults === 0) &&
+   //                   <div className='outline shadow-sm background-white p-3 text-center'>There are no results.</div>
+   //                }
 
-               {myJobs.map((job) => {
-                  return (
-                     <JobCard {...job} key={job._id} singleNoteInput={true} />
-                  )
-               })}
-            </FlexBoxWrapper>
-         }
-      </Page>
-   );
+   //                {myJobs.map((job) => {
+   //                   return (
+   //                      <JobCard {...job} key={job._id} singleNoteInput={true} />
+   //                   )
+   //                })}
+   //             </FlexBoxWrapper>
+   //          }
+   //       </Page>
+   //    );
 };
 
 export default MyJobs;

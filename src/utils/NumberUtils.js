@@ -10,7 +10,10 @@ export const addTwoCurrencies = (num1, num2) => {
 export const billingTotal = (billing) => {
    return billing.reduce((total, bill) => {
       // fee amount is the default, but use the adjusted amount if it has been set
-      const amount = bill.adjustedAmount === null ? bill.fee.amount : bill.adjustment;
+      const amount = bill.overrideAmount === null ? bill.amount : bill.overrideAmount;
       return addTwoCurrencies(total, amount);
    }, 0);
 };
+
+// returns the total balance of all the fees
+export const feesTotal = (fees) => fees.reduce((total, fee) => addTwoCurrencies(total, fee.amount), 0);

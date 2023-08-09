@@ -14,7 +14,7 @@ const Modal = ({ children, blurBackdrop = false, topMarginIsFixed = false }) => 
 
    const modalClasses = 'myModal background position-fixed d-flex top-0 start-0 w-100 h-100 overflow-auto';
    const modalStyles = {
-      background: 'linear-gradient(0deg, rgba(193,228,255,1) 0%, rgba(229,239,255,1) 29%, rgba(255,255,255,0) 100%)',
+      background: 'linear-gradient(0deg, rgba(120,150,215,0.75) 0%, rgba(229,239,255,0.85) 29%, rgba(255,255,255,0) 100%)',
       zIndex: '1050'
    };
 

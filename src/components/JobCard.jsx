@@ -108,7 +108,7 @@ const JobCard = ({
                         <FeesList billing={billing} />
                         <div className='d-flex align-items-center justify-content-end mt-1'>
                            <SmallHeader text='Total' />
-                           <span className='border-top ms-2 ps-2'>{'$ ' + formatCurrency(billing.reduce((total, bill) => addTwoCurrencies(total, (bill.adjustedAmount === null ? bill.fee.amount : bill.adjustedAmount)), 0), true)}</span>
+                           <span className='border-top ms-2 ps-2'>{'$ ' + formatCurrency(billing.reduce((total, bill) => addTwoCurrencies(total, (bill.overrideAmount === null ? bill.amount : bill.overrideAmount)), 0), true)}</span>
                         </div>
                      </>}
 

@@ -2,20 +2,12 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 
 // components
-import ActionButton from './ActionButton';
-import AddressDisplay from './AddressDisplay';
-import Counter from './Counter';
-import CreatedInfo from './CreatedInfo';
-import DriversList from './DriversList';
-import DriverNoteInput from './DriverNoteInput';
-import EditJobForm from './EditJobForm';
-import FeesList from './FeesList';
-import NotesList from './NotesList';
 import SmallHeader from './SmallHeader';
 
 // functions
-import { datePrettyString, dateStringFormat, formatCurrency, timeStringFormat } from '../utils/StringUtils';
+import { datePrettyString, formatCurrency, timeStringFormat } from '../utils/StringUtils';
 import { billingTotal } from '../utils/NumberUtils';
+import Tabs from './Tabs';
 
 
 const JobDetails = ({
@@ -44,29 +36,10 @@ const JobDetails = ({
       status
    } = job;
 
-   const tabs = [
-      {
-         name: 'Info',
-         icon: 'bi bi-person-rolodex'
-      },
-      {
-         name: 'Billing',
-         icon: 'bi bi-receipt-cutoff'
-      },
-      {
-         name: 'Notes',
-         icon: 'bi bi-sticky'
-      }
-   ];
-
-   // by default, the first tab is to be displayed
-   const [selectedTab, setSelectedTab] = useState(tabs[0].name);
-
    // expands the additional info of a job
    const [expandAdditionalInfo, setExpandAdditionalInfo] = useState(false);
 
    // formatting strings for date and time
-   const balance = formatCurrency(billingTotal(billing), true);
    const pickupTimeString = pickup.includeTime ?
       timeStringFormat({ dateString: pickup.date, showMilitary: true }) :
       '--:--';
@@ -111,7 +84,6 @@ const JobDetails = ({
          className='jobDetails position-relative bg-white container rounded px-4 py-2'
          style={{ boxShadow: '0 .125rem .25rem var(--mainPalette8)' }}
       >
-
          {/* ACTION BUTTONS: for the document and button to expand the additional info element */}
          <div className='position-absolute top-0 end-0 pt-1 pe-1'>
             {/* delete document button */}
@@ -191,86 +163,73 @@ const JobDetails = ({
             </div>
          </div>
 
-         {expandAdditionalInfo &&
-            <div className='additionalInfo mt-3'>
-               {/* TABS AND CONTENT */}
-               <div className='tabs d-flex text-secondary fs-smaller mb-2'>
-                  {
-                     tabs.map(tab => {
-                        const { name, icon } = tab;
-                        const isSelected = selectedTab === name;
+         {
+            expandAdditionalInfo &&
+            <div className='additionalInfo mt-4'>
+               <Tabs
+                  tabs={[
+                     {
+                        name: 'Info',
+                        icon: 'bi bi-person-rolodex',
+                        contentJSX: (
+                           <>
+                              {/* PARCEL */}
+                              <div className='row mb-1'>
+                                 <div className='col-sm-2 text-sm-end text-secondary'>
+                                    <SmallHeader text='Parcel' />
+                                 </div>
+                                 <div className='col-sm-10'>
+                                    {parcel}
+                                 </div>
+                              </div>
+                              {/* DRIVERS */}
+                              <div className='row mb-1'>
+                                 <div className='col-sm-2 text-sm-end text-secondary'>
+                                    <SmallHeader text={`Driver${drivers.length > 1 ? 's' : ''}`} />
+                                 </div>
+                                 <div className='col-sm-10'>
+                                    {
+                                       drivers.map(driver => (
+                                          <div key={driver._id}>{driver.fullName}</div>
+                                       ))
+                                    }
+                                 </div>
+                              </div>
 
-                        return (
-                           <button
-                              key={name}
-                              className='text-center border-top-0 border-end-0 border-start-0 cursor-pointer flex-grow-1'
-                              onClick={() => setSelectedTab(name)}
-                              style={{
-                                 backgroundColor: isSelected ? 'var(--mainPalette9)' : 'transparent',
-                                 borderBottomWidth: '1px',
-                                 borderBottomStyle: 'solid',
-                                 borderBottomColor: isSelected ? 'var(--mainPalette4)' : 'var(--bs-gray-300)',
-                                 color: isSelected ? 'var(--mainPalette4)' : 'inherit',
-                                 opacity: isSelected ? '1' : '0.5',
-                                 transition: 'all 0.2s ease-in-out'
-                              }}
-                              type='button'
-                           >
-                              <i className={icon}></i><span className='ms-2'>{name}</span>
-                           </button>
+                              {/* CREATED BY */}
+                              <div className='row mb-1'>
+                                 <div className='col-sm-2 text-sm-end text-secondary'>
+                                    <SmallHeader text='Creator' />
+                                 </div>
+                                 <div className='col-sm-10'>
+                                    {createdBy.fullName}
+                                 </div>
+                              </div>
+
+                              {/* CREATED AT */}
+                              <div className='row'>
+                                 <div className='col-sm-2 text-sm-end text-secondary'>
+                                    <SmallHeader text='Created' />
+                                 </div>
+                                 <div className='col-sm-10 text-capitalize'>
+                                    {datePrettyString({ dateString: createdAt })}
+                                 </div>
+                              </div>
+                           </>
                         )
-                     })
-                  }
-               </div>
-
-               {/* CONTENT 1: THIS IS DISPLAYED WHEN SELECTING TAB 1: INFO */}
-               {
-                  (selectedTab === tabs[0].name) &&
-                  <>
-                     {/* PARCEL */}
-                     <div className='row mb-1'>
-                        <div className='col-sm-2 text-sm-end text-secondary'>
-                           <SmallHeader text='Parcel' />
-                        </div>
-                        <div className='col-sm-10'>
-                           {parcel}
-                        </div>
-                     </div>
-                     {/* DRIVERS */}
-                     <div className='row mb-1'>
-                        <div className='col-sm-2 text-sm-end text-secondary'>
-                           <SmallHeader text={`Driver${drivers.length > 1 ? 's' : ''}`} />
-                        </div>
-                        <div className='col-sm-10'>
-                           {
-                              drivers.map(driver => (
-                                 <div key={driver._id}>{driver.fullName}</div>
-                              ))
-                           }
-                        </div>
-                     </div>
-
-                     {/* CREATED BY */}
-                     <div className='row mb-1'>
-                        <div className='col-sm-2 text-sm-end text-secondary'>
-                           <SmallHeader text='Creator' />
-                        </div>
-                        <div className='col-sm-10'>
-                           {createdBy.fullName}
-                        </div>
-                     </div>
-
-                     {/* CREATED AT */}
-                     <div className='row'>
-                        <div className='col-sm-2 text-sm-end text-secondary'>
-                           <SmallHeader text='Created' />
-                        </div>
-                        <div className='col-sm-10 text-capitalize'>
-                           {datePrettyString({ dateString: createdAt })}
-                        </div>
-                     </div>
-                  </>
-               }
+                     },
+                     {
+                        name: 'Billing',
+                        icon: 'bi bi-receipt-cutoff',
+                        contentJSX: <div>working...</div>
+                     },
+                     {
+                        name: 'Notes',
+                        icon: 'bi bi-sticky',
+                        contentJSX: <div>working...</div>
+                     }
+                  ]}
+               />
             </div>
          }
       </div>

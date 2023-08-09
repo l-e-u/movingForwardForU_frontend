@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 const GrowingTextArea = ({ input, setInput }) => {
    const textAreaRef = useRef(null);
 
-   const textAreaClasses = 'w-100 rounded-1 p-2';
+   const textAreaClasses = 'myTextAreaInput w-100 rounded-1 p-2';
    const textAreaVariants = {
       mount: {
          border: '1px solid var(--bs-gray-400)',
@@ -24,7 +24,7 @@ const GrowingTextArea = ({ input, setInput }) => {
 
          // set the height directly, outside of the render loop
          // trying to set this with state or a ref will produce an incorrect value.
-         textAreaRef.current.style.height = scrollHeight + 'px';
+         textAreaRef.current.style.height = scrollHeight + 24 + 'px';
       };
    });
 

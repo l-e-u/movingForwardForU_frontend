@@ -34,18 +34,27 @@ const FeeSelect = ({ selectedFees, setFees }) => {
       ))
    );
 
+   // styles for the select container and its children
    const feeSelectStyles = {
+      container: (base) => ({
+         ...base,
+      }),
+      input: (base) => ({
+         ...base,
+         minWidth: '100px'
+      }),
       option: (base) => ({
          ...base,
-         whiteSpace: 'pre-wrap'
       }),
       multiValue: (base) => ({
          ...base,
-         backgroundColor: 'var(--bs-gray-100)'
+         backgroundColor: 'var(--bs-gray-100)',
+         flexGrow: '1'
       }),
       multiValueLabel: (base) => ({
          ...base,
          color: 'var(--mainPalette1)',
+         flexGrow: '1'
       }),
       multiValueRemove: (base) => ({
          ...base,
@@ -57,9 +66,21 @@ const FeeSelect = ({ selectedFees, setFees }) => {
    fees.forEach(fee => {
       const { amount, name } = fee;
 
+      // this key is applied to the label element when it's rendered, it's also the value that compared to user input when searching
+      const key = name + amount.toString()
+
       feeOptions.push({
-         label: `${name}\n$${amount.toFixed(2)}`,
-         value: fee
+         index: name,
+         label: (
+            <div className='d-md-flex justify-content-between px-2'>
+               <div>{name}</div>
+               <div className='text-end'>$ {amount.toFixed(2)}</div>
+            </div>
+         ),
+         value: {
+            ...fee,
+            toString: () => key
+         }
       })
    });
 
@@ -89,7 +110,7 @@ const FeeSelect = ({ selectedFees, setFees }) => {
          styles={feeSelectStyles}
          value={getSelectedOptions()}
       />
-   )
+   );
 };
 
 export default FeeSelect;

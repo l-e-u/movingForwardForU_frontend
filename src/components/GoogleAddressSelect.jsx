@@ -4,8 +4,8 @@ import { motion } from 'framer-motion';
 // components
 import PlacesAutocomplete from 'react-places-autocomplete';
 
-const GoogleAddressSelect = ({ setAddress }) => {
-   const [input, setInput] = useState('');
+const GoogleAddressSelect = ({ address, setAddress }) => {
+   const [input, setInput] = useState(address);
 
    const inputVariants = {
       mount: {

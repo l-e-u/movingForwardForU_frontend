@@ -8,33 +8,23 @@ import { useContactsContext } from '../hooks/useContactsContext';
 // components
 import ErrorAlert from './ErrorAlert';
 
-const ContactSelect = ({ propertyForOptionLabel, placeholder, setContact }) => {
+const ContactAddressSelect = ({ placeholder, setAddress, address }) => {
    const { getContacts, error, isLoading } = useGetContacts();
    const { contacts } = useContactsContext();
 
    // label is what appears as an option in the dropdown list
-   const selectOptions = contacts.map(contact => {
-      return {
-         label: contact[propertyForOptionLabel],
-         value: contact._id
-      }
-   });
+   const selectOptions = contacts.map(contact => ({
+      label: contact.address,
+      value: contact.address
+   }));
 
    // as the user selects from the dropdown options, setting saves the id, clearing will set to null
-   const handleOnChange = (selectedOption) => {
-      const selectedContact = contacts.find(contact => selectedOption?.value === contact._id);
-
-      setContact(selectedContact || null);
-   };
+   const handleOnChange = (selectedOption) => setAddress(selectedOption?.value || '');
 
    // only on initial mount, fetch contacts
-   useEffect(() => {
-      getContacts();
-   }, []);
+   useEffect(() => { getContacts() }, []);
 
-   if (error) {
-      return <ErrorAlert message={error.message} />;
-   };
+   if (error) return <ErrorAlert message={error.message} />;
 
    return (
       <Select
@@ -50,8 +40,9 @@ const ContactSelect = ({ propertyForOptionLabel, placeholder, setContact }) => {
          placeholder={placeholder || ''}
          options={selectOptions}
          onChange={handleOnChange}
+         value={selectOptions.find(option => option.value === address)}
       />
    )
 }
 
-export default ContactSelect
+export default ContactAddressSelect

@@ -1,81 +1,285 @@
+import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion';
+import Select from 'react-select';
 
-const BillingSelect = ({ defaultFees }) => {
-   // as the user selects fees, the list gets populated
-   const defaultFeesListClasses = 'defaultFeesList rounded m-0 p-0 fs-smaller';
-   const defaultFeesListStyles = { listStyle: 'none' };
+// hooks
+import { useGetFees } from '../hooks/useGetFees';
+import { useFeesContext } from '../hooks/useFeesContext';
 
-   // items have the option to clear it off the default-selection list
-   const defaultFeesItemClasses = 'd-flex align-items-center rounded-pill mb-2';
-   const defaultFeesItemStyles = {
-      border: '1px solid var(--mainPalette4)',
-      color: 'var(--mainPalette3)'
+// components
+import ErrorAlert from './ErrorAlert';
+import CurrencyInput from './CurrencyInput';
+import SmallHeader from './SmallHeader';
+
+// utilities
+import { formatToCurrencyString, removeCommasFromString } from '../utils/StringUtils';
+import { billingTotal } from '../utils/NumberUtils';
+
+const BillingSelect = ({ billing, setBilling }) => {
+   const { getFees, error, isLoading } = useGetFees();
+   const { fees } = useFeesContext();
+
+   const [selectedBill, setSelectedBill] = useState(null);
+
+   // populates the drop-down menu listing all the fees that have not been selected
+   const feeMenuOptions = [];
+
+   // populates the values container that displays all the fees that have been selected
+   const billingValues = [];
+
+   const handleCancelOverrideAmount = () => setSelectedBill(null);
+
+   const handleConfirmOverrideAmount = () => {
+      const updatedBilling = [...billing];
+
+      for (let index = 0; index < updatedBilling.length; index++) {
+         const bill = updatedBilling[index];
+
+         if (bill._id === selectedBill._id) {
+            updatedBilling[index] = {
+               ...bill,
+               overrideAmount: Number(removeCommasFromString(selectedBill.overrideAmount))
+            }
+            break;
+         };
+      };
+
+      setSelectedBill(null);
+      setBilling(updatedBilling);
    };
 
-   const handleRemoveDefaultFee = (_id) => {
-      return () => {
-         setContact({
-            ...contact,
-            defaultFees: defaultFees.filter(fee => _id !== fee._id)
-         })
-      }
+   // filter all the fees that the user has selected, and format into billing for the job
+   const handleOnChange = (selectedOptions) => {
+      // regardless of adding or removing a selected fee, clear selectedBill
+      setSelectedBill(null);
+
+      // remove the toString function that was added before
+      setBilling(selectedOptions.map(selectedOption => {
+         const { toString, ...fee } = selectedOption.value;
+         return fee;
+      }));
+   };
+
+   // shows currency input to override fee amount
+   const handleEditOnClick = (bill) => {
+      return () => setSelectedBill(bill);
+   };
+
+   const handleOnOverrideAmountInput = (input) => {
+      setSelectedBill({
+         ...selectedBill,
+         overrideAmount: input
+      });
+   };
+
+   // custom filter function that determines if an option should be listed in the drop down menu
+   const filterOption = (option, inputText) => {
+      // with user input, compare the input with the name and amount
+      if (inputText) {
+         const { amount, name } = option.data.value;
+         const optionNameAmount = `${name.toLowerCase()} ${amount.toFixed(2)}`;
+
+         // return the option if input is included in either name or amount
+         if (optionNameAmount.includes(inputText.toLowerCase())) return true;
+
+         return false;
+      };
+
+      // no input returns all fees that have not been selected
+      return true;
+   };
+
+   // styles for the select container and its children
+   const feeSelectStyles = {
+      container: (base) => ({
+         ...base,
+      }),
+      input: (base) => ({
+         ...base,
+         minWidth: '100px'
+      }),
+      option: (base) => ({
+         ...base,
+         textAlign: 'right',
+         whiteSpace: 'pre-wrap'
+      }),
+      multiValue: (base) => ({
+         ...base,
+         backgroundColor: 'var(--bs-gray-100)',
+         flexGrow: '1',
+      }),
+      multiValueLabel: (base) => ({
+         ...base,
+         color: 'var(--mainPalette1)',
+         flexGrow: '1',
+         padding: '0',
+         paddingLeft: '0'
+      }),
+      multiValueRemove: (base) => ({
+         ...base,
+         color: 'var(--bs-secondary)',
+         transition: 'all 0.2s ease-in-out'
+      })
+   };
+
+   // separate the fees into IS / NOT included in billing
+   fees.forEach(fee => {
+      const { _id, amount, name } = fee;
+      const bill = billing.find(bill => bill._id === fee._id);
+      const toString = () => _id;
+      let amountText = amount >= 0 ? amount.toFixed(2) : `(${amount.toFixed(2)})`;
+
+      // toString function is used as a key for the options to avoid unique-key error for children
+      const isIncludedInBilling = !!bill;
+
+      // selected fees are the ones that are included in the job's billing. list these separately as selected values
+      if (isIncludedInBilling) {
+         const { overrideAmount } = bill;
+         const hasOverride = overrideAmount !== null;
+         let overrideText;
+
+         if (hasOverride) {
+            overrideText = overrideAmount.toFixed(2);
+            overrideText = overrideAmount >= 0 ? overrideText : `(${overrideText})`;
+         }
+         else {
+            amountText = '$ ' + amountText;
+         }
+
+         return billingValues.push({
+            label: (
+               <div className='d-flex'>
+                  {!selectedBill &&
+                     <motion.div
+                        className='myOptionEditButton d-flex cursor-pointer rounded-1 px-1'
+                        onClick={handleEditOnClick(bill)}
+                        whileHover={{ backgroundColor: 'var(--bs-gray-300)' }}
+                     >
+                        <i className='bi bi-pencil text-secondary m-auto'></i>
+                     </motion.div>
+                  }
+
+                  <div className='flex-grow-1 px-2 py-1'>
+                     <div>{name}</div>
+                     <div className='text-end'>
+                        <span className={hasOverride ? 'text-decoration-line-through' : ''} style={{ opacity: hasOverride ? '0.5' : '1' }}>
+                           {amountText}
+                        </span>
+                        {hasOverride && <span className='ms-3'>{`$ ${overrideText}`}</span>}
+                     </div>
+                  </div>
+               </div>
+            ),
+            value: {
+               ...bill,
+               toString,
+            }
+         });
+      };
+
+      // these are the fees that have not been selected yet
+      feeMenuOptions.push({
+         label: (
+            <div className='d-md-flex justify-content-between'>
+               <div>{name}</div>
+               <div>{`$ ${amountText}`}</div>
+            </div>
+         ),
+         value: {
+            ...fee,
+            overrideAmount: null,
+            toString
+         }
+      });
+   });
+
+   // only on initial mount, fetch fees
+   useEffect(() => {
+      getFees();
+   }, []);
+
+   if (error) {
+      return <ErrorAlert message={error.message} />;
    };
 
    return (
       <>
-         <div className='feeSelect row mb-3'>
-            <div className='col-sm-3 col-md-2 d-flex justify-content-start justify-content-sm-end align-items-center text-secondary'>
-               <SmallHeader text='Fee Select' />
+         {
+            selectedBill &&
+            <div className='container-fluid p-0 mb-3'>
+               <p className='fs-smaller text-secondary whiteSpace-preWrap mb-3'>
+                  {`The new amount will override the fee's original amount for this billing only.`}
+               </p>
+               <div className='ps-sm-5 mb-1' style={{ fontWeight: '500' }}><SmallHeader text={selectedBill.name} /></div>
+               <div className='row'>
+
+                  <div className='col-sm-4 d-flex justify-content-start justify-content-sm-end align-items-center  text-secondary'>
+                     <SmallHeader text='New Amount' />
+                  </div>
+                  <div className='col-sm-8 d-flex align-items-center gap-1'>
+
+                     {/* CONFIRM OVERRIDE AMOUNT */}
+                     <motion.i
+                        className='bi bi-check2 rounded-1 cursor-pointer py-2 px-sm-2'
+                        initial={{ color: 'var(--bs-secondary)' }}
+                        onClick={handleConfirmOverrideAmount}
+                        role='button'
+                        whileHover={{
+                           backgroundColor: '#b1fbb3',
+                           color: 'var(--bs-success)'
+                        }}
+                     >
+
+                     </motion.i>
+
+                     <div className='flex-grow-1'>
+                        <CurrencyInput input={selectedBill.overrideAmount?.toString() || ''} setInput={handleOnOverrideAmountInput} />
+                     </div>
+
+                     {/* CANCEL OVERRIDE AMOUNT */}
+                     <motion.i
+                        className='bi bi-x rounded-1 cursor-pointer py-2 px-sm-2'
+                        initial={{ color: 'var(--bs-secondary)' }}
+                        onClick={handleCancelOverrideAmount}
+                        role='button'
+                        whileHover={{
+                           backgroundColor: '#FFBDAD',
+                           color: 'var(--bs-danger)'
+                        }}
+                     >
+                     </motion.i>
+                  </div>
+               </div>
             </div>
-            <div className='col-sm-9 col-md-10'>
-               <FeeSelect
-                  selectedFees={defaultFees}
-                  setFee={fee => {
-                     setContact(prev => ({
-                        ...prev,
-                        defaultFees: [
-                           ...prev.defaultFees,
-                           fee
-                        ]
-                     }))
-                  }}
-               />
-            </div>
+         }
+
+         <div className='text-end text-secondary pe-2 pe-sm-5 mb-1'>
+            <SmallHeader text={`Balance: $ ${formatToCurrencyString({ amount: billingTotal(billing).toString(), setTwoDecimalPlaces: true })}`} />
          </div>
 
-         {/* DEFAULT FEES */}
-         <div className='defaultFees row'>
-            <div className='col-sm-3 col-md-2 d-flex justify-content-start justify-content-sm-end align-items-top text-secondary'>
-               <SmallHeader text='Default Fees' />
-            </div>
-            <div className='col-sm-9 col-md-10'>
-               <ul className={defaultFeesListClasses} style={defaultFeesListStyles}  >
-                  {
-                     defaultFees.map(fee => (
-                        <li key={fee._id} className={defaultFeesItemClasses} style={defaultFeesItemStyles}>
-                           <span className='px-3'>{fee.name}</span>
-                           <span className='text-nowrap ms-auto'>{`$ ${fee.amount.toFixed(2)}`}</span>
-                           <motion.i
-                              className='bi bi-x ps-4 pe-2 py-1 cursor-pointer'
-                              onClick={handleRemoveDefaultFee(fee._id)}
-                              initial={{
-                                 scale: 1,
-                                 color: 'inherit'
-                              }}
-                              whileHover={{
-                                 scale: 1.1,
-                                 color: 'red',
-                              }}
-                           >
-                           </motion.i>
-                        </li>
-                     ))
-                  }
-               </ul>
-            </div>
-         </div>
+         <Select
+            backspaceRemovesValue={false}
+            classNamePrefix='mySelectInput'
+            closeMenuOnSelect={false}
+            hideSelectedOptions={true}
+            filterOption={filterOption}
+            isClearable={false}
+            isDisabled={isLoading}
+            isLoading={isLoading}
+            isMulti
+            isSearchable
+            loadingMessage={() => 'Loading...'}
+            noOptionsMessage={() => 'No results.'}
+            onChange={handleOnChange}
+            openMenuOnFocus={false}
+            openMenuOnClick={false}
+            options={feeMenuOptions}
+            placeholder=''
+            styles={feeSelectStyles}
+            value={billingValues}
+         />
       </>
-   )
+   );
 };
 
 export default BillingSelect;

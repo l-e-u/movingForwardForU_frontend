@@ -74,7 +74,7 @@ const FeeSearchSelect = ({ billing, setJob }) => {
                   setJob(prev => {
                      return {
                         ...prev,
-                        billing: [...prev.billing, { adjustedAmount: null, fee: doc }]
+                        billing: [...prev.billing, { overrideAmount: null, fee: doc }]
                      }
                   });
                };
@@ -83,7 +83,7 @@ const FeeSearchSelect = ({ billing, setJob }) => {
             filterSuggestions={(fee, text) => fee.name.toLowerCase().includes(text.toLowerCase())}
             inputError={null}
             inputErrorMessage={''}
-            documents={fees?.filter(fee => billing.every(bill => fee._id !== bill.fee._id)) ?? []}
+            documents={fees?.filter(fee => billing.every(bill => fee._id !== bill._id)) ?? []}
             errorLoading={error}
             isLoading={isLoading} />
 
@@ -102,7 +102,7 @@ const FeeSearchSelect = ({ billing, setJob }) => {
                   {/* when a fee is selected, it creates a list item that gives the user an option to clear it (removes from selected fee list) or enter an adjusted amount to use instead of the base fee amount */}
 
                   {billing.map(bill => {
-                     const { adjustedAmount, fee } = bill;
+                     const { overrideAmount, fee } = bill;
                      const { _id, amount, name } = fee;
 
                      return (
@@ -130,13 +130,13 @@ const FeeSearchSelect = ({ billing, setJob }) => {
                                        {/* input for adjusted amount for the fee */}
                                        <div style={{ maxWidth: '300px' }}>
                                           <CurrencyInput
-                                             amount={adjustedAmount}
+                                             amount={overrideAmount}
                                              setCurrency={({ input }) => {
                                                 setJob(prev => {
                                                    return ({
                                                       ...prev,
                                                       billing: prev.billing.map(bill => {
-                                                         if (bill.fee._id === _id) return ({ fee: { ...bill.fee }, adjustedAmount: input });
+                                                         if (bill._id === _id) return ({ fee: { ...bill.fee }, overrideAmount: input });
                                                          return bill;
                                                       })
                                                    })
@@ -152,7 +152,7 @@ const FeeSearchSelect = ({ billing, setJob }) => {
                                     setJob(prev => {
                                        return {
                                           ...prev,
-                                          billing: billing.filter(bill => bill.fee._id !== _id)
+                                          billing: billing.filter(bill => bill._id !== _id)
                                        }
                                     });
                                  }} /></div>
@@ -164,7 +164,7 @@ const FeeSearchSelect = ({ billing, setJob }) => {
                </ul>
                <div className='mt-1 mb-3'>
                   <SmallHeader text='Total' />
-                  <span className='ms-3'>{'$ ' + formatCurrency(billing.reduce((total, bill) => addTwoCurrencies(total, (bill.adjustedAmount === null ? bill.fee.amount : bill.adjustedAmount)), 0), true)}</span>
+                  <span className='ms-3'>{'$ ' + formatCurrency(billing.reduce((total, bill) => addTwoCurrencies(total, (bill.overrideAmount === null ? bill.amount : bill.overrideAmount)), 0), true)}</span>
                </div>
             </div>}
       </>

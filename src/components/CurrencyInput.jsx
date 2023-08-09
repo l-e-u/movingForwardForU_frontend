@@ -39,6 +39,9 @@ const CurrencyInput = ({ input, setInput }) => {
       setInput(isNaN(value) ? input : value);
    };
 
+   // this prevents from the form being submitted when hitting 'Enter' when focused on this input
+   const handleOnKeyDown = (e) => { if (e.key === 'Enter') e.preventDefault() }
+
    const formatValue = (value) => isNaN(value) ? value : formatToCurrencyString({ amount: value });
 
    return (
@@ -49,6 +52,7 @@ const CurrencyInput = ({ input, setInput }) => {
             initial='mount'
             onBlur={handleOnBlur}
             onChange={handleOnChange}
+            onKeyDown={handleOnKeyDown}
             title='Needs to be a currency.'
             type='text'
             value={formatValue(input)}

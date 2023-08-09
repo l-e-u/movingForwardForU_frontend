@@ -83,7 +83,7 @@ const ContactSearchSelect = ({ customer, setJob, inputError, inputErrorMessage }
                   const updated = { ...prev };
                   // loop throught the contact's default fees, and the default fee is not already listed in the job's billing, then push it
                   selectedContact.defaultFees.forEach(defaultFee => {
-                     if (!updated.billing.find(bill => defaultFee._id === bill.fee._id)) updated.billing.push({ adjustedAmount: null, fee: defaultFee });
+                     if (!updated.billing.find(bill => defaultFee._id === bill._id)) updated.billing.push({ overrideAmount: null, fee: defaultFee });
                   })
                   updated.customer = selectedContact;
                   return updated;

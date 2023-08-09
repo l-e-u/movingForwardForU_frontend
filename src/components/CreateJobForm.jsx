@@ -8,23 +8,23 @@ import Modal from './Modal';
 import JobForm from './JobForm';
 
 const CreateJobForm = ({ hideForm }) => {
-   const newJob = {
+   const { createJob, error, isLoading } = useCreateJob();
+
+   const locationDetails = { address: '', date: new Date(), includeTime: false };
+
+   // state for user inputs
+   const [job, setJob] = useState({
       billing: [],
       customer: null,
-      delivery: { address: '', date: new Date(), includeTime: false },
+      delivery: { ...locationDetails },
       drivers: [],
       mileage: 0,
       notes: [],
       parcel: '',
-      pickup: { address: '', date: new Date(), includeTime: false },
+      pickup: { ...locationDetails },
       reference: '',
-      status: null,
-   };
-
-   const { createJob, error, isLoading } = useCreateJob();
-
-   // state for user inputs
-   const [job, setJob] = useState(newJob);
+      status: null
+   });
 
    const closeButtonClasses = 'position-absolute top-0 end-0 fw-bold p-3 text-secondary border-0';
    const closeButtonStyles = { background: 'transparent', zIndex: '1' };
@@ -33,6 +33,38 @@ const CreateJobForm = ({ hideForm }) => {
 
    const formHeading = 'New Job';
    const formSubHeading = `As a dispatcher, you can see all jobs, but a driver will only see jobs that have been assigned to them.`;
+
+   const submitButtonText = isLoading ? 'Saving' : 'Save';
+
+   const handleOnSubmit = async (e) => {
+      e.preventDefault();
+
+      const formattedJob = {
+         ...job,
+         billing: job.billing.map(bill => ({
+            ...bill,
+            overrideAmount: (overrideAmount === null) ? null : Number(bill.overrideAmount)
+         })),
+         customer: job.customer?._id,
+         drivers: job.drivers.map(d => d._id),
+         mileage: Number(job.mileage),
+         notes: job.notes.map(note => ({ ...note, createdBy: note.createdBy._id })),
+         status: job.status?._id
+      }
+
+      // create a multipart form data object to send to server
+      const jobForm = new FormData();
+
+      jobForm.append('job', JSON.stringify(formattedJob));
+
+      formattedJob.notes[0]?.attachments.forEach(attachment => {
+         jobForm.append('attachments', attachment.file);
+      });
+      console.log(formattedJob)
+      const jobCreated = await createJob(jobForm);
+
+      if (jobCreated) hideForm();
+   };
 
    return (
       <Modal blurBackdrop={true} topMarginIsFixed={true}>
@@ -49,36 +81,12 @@ const CreateJobForm = ({ hideForm }) => {
             heading={formHeading}
             job={job}
             error={error}
-            handleSubmit={async (e) => {
-               e.preventDefault();
-               return console.log(job)
-               const jobCreated = await createJob({
-                  ...job,
-                  customer: job.customer?._id,
-                  drivers: job.drivers.map(d => d._id),
-                  mileage: Number(job.mileage),
-                  billing: job.billing.map(bill => {
-                     let adjustedAmount = bill.adjustedAmount
-                     if (adjustedAmount !== null) adjustedAmount = Number(adjustedAmount);
-
-                     return {
-                        adjustedAmount,
-                        fee: bill.fee._id,
-                     }
-                  }),
-                  status: job.status?._id,
-               });
-
-               if (jobCreated) {
-                  hideForm();
-                  refreshJobList();
-               };
-            }}
+            handleSubmit={handleOnSubmit}
             isFetching={isLoading}
             setJob={setJob}
             subHeading={formSubHeading}
             submitButtonIsDisabled={isLoading}
-            submitButtonText={isLoading ? 'Saving' : 'Save'}
+            submitButtonText={submitButtonText}
          />
       </Modal>
    );

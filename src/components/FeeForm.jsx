@@ -24,10 +24,6 @@ const FeeForm = ({
    const formClasses = 'newFeeForm position-relative p-4 pb-5 text-reset shadow bg-white rounded-4';
    const formStyles = { width: '90vw', maxWidth: '500px' };
 
-   const currencyContainerClasses = 'd-flex rounded-1 p-2';
-   const currencyContainerStyles = { border: '1px solid var(--bs-gray-400)' };
-   const currencySymbolContainerClasses = 'pe-2';
-
    return (
       <form className={formClasses} onSubmit={handleSubmit} style={formStyles} >
 
