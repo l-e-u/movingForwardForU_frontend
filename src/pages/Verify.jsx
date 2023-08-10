@@ -2,11 +2,11 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'react-router';
 
 // components
-import ActionButton from '../components/ActionButton';
-import Card from '../components/Card';
-import PasswordChecklist from 'react-password-checklist';
-import LoadingDocuments from '../components/LoadingDocuments';
-import PageContentWrapper from '../components/Page';
+// import ActionButton from '../components/ActionButton';
+// import Card from '../components/Card';
+// import PasswordChecklist from 'react-password-checklist';
+// import LoadingDocuments from '../components/LoadingDocuments';
+// import PageContentWrapper from '../components/Page';
 
 // hooks
 import { useVerify } from '../hooks/useVerify';
@@ -88,101 +88,101 @@ const Verify = () => {
          };
       });
    };
+return <></>
+//   return (
+//       <PageContentWrapper>
+//          <div className='flex-grow-1 mx-auto my-3' style={{ maxWidth: '1000px' }}>
+//             <Card
+//               header={<>
+//                   <h2 className='fs-3 mb-0'>
+//                      Welcome,
+//                   </h2>
+//                   <h3 className='mb-0'>{name + '!'}</h3>
+//               </>}
 
-   return (
-      <PageContentWrapper>
-         <div className='flex-grow-1 mx-auto my-3' style={{ maxWidth: '1000px' }}>
-            <Card
-               header={<>
-                  <h2 className='fs-3 mb-0'>
-                     Welcome,
-                  </h2>
-                  <h3 className='mb-0'>{name + '!'}</h3>
-               </>}
+//               body={<>
+//                   {/* while loading, display the loading spinner */}
+//                   {isLoading && <LoadingDocuments />}
 
-               body={<>
-                  {/* while loading, display the loading spinner */}
-                  {isLoading && <LoadingDocuments />}
+//                   {/* show error when token has expired */}
+//                   {error?.token && <p>Oops! This link has expired.</p>}
 
-                  {/* show error when token has expired */}
-                  {error?.token && <p>Oops! This link has expired.</p>}
+//                   {/* succesful confirmation */}
+//                   {user?.isVerified && <p>You're good to go!</p>}
 
-                  {/* succesful confirmation */}
-                  {user?.isVerified && <p>You're good to go!</p>}
+//                   {/* if the email token has expired OR the user has already been verified, direct them to the login screen */}
+//                   {(error?.token || user?.isVerified) &&
+//                      <>
+//                         <p style={{ whiteSpace: 'pre-wrap' }}>You will be redirected to the login page in 3 seconds...
+//                         </p>
+//                         <div className='spinner-border spinner-border-sm' role='status'>
+//                           <span className='visually-hidden'>Loading...</span>
+//                         </div>
+//                      </>
+//                   }
 
-                  {/* if the email token has expired OR the user has already been verified, direct them to the login screen */}
-                  {(error?.token || user?.isVerified) &&
-                     <>
-                        <p style={{ whiteSpace: 'pre-wrap' }}>You will be redirected to the login page in 3 seconds...
-                        </p>
-                        <div className='spinner-border spinner-border-sm' role='status'>
-                           <span className='visually-hidden'>Loading...</span>
-                        </div>
-                     </>
-                  }
+//                   {/* have the user set their password to verify their email */}
+//                   {(!error && !user?.isVerified) &&
+//                      <form className='verify' onSubmit={handleSubmit}>
 
-                  {/* have the user set their password to verify their email */}
-                  {(!error && !user?.isVerified) &&
-                     <form className='verify' onSubmit={handleSubmit}>
+//                         <p>Please set your password to complete your account.<br />Afterwards you'll be able to login.</p>
 
-                        <p>Please set your password to complete your account.<br />Afterwards you'll be able to login.</p>
+//                         <div className='form-floating mb-2'>
+//                           <input
+//                               className='form-control'
+//                               placeholder='Password'
+//                               type='password'
+//                               name='password'
+//                               id='password'
+//                               onChange={(e) => setPassword(e.target.value)}
+//                               value={password}
+//                           />
+//                           <label htmlFor='password'>
+//                               {errorPasswordInput ? <span className='ms-1 text-danger'>{verifyError.message}</span> : 'Password'}
+//                           </label>
+//                         </div>
 
-                        <div className='form-floating mb-2'>
-                           <input
-                              className='form-control'
-                              placeholder='Password'
-                              type='password'
-                              name='password'
-                              id='password'
-                              onChange={(e) => setPassword(e.target.value)}
-                              value={password}
-                           />
-                           <label htmlFor='password'>
-                              {errorPasswordInput ? <span className='ms-1 text-danger'>{verifyError.message}</span> : 'Password'}
-                           </label>
-                        </div>
+//                         <div className='form-floating mb-3'>
+//                           <input
+//                               className='form-control'
+//                               placeholder='Confirm Password'
+//                               type='password'
+//                               name='confirmPassword'
+//                               id='confirmPassword'
+//                               onChange={(e) => setConfirmPassword(e.target.value)}
+//                               value={confirmPassword}
+//                           />
+//                           <label htmlFor='confirmPassword'>
+//                               {errorConfirmPasswordInput ? <span className='ms-1 text-danger'>{verifyError.message}</span> : 'Confirm Password'}
 
-                        <div className='form-floating mb-3'>
-                           <input
-                              className='form-control'
-                              placeholder='Confirm Password'
-                              type='password'
-                              name='confirmPassword'
-                              id='confirmPassword'
-                              onChange={(e) => setConfirmPassword(e.target.value)}
-                              value={confirmPassword}
-                           />
-                           <label htmlFor='confirmPassword'>
-                              {errorConfirmPasswordInput ? <span className='ms-1 text-danger'>{verifyError.message}</span> : 'Confirm Password'}
+//                           </label>
+//                         </div>
 
-                           </label>
-                        </div>
+//                         <PasswordChecklist
+//                           rules={['minLength', 'specialChar', 'number', 'capital', 'match']}
+//                           minLength={8}
+//                           value={password}
+//                           valueAgain={confirmPassword}
+//                           onChange={isValid => setPasswordIsValid(isValid)}
+//                           iconComponents={{
+//                               InvalidIcon: <i className='text-danger bi bi-x me-1' style={{ paddingTop: '.125rem' }}></i>,
+//                               ValidIcon: <i className='text-success bi bi-check me-1'></i>
+//                           }} />
 
-                        <PasswordChecklist
-                           rules={['minLength', 'specialChar', 'number', 'capital', 'match']}
-                           minLength={8}
-                           value={password}
-                           valueAgain={confirmPassword}
-                           onChange={isValid => setPasswordIsValid(isValid)}
-                           iconComponents={{
-                              InvalidIcon: <i className='text-danger bi bi-x me-1' style={{ paddingTop: '.125rem' }}></i>,
-                              ValidIcon: <i className='text-success bi bi-check me-1'></i>
-                           }} />
-
-                        <br />
-                        <ActionButton
-                           alignX='right'
-                           isDisabled={verifyIsLoading || !passwordIsValid}
-                           text={(verifyIsLoading ? 'Saving...' : 'Submit')}
-                           type='submit'
-                        />
-                     </form>
-                  }
-               </>}
-            />
-         </div >
-      </PageContentWrapper>
-   )
+//                         <br />
+//                         <ActionButton
+//                           alignX='right'
+//                           isDisabled={verifyIsLoading || !passwordIsValid}
+//                           text={(verifyIsLoading ? 'Saving...' : 'Submit')}
+//                           type='submit'
+//                         />
+//                      </form>
+//                   }
+//               </>}
+//             />
+//          </div >
+//       </PageContentWrapper>
+//   )
 };
 
 export default Verify;
