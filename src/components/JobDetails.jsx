@@ -11,6 +11,7 @@ import TransitDetails from './TransitDetails';
 import { datePrettyString, formatToCurrencyString, timeStringFormat } from '../utils/StringUtils';
 import { billingTotal } from '../utils/NumberUtils';
 import BillingTable from './BillingTable';
+import CollapsingSection from './CollapsingSection';
 
 
 const JobDetails = ({
@@ -122,141 +123,137 @@ const JobDetails = ({
             </div>
          </div>
 
-         {
-            showMore &&
-            <div className='additionalInfo row mt-3'>
-               <div className='col-12'>
-                  <Tabs
-                     tabs={[
-                        {
-                           name: 'Info',
-                           icon: 'bi bi-person-rolodex',
-                           contentJSX: (
-                              <>
-                                 {/* PARCEL */}
-                                 <div className='row mb-1'>
-                                    <div className='col-sm-2 text-sm-end text-secondary'>
-                                       <SmallHeader text='Parcel' />
-                                    </div>
-                                    <div className='col-sm-10'>
-                                       {parcel}
-                                    </div>
-                                 </div>
-                                 {/* DRIVERS */}
-                                 <div className='row mb-1'>
-                                    <div className='col-sm-2 text-sm-end text-secondary'>
-                                       <SmallHeader text={`Driver${drivers.length > 1 ? 's' : ''}`} />
-                                    </div>
-                                    <div className='col-sm-10'>
-                                       {noDrivers && <div>None assigned</div>}
-                                       {
-                                          drivers.map(driver => (
-                                             <div key={driver._id}>{driver.fullName}</div>
-                                          ))
-                                       }
-                                    </div>
-                                 </div>
-
-                                 {/* CREATED BY */}
-                                 <div className='row mb-1'>
-                                    <div className='col-sm-2 text-sm-end text-secondary'>
-                                       <SmallHeader text='Creator' />
-                                    </div>
-                                    <div className='col-sm-10'>
-                                       {createdBy.fullName}
-                                    </div>
-                                 </div>
-
-                                 {/* CREATED AT */}
-                                 <div className='row'>
-                                    <div className='col-sm-2 text-sm-end text-secondary'>
-                                       <SmallHeader text='Created' />
-                                    </div>
-                                    <div className='col-sm-10 text-capitalize'>
-                                       {datePrettyString({ dateString: createdAt, includeTime: true })}
-                                    </div>
-                                 </div>
-                              </>
-                           )
-                        },
-                        {
-                           name: 'Billing',
-                           icon: 'bi bi-receipt-cutoff',
-                           contentJSX: (
-                              <>
-                                 <div className='text-end text-secondary'>
-                                    <SmallHeader text={`Balance: $ ${formatToCurrencyString({ amount: billingTotal(billing).toString(), setTwoDecimalPlaces: true })}`} />
-                                 </div>
-
-                                 <BillingTable billing={billing} />
-                              </>
-                           )
-                        },
-                        {
-                           name: 'Notes',
-                           icon: 'bi bi-sticky',
-                           contentJSX: (
-                              <>
-                                 <div className='text-end text-secondary'>
-                                    <SmallHeader text={`Total: ${notes.length}`} />
-                                 </div>
+         <CollapsingSection className='mt-3' maxHeight={'300px'} isExpanded={showMore}>
+            <Tabs
+               tabs={[
+                  {
+                     name: 'Info',
+                     icon: 'bi bi-person-rolodex',
+                     contentJSX: (
+                        <>
+                           {/* PARCEL */}
+                           <div className='row mb-1'>
+                              <div className='col-sm-2 text-sm-end text-secondary'>
+                                 <SmallHeader text='Parcel' />
+                              </div>
+                              <div className='col-sm-10'>
+                                 {parcel}
+                              </div>
+                           </div>
+                           {/* DRIVERS */}
+                           <div className='row mb-1'>
+                              <div className='col-sm-2 text-sm-end text-secondary'>
+                                 <SmallHeader text={`Driver${drivers.length > 1 ? 's' : ''}`} />
+                              </div>
+                              <div className='col-sm-10'>
+                                 {noDrivers && <div>None assigned</div>}
                                  {
-                                    (notes.length > 0) &&
-                                    <ul className='notesList p-0 mx-0 mb-0 mt-1 mt-sm-0' style={{ listStyle: 'none' }}>
-                                       {
-                                          notes.map(note => (
-                                             <li key={note._id} className='row d-flex justify-content-between'>
-                                                <div className='col-sm-6 fs-smaller text-secondary text-capitalize' style={{ opacity: 0.5 }}>
-                                                   {datePrettyString({ dateString: note.createdAt, includeTime: true })}
-                                                </div>
-
-                                                <div className='col-sm-6 fs-smaller text-secondary' style={{ opacity: 0.5 }}>
-                                                   {note.createdBy.fullName}
-                                                </div>
-
-                                                <div className='text-secondary mt-2'>
-                                                   <i className='bi bi-paperclip fs-smaller me-1'></i>
-                                                   <SmallHeader text={`Attachments: ${note.attachments.length}`} />
-                                                </div>
-
-                                                <ul className='attachmentsList row col-12 m-0' style={{ listStyle: 'none' }}>
-                                                   {
-                                                      note.attachments.map((attachment, index) => (
-                                                         <li key={attachment._id} className='fs-smaller row col-12 mt-1'>
-                                                            <div className='col-1 text-end p-0' style={{ fontFamily: 'monospace', opacity: 0.5 }}>
-                                                               {index.toString().padStart(2, '0')}
-                                                            </div>
-                                                            <div className='col-11 ps-3 pe-0'>
-                                                               <a
-                                                                  className='word-break-all'
-                                                                  href={`${API_BASE_URL}/api/attachments/download/` + attachment.filename}
-                                                                  rel='noopener noreferrer'
-                                                                  target='_blank'
-                                                               >
-                                                                  {attachment.originalname}
-                                                               </a>
-                                                            </div>
-                                                         </li>
-                                                      ))
-                                                   }
-                                                </ul>
-
-                                                <div className='col-12 whiteSpace-preWrap mt-2'>
-                                                   {note.message}
-                                                </div>
-                                             </li>
-                                          ))
-                                       }
-                                    </ul>
+                                    drivers.map(driver => (
+                                       <div key={driver._id}>{driver.fullName}</div>
+                                    ))
                                  }
-                              </>
-                           )
-                        }
-                     ]}
-                  />
-               </div>
-            </div>
-         }
+                              </div>
+                           </div>
+
+                           {/* CREATED BY */}
+                           <div className='row mb-1'>
+                              <div className='col-sm-2 text-sm-end text-secondary'>
+                                 <SmallHeader text='Creator' />
+                              </div>
+                              <div className='col-sm-10'>
+                                 {createdBy.fullName}
+                              </div>
+                           </div>
+
+                           {/* CREATED AT */}
+                           <div className='row'>
+                              <div className='col-sm-2 text-sm-end text-secondary'>
+                                 <SmallHeader text='Created' />
+                              </div>
+                              <div className='col-sm-10 text-capitalize'>
+                                 {datePrettyString({ dateString: createdAt, includeTime: true })}
+                              </div>
+                           </div>
+                        </>
+                     )
+                  },
+                  {
+                     name: 'Billing',
+                     icon: 'bi bi-receipt-cutoff',
+                     contentJSX: (
+                        <>
+                           <div className='text-end text-secondary'>
+                              <SmallHeader text={`Balance: $ ${formatToCurrencyString({ amount: billingTotal(billing).toString(), setTwoDecimalPlaces: true })}`} />
+                           </div>
+
+                           {(billing.length > 0) && <BillingTable billing={billing} />}
+                        </>
+                     )
+                  },
+                  {
+                     name: 'Notes',
+                     icon: 'bi bi-sticky',
+                     contentJSX: (
+                        <>
+                           <div className='text-end text-secondary'>
+                              <SmallHeader text={`Total: ${notes.length}`} />
+                           </div>
+                           {
+                              (notes.length > 0) &&
+                              <ul className='notesList p-0 mx-0 mb-0 mt-1 mt-sm-0' style={{ listStyle: 'none' }}>
+                                 {
+                                    notes.map(note => (
+                                       <li key={note._id} className='row d-flex justify-content-between'>
+                                          <div className='col-sm-6 fs-smaller text-secondary text-capitalize' style={{ opacity: 0.5 }}>
+                                             {datePrettyString({ dateString: note.createdAt, includeTime: true })}
+                                          </div>
+
+                                          <div className='col-sm-6 fs-smaller text-secondary' style={{ opacity: 0.5 }}>
+                                             {note.createdBy.fullName}
+                                          </div>
+
+                                          <div className='text-secondary mt-2'>
+                                             <i className='bi bi-paperclip fs-smaller me-1'></i>
+                                             <SmallHeader text={`Attachments: ${note.attachments.length}`} />
+                                          </div>
+
+                                          <ul className='attachmentsList row col-12 m-0' style={{ listStyle: 'none' }}>
+                                             {
+                                                note.attachments.map((attachment, index) => (
+                                                   <li key={attachment._id} className='fs-smaller row col-12 mt-1'>
+                                                      <div className='col-1 text-end p-0' style={{ fontFamily: 'monospace', opacity: 0.5 }}>
+                                                         {index.toString().padStart(2, '0')}
+                                                      </div>
+                                                      <div className='col-11 ps-3 pe-0'>
+                                                         <a
+                                                            className='word-break-all'
+                                                            href={`${API_BASE_URL}/api/attachments/download/` + attachment.filename}
+                                                            rel='noopener noreferrer'
+                                                            target='_blank'
+                                                         >
+                                                            {attachment.originalname}
+                                                         </a>
+                                                      </div>
+                                                   </li>
+                                                ))
+                                             }
+                                          </ul>
+
+                                          <div className='col-12 whiteSpace-preWrap mt-2'>
+                                             {note.message}
+                                          </div>
+                                       </li>
+                                    ))
+                                 }
+                              </ul>
+                           }
+                        </>
+                     )
+                  }
+               ]}
+            />
+         </CollapsingSection>
+
       </div>
    );
 };

@@ -5,6 +5,12 @@ const EllipsisMenu = ({ actions = [] }) => {
    const [showMenu, setShowMenu] = useState(false);
    const [userEnteredMenu, setUserEnteredMenu] = useState(false);
 
+   const handleOnClickAction = (actionHandler) => {
+      return () => {
+         hideMenu();
+         actionHandler();
+      };
+   };
    const handleOnClickToggleMenu = () => setShowMenu(!showMenu);
    const userEnteredMenuTrue = () => setUserEnteredMenu(true);
    const hideMenu = () => setShowMenu(false);
@@ -72,7 +78,7 @@ const EllipsisMenu = ({ actions = [] }) => {
       <button
          className='bg-none border-0 d-flex gap-2 text-reset'
          key={action.name.concat(index.toString().padStart(2, '0'))}
-         onClick={action.handler}
+         onClick={handleOnClickAction(action.handler)}
          style={{ outline: 'none' }}
          type='button'
       >

@@ -6,6 +6,7 @@ import SmallHeader from './SmallHeader';
 
 // utilities
 import { formatCurrency, phoneNumberFormatted } from '../utils/StringUtils';
+import Tabs from './Tabs';
 
 const ContactDetails = ({ contact, showEditForm }) => {
    const [expandAdditionalInfo, setExpandAdditionalInfo] = useState(false);
@@ -120,6 +121,15 @@ const ContactDetails = ({ contact, showEditForm }) => {
                   marginLeft: '-1.25rem'
                }}
             >
+               <Tabs
+                  tabs={[
+                     {
+                        name: 'Note',
+                        icon: 'bi bi-sticky',
+                        contentJSX: <p className='whiteSpace-preWrap m-0'>{note}</p>
+                     }
+                  ]}
+               />
                <div className='row mb-2'>
                   <div className='col-md-2 text-md-end text-secondary'><SmallHeader text='Default Fees' /></div>
                   <div className='col-md-10'>
@@ -133,12 +143,12 @@ const ContactDetails = ({ contact, showEditForm }) => {
                   </div>
                </div>
 
-               <div className='row mb-2'>
+               <div className='row mb-2 d-none'>
                   <div className='col-md-2 text-md-end text-secondary'><SmallHeader text='Billing' /></div>
                   <div className='col-md-10'>{billingAddress}</div>
                </div>
 
-               <div className='row'>
+               <div className='row d-none'>
                   <div className='col-md-2 text-md-end text-secondary'><SmallHeader text='Note' /></div>
                   <div className='col-md-10 whiteSpace-preWrap'>{note}</div>
                </div>
