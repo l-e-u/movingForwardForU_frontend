@@ -59,6 +59,9 @@ const EllipsisMenu = ({ actions = [] }) => {
          opacity: 0,
          transition: {
             display: {
+               delay: 1
+            },
+            opacity: {
                delay: 0.5
             }
          }

@@ -10,6 +10,7 @@ import TransitDetails from './TransitDetails';
 // functions
 import { datePrettyString, formatToCurrencyString, timeStringFormat } from '../utils/StringUtils';
 import { billingTotal } from '../utils/NumberUtils';
+import BillingTable from './BillingTable';
 
 
 const JobDetails = ({
@@ -183,19 +184,11 @@ const JobDetails = ({
                            icon: 'bi bi-receipt-cutoff',
                            contentJSX: (
                               <>
-                                 <div className='text-end text-secondary mb-2'>
+                                 <div className='text-end text-secondary'>
                                     <SmallHeader text={`Balance: $ ${formatToCurrencyString({ amount: billingTotal(billing).toString(), setTwoDecimalPlaces: true })}`} />
                                  </div>
-                                 <ul className='p-0 m-0' style={{ listStyle: 'none' }}>
-                                    {
-                                       billing.map(bill => (
-                                          <li key={bill._id} className='d-flex justify-content-between'>
-                                             <span>{bill.fee.name}</span>
-                                             <span>$ {bill.fee.amount}</span>
-                                          </li>
-                                       ))
-                                    }
-                                 </ul>
+
+                                 <BillingTable billing={billing} />
                               </>
                            )
                         },
@@ -204,45 +197,58 @@ const JobDetails = ({
                            icon: 'bi bi-sticky',
                            contentJSX: (
                               <>
-                                 <div className='text-end text-secondary mb-2'>
+                                 <div className='text-end text-secondary'>
                                     <SmallHeader text={`Total: ${notes.length}`} />
                                  </div>
-                                 <ul className='notesList p-0 m-0' style={{ listStyle: 'none' }}>
-                                    {
-                                       notes.map(note => (
-                                          <li key={note._id} className='row d-flex justify-content-between'>
-                                             <div className='col-sm-6 fs-smaller text-secondary text-capitalize' style={{ opacity: 0.5 }}>
-                                                {datePrettyString({ dateString: note.createdAt, includeTime: true })}
-                                             </div>
+                                 {
+                                    (notes.length > 0) &&
+                                    <ul className='notesList p-0 mx-0 mb-0 mt-1 mt-sm-0' style={{ listStyle: 'none' }}>
+                                       {
+                                          notes.map(note => (
+                                             <li key={note._id} className='row d-flex justify-content-between'>
+                                                <div className='col-sm-6 fs-smaller text-secondary text-capitalize' style={{ opacity: 0.5 }}>
+                                                   {datePrettyString({ dateString: note.createdAt, includeTime: true })}
+                                                </div>
 
-                                             <div className='col-sm-6 fs-smaller text-secondary' style={{ opacity: 0.5 }}>
-                                                {note.createdBy.fullName}
-                                             </div>
+                                                <div className='col-sm-6 fs-smaller text-secondary' style={{ opacity: 0.5 }}>
+                                                   {note.createdBy.fullName}
+                                                </div>
 
-                                             <ul className='attachmentsList col-12 m-0 p-0' style={{ listStyle: 'none' }}>
-                                                {
-                                                   note.attachments.map(attachment => (
-                                                      <li key={attachment._id} className='fs-smaller text-end'>
-                                                         <a
-                                                            href={`${API_BASE_URL}/api/attachments/download/` + attachment.filename}
-                                                            target='_blank'
-                                                            rel='noopener noreferrer'
-                                                         >
-                                                            <span>{attachment.originalname}</span>
-                                                            <i className='bi bi-download ps-2 text-secondary'></i>
-                                                         </a>
-                                                      </li>
-                                                   ))
-                                                }
-                                             </ul>
+                                                <div className='text-secondary mt-2'>
+                                                   <i className='bi bi-paperclip fs-smaller me-1'></i>
+                                                   <SmallHeader text={`Attachments: ${note.attachments.length}`} />
+                                                </div>
 
-                                             <div className='col-12 mt-1'>
-                                                {note.message}
-                                             </div>
-                                          </li>
-                                       ))
-                                    }
-                                 </ul>
+                                                <ul className='attachmentsList row col-12 m-0' style={{ listStyle: 'none' }}>
+                                                   {
+                                                      note.attachments.map((attachment, index) => (
+                                                         <li key={attachment._id} className='fs-smaller row col-12 mt-1'>
+                                                            <div className='col-1 text-end p-0' style={{ fontFamily: 'monospace', opacity: 0.5 }}>
+                                                               {index.toString().padStart(2, '0')}
+                                                            </div>
+                                                            <div className='col-11 ps-3 pe-0'>
+                                                               <a
+                                                                  className='word-break-all'
+                                                                  href={`${API_BASE_URL}/api/attachments/download/` + attachment.filename}
+                                                                  rel='noopener noreferrer'
+                                                                  target='_blank'
+                                                               >
+                                                                  {attachment.originalname}
+                                                               </a>
+                                                            </div>
+                                                         </li>
+                                                      ))
+                                                   }
+                                                </ul>
+
+                                                <div className='col-12 whiteSpace-preWrap mt-2'>
+                                                   {note.message}
+                                                </div>
+                                             </li>
+                                          ))
+                                       }
+                                    </ul>
+                                 }
                               </>
                            )
                         }

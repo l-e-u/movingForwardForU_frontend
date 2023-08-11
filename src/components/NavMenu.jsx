@@ -83,7 +83,7 @@ const NavMenu = ({ selectedLink, setSelectedLink }) => {
                      borderBottomColor: isSelected ? 'var(--mainPalette7)' : 'transparent',
                      borderLeftColor: 'transparent',
                      color: isSelected ? 'var(--mainPalette4)' : 'var(--bs-secondary)',
-                     backgroundColor: isSelected ? 'var(--mainPalette8)' : 'transparent',
+                     backgroundColor: isSelected ? 'var(--mainPalette9)' : 'transparent',
                      opacity: isSelected ? '1' : '0.5',
                      fontWeight: isSelected ? '500' : '400'
                   }}

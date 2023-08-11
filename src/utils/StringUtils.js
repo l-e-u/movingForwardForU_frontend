@@ -112,7 +112,7 @@ export const formatToCurrencyString = ({
    amount,
    setTwoDecimalPlaces = false
 }) => {
-   const value = removeCommasFromString(amount);
+   const value = removeCommasFromString(amount.toString());
    let [integer, decimal] = value.split('.');
    const hasDecimal = decimal?.length >= 0;
 
