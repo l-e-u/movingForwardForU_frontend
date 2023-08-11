@@ -1,11 +1,10 @@
 // on bigger screens this gains margin left for the navMenu, which is set in CSS
 
 const Page = ({ children, }) => {
-   const pageClasses = 'page flex-grow-1 overflow-auto';
-   const pageStyles = { backgroundColor: 'var(--mainPalette9)' };
+   const pageClasses = 'page bg-none flex-grow-1 overflow-auto';
 
    return (
-      <div className={pageClasses} style={pageStyles}>{children}</div>
+      <div className={pageClasses}>{children}</div>
    );
 };
 

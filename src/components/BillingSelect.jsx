@@ -21,6 +21,9 @@ const BillingSelect = ({ billing, setBilling }) => {
 
    const [selectedBill, setSelectedBill] = useState(null);
 
+   console.log('billing', billing)
+   console.log('selectedBill', selectedBill)
+
    // populates the drop-down menu listing all the fees that have not been selected
    const feeMenuOptions = [];
 
@@ -35,7 +38,7 @@ const BillingSelect = ({ billing, setBilling }) => {
       for (let index = 0; index < updatedBilling.length; index++) {
          const bill = updatedBilling[index];
 
-         if (bill._id === selectedBill._id) {
+         if (bill.fee._id === selectedBill.fee._id) {
             updatedBilling[index] = {
                ...bill,
                overrideAmount: Number(removeCommasFromString(selectedBill.overrideAmount))
@@ -55,15 +58,18 @@ const BillingSelect = ({ billing, setBilling }) => {
 
       // remove the toString function that was added before
       setBilling(selectedOptions.map(selectedOption => {
-         const { toString, ...fee } = selectedOption.value;
-         return fee;
+         const { toString, fee, overrideAmount, ...bill } = selectedOption.value;
+         console.log(selectedOption.value)
+         return {
+            ...bill,
+            fee,
+            overrideAmount: overrideAmount !== null ? overrideAmount : null
+         };
       }));
    };
 
    // shows currency input to override fee amount
-   const handleEditOnClick = (bill) => {
-      return () => setSelectedBill(bill);
-   };
+   const handleEditOnClick = (bill) => (() => setSelectedBill(bill));
 
    const handleOnOverrideAmountInput = (input) => {
       setSelectedBill({
@@ -76,7 +82,7 @@ const BillingSelect = ({ billing, setBilling }) => {
    const filterOption = (option, inputText) => {
       // with user input, compare the input with the name and amount
       if (inputText) {
-         const { amount, name } = option.data.value;
+         const { amount, name } = option.data.value.fee;
          const optionNameAmount = `${name.toLowerCase()} ${amount.toFixed(2)}`;
 
          // return the option if input is included in either name or amount
@@ -125,7 +131,7 @@ const BillingSelect = ({ billing, setBilling }) => {
    // separate the fees into IS / NOT included in billing
    fees.forEach(fee => {
       const { _id, amount, name } = fee;
-      const bill = billing.find(bill => bill._id === fee._id);
+      const bill = billing.find(bill => bill.fee._id === fee._id);
       const toString = () => _id;
       let amountText = amount >= 0 ? amount.toFixed(2) : `(${amount.toFixed(2)})`;
 
@@ -144,7 +150,7 @@ const BillingSelect = ({ billing, setBilling }) => {
          }
          else {
             amountText = '$ ' + amountText;
-         }
+         };
 
          return billingValues.push({
             label: (
@@ -172,6 +178,7 @@ const BillingSelect = ({ billing, setBilling }) => {
             ),
             value: {
                ...bill,
+               fee: { ...bill.fee },
                toString,
             }
          });
@@ -186,7 +193,7 @@ const BillingSelect = ({ billing, setBilling }) => {
             </div>
          ),
          value: {
-            ...fee,
+            fee,
             overrideAmount: null,
             toString
          }

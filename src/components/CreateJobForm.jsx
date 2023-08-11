@@ -42,8 +42,8 @@ const CreateJobForm = ({ hideForm }) => {
       const formattedJob = {
          ...job,
          billing: job.billing.map(bill => ({
-            ...bill,
-            overrideAmount: (overrideAmount === null) ? null : Number(bill.overrideAmount)
+            fee: bill.fee._id,
+            overrideAmount: (bill.overrideAmount === null) ? null : Number(bill.overrideAmount)
          })),
          customer: job.customer?._id,
          drivers: job.drivers.map(d => d._id),

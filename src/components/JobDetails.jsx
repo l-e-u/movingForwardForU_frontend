@@ -2,12 +2,14 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 
 // components
+import EllipsisMenu from './EllipsisMenu';
 import SmallHeader from './SmallHeader';
+import Tabs from './Tabs';
+import TransitDetails from './TransitDetails';
 
 // functions
-import { datePrettyString, formatCurrency, timeStringFormat } from '../utils/StringUtils';
+import { datePrettyString, formatToCurrencyString, timeStringFormat } from '../utils/StringUtils';
 import { billingTotal } from '../utils/NumberUtils';
-import Tabs from './Tabs';
 
 
 const JobDetails = ({
@@ -20,6 +22,7 @@ const JobDetails = ({
    showCreatedDetails = false,
    singleNoteInput = false,
 }) => {
+   const API_BASE_URL = process.env.API_BASE_URL;
    const {
       _id,
       billing,
@@ -35,9 +38,9 @@ const JobDetails = ({
       reference,
       status
    } = job;
-
+   console.log(job)
    // expands the additional info of a job
-   const [expandAdditionalInfo, setExpandAdditionalInfo] = useState(false);
+   const [showMore, setShowMore] = useState(false);
 
    // formatting strings for date and time
    const pickupTimeString = pickup.includeTime ?
@@ -47,189 +50,205 @@ const JobDetails = ({
       timeStringFormat({ dateString: delivery.date, showMilitary: true }) :
       '--:--';
 
-
-   // delete and edit buttons are identical, expandContract button will have the same hover effects, but when its additional info is expanded, it will maintain its hover colors
-   const actionButtonVariants = {
-      actionButton: {
-         background: 'transparent',
-         borderWidth: '1px',
-         borderStyle: 'solid',
-         borderColor: 'var(--bs-secondary)',
-         color: 'var(--bs-secondary)',
-         scale: 1,
-         opacity: 0.5
-      },
-      expandContractButton: {
-         background: 'transparent',
-         borderWidth: '1px',
-         borderStyle: 'solid',
-         borderColor: expandAdditionalInfo ? 'var(--mainPalette4)' : 'var(--bs-secondary)',
-         color: expandAdditionalInfo ? 'var(--mainPalette4)' : 'var(--bs-secondary)',
-         scale: 1,
-         opacity: expandAdditionalInfo ? 1 : 0.5
-      },
-      onHover: {
-         borderColor: 'var(--mainPalette4)',
-         color: 'var(--mainPalette4)',
-         scale: 1.1,
-         opacity: 1,
-         transition: {
-            duration: 0.2,
-         }
-      }
-   };
+   const noDrivers = drivers.length === 0;
 
    return (
       <div
-         className='jobDetails position-relative bg-white container rounded px-4 py-2'
-         style={{ boxShadow: '0 .125rem .25rem var(--mainPalette8)' }}
+         className='jobDetails position-relative bg-white container-fluid rounded py-2 border-top-0 border-start-0'
+         style={{
+            borderRight: '1px solid var(--mainPalette6)',
+            borderBottom: '1px solid var(--mainPalette6)'
+         }}
       >
-         {/* ACTION BUTTONS: for the document and button to expand the additional info element */}
-         <div className='position-absolute top-0 end-0 pt-1 pe-1'>
-            {/* delete document button */}
-            <motion.button className='rounded' onClick={() => { }} type='button' variants={actionButtonVariants} initial='actionButton' whileHover='onHover' >
-               <i className='bi bi-trash3'></i>
-            </motion.button>
-
-            {/* edit document button */}
-            <motion.button className='rounded mx-4 mx-lg-5' onClick={showEditForm} type='button' variants={actionButtonVariants} initial='actionButton' whileHover='onHover' >
-               <i className='bi bi-pencil'></i>
-            </motion.button>
-
-            {/* user can expand and contract the additional info element */}
-            <motion.button
-               className='bg-none rounded'
-               onClick={() => setExpandAdditionalInfo(!expandAdditionalInfo)}
-               initial='expandContractButton'
-               type='button'
-               variants={actionButtonVariants}
-               whileHover='onHover'
-            >
-               <i className={`bi bi-chevron-${expandAdditionalInfo ? 'contract' : 'expand'}`}></i>
-            </motion.button>
-         </div>
-
-         {/* CUSTOMER / CLIENT / ORGANIZATION */}
-         <div className='customer name d-xl-flex align-items-baseline gap-2 mb-1'>
-            <div className='text-secondary'><SmallHeader text='Customer' /></div>
-            <div className='fs-5' style={{ fontWeight: '500' }}>{customer.organization}</div>
-         </div>
+         <EllipsisMenu
+            actions={[
+               {
+                  name: showMore ? 'Collapse' : 'Expand',
+                  icon: `bi bi-chevron-${showMore ? 'contract' : 'expand'}`,
+                  handler: () => setShowMore(!showMore)
+               }
+            ]}
+         />
 
          {/* DEFAULT VIEW FOR QUICK READING */}
          <div className='row'>
-
-            <div className='col-xl-3 mb-1 my-xl-auto'>
-               <div className='my-auto'>
-                  {/* STATUS NAME */}
-                  <i className='bi bi-stars text-secondary me-2'></i>
-                  <span>{status.name}</span>
-                  <br />
-                  {/* REFERENCE */}
-                  <i className='bi bi-hash text-secondary me-2'></i>
-                  <span>{reference}</span>
-               </div>
+            <div className='col-sm-6 text-secondary'>
+               {/* STATUS */}
+               <i className='bi bi-stars fs-smaller me-2'></i>
+               <span><SmallHeader text={status.name} /></span>
             </div>
 
-            {/* PICKUP DETAILS */}
-            <div className='col-lg col-xl mb-2 mb-lg-0'>
-               <div className='text-secondary mb-1' style={{ opacity: '0.5' }}><SmallHeader text='Pickup Details' /></div>
+            <div className='col-sm-6 text-secondary'>
+               {/* REFERENCE */}
+               <i className='bi bi-hash fs-smaller me-2'></i>
+               <span className='me-3'><SmallHeader text={reference} /></span>
+            </div>
+         </div>
 
-               <div className='pickup'>
-                  <i className='bi bi-clock text-secondary me-2'></i>
-                  <span style={{ letterSpacing: '2px' }}>{pickupTimeString}</span>
-                  <br />
-                  <i className='bi bi-calendar4-event text-secondary me-2'></i>
-                  <span className='text-capitalize'>{datePrettyString({ dateString: pickup.date })}</span>
-                  <br />
-                  <i className='bi bi-geo-alt text-secondary me-2'></i>
-                  <span>{pickup.address}</span>
-               </div>
+         {/* ORGANIZATION */}
+         <div className='row mb-1'>
+            <div className='col-12' style={{ fontWeight: '600' }}>
+               {customer.organization}
+            </div>
+         </div>
+
+         {/* PICKUP AND DELIVERY DETAILS */}
+         <div className='row'>
+            {/* PICKUP DETAILS */}
+            <div className='col-sm col-lg col-xl'>
+               <span className='text-secondary' style={{ opacity: '0.5' }}>
+                  <SmallHeader text='Pickup Details' />
+               </span>
+
+               <TransitDetails
+                  address={pickup.address}
+                  dateText={datePrettyString({ dateString: pickup.date })}
+                  timeText={pickupTimeString}
+               />
             </div>
 
             {/* DELIVERY DETAILS */}
-            <div className='col-lg col-xl'>
-               <div className='text-secondary mb-1' style={{ opacity: '0.5' }}><SmallHeader text='Delivery Details' /></div>
-
-               <div className='delivery'>
-                  <i className='bi bi-clock text-secondary me-2'></i>
-                  <span style={{ letterSpacing: '2px' }}>{deliveryTimeString}</span>
-                  <br />
-                  <i className='bi bi-calendar4-event text-secondary me-2'></i>
-                  <span className='text-capitalize'>{datePrettyString({ dateString: delivery.date })}</span>
-                  <br />
-                  <i className='bi bi-geo-alt text-secondary me-2'></i>
-                  <span>{delivery.address}</span>
+            <div className='col-sm col-lg col-xl'>
+               <div className='text-secondary' style={{ opacity: '0.5' }}>
+                  <SmallHeader text='Delivery Details' />
                </div>
+
+               <TransitDetails
+                  address={delivery.address}
+                  dateText={datePrettyString({ dateString: delivery.date })}
+                  timeText={deliveryTimeString}
+               />
             </div>
          </div>
 
          {
-            expandAdditionalInfo &&
-            <div className='additionalInfo mt-4'>
-               <Tabs
-                  tabs={[
-                     {
-                        name: 'Info',
-                        icon: 'bi bi-person-rolodex',
-                        contentJSX: (
-                           <>
-                              {/* PARCEL */}
-                              <div className='row mb-1'>
-                                 <div className='col-sm-2 text-sm-end text-secondary'>
-                                    <SmallHeader text='Parcel' />
+            showMore &&
+            <div className='additionalInfo row mt-3'>
+               <div className='col-12'>
+                  <Tabs
+                     tabs={[
+                        {
+                           name: 'Info',
+                           icon: 'bi bi-person-rolodex',
+                           contentJSX: (
+                              <>
+                                 {/* PARCEL */}
+                                 <div className='row mb-1'>
+                                    <div className='col-sm-2 text-sm-end text-secondary'>
+                                       <SmallHeader text='Parcel' />
+                                    </div>
+                                    <div className='col-sm-10'>
+                                       {parcel}
+                                    </div>
                                  </div>
-                                 <div className='col-sm-10'>
-                                    {parcel}
+                                 {/* DRIVERS */}
+                                 <div className='row mb-1'>
+                                    <div className='col-sm-2 text-sm-end text-secondary'>
+                                       <SmallHeader text={`Driver${drivers.length > 1 ? 's' : ''}`} />
+                                    </div>
+                                    <div className='col-sm-10'>
+                                       {noDrivers && <div>None assigned</div>}
+                                       {
+                                          drivers.map(driver => (
+                                             <div key={driver._id}>{driver.fullName}</div>
+                                          ))
+                                       }
+                                    </div>
                                  </div>
-                              </div>
-                              {/* DRIVERS */}
-                              <div className='row mb-1'>
-                                 <div className='col-sm-2 text-sm-end text-secondary'>
-                                    <SmallHeader text={`Driver${drivers.length > 1 ? 's' : ''}`} />
+
+                                 {/* CREATED BY */}
+                                 <div className='row mb-1'>
+                                    <div className='col-sm-2 text-sm-end text-secondary'>
+                                       <SmallHeader text='Creator' />
+                                    </div>
+                                    <div className='col-sm-10'>
+                                       {createdBy.fullName}
+                                    </div>
                                  </div>
-                                 <div className='col-sm-10'>
+
+                                 {/* CREATED AT */}
+                                 <div className='row'>
+                                    <div className='col-sm-2 text-sm-end text-secondary'>
+                                       <SmallHeader text='Created' />
+                                    </div>
+                                    <div className='col-sm-10 text-capitalize'>
+                                       {datePrettyString({ dateString: createdAt, includeTime: true })}
+                                    </div>
+                                 </div>
+                              </>
+                           )
+                        },
+                        {
+                           name: 'Billing',
+                           icon: 'bi bi-receipt-cutoff',
+                           contentJSX: (
+                              <>
+                                 <div className='text-end text-secondary mb-2'>
+                                    <SmallHeader text={`Balance: $ ${formatToCurrencyString({ amount: billingTotal(billing).toString(), setTwoDecimalPlaces: true })}`} />
+                                 </div>
+                                 <ul className='p-0 m-0' style={{ listStyle: 'none' }}>
                                     {
-                                       drivers.map(driver => (
-                                          <div key={driver._id}>{driver.fullName}</div>
+                                       billing.map(bill => (
+                                          <li key={bill._id} className='d-flex justify-content-between'>
+                                             <span>{bill.fee.name}</span>
+                                             <span>$ {bill.fee.amount}</span>
+                                          </li>
                                        ))
                                     }
+                                 </ul>
+                              </>
+                           )
+                        },
+                        {
+                           name: 'Notes',
+                           icon: 'bi bi-sticky',
+                           contentJSX: (
+                              <>
+                                 <div className='text-end text-secondary mb-2'>
+                                    <SmallHeader text={`Total: ${notes.length}`} />
                                  </div>
-                              </div>
+                                 <ul className='notesList p-0 m-0' style={{ listStyle: 'none' }}>
+                                    {
+                                       notes.map(note => (
+                                          <li key={note._id} className='row d-flex justify-content-between'>
+                                             <div className='col-sm-6 fs-smaller text-secondary text-capitalize' style={{ opacity: 0.5 }}>
+                                                {datePrettyString({ dateString: note.createdAt, includeTime: true })}
+                                             </div>
 
-                              {/* CREATED BY */}
-                              <div className='row mb-1'>
-                                 <div className='col-sm-2 text-sm-end text-secondary'>
-                                    <SmallHeader text='Creator' />
-                                 </div>
-                                 <div className='col-sm-10'>
-                                    {createdBy.fullName}
-                                 </div>
-                              </div>
+                                             <div className='col-sm-6 fs-smaller text-secondary' style={{ opacity: 0.5 }}>
+                                                {note.createdBy.fullName}
+                                             </div>
 
-                              {/* CREATED AT */}
-                              <div className='row'>
-                                 <div className='col-sm-2 text-sm-end text-secondary'>
-                                    <SmallHeader text='Created' />
-                                 </div>
-                                 <div className='col-sm-10 text-capitalize'>
-                                    {datePrettyString({ dateString: createdAt })}
-                                 </div>
-                              </div>
-                           </>
-                        )
-                     },
-                     {
-                        name: 'Billing',
-                        icon: 'bi bi-receipt-cutoff',
-                        contentJSX: <div>working...</div>
-                     },
-                     {
-                        name: 'Notes',
-                        icon: 'bi bi-sticky',
-                        contentJSX: <div>working...</div>
-                     }
-                  ]}
-               />
+                                             <ul className='attachmentsList col-12 m-0 p-0' style={{ listStyle: 'none' }}>
+                                                {
+                                                   note.attachments.map(attachment => (
+                                                      <li key={attachment._id} className='fs-smaller text-end'>
+                                                         <a
+                                                            href={`${API_BASE_URL}/api/attachments/download/` + attachment.filename}
+                                                            target='_blank'
+                                                            rel='noopener noreferrer'
+                                                         >
+                                                            <span>{attachment.originalname}</span>
+                                                            <i className='bi bi-download ps-2 text-secondary'></i>
+                                                         </a>
+                                                      </li>
+                                                   ))
+                                                }
+                                             </ul>
+
+                                             <div className='col-12 mt-1'>
+                                                {note.message}
+                                             </div>
+                                          </li>
+                                       ))
+                                    }
+                                 </ul>
+                              </>
+                           )
+                        }
+                     ]}
+                  />
+               </div>
             </div>
          }
       </div>

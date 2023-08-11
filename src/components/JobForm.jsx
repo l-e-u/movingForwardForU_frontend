@@ -549,7 +549,7 @@ const JobForm = ({
                                  createdByName={createdBy.fullName}
                                  createdAtDate={createdAt}
                                  isResizingImages={isResizingImages}
-                                 key={note._id}
+                                 key={note._id || index}
                                  messageInput={message}
                                  setAttachments={attachments => {
                                     setJob({
