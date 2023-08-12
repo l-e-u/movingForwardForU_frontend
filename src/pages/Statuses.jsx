@@ -9,6 +9,8 @@ import { useStatusesContext } from '../hooks/useStatusesContext';
 import CreateStatusForm from '../components/CreateStatusForm';
 import EditStatusForm from '../components/EditStatusForm';
 import SmallHeader from '../components/SmallHeader';
+import DetailsContainer from '../components/DetailsContainer';
+import EllipsisMenu from '../components/EllipsisMenu';
 
 const Statuses = () => {
    const { getStatuses, error, isLoading } = useGetStatuses();
@@ -32,28 +34,6 @@ const Statuses = () => {
       }
    };
 
-   // delete and edit buttons variants
-   const actionButtonVariants = {
-      actionButton: {
-         background: 'transparent',
-         borderWidth: '1px',
-         borderStyle: 'solid',
-         borderColor: 'var(--bs-secondary)',
-         color: 'var(--bs-secondary)',
-         scale: 1,
-         opacity: 0.5
-      },
-      onHover: {
-         borderColor: 'var(--mainPalette4)',
-         color: 'var(--mainPalette4)',
-         scale: 1.1,
-         opacity: 1,
-         transition: {
-            duration: 0.2,
-         }
-      }
-   };
-
    // styling for the list container
    const listClasses = 'statusesList px-md-5 py-0 px-3 m-0';
    const listVariants = {
@@ -68,8 +48,6 @@ const Statuses = () => {
       }
    };
 
-   // styling for an item in the list
-   const itemClasses = 'statusItem bg-white container position-relative rounded py-3 px-4';
    const itemVariants = {
       mount: {
          opacity: 0,
@@ -132,32 +110,36 @@ const Statuses = () => {
          <motion.ul className={listClasses} variants={listVariants} initial='mount' animate='animation'>
             {
                statuses.map(status => (
-                  <motion.li key={status._id} className={itemClasses} variants={itemVariants} >
+                  <motion.li key={status._id} variants={itemVariants} >
+                     <DetailsContainer>
+                        <EllipsisMenu actions={[
+                           {
+                              name: 'Delete',
+                              icon: 'bi bi-trash3',
+                              handler: () => { }
+                           },
+                           {
+                              name: 'Edit',
+                              icon: 'bi bi-pen',
+                              handler: () => setSelectedStatus(status)
+                           }
+                        ]}
+                        />
 
-                     {/* contains all actions for the document and button to expand the additional info element */}
-                     <div className='position-absolute top-0 end-0 pt-1 pe-1'>
-                        {/* delete document button */}
-                        <motion.button className='rounded me-3' onClick={() => { }} type='button' variants={actionButtonVariants} initial='actionButton' whileHover='onHover' >
-                           <i className='bi bi-trash3'></i>
-                        </motion.button>
+                        {/* name */}
+                        <div className='row px-2 mb-2'>
+                           <div className={firstColumnClasses}>
+                              <SmallHeader text='Name' />
+                           </div>
+                           <div className={secondColumnClasses} style={{ fontWeight: '600' }}>{status.name}</div>
+                        </div>
 
-                        {/* edit document button */}
-                        <motion.button className='rounded ms-3' onClick={() => setSelectedStatus(status)} type='button' variants={actionButtonVariants} initial='actionButton' whileHover='onHover' >
-                           <i className='bi bi-pencil'></i>
-                        </motion.button>
-                     </div>
-
-                     {/* name */}
-                     <div className='row border-bottom border-bottom-lg-0 pb-2 pb-lg-0 mb-2'>
-                        <div className='col-lg-2 mt-auto text-secondary text-lg-end'><SmallHeader text='Name' /></div>
-                        <div className='col-lg-10 fs-5' style={{ fontWeight: '500' }}>{status.name}</div>
-                     </div>
-
-                     {/* description */}
-                     <div className='row'>
-                        <div className={firstColumnClasses}><SmallHeader text='Description' /></div>
-                        <div className={secondColumnClasses + ' whiteSpace-preWrap'}>{status.description}</div>
-                     </div>
+                        {/* description */}
+                        <div className='row px-2'>
+                           <div className={firstColumnClasses}><SmallHeader text='Description' /></div>
+                           <div className={secondColumnClasses + ' whiteSpace-preWrap'}>{status.description}</div>
+                        </div>
+                     </DetailsContainer>
                   </motion.li>
                ))
             }

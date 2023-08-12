@@ -1,21 +1,23 @@
 import { motion } from 'framer-motion';
 
-const CollapsingSection = ({ children, className, maxHeight, isExpanded }) => {
+const CollapsingSection = ({ children, maxHeight, isExpanded }) => {
    return (
       <motion.div
          className='myCollapsingSection d-grid overflow-hidden'
          initial={{
             maxHeight,
-            height: '0px',
+            marginTop: '0rem',
+            gridTemplateRows: '0fr',
          }}
          animate={{
-            height: isExpanded ? maxHeight : '0px',
+            gridTemplateRows: isExpanded ? '1fr' : '0fr',
+            marginTop: isExpanded ? '1rem' : '0rem',
             transition: {
                duration: 0.3
             }
          }}
       >
-         <div className={`section overflow-hidden ${className || ''}`}>
+         <div className='section overflow-hidden'>
             {children}
          </div>
       </motion.div>

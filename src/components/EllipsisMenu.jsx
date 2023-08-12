@@ -15,37 +15,6 @@ const EllipsisMenu = ({ actions = [] }) => {
    const userEnteredMenuTrue = () => setUserEnteredMenu(true);
    const hideMenu = () => setShowMenu(false);
 
-   // delete and edit buttons are identical, expandContract button will have the same hover effects, but when its additional info is expanded, it will maintain its hover colors
-   // const actionButtonVariants = {
-   //    actionButton: {
-   //       background: 'transparent',
-   //       borderWidth: '1px',
-   //       borderStyle: 'solid',
-   //       borderColor: 'var(--bs-secondary)',
-   //       color: 'var(--bs-secondary)',
-   //       scale: 1,
-   //       opacity: 0.5
-   //    },
-   //    expandContractButton: {
-   //       background: 'transparent',
-   //       borderWidth: '1px',
-   //       borderStyle: 'solid',
-   //       borderColor: expandAdditionalInfo ? 'var(--mainPalette4)' : 'var(--bs-secondary)',
-   //       color: expandAdditionalInfo ? 'var(--mainPalette4)' : 'var(--bs-secondary)',
-   //       scale: 1,
-   //       opacity: expandAdditionalInfo ? 1 : 0.5
-   //    },
-   //    onHover: {
-   //       borderColor: 'var(--mainPalette4)',
-   //       color: 'var(--mainPalette4)',
-   //       scale: 1.1,
-   //       opacity: 1,
-   //       transition: {
-   //          duration: 0.2,
-   //       }
-   //    }
-   // };
-
    const iconVariants = {
       mount: {
          opacity: 0.5
@@ -102,7 +71,7 @@ const EllipsisMenu = ({ actions = [] }) => {
             {
                showMenu &&
                <motion.div
-                  className='ellipsisMenu border-end border-bottom rounded-1 fs-smaller position-absolute top-0 end-100 p-2 mt-2 shadow-sm'
+                  className='ellipsisMenu d-flex flex-column gap-2 bg-white border-end border-bottom rounded-1 fs-smaller position-absolute top-0 end-100 p-2 mt-2 shadow-sm'
                   variants={fadeVariants}
                   initial='hidden'
                   animate='visible'
@@ -129,32 +98,6 @@ const EllipsisMenu = ({ actions = [] }) => {
          </motion.i>
       </div>
    );
-
-   // return (
-   //    <div className='position-absolute top-0 end-0 pt-1 pe-1'>
-   //       {/* delete document button */}
-   //       <motion.button className='rounded' onClick={() => { }} type='button' variants={actionButtonVariants} initial='actionButton' whileHover='onHover' >
-   //          <i className='bi bi-trash3'></i>
-   //       </motion.button>
-
-   //       {/* edit document button */}
-   //       <motion.button className='rounded mx-4 mx-lg-5' onClick={showEditForm} type='button' variants={actionButtonVariants} initial='actionButton' whileHover='onHover' >
-   //          <i className='bi bi-pencil'></i>
-   //       </motion.button>
-
-   //       {/* user can expand and contract the additional info element */}
-   //       <motion.button
-   //          className='bg-none rounded'
-   //          onClick={() => setExpandAdditionalInfo(!expandAdditionalInfo)}
-   //          initial='expandContractButton'
-   //          type='button'
-   //          variants={actionButtonVariants}
-   //          whileHover='onHover'
-   //       >
-   //          <i className={`bi bi-chevron-${expandAdditionalInfo ? 'contract' : 'expand'}`}></i>
-   //       </motion.button>
-   //    </div>
-   // )
 };
 
 export default EllipsisMenu;

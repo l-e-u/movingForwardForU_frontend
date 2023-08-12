@@ -9,6 +9,8 @@ import SmallHeader from '../components/SmallHeader';
 // hooks
 import { useGetFees } from '../hooks/useGetFees';
 import { useFeesContext } from '../hooks/useFeesContext';
+import DetailsContainer from '../components/DetailsContainer';
+import EllipsisMenu from '../components/EllipsisMenu';
 
 const Fees = () => {
    const { getFees, error, isLoading } = useGetFees();
@@ -132,38 +134,40 @@ const Fees = () => {
          <motion.ul className={listClasses} variants={listVariants} initial='mount' animate='animation'>
             {
                fees.map(fee => (
-                  <motion.li key={fee._id} className={itemClasses} variants={itemVariants} >
+                  <motion.li key={fee._id} variants={itemVariants} >
+                     <DetailsContainer>
+                        <EllipsisMenu actions={[
+                           {
+                              name: 'Delete',
+                              icon: 'bi bi-trash3',
+                              handler: () => { }
+                           },
+                           {
+                              name: 'Edit',
+                              icon: 'bi bi-pen',
+                              handler: () => setSelectedFee(fee)
+                           }
+                        ]}
+                        />
 
-                     {/* contains all actions for the document and button to expand the additional info element */}
-                     <div className='position-absolute top-0 end-0 pt-1 pe-1'>
-                        {/* delete document button */}
-                        <motion.button className='rounded me-3' onClick={() => { }} type='button' variants={actionButtonVariants} initial='actionButton' whileHover='onHover' >
-                           <i className='bi bi-trash3'></i>
-                        </motion.button>
+                        {/* name */}
+                        <div className='row px-2 mb-2'>
+                           <div className={firstColumnClasses}><SmallHeader text='Name' /></div>
+                           <div className={secondColumnClasses} style={{ fontWeight: '600' }}>{fee.name}</div>
+                        </div>
 
-                        {/* edit document button */}
-                        <motion.button className='rounded ms-3' onClick={() => setSelectedFee(fee)} type='button' variants={actionButtonVariants} initial='actionButton' whileHover='onHover' >
-                           <i className='bi bi-pencil'></i>
-                        </motion.button>
-                     </div>
+                        {/* amount */}
+                        <div className='row px-2 mb-2'>
+                           <div className={firstColumnClasses}><SmallHeader text='Amount' /></div>
+                           <div className={secondColumnClasses}>{`$ ${fee.amount.toFixed(2)}`}</div>
+                        </div>
 
-                     {/* name */}
-                     <div className='row border-bottom border-bottom-xl-0 pb-2 pb-xl-0 mb-2'>
-                        <div className='col-xl-2 mt-auto text-secondary text-xl-end'><SmallHeader text='Name' /></div>
-                        <div className='col-xl-10 fs-5' style={{ fontWeight: '500' }}>{fee.name}</div>
-                     </div>
-
-                     {/* amount */}
-                     <div className='row mb-2'>
-                        <div className={firstColumnClasses}><SmallHeader text='Amount' /></div>
-                        <div className={secondColumnClasses}>{`$ ${fee.amount.toFixed(2)}`}</div>
-                     </div>
-
-                     {/* description */}
-                     <div className='row'>
-                        <div className={firstColumnClasses}><SmallHeader text='Description' /></div>
-                        <div className={secondColumnClasses + ' whiteSpace-preWrap'}>{fee.description}</div>
-                     </div>
+                        {/* description */}
+                        <div className='row px-2'>
+                           <div className={firstColumnClasses}><SmallHeader text='Description' /></div>
+                           <div className={secondColumnClasses + ' whiteSpace-preWrap'}>{fee.description}</div>
+                        </div>
+                     </DetailsContainer>
                   </motion.li>
                ))
             }

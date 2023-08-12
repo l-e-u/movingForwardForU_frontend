@@ -50,7 +50,7 @@ function App() {
                               <Navigate to='/login' />}
                      />
                      <Route
-                        path='/jobs'
+                        path='/dispatch'
                         element={
                            user ?
                               <Jobs filters={jobFilters} setFilters={setJobFilters} selectedLink={selectedLink} setSelectedLink={setSelectedLink} /> :

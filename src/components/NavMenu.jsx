@@ -11,7 +11,7 @@ import logo from '../assets/movingForwardArrows.svg';
 const NavMenu = ({ selectedLink, setSelectedLink }) => {
    const links = [
       { name: 'My Jobs', path: '/', icon: 'bi-list-check' },
-      { name: 'Jobs', path: '/jobs', icon: 'bi-truck' },
+      { name: 'Dispatch', path: '/dispatch', icon: 'bi-truck' },
       { name: 'Contacts', path: '/contacts', icon: 'bi-person-vcard' },
       { name: 'Statuses', path: '/statuses', icon: 'bi-tags' },
       { name: 'Users', path: '/users', icon: 'bi-people' },

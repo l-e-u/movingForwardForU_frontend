@@ -1,7 +1,9 @@
 import { useState } from 'react';
-import { motion } from 'framer-motion';
 
 // components
+import BillingTable from './BillingTable';
+import CollapsingSection from './CollapsingSection';
+import DetailsContainer from './DetailsContainer';
 import EllipsisMenu from './EllipsisMenu';
 import SmallHeader from './SmallHeader';
 import Tabs from './Tabs';
@@ -10,9 +12,6 @@ import TransitDetails from './TransitDetails';
 // functions
 import { datePrettyString, formatToCurrencyString, timeStringFormat } from '../utils/StringUtils';
 import { billingTotal } from '../utils/NumberUtils';
-import BillingTable from './BillingTable';
-import CollapsingSection from './CollapsingSection';
-
 
 const JobDetails = ({
    job,
@@ -55,13 +54,7 @@ const JobDetails = ({
    const noDrivers = drivers.length === 0;
 
    return (
-      <div
-         className='jobDetails position-relative bg-white container-fluid rounded py-2 border-top-0 border-start-0'
-         style={{
-            borderRight: '1px solid var(--mainPalette6)',
-            borderBottom: '1px solid var(--mainPalette6)'
-         }}
-      >
+      <DetailsContainer>
          <EllipsisMenu
             actions={[
                {
@@ -73,57 +66,45 @@ const JobDetails = ({
          />
 
          {/* DEFAULT VIEW FOR QUICK READING */}
-         <div className='row'>
-            <div className='col-sm-6 text-secondary'>
-               {/* STATUS */}
-               <i className='bi bi-stars fs-smaller me-2'></i>
-               <span><SmallHeader text={status.name} /></span>
-            </div>
+         {/* STATUS */}
+         <i className='bi bi-stars fs-smaller me-2 text-secondary'></i>
+         <span className='text-secondary'><SmallHeader text={status.name} /></span>
 
-            <div className='col-sm-6 text-secondary'>
-               {/* REFERENCE */}
-               <i className='bi bi-hash fs-smaller me-2'></i>
-               <span className='me-3'><SmallHeader text={reference} /></span>
-            </div>
-         </div>
+         <br />
+
+         {/* REFERENCE */}
+         <i className='bi bi-hash fs-smaller me-2 text-secondary'></i>
+         <span className='text-secondary'><SmallHeader text={reference} /></span>
 
          {/* ORGANIZATION */}
-         <div className='row mb-1'>
-            <div className='col-12' style={{ fontWeight: '600' }}>
-               {customer.organization}
-            </div>
+         <div className='ms-3 ps-1 mb-2' style={{ fontWeight: '600' }}>
+            {customer.organization}
          </div>
 
          {/* PICKUP AND DELIVERY DETAILS */}
-         <div className='row'>
+         <div className='row mx-2'>
             {/* PICKUP DETAILS */}
             <div className='col-sm col-lg col-xl'>
-               <span className='text-secondary' style={{ opacity: '0.5' }}>
-                  <SmallHeader text='Pickup Details' />
-               </span>
-
                <TransitDetails
                   address={pickup.address}
                   dateText={datePrettyString({ dateString: pickup.date })}
+                  heading='Pickup'
                   timeText={pickupTimeString}
                />
             </div>
 
             {/* DELIVERY DETAILS */}
             <div className='col-sm col-lg col-xl'>
-               <div className='text-secondary' style={{ opacity: '0.5' }}>
-                  <SmallHeader text='Delivery Details' />
-               </div>
-
                <TransitDetails
                   address={delivery.address}
                   dateText={datePrettyString({ dateString: delivery.date })}
+                  heading='Delivery'
                   timeText={deliveryTimeString}
                />
             </div>
          </div>
 
-         <CollapsingSection className='mt-3' maxHeight={'300px'} isExpanded={showMore}>
+         <CollapsingSection maxHeight={'300px'} isExpanded={showMore}>
             <Tabs
                tabs={[
                   {
@@ -204,15 +185,15 @@ const JobDetails = ({
                                  {
                                     notes.map(note => (
                                        <li key={note._id} className='row d-flex justify-content-between'>
-                                          <div className='col-sm-6 fs-smaller text-secondary text-capitalize' style={{ opacity: 0.5 }}>
+                                          <div className='col-12 fs-smaller text-secondary text-capitalize' style={{ opacity: 0.5 }}>
                                              {datePrettyString({ dateString: note.createdAt, includeTime: true })}
                                           </div>
 
-                                          <div className='col-sm-6 fs-smaller text-secondary' style={{ opacity: 0.5 }}>
+                                          <div className='col-12 fs-smaller text-secondary' style={{ opacity: 0.5 }}>
                                              {note.createdBy.fullName}
                                           </div>
 
-                                          <div className='text-secondary mt-2'>
+                                          <div className='text-secondary mt-1'>
                                              <i className='bi bi-paperclip fs-smaller me-1'></i>
                                              <SmallHeader text={`Attachments: ${note.attachments.length}`} />
                                           </div>
@@ -253,8 +234,7 @@ const JobDetails = ({
                ]}
             />
          </CollapsingSection>
-
-      </div>
+      </DetailsContainer>
    );
 };
 

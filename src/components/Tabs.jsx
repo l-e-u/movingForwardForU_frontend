@@ -39,6 +39,15 @@ const Tabs = ({ tabs }) => {
    // icon on the tab button
    const iconClasses = 'me-2';
 
+   const contentVariants = {
+      hidden: {
+         opacity: 0
+      },
+      visible: {
+         opacity: 1
+      }
+   };
+
    return (
       <div className={parentContainerClasses}>
          <div className={tabButtonsContainerClasses}>
@@ -73,8 +82,17 @@ const Tabs = ({ tabs }) => {
                })
             }
          </div>
+
          <div className={contentContainerClasses} style={contentContainerStyles}>
-            {tabs[selectedTabIndex].contentJSX}
+            <motion.div
+               animate='visible'
+               exit='hidden'
+               initial='hidden'
+               key={selectedTabIndex}
+               variants={contentVariants}
+            >
+               {tabs[selectedTabIndex].contentJSX}
+            </motion.div>
          </div>
       </div>
    )
