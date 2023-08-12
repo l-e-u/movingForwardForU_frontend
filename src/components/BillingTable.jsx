@@ -13,7 +13,7 @@ const BillingTable = ({ billing }) => {
    return (
       <table className='table table-sm text-reset m-0'>
          <thead>
-            <tr className='text-secondary fs-smaller fw-normal'>
+            <tr className='text-secondary fs-smaller'>
                <th className='fw-normal text-center' scope='col' style={scopeStyles}>#</th>
                <th className='fw-normal' scope='col' style={scopeStyles}>Fee</th>
                <th className='fw-normal text-end' colSpan='2' scope='col' style={scopeStyles}>Amount</th>

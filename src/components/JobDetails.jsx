@@ -108,7 +108,7 @@ const JobDetails = ({
             <Tabs
                tabs={[
                   {
-                     name: 'Info',
+                     name: 'Details',
                      icon: 'bi bi-person-rolodex',
                      contentJSX: (
                         <>

@@ -1,160 +1,160 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
 
 // components
-// import PageContentWrapper from '../components/Page';
-// import CreatedInfo from '../components/CreatedInfo';
-// import FlexBoxWrapper from '../components/FlexBoxWrapper';
-// import ActionButton from '../components/ActionButton';
-// import CreateUserForm from '../components/CreateUserForm';
-// import EditUserForm from '../components/EditUserForm';
-// import LoadingDocuments from '../components/LoadingDocuments';
-// import ErrorLoadingDocuments from '../components/ErrorLoadingDocuments';
-// import SmallHeader from '../components/SmallHeader';
-// import OptionsMenu from '../components/OptionsMenu';
-// import Card from '../components/Card';
+import CreateUserForm from '../components/CreateUserForm';
+import DetailsContainer from '../components/DetailsContainer';
+import EllipsisMenu from '../components/EllipsisMenu';
+import SmallHeader from '../components/SmallHeader';
 
 // hooks
 import { useUsersContext } from '../hooks/useUsersContext';
-import { useAuthContext } from '../hooks/useAuthContext';
+import { useGetUsers } from '../hooks/useGetUsers';
 
 const Users = () => {
-   const API_BASE_URL = process.env.API_BASE_URL;
-   const { user } = useAuthContext();
-   const { users, dispatch } = useUsersContext();
+   const { getUsers, error, isLoading } = useGetUsers();
+   const { users } = useUsersContext();
 
-   const editFormRef = useRef(null);
-
-   // local state
-   const [error, setError] = useState(null);
-   const [isLoading, setIsLoading] = useState(null);
-   const [selectedUserId, setSelectedUserId] = useState(null);
    const [showCreateForm, setShowCreateForm] = useState(false);
-   const [showEditForm, setShowEditForm] = useState(false);
-   const [showOptionsMenu, setShowOptionsMenu] = useState(false);
+   const [selectedUser, setSelectedUser] = useState(null);
 
-   useEffect(() => {
-      if (showEditForm) editFormRef.current?.scrollIntoView({ behavior: 'smooth' });
-   }, [showEditForm]);
+   // button to add new documents classes, styles, and framer-motion variants
+   const addButtonClasses = 'px-3 py-1 ms-auto position-relative border-start-0 border-top-0 rounded text-white d-flex justify-content-center align-items-center gap-1';
+   const addButtonVariants = {
+      mount: {
+         backgroundColor: 'var(--mainPalette4)',
+         borderRight: '1px solid var(--mainPalette2)',
+         borderBottom: '1px solid var(--mainPalette2)'
+      },
+      onHover: {
+         scale: 1.1,
+         transition: {
+            duration: 0.3,
+         },
+         boxShadow: '0px 0px 8px var(--mainPalette4)',
+      }
+   };
 
-   useEffect(() => {
-      (async () => {
-         setIsLoading(true);
-         setError(null);
+   // styling for the list container
+   const listClasses = 'jobsList px-3 pb-0 px-md-5';
+   const listVariants = {
+      mount: {
+         listStyle: 'none',
+         margin: '0',
+         padding: '0'
+      },
+      animation: {
+         transition: {
+            when: 'beforeChildren',
+            staggerChildren: 0.1
+         }
+      }
+   };
 
-         const response = await fetch(`${API_BASE_URL}/api/users`, {
-            headers: {
-               'Content-Type': 'application/json',
-               'Authentication': `Bearer ${user.token}`
+   // styling for an item in the list
+   const itemVariants = {
+      mount: {
+         opacity: 0,
+         marginBottom: '0'
+      },
+      animation: {
+         opacity: 1,
+         marginBottom: '1rem',
+         transition: {
+            marginBottom: {
+               delay: 0.5
             }
-         });
+         }
+      }
+   };
 
-         // expecting all contacts
-         const json = await response.json();
+   // styling for the columns
+   const firstColumnClasses = 'col-sm-2 text-secondary text-sm-end';
+   const secondColumnClasses = 'col-sm-10'
 
-         if (!response.ok) {
-            console.error(json);
-            setError(json.error);
-            setIsLoading(false);
-         };
+   useEffect(() => {
+      getUsers();
+   }, []);
 
-         if (response.ok) {
-            setError(null);
-            setIsLoading(false);
+   return (
+      <>
+         <AnimatePresence>
+            {
+               showCreateForm &&
+               <CreateUserForm hideForm={() => setShowCreateForm(false)} />
+            }
+         </AnimatePresence>
 
-            dispatch({ type: 'SET_USERS', payload: json });
-         };
-      })();
-   }, [API_BASE_URL, dispatch, user]);
+         {/* button to display the new job form */}
+         <div className='p-2'>
+            <motion.button
+               className={addButtonClasses}
+               onClick={() => setShowCreateForm(true)}
+               type='button'
+               variants={addButtonVariants}
+               initial='mount'
+               whileHover='onHover'
+            >
+               <i className='bi bi-plus'></i>
+               <i className='bi bi-truck'></i>
+            </motion.button>
+         </div>
 
-   // sets all the forms and menus show setters to false
-   const hideAllMenusAndForms = () => [setShowEditForm, setShowCreateForm, setShowOptionsMenu].forEach(setShow => setShow(false));
-   return <></>;
-   // return (
-   //    <PageContentWrapper>
-   //       <div className='mb-3'>
-   //          {showCreateForm ?
-   //             <CreateUserForm setShowThisForm={setShowCreateForm} /> :
-   //             <ActionButton
-   //                alignX='right'
-   //                handleOnClick={() => {
-   //                   hideAllMenusAndForms();
-   //                   setShowCreateForm(true);
-   //                   setSelectedUserId(null);
-   //                }}
-   //                text='Create A User'
-   //             />
-   //          }
-   //       </div>
-
-   //       {/* show spinner with actively fetching data */}
-   //       {isLoading && <div className='my-5'><LoadingDocuments /></div>}
-
-   //       {error && <ErrorLoadingDocuments docType='Users' />}
-
-   //       {users &&
-   //          <FlexBoxWrapper>
-   //             {users.map((u) => {
-   //                const { _id, address, comments, createdAt, email, firstName, isActive, isAdmin, isVerified, lastName } = u;
-   //                const isSelectedUser = selectedUserId === _id;
+         <motion.ul className={listClasses} variants={listVariants} initial='mount' animate='animation'>
+            {
+               users.map(user => (
+                  <motion.li key={user._id} variants={itemVariants}>
+                     <DetailsContainer>
+                        <EllipsisMenu
+                           actions={[
+                              {
+                                 name: 'Delete',
+                                 icon: 'bi bi-trash3',
+                                 handler: () => { }
+                              },
+                              {
+                                 name: 'Edit',
+                                 icon: 'bi bi-pen',
+                                 handler: () => selectedUser(user)
+                              }
+                           ]}
+                        />
 
 
-   //                switch (true) {
-   //                   case (showEditForm && isSelectedUser):
-   //                      return (<div className='position-relative' key={_id} ref={editFormRef}>
-   //                         <EditUserForm prev={u} setShowThisForm={setShowEditForm} />
-   //                      </div>);
+                        {/* NAME */}
+                        <div className='mb-2' style={{ fontWeight: '600' }}>{user.fullName}</div>
 
-   //                   default:
-   //                      return (<div className='position-relative' key={_id}>
-   //                         <OptionsMenu
-   //                            showMenu={showOptionsMenu && isSelectedUser}
-   //                            handleOnClickCloseMenu={() => setShowOptionsMenu(false)}
-   //                            handleOnClickEditOption={() => {
-   //                               hideAllMenusAndForms();
-   //                               setShowEditForm(true);
-   //                            }}
-   //                            handleOnClickMenu={() => {
-   //                               hideAllMenusAndForms();
-   //                               setSelectedUserId(_id);
-   //                               setShowOptionsMenu(true);
-   //                            }}
-   //                         />
-   //                         <Card
-   //                            header={<div>{firstName + ' ' + lastName + (isAdmin ? ' (Admin)' : '')}</div>}
-   //                            body={
-   //                               <div>
-   //                                  <SmallHeader text='Status' />
-   //                                  <p className='mb-2'>{isActive ? 'Active' : 'Inactive'}</p>
+                        {/* NOTE */}
+                        <div className='row px-1 px-sm-3 px-md-4 px-lg-1'>
+                           {/* PHONE */}
+                           <div className='phone col-lg d-flex gap-2 justify-content-lg-center align-items-center mb-1 mb-lg-0'>
+                              <i className='bi bi-telephone text-secondary fs-smaller'></i>
+                              <div>
+                                 {`${user.phoneNumber ? phoneNumberFormatted(user.phoneNumber) : ''}`}
+                              </div>
+                           </div>
 
-   //                                  <SmallHeader text='Email' />
-   //                                  <div className='mb-2'>
-   //                                     <i className='bi bi-envelope text-action me-2'></i>
-   //                                     {isVerified && <i className='bi bi-patch-check text-action me-2'></i>}
-   //                                     <span>{email}</span>
-   //                                  </div>
+                           {/* EMAIL */}
+                           <div className='email col-lg d-flex gap-2 justify-content-lg-center align-items-center'>
+                              <i className='bi bi-envelope-at text-secondary fs-smaller'></i>
+                              <div className='word-break-all'>{user.email}</div>
+                              {user.isVerified && <i className='bi bi-patch-check text-secondary fs-smaller'></i>}
+                           </div>
 
-   //                                  {address && <>
-   //                                     <SmallHeader text='Address' />
-   //                                     <i className='bi bi-geo-alt text-action me-2'></i> <span>{address}</span>
-   //                                  </>}
+                           {/* NOTE */}
+                           <div className='address col-lg d-flex gap-2 justify-content-lg-center align-items-center mb-1 mb-lg-0'>
+                              <i className='bi bi-sticky text-secondary fs-smaller'></i>
+                              <div>{user.note}</div>
+                           </div>
+                        </div>
 
-   //                                  {comments && <>
-   //                                     <SmallHeader text='Comments' />
-   //                                     <p style={{ whiteSpace: 'pre-wrap' }}>{comments}</p>
-   //                                  </>}
-   //                               </div>
-   //                            }
-   //                            footer={<CreatedInfo createdAt={createdAt} />}
-   //                         />
-
-   //                      </div>)
-   //                }
-   //             })
-   //             }
-   //          </FlexBoxWrapper>
-   //       }
-   //    </PageContentWrapper>
-   // );
+                     </DetailsContainer>
+                  </motion.li>
+               ))
+            }
+         </motion.ul>
+      </>
+   );
 };
 
 export default Users;

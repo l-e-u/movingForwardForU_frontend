@@ -10,7 +10,7 @@ import logo from '../assets/movingForwardArrows.svg';
 
 const NavMenu = ({ selectedLink, setSelectedLink }) => {
    const links = [
-      { name: 'My Jobs', path: '/', icon: 'bi-list-check' },
+      { name: 'Jobs', path: '/', icon: 'bi-list-check' },
       { name: 'Dispatch', path: '/dispatch', icon: 'bi-truck' },
       { name: 'Contacts', path: '/contacts', icon: 'bi-person-vcard' },
       { name: 'Statuses', path: '/statuses', icon: 'bi-tags' },
@@ -24,11 +24,15 @@ const NavMenu = ({ selectedLink, setSelectedLink }) => {
 
    const expandCollapseVariants = {
       mount: {
+         borderBottom: '1px solid var(--mainPalette7)',
+         paddingBottom: '0rem',
          height: '0px',
          zIndex: '1'
       },
       animation: {
+         boxShadow: '0px 1px 25px 1px var(--mainPalette7)',
          height: '300px',
+         paddingBottom: '0.5rem',
          transition: {
             when: 'beforeChildren',
             staggerChildren: 0.1,
@@ -39,6 +43,7 @@ const NavMenu = ({ selectedLink, setSelectedLink }) => {
       },
       unmount: {
          height: '0px',
+         paddingBottom: '0rem',
          transition: {
             when: 'afterChildren',
          }
@@ -114,7 +119,12 @@ const NavMenu = ({ selectedLink, setSelectedLink }) => {
 
          {/* displayed on smaller screens */}
          <div className='smallMenu d-md-none position-relative'>
-            <div className='d-flex position-relative justify-content-between align-items-center bg-white py-2' style={{ zIndex: '2' }}>
+            <div
+               className='d-flex position-relative justify-content-between align-items-center bg-white py-2'
+               style={{
+                  zIndex: '2'
+               }}
+            >
 
                {/* current page name */}
                <span className='fs-6 d-md-none ps-3'>{selectedLink}</span>
@@ -133,7 +143,7 @@ const NavMenu = ({ selectedLink, setSelectedLink }) => {
             <AnimatePresence mode='wait' onExitComplete={() => setExpandMenu(false)}>
                {expandMenu &&
                   <motion.div
-                     className='d-flex flex-column rounded-bottom position-absolute bg-white w-100 top-100 start-0 text-secondary shadow-lg pb-2'
+                     className='d-flex flex-column rounded-bottom position-absolute bg-white w-100 top-100 start-0 text-secondary'
                      variants={expandCollapseVariants}
                      initial='mount'
                      animate='animation'
@@ -159,9 +169,17 @@ const NavMenu = ({ selectedLink, setSelectedLink }) => {
                Moving Forward for U
             </span>
 
+            {/* LOGO */}
             <div
                className='rounded-circle d-flex justify-content-center align-items-center mx-auto mb-5 p-4'
-               style={{ backgroundColor: 'var(--bs-gray-200)', height: '35px', width: '35px' }}>
+               style={{
+                  backgroundColor: 'var(--bs-gray-200)',
+                  borderRight: '1px solid var(--bs-gray-400)',
+                  borderBottom: '1px solid var(--bs-gray-400)',
+                  height: '35px',
+                  width: '35px'
+               }}
+            >
                <img
                   style={{ height: '25px', width: '25px' }}
                   src={logo} alt='SVG logo image'

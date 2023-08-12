@@ -28,11 +28,12 @@ const Tabs = ({ tabs }) => {
    });
 
    // contains all the content
-   const contentContainerClasses = 'content flex-grow-1 border-top-0 border-start-0 overflow-auto rounded-bottom pt-1 px-3 pb-3';
+   const contentContainerClasses = 'content flex-grow-1 border-top-0 border-start-0 overflow-auto rounded-bottom';
    const contentContainerStyles = {
       borderBottom: '1px solid var(--mainPalette7)',
       borderRight: '1px solid var(--mainPalette7)',
       backgroundColor: 'var(--mainPalette9)',
+      padding: hasOneTab ? '0.25rem 1rem 1rem 1rem' : '0.5rem 1rem 1rem 1rem'
    };
 
 
