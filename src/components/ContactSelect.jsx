@@ -8,14 +8,14 @@ import { useContactsContext } from '../hooks/useContactsContext';
 // components
 import ErrorAlert from './ErrorAlert';
 
-const ContactSelect = ({ propertyForOptionLabel, placeholder, setContact }) => {
+const ContactSelect = ({ placeholder, setContact }) => {
    const { getContacts, error, isLoading } = useGetContacts();
    const { contacts } = useContactsContext();
 
    // label is what appears as an option in the dropdown list
    const selectOptions = contacts.map(contact => {
       return {
-         label: contact[propertyForOptionLabel],
+         label: contact.organization,
          value: contact._id
       }
    });

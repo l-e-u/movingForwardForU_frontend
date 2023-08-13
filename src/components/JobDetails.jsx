@@ -104,7 +104,7 @@ const JobDetails = ({
             </div>
          </div>
 
-         <CollapsingSection maxHeight={'300px'} isExpanded={showMore}>
+         <CollapsingSection isExpanded={showMore}>
             <Tabs
                tabs={[
                   {
