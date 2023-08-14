@@ -7,6 +7,7 @@ import { useGetJobs } from '../hooks/useGetJobs';
 
 // components
 import CreateJobForm from '../components/CreateJobForm';
+import EditJobForm from '../components/EditJobForm';
 import JobDetails from '../components/JobDetails';
 
 const Jobs = ({
@@ -92,6 +93,13 @@ const Jobs = ({
             {
                showCreateForm &&
                <CreateJobForm hideForm={() => setShowCreateForm(false)} />
+            }
+         </AnimatePresence>
+
+         <AnimatePresence>
+            {
+               selectedJob &&
+               <EditJobForm currentJob={selectedJob} hideForm={() => setSelectedJob(null)} />
             }
          </AnimatePresence>
 

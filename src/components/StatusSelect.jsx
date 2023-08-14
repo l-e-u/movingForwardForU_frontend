@@ -8,7 +8,7 @@ import { useStatusesContext } from '../hooks/useStatusesContext';
 // components
 import ErrorAlert from './ErrorAlert';
 
-const StatusSelect = ({ placeholder, setStatus }) => {
+const StatusSelect = ({ placeholder, setStatus, status }) => {
    const { getStatuses, error, isLoading } = useGetStatuses();
    const { statuses } = useStatusesContext();
 
@@ -50,6 +50,7 @@ const StatusSelect = ({ placeholder, setStatus }) => {
          placeholder={placeholder || ''}
          options={selectOptions}
          onChange={handleOnChange}
+         value={selectOptions.find(option => option.value === status?._id)}
       />
    )
 };

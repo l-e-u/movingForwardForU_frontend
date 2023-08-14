@@ -73,7 +73,7 @@ export const datePrettyString = ({ dateObject, dateString, includeTime }) => {
       hours %= 12;
 
       if (hours === 0) hours = 12;
-      prettyTime = `${hours}:${minutes} ${meridiem}, `;
+      prettyTime = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')} ${meridiem}, `;
    };
 
    return prettyTime + prettyDate;

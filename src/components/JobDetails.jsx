@@ -39,8 +39,6 @@ const JobDetails = ({
       reference,
       status
    } = job;
-   console.log(job)
-   // expands the additional info of a job
    const [showMore, setShowMore] = useState(false);
 
    // formatting strings for date and time
@@ -57,6 +55,11 @@ const JobDetails = ({
       <DetailsContainer>
          <EllipsisMenu
             actions={[
+               {
+                  name: 'Edit',
+                  icon: 'bi bi-pen',
+                  handler: showEditForm
+               },
                {
                   name: showMore ? 'Collapse' : 'Expand',
                   icon: `bi bi-chevron-${showMore ? 'contract' : 'expand'}`,

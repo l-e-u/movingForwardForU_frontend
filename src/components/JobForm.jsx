@@ -4,10 +4,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 // components
 import BillingSelect from './BillingSelect';
 import ContactSelect from './ContactSelect';
-import ContactAddressSelect from './ContactAddressSelect';
 import DateInput from './DateInput';
 import ErrorAlert from './ErrorAlert';
-import FileInput from './FileInput';
 import FormHeader from './FormHeader';
 import GoogleAddressSelect from './GoogleAddressSelect';
 import MilitaryTimeSelect from './MilitaryTimeSelect';
@@ -47,12 +45,15 @@ const JobForm = ({
       reference,
       status,
    } = job;
+   const defaultSearchType = 'contacts';
 
    const [addressRadio, setAddressRadio] = useState('pickup');
-   const [searchRadio, setSearchRadio] = useState('contacts');
-   const [addressSearchType, setAddressSearchType] = useState('contacts')
+   const [addressSearchType, setAddressSearchType] = useState({ pickup: defaultSearchType, delivery: defaultSearchType });
    const [addressInput, setAddressInput] = useState('');
    const [showAppendNoteButton, setShowAppendNoteButton] = useState(true);
+
+   // used when address input is cleared out
+   const resetSearchType = () => setAddressSearchType(prev => ({ ...prev, [addressRadio]: defaultSearchType }));
 
    // button to add new documents classes, styles, and framer-motion variants
    const addButtonClasses = 'px-3 py-1 ms-auto position-relative border-start-0 border-top-0 rounded text-white d-flex justify-content-center align-items-center gap-1';
@@ -77,9 +78,10 @@ const JobForm = ({
 
    // helps determine when to show the address search options
    const address = job[addressRadio].address;
-   const showContactAddressSearch = !address && (addressSearchType === 'contacts');
-   const showGoogleAddressSearch = !address && (addressSearchType === 'google');
-   const showCustomAddressInput = !address && (addressSearchType === 'none');
+   const searchType = addressSearchType[addressRadio];
+   const showContactAddressSearch = !address && (searchType === 'contacts');
+   const showGoogleAddressSearch = !address && (searchType === 'google');
+   const showCustomAddressInput = !address && (searchType === 'none');
 
    const [isResizingImages, setIsResizingImages] = useState(false);
 
@@ -98,14 +100,7 @@ const JobForm = ({
    const formClasses = 'newJob position-relative px-4 pt-4 pb-5 text-reset shadow bg-white rounded-4';
    const formStyles = { width: '90vw', maxWidth: '600px' };
 
-   const fadeOutVariants = {
-      visible: {
-         opacity: 1,
-      },
-      hidden: {
-         opacity: 0,
-      }
-   };
+   console.log(job);
 
    return (
       <form className={formClasses} onSubmit={handleSubmit} style={formStyles}>
@@ -123,6 +118,7 @@ const JobForm = ({
                   <StatusSelect
                      placeholder='Required'
                      setStatus={status => setJob(prev => ({ ...prev, status }))}
+                     status={status}
                   />
                </div>
             </div>
@@ -134,6 +130,7 @@ const JobForm = ({
                </div>
                <div className='col-sm-10'>
                   <ContactSelect
+                     contact={customer}
                      placeholder='Required'
                      setContact={contact => setJob({ ...job, customer: contact })}
                   />
@@ -150,7 +147,6 @@ const JobForm = ({
                         id='addressRadioPickup'
                         onChange={() => {
                            setAddressRadio('pickup');
-                           setSearchRadio('contacts');
                         }}
                         type='radio'
                      />
@@ -166,7 +162,6 @@ const JobForm = ({
                         id='addressRadioDelivery'
                         onChange={() => {
                            setAddressRadio('delivery');
-                           setSearchRadio('contacts');
                         }}
                         type='radio'
                      />
@@ -177,30 +172,55 @@ const JobForm = ({
                </div>
             </div>
 
-            {/* ONCE AN ADDRESS IS SET, THIS CAN BE CLEARED OUT TO SEARCH AGAIN */}
-            <AnimatePresence mode='wait'>
-               {
-                  address &&
-                  <motion.div className='addressValue row mb-2' variants={fadeOutVariants} initial='hidden' animate='visible' exit='hidden'>
-                     <div className='col-sm-2 d-flex justify-content-start justify-content-sm-end align-items-center text-secondary'>
-                        <SmallHeader text='Address' />
-                     </div>
-                     <div className='col-sm-10'>
+            {/* ADDRESS SELECTION */}
+            <div className='addressInputs position-relative'>
+
+               <div className='row'>
+                  <p className='col-sm-10 fs-smaller text-secondary mb-2 ms-auto'>
+                     Select a search type to auto-fill the address.
+                  </p>
+               </div>
+
+               {/* RADIO BUTTONS: CONTACT AND GOOGLE SELECTIONS */}
+               <div className='row mb-2'>
+                  <div className='col-sm-2 d-flex justify-content-start justify-content-sm-end align-items-center text-secondary'>
+                     <span style={{ opacity: !address ? 1 : 0.5 }}><SmallHeader text='Search' /></span>
+                  </div>
+                  <div className='col-sm-10'>
+                     <AddressSearchType
+                        addressIsSet={!!address}
+                        setType={type => setAddressSearchType(prev => ({ ...prev, [addressRadio]: type }))}
+                        value={searchType}
+                     />
+                  </div>
+               </div>
+
+               <div className='row mb-2'>
+                  <div className='col-sm-2 d-flex justify-content-start justify-content-sm-end align-items-center text-secondary'>
+                     <SmallHeader text='Address' />
+                  </div>
+                  <div className='col-sm-10'>
+                     {
+                        address &&
                         <div className='d-flex bg-white align-items-center rounded-1 border ps-2'>
                            <span>
                               {address}
                            </span>
+
+                           {/* X button clears the address for pickup/delivery */}
                            <motion.i
                               className='bi bi-x-lg p-2 ms-auto'
                               initial={{ opacity: 0.5 }}
                               onClick={() => {
-                                 setAddressInput('');
-                                 setSearchRadio('contacts');
+                                 const emptyString = '';
+
+                                 setAddressInput(emptyString);
+                                 resetSearchType();
                                  setJob({
                                     ...job,
                                     [addressRadio]: {
                                        ...job[addressRadio],
-                                       address: ''
+                                       address: emptyString
                                     }
                                  })
                               }}
@@ -208,94 +228,62 @@ const JobForm = ({
                               role='button'
                            ></motion.i>
                         </div>
-                     </div>
-                  </motion.div>
-               }
-            </AnimatePresence>
 
-            {/* ADDRESS SELECTION */}
-            <AnimatePresence mode='wait'>
-               {
-                  !address &&
-                  <motion.div className='addressInputs position-relative' variants={fadeOutVariants} initial='hidden' animate='visible' exit='hidden'>
+                     }
+                     {
+                        showGoogleAddressSearch &&
+                        <GoogleAddressSelect
+                           address={address}
+                           setAddress={address => {
+                              setJob({
+                                 ...job,
+                                 [addressRadio]: {
+                                    ...[addressRadio],
+                                    address
+                                 }
+                              })
+                           }}
+                        />
+                     }
 
-                     <div className='row'>
-                        <p className='col-sm-10 fs-smaller text-secondary mb-2 ms-auto'>
-                           Select a search type to auto-fill the address.
-                        </p>
-                     </div>
+                     {
+                        showContactAddressSearch &&
+                        <ContactSelect
+                           placeholder='Required'
+                           setContact={contact => {
+                              setJob({
+                                 ...job,
+                                 [addressRadio]: {
+                                    ...job[addressRadio],
+                                    address: contact.address
+                                 }
+                              })
+                           }}
+                           address={job[addressRadio].address}
+                        />
+                     }
 
-                     {/* RADIO BUTTONS: CONTACT AND GOOGLE SELECTIONS */}
-                     <div className='row mb-2'>
-                        <div className='col-sm-2 d-flex justify-content-start justify-content-sm-end align-items-center text-secondary'>
-                           <SmallHeader text='Search' />
-                        </div>
-                        <div className='col-sm-10'>
-                           <AddressSearchType setType={type => setAddressSearchType(type)} />
-                        </div>
-                     </div>
+                     {
+                        showCustomAddressInput &&
+                        <TextInput
+                           input={addressInput}
+                           onBlur={address => {
+                              setAddressInput('');
+                              setJob({
+                                 ...job,
+                                 [addressRadio]: {
+                                    ...job[addressRadio],
+                                    address
+                                 }
+                              })
+                           }}
+                           setInput={input => setAddressInput(input)}
+                        />
+                     }
+                  </div>
+               </div>
 
-                     <div className='row mb-2'>
-                        <div className='col-sm-2 d-flex justify-content-start justify-content-sm-end align-items-center text-secondary'>
-                           <SmallHeader text='Address' />
-                        </div>
-                        <div className='col-sm-10'>
-                           {
-                              showGoogleAddressSearch &&
-                              <GoogleAddressSelect
-                                 address={address}
-                                 setAddress={address => {
-                                    setJob({
-                                       ...job,
-                                       [addressRadio]: {
-                                          ...job[addressRadio],
-                                          address
-                                       }
-                                    })
-                                 }}
-                              />
-                           }
-
-                           {
-                              showContactAddressSearch &&
-                              <ContactSelect
-                                 placeholder='Required'
-                                 setContact={contact => {
-                                    setJob({
-                                       ...job,
-                                       [addressRadio]: {
-                                          ...job[addressRadio],
-                                          address: contact.address
-                                       }
-                                    })
-                                 }}
-                                 address={job[addressRadio].address}
-                              />
-                           }
-
-                           {
-                              showCustomAddressInput &&
-                              <TextInput
-                                 input={addressInput}
-                                 onBlur={address => {
-                                    setAddressInput('');
-                                    setJob({
-                                       ...job,
-                                       [addressRadio]: {
-                                          ...job[addressRadio],
-                                          address
-                                       }
-                                    })
-                                 }}
-                                 setInput={input => setAddressInput(input)}
-                              />
-                           }
-                        </div>
-                     </div>
-
-                  </motion.div>
-               }
-            </AnimatePresence>
+            </div>
 
             {/* PICKUP AND DELIVERY */}
             <div className='row mb-2'>
@@ -462,6 +450,10 @@ const JobForm = ({
                icon: 'bi bi-sticky',
                contentJSX: (
                   <>
+                     <div className='text-end text-secondary'>
+                        <SmallHeader text={`Total: ${notes.length}`} />
+                     </div>
+
                      <AnimatePresence mode='wait'>
                         {/* BUTTON TO ADD A NOTE TO NOTES */}
                         {
@@ -503,13 +495,19 @@ const JobForm = ({
                                  attachments={attachments}
                                  createdByName={createdBy.fullName}
                                  createdAtDate={createdAt}
+                                 deleteNote={() => {
+                                    setJob({
+                                       ...job,
+                                       notes: notes.toSpliced(index, 1)
+                                    })
+                                 }}
                                  isResizingImages={isResizingImages}
                                  key={note._id || index}
                                  messageInput={message}
                                  setAttachments={attachments => {
                                     setJob({
                                        ...job,
-                                       notes: job.notes.map((note, i) => {
+                                       notes: notes.map((note, i) => {
                                           if (i === index) note.attachments = attachments;
                                           return note;
                                        })
@@ -520,7 +518,7 @@ const JobForm = ({
                                  setMessageInput={input => {
                                     setJob({
                                        ...job,
-                                       notes: job.notes.map((note, i) => {
+                                       notes: notes.map((note, i) => {
                                           if (i === index) note.message = input;
                                           return note;
                                        })

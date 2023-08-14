@@ -39,8 +39,8 @@ const EditContactForm = ({ currentContact, hideForm }) => {
    // close button X
    const closeIconClasses = 'bi bi-x-lg';
 
-   const formHeading = 'New Contact';
-   const formSubHeading = `The address can be used for pickup or delivery when selecting this contact on a job.`;
+   const formHeading = 'Edit Contact';
+   const formSubHeading = '';
 
    // changes value depending of the form is fetching or not
    const submitButtonText = isLoading ? 'Saving' : 'Save';

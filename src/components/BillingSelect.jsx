@@ -21,9 +21,6 @@ const BillingSelect = ({ billing, setBilling }) => {
 
    const [selectedBill, setSelectedBill] = useState(null);
 
-   console.log('billing', billing)
-   console.log('selectedBill', selectedBill)
-
    // populates the drop-down menu listing all the fees that have not been selected
    const feeMenuOptions = [];
 
@@ -97,8 +94,11 @@ const BillingSelect = ({ billing, setBilling }) => {
 
    // styles for the select container and its children
    const feeSelectStyles = {
-      container: (base) => ({
+      valueContainer: (base) => ({
          ...base,
+         flexDirection: 'column',
+         flexWrap: 'no-wrap',
+         gap: '0.5rem'
       }),
       input: (base) => ({
          ...base,
@@ -106,20 +106,18 @@ const BillingSelect = ({ billing, setBilling }) => {
       }),
       option: (base) => ({
          ...base,
-         textAlign: 'right',
-         whiteSpace: 'pre-wrap'
       }),
       multiValue: (base) => ({
          ...base,
          backgroundColor: 'var(--bs-gray-100)',
-         flexGrow: '1',
+         width: '100%',
       }),
       multiValueLabel: (base) => ({
          ...base,
          color: 'var(--mainPalette1)',
-         flexGrow: '1',
-         padding: '0',
-         paddingLeft: '0'
+         padding: 0,
+         paddingLeft: 0,
+         flexGrow: 1,
       }),
       multiValueRemove: (base) => ({
          ...base,
@@ -156,24 +154,20 @@ const BillingSelect = ({ billing, setBilling }) => {
             label: (
                <div className='d-flex'>
                   {!selectedBill &&
-                     <motion.div
-                        className='myOptionEditButton d-flex cursor-pointer rounded-1 px-1'
+                     <motion.span
+                        className='myOptionEditButton d-flex justify-content-center align-items-center cursor-pointer rounded-1'
                         onClick={handleEditOnClick(bill)}
                         whileHover={{ backgroundColor: 'var(--bs-gray-300)' }}
                      >
-                        <i className='bi bi-pencil text-secondary m-auto'></i>
-                     </motion.div>
+                        <i className='bi bi-pencil text-secondary'></i>
+                     </motion.span>
                   }
 
-                  <div className='flex-grow-1 px-2 py-1'>
-                     <div>{name}</div>
-                     <div className='text-end'>
-                        <span className={hasOverride ? 'text-decoration-line-through' : ''} style={{ opacity: hasOverride ? '0.5' : '1' }}>
-                           {amountText}
-                        </span>
-                        {hasOverride && <span className='ms-3'>{`$ ${overrideText}`}</span>}
-                     </div>
-                  </div>
+                  <span className=''>{name}</span>
+                  <span className={hasOverride ? 'text-decoration-line-through' : ''} style={{ opacity: hasOverride ? '0.5' : '1' }}>
+                     {amountText}
+                  </span>
+                  {hasOverride && <span className=''>{`$ ${overrideText}`}</span>}
                </div>
             ),
             value: {
@@ -187,9 +181,9 @@ const BillingSelect = ({ billing, setBilling }) => {
       // these are the fees that have not been selected yet
       feeMenuOptions.push({
          label: (
-            <div className='d-md-flex justify-content-between'>
+            <div className='d-flex justify-content-between'>
                <div>{name}</div>
-               <div>{`$ ${amountText}`}</div>
+               <div className='text-nowrap'>{`$ ${amountText}`}</div>
             </div>
          ),
          value: {

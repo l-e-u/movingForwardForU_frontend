@@ -1,7 +1,6 @@
 // components
 import FileInput from './FileInput';
 import GrowingTextArea from './GrowingTextArea';
-import SmallHeader from './SmallHeader';
 
 // utilities
 import { datePrettyString } from '../utils/StringUtils';
@@ -17,35 +16,36 @@ const NoteInput = ({
    setMessageInput,
    setAttachments
 }) => {
-   return (
-      <div>
-         <FileInput
-            isResizingImages={isResizingImages}
-            setAttachments={setAttachments}
-            setIsResizingImagesFalse={setIsResizingImagesFalse}
-            setIsResizingImagesTrue={setIsResizingImagesTrue}
-         />
-         <div className='container-fluid my-1'>
-            <div className='row'>
+   const dateObject = new Date(createdAtDate);
 
-               <div className='col-sm-5'>
-                  <div className='text-secondary'><SmallHeader text='Creator' /></div>
-                  {createdByName}
+   return (
+      <>
+         <div className='container-fluid p-0 mb-2'>
+            <div className='row'>
+               <div className='col-12 fs-smaller text-secondary text-capitalize' style={{ opacity: 0.5 }}>
+                  {datePrettyString({ dateObject, includeTime: true })}
                </div>
 
-               <div className='col-sm-7'>
-                  <div className='text-secondary'><SmallHeader text='Created' /></div>
-                  <span className='text-capitalize'>
-                     {datePrettyString({ dateObject: createdAtDate, includeTime: true })}
-                  </span>
+               <div className='col-12 fs-smaller text-secondary' style={{ opacity: 0.5 }}>
+                  {createdByName}
                </div>
             </div>
          </div>
+
+         <div className='mb-2'>
+            <FileInput
+               isResizingImages={isResizingImages}
+               setAttachments={setAttachments}
+               setIsResizingImagesFalse={setIsResizingImagesFalse}
+               setIsResizingImagesTrue={setIsResizingImagesTrue}
+            />
+         </div>
+
          <GrowingTextArea
             input={messageInput}
             setInput={setMessageInput}
          />
-      </div>
+      </>
    );
 };
 

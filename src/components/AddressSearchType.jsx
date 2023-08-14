@@ -1,6 +1,6 @@
 import Select from 'react-select';
 
-const AddressSearchType = ({ setType }) => {
+const AddressSearchType = ({ addressIsSet, setType, value }) => {
    const searchTypes = ['contacts', 'google', 'none'];
    const searchOptions = searchTypes.map(type => ({
       label: type,
@@ -23,10 +23,12 @@ const AddressSearchType = ({ setType }) => {
          defaultValue={searchOptions[0]}
          hideSelectedOptions={false}
          isClearable={false}
+         isDisabled={addressIsSet}
          isSearchable={false}
          onChange={handleOnChange}
          options={searchOptions}
          styles={selectStyles}
+         value={searchOptions.find(option => option.value === value)}
       />
    )
 }

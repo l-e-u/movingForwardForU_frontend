@@ -8,7 +8,7 @@ import { useContactsContext } from '../hooks/useContactsContext';
 // components
 import ErrorAlert from './ErrorAlert';
 
-const ContactSelect = ({ placeholder, setContact }) => {
+const ContactSelect = ({ contact, placeholder, setContact }) => {
    const { getContacts, error, isLoading } = useGetContacts();
    const { contacts } = useContactsContext();
 
@@ -50,6 +50,7 @@ const ContactSelect = ({ placeholder, setContact }) => {
          placeholder={placeholder || ''}
          options={selectOptions}
          onChange={handleOnChange}
+         value={selectOptions.find(option => option.value === contact?._id)}
       />
    )
 }

@@ -14,7 +14,7 @@ const BillingTable = ({ billing }) => {
       <table className='table table-sm text-reset m-0'>
          <thead>
             <tr className='text-secondary fs-smaller'>
-               <th className='fw-normal text-center' scope='col' style={scopeStyles}>#</th>
+               <th className='fw-normal text-center' scope='col' style={scopeStyles}></th>
                <th className='fw-normal' scope='col' style={scopeStyles}>Fee</th>
                <th className='fw-normal text-end' colSpan='2' scope='col' style={scopeStyles}>Amount</th>
             </tr>
@@ -28,7 +28,7 @@ const BillingTable = ({ billing }) => {
                   const overrideAmountText = hasOverrideAmount ? encloseNegativeNumber(overrideAmount) : '';
 
                   return (
-                     <tr key={bill._id}>
+                     <tr key={bill._id || fee._id}>
                         <th
                            className='fs-smaller fw-normal text-secondary text-center'
                            scope='row'
