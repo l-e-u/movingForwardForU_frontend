@@ -13,9 +13,9 @@ import Page from './components/Page';
 import Archives from './pages/Archives.jsx';
 import Contacts from './pages/Contacts.jsx';
 import Fees from './pages/Fees.jsx';
-import Jobs from './pages/Jobs.jsx'
+import Dispatch from './pages/Dispatch.jsx'
 import Login from './pages/Login.jsx';
-import MyJobs from './pages/MyJobs.jsx';
+import Jobs from './pages/Jobs.jsx';
 import Statuses from './pages/Statuses.jsx';
 import Users from './pages/Users.jsx';
 import Verify from './pages/Verify.jsx';
@@ -26,13 +26,13 @@ function App() {
    const [archiveFilters, setArchiveFilters] = useState({});
    const [jobFilters, setJobFilters] = useState({});
    const [myJobFilters, setMyJobFilters] = useState({});
-   const [selectedLink, setSelectedLink] = useState('My Jobs')
+   const [selectedLink, setSelectedLink] = useState('Jobs')
 
    useEffect(() => {
       // reset state when user changes
       setJobFilters({});
       setMyJobFilters({});
-      setSelectedLink('My Jobs');
+      setSelectedLink('Jobs');
    }, [user])
 
    return (
@@ -46,14 +46,14 @@ function App() {
                         path='/'
                         element={
                            user ?
-                              <MyJobs filters={myJobFilters} setFilters={setMyJobFilters} selectedLink={selectedLink} setSelectedLink={setSelectedLink} /> :
+                              <Jobs filters={myJobFilters} setFilters={setMyJobFilters} selectedLink={selectedLink} setSelectedLink={setSelectedLink} /> :
                               <Navigate to='/login' />}
                      />
                      <Route
                         path='/dispatch'
                         element={
                            user ?
-                              <Jobs filters={jobFilters} setFilters={setJobFilters} selectedLink={selectedLink} setSelectedLink={setSelectedLink} /> :
+                              <Dispatch filters={jobFilters} setFilters={setJobFilters} selectedLink={selectedLink} setSelectedLink={setSelectedLink} /> :
                               <Navigate to='/login' />
                         }
                      />

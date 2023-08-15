@@ -110,14 +110,14 @@ const BillingSelect = ({ billing, setBilling }) => {
       multiValue: (base) => ({
          ...base,
          backgroundColor: 'var(--bs-gray-100)',
-         width: '100%',
+         borderRight: '1px solid var(--bs-gray-300)',
+         borderBottom: '1px solid var(--bs-gray-300)',
+         width: '100%'
       }),
       multiValueLabel: (base) => ({
          ...base,
          color: 'var(--mainPalette1)',
-         padding: 0,
-         paddingLeft: 0,
-         flexGrow: 1,
+         flexGrow: 1
       }),
       multiValueRemove: (base) => ({
          ...base,
@@ -152,23 +152,31 @@ const BillingSelect = ({ billing, setBilling }) => {
 
          return billingValues.push({
             label: (
-               <div className='d-flex'>
-                  {!selectedBill &&
-                     <motion.span
-                        className='myOptionEditButton d-flex justify-content-center align-items-center cursor-pointer rounded-1'
-                        onClick={handleEditOnClick(bill)}
-                        whileHover={{ backgroundColor: 'var(--bs-gray-300)' }}
-                     >
-                        <i className='bi bi-pencil text-secondary'></i>
-                     </motion.span>
-                  }
+               <div className='container-fluid p-0'>
+                  <div className='row g-0'>
+                     <div className='col-1 d-flex align-items-center justify-content-center justify-content-sm-start'>
+                        <button
+                           className='myOptionEditButton bg-none border-0 p-0 m-0'
+                           disabled={!!selectedBill}
+                           style={{ opacity: !!selectedBill ? 0.25 : 1 }}
+                           onClick={handleEditOnClick(bill)}
+                        >
+                           <i className='bi bi-pencil text-secondary fs-smaller'></i>
+                        </button>
+                     </div>
 
-                  <span className=''>{name}</span>
-                  <span className={hasOverride ? 'text-decoration-line-through' : ''} style={{ opacity: hasOverride ? '0.5' : '1' }}>
-                     {amountText}
-                  </span>
-                  {hasOverride && <span className=''>{`$ ${overrideText}`}</span>}
-               </div>
+                     <div className='col-11 d-sm-flex ps-2 ps-sm-0'>
+                        <div className='text-wrap flex-grow-1'>{name}</div>
+
+                        <div className='text-end'>
+                           <span className={hasOverride ? 'text-decoration-line-through me-2' : ''} style={{ opacity: hasOverride ? '0.5' : '1' }}>
+                              {amountText}
+                           </span>
+                           {hasOverride && <span className=''>{`$ ${overrideText}`}</span>}
+                        </div>
+                     </div>
+                  </div>
+               </div >
             ),
             value: {
                ...bill,

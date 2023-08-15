@@ -3,6 +3,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 
 // hooks
 import { useJobsContext } from '../hooks/useJobsContext';
+import { useAuthContext } from '../hooks/useAuthContext';
 import { useGetJobs } from '../hooks/useGetJobs';
 
 // components
@@ -14,8 +15,10 @@ const Jobs = ({
    filters,
    setFilters,
 }) => {
-   const { getJobs, error, isLoading } = useGetJobs();
+   const { user } = useAuthContext();
    const { jobs } = useJobsContext();
+
+   const { getJobs, error, isLoading } = useGetJobs();
 
    const [showCreateForm, setShowCreateForm] = useState(false);
    const [selectedJob, setSelectedJob] = useState(null);
@@ -25,23 +28,6 @@ const Jobs = ({
    const [currentPage, setCurrentPage] = useState(1);
    const [totalPages, setTotalPages] = useState(1);
    const [totalResults, setTotalResults] = useState(0);
-
-   // button to add new documents classes, styles, and framer-motion variants
-   const addButtonClasses = 'px-3 py-1 ms-auto position-relative border-start-0 border-top-0 rounded text-white d-flex justify-content-center align-items-center gap-1';
-   const addButtonVariants = {
-      mount: {
-         backgroundColor: 'var(--mainPalette4)',
-         borderRight: '1px solid var(--mainPalette2)',
-         borderBottom: '1px solid var(--mainPalette2)'
-      },
-      onHover: {
-         scale: 1.1,
-         transition: {
-            duration: 0.3,
-         },
-         boxShadow: '0px 0px 8px var(--mainPalette4)',
-      }
-   };
 
    // styling for the list container
    const listClasses = 'jobsList px-3 pb-0 px-md-5';
@@ -81,53 +67,23 @@ const Jobs = ({
       getJobs({
          currentPage,
          limit,
-         filters
+         filters: {
+            ...filters,
+            drivers: [user._id]
+         }
       });
    }, [currentPage, filters, limit]);
 
-   console.log(jobs)
-
    return (
-      <>
-         <AnimatePresence>
-            {
-               showCreateForm &&
-               <CreateJobForm hideForm={() => setShowCreateForm(false)} />
-            }
-         </AnimatePresence>
-
-         <AnimatePresence>
-            {
-               selectedJob &&
-               <EditJobForm currentJob={selectedJob} hideForm={() => setSelectedJob(null)} />
-            }
-         </AnimatePresence>
-
-         {/* button to display the new job form */}
-         <div className='p-2'>
-            <motion.button
-               className={addButtonClasses}
-               onClick={() => setShowCreateForm(true)}
-               type='button'
-               variants={addButtonVariants}
-               initial='mount'
-               whileHover='onHover'
-            >
-               <i className='bi bi-plus'></i>
-               <i className='bi bi-truck'></i>
-            </motion.button>
-         </div>
-
-         <motion.ul className={listClasses} variants={listVariants} initial='mount' animate='animation'>
-            {
-               jobs.map(job => (
-                  <motion.li key={job._id} variants={itemVariants}>
-                     <JobDetails job={job} showEditForm={() => setSelectedJob(job)} />
-                  </motion.li>
-               ))
-            }
-         </motion.ul>
-      </>
+      <motion.ul className={listClasses} variants={listVariants} initial='mount' animate='animation'>
+         {
+            jobs.map(job => (
+               <motion.li key={job._id} variants={itemVariants}>
+                  <JobDetails job={job} showEditForm={() => setSelectedJob(job)} readOnly={true} />
+               </motion.li>
+            ))
+         }
+      </motion.ul>
    );
 };
 

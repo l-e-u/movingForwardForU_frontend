@@ -10,7 +10,14 @@ import JobForm from './JobForm';
 const CreateJobForm = ({ hideForm }) => {
    const { createJob, error, isLoading } = useCreateJob();
 
-   const locationDetails = { address: '', date: new Date(), includeTime: false };
+   const midnightDate = new Date();
+
+   midnightDate.setMilliseconds(0);
+   midnightDate.setSeconds(0);
+   midnightDate.setMinutes(0);
+   midnightDate.setHours(0);
+
+   const locationDetails = { address: '', date: midnightDate, includeTime: false };
 
    // state for user inputs
    const [job, setJob] = useState({
@@ -25,7 +32,7 @@ const CreateJobForm = ({ hideForm }) => {
       reference: '',
       status: null
    });
-
+   console.log(job.pickup, job.delivery)
    const closeButtonClasses = 'position-absolute top-0 end-0 fw-bold p-3 text-secondary border-0';
    const closeButtonStyles = { background: 'transparent', zIndex: '1' };
 

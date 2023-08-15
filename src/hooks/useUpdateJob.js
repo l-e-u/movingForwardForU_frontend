@@ -7,27 +7,13 @@ export const useUpdateJob = () => {
    const [isLoading, setIsLoading] = useState(null);
    const { user } = useAuthContext();
 
-   const updateJob = async ({ _id, updates, filesToDelete = [] }) => {
+   const updateJob = async ({ _id, updatedJobForm }) => {
       setIsLoading(true);
       setError(null);
 
-      // create a multipart form data object to hold the updated fields
-      const form = new FormData();
-      form.append('updates', JSON.stringify(updates));
-
-      // gather all the new notes that have attachments to upload
-      updates.notes?.forEach(note => {
-         // middleware handles this form data on the backend, no need to stringify
-         note.attachments.forEach(attachment => form.append('attachments', attachment.file));
-      });
-
-      // append to formData all the previous uploads that need to be deleted with its note
-      form.append('filesToDelete', JSON.stringify(filesToDelete));
-
-
       const response = await fetch(`${API_BASE_URL}/api/jobs/` + _id, {
          method: 'PATCH',
-         body: form,
+         body: updatedJobForm,
          headers: { 'Authentication': `Bearer ${user.token}` }
       });
 

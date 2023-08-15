@@ -100,8 +100,6 @@ const JobForm = ({
    const formClasses = 'newJob position-relative px-4 pt-4 pb-5 text-reset shadow bg-white rounded-4';
    const formStyles = { width: '90vw', maxWidth: '600px' };
 
-   console.log(job);
-
    return (
       <form className={formClasses} onSubmit={handleSubmit} style={formStyles}>
 
@@ -238,7 +236,7 @@ const JobForm = ({
                               setJob({
                                  ...job,
                                  [addressRadio]: {
-                                    ...[addressRadio],
+                                    ...job[addressRadio],
                                     address
                                  }
                               })
@@ -414,7 +412,7 @@ const JobForm = ({
                            <SmallHeader text='Reference' />
                         </div>
                         <div className='col-sm-10'>
-                           <TextInput input={job.reference} setInput={input => setJob(prev => ({ ...prev, reference: input }))} />
+                           <TextInput input={job.reference ?? ''} setInput={input => setJob(prev => ({ ...prev, reference: input }))} />
                         </div>
                      </div>
 
@@ -424,7 +422,7 @@ const JobForm = ({
                            <SmallHeader text='Parcel' />
                         </div>
                         <div className='col-sm-10'>
-                           <TextInput input={job.parcel} setInput={input => setJob(prev => ({ ...prev, parcel: input }))} />
+                           <TextInput input={job.parcel ?? ''} setInput={input => setJob(prev => ({ ...prev, parcel: input }))} />
                         </div>
                      </div>
 
@@ -467,13 +465,13 @@ const JobForm = ({
                                  setJob({
                                     ...job,
                                     notes: [
-                                       ...job.notes,
                                        {
                                           attachments: [],
                                           message: '',
                                           createdAt: new Date(),
                                           createdBy: user,
-                                       }
+                                       },
+                                       ...job.notes
                                     ]
                                  })
                               }}
@@ -496,6 +494,11 @@ const JobForm = ({
                                  createdByName={createdBy.fullName}
                                  createdAtDate={createdAt}
                                  deleteNote={() => {
+                                    const { _id } = note;
+
+                                    // can only add one note at a time and that note will not have an _id, reappear the button if the new note was deleted
+                                    if (!_id) setShowAppendNoteButton(true);
+
                                     setJob({
                                        ...job,
                                        notes: notes.toSpliced(index, 1)
@@ -504,6 +507,7 @@ const JobForm = ({
                                  isResizingImages={isResizingImages}
                                  key={note._id || index}
                                  messageInput={message}
+                                 noteIsNew={!note._id}
                                  setAttachments={attachments => {
                                     setJob({
                                        ...job,

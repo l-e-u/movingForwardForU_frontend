@@ -8,7 +8,9 @@ const GrowingTextArea = ({ input, setInput }) => {
    const textAreaVariants = {
       mount: {
          border: '1px solid var(--bs-gray-400)',
-         outline: '2px solid transparent'
+         maxHeight: '500px',
+         outline: '2px solid transparent',
+         overflowY: 'scroll'
       },
       onFocus: {
          outline: '2px solid var(--mainPalette6)',

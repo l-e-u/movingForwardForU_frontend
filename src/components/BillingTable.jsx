@@ -46,7 +46,7 @@ const BillingTable = ({ billing }) => {
                            {hasOverrideAmount ? amountText : overrideAmountText}
                         </td>
                         <td className='text-nowrap text-end align-middle'>
-                           {hasOverrideAmount ? overrideAmount : amountText}
+                           {hasOverrideAmount ? overrideAmountText : amountText}
                         </td>
                      </tr>
                   )

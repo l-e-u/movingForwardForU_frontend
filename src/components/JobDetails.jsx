@@ -15,6 +15,7 @@ import { billingTotal } from '../utils/NumberUtils';
 
 const JobDetails = ({
    job,
+   readOnly,
    setFilters,
    showEditForm,
    listDrivers = false,
@@ -24,6 +25,7 @@ const JobDetails = ({
    singleNoteInput = false,
 }) => {
    const API_BASE_URL = process.env.API_BASE_URL;
+
    const {
       _id,
       billing,
@@ -48,25 +50,34 @@ const JobDetails = ({
    const deliveryTimeString = delivery.includeTime ?
       timeStringFormat({ dateString: delivery.date, showMilitary: true }) :
       '--:--';
-
    const noDrivers = drivers.length === 0;
+   const ellipsisMenuOptions = [];
+
+   // add opions that the user can select to perform on the document depending on their role/authorization
+   if (!readOnly) {
+      ellipsisMenuOptions.push({
+         name: 'Edit',
+         icon: 'bi bi-pen',
+         handler: showEditForm
+      },
+         {
+            name: 'Delete',
+            icon: 'bi bi-trash3',
+            handler: () => { }
+         }
+      );
+   };
+
+   // any user can expand for more information
+   ellipsisMenuOptions.push({
+      name: showMore ? 'Collapse' : 'Expand',
+      icon: `bi bi-chevron-${showMore ? 'contract' : 'expand'}`,
+      handler: () => setShowMore(!showMore)
+   });
 
    return (
       <DetailsContainer>
-         <EllipsisMenu
-            actions={[
-               {
-                  name: 'Edit',
-                  icon: 'bi bi-pen',
-                  handler: showEditForm
-               },
-               {
-                  name: showMore ? 'Collapse' : 'Expand',
-                  icon: `bi bi-chevron-${showMore ? 'contract' : 'expand'}`,
-                  handler: () => setShowMore(!showMore)
-               }
-            ]}
-         />
+         <EllipsisMenu actions={ellipsisMenuOptions} />
 
          {/* DEFAULT VIEW FOR QUICK READING */}
          {/* STATUS */}
@@ -80,7 +91,7 @@ const JobDetails = ({
          <span className='text-secondary'><SmallHeader text={reference} /></span>
 
          {/* ORGANIZATION */}
-         <div className='ms-3 ps-1 mb-2' style={{ fontWeight: '600' }}>
+         <div className='ms-3 ps-1 my-2' style={{ fontWeight: '600' }}>
             {customer.organization}
          </div>
 
@@ -184,46 +195,81 @@ const JobDetails = ({
                            </div>
                            {
                               (notes.length > 0) &&
-                              <ul className='notesList p-0 mx-0 mb-0 mt-1 mt-sm-0' style={{ listStyle: 'none' }}>
+                              <ul
+                                 className='notesList p-0 m-0'
+                                 style={{ listStyle: 'none' }}
+                              >
                                  {
                                     notes.map(note => (
-                                       <li key={note._id} className='row d-flex justify-content-between'>
-                                          <div className='col-12 fs-smaller text-secondary text-capitalize' style={{ opacity: 0.5 }}>
+                                       <li key={note._id} className='row d-flex justify-content-between mt-3' style={{ borderTop: '1px dotted var(--mainPalette4)' }}>
+                                          <div className='col-12 fs-smaller text-secondary text-capitalize mt-2'>
                                              {datePrettyString({ dateString: note.createdAt, includeTime: true })}
                                           </div>
 
-                                          <div className='col-12 fs-smaller text-secondary' style={{ opacity: 0.5 }}>
+                                          <div className='col-12 fs-smaller text-secondary mb-2'>
                                              {note.createdBy.fullName}
                                           </div>
 
-                                          <div className='text-secondary mt-1'>
-                                             <i className='bi bi-paperclip fs-smaller me-1'></i>
-                                             <SmallHeader text={`Attachments: ${note.attachments.length}`} />
-                                          </div>
+                                          {
+                                             (note.attachments.length > 0) &&
+                                             <div className='px-2 mb-2'>
+                                                <table className='table table-sm table-borderless text-reset m-0'>
+                                                   <thead>
+                                                      <tr className='text-secondary fs-smaller'>
+                                                         <th className='fw-normal' scope='col' colSpan='2' style={{ opacity: 0.5 }}>
+                                                            {`Attachment${note.attachments.length > 1 ? 's' : ''}`}
+                                                         </th>
+                                                         <th className='fw-normal text-end' colSpan='2' scope='col' style={{ opacity: 0.5 }}>Type</th>
+                                                      </tr>
+                                                   </thead>
+                                                   <tbody>
+                                                      {
+                                                         note.attachments.map((attachment, index) => {
+                                                            const number = index + 1;
+                                                            const hasNewFile = !!attachment.file;
+                                                            let fileName = attachment.originalname?.split('.')[0];
+                                                            let fileType = attachment.contentType?.split('/')[1].toLowerCase();
 
-                                          <ul className='attachmentsList row col-12 m-0' style={{ listStyle: 'none' }}>
-                                             {
-                                                note.attachments.map((attachment, index) => (
-                                                   <li key={attachment._id} className='fs-smaller row col-12 mt-1'>
-                                                      <div className='col-1 text-end p-0' style={{ fontFamily: 'monospace', opacity: 0.5 }}>
-                                                         {index.toString().padStart(2, '0')}
-                                                      </div>
-                                                      <div className='col-11 ps-3 pe-0'>
-                                                         <a
-                                                            className='word-break-all'
-                                                            href={`${API_BASE_URL}/api/attachments/download/` + attachment.filename}
-                                                            rel='noopener noreferrer'
-                                                            target='_blank'
-                                                         >
-                                                            {attachment.originalname}
-                                                         </a>
-                                                      </div>
-                                                   </li>
-                                                ))
-                                             }
-                                          </ul>
+                                                            if (hasNewFile) {
+                                                               [fileName, fileType] = attachment.filename.split('.');
+                                                            };
 
-                                          <div className='col-12 whiteSpace-preWrap mt-2'>
+                                                            return (
+                                                               <tr key={attachment._id ?? index}>
+                                                                  <th
+                                                                     className='fs-smaller fw-normal text-secondary'
+                                                                     scope='row'
+                                                                     style={{ opacity: 0.5, fontFamily: 'monospace' }}
+                                                                  >
+                                                                     {number.toString().padStart(2, '0')}
+                                                                  </th>
+
+                                                                  <td>
+                                                                     <a
+                                                                        className='word-break-all text-reset text-decoration-none'
+                                                                        href={`${API_BASE_URL}/api/attachments/download/` + attachment.filename}
+                                                                        rel='noopener noreferrer'
+                                                                        target='_blank'
+                                                                     >
+                                                                        {fileName}
+                                                                        <i className='bi bi-download text-secondary ms-2'></i>
+                                                                     </a>
+                                                                  </td>
+
+                                                                  <td className='text-nowrap text-end align-middle'>
+                                                                     {fileType}
+                                                                  </td>
+                                                               </tr>
+                                                            )
+                                                         })
+                                                      }
+                                                   </tbody>
+                                                </table>
+                                             </div>
+                                          }
+
+                                          <span className='text-secondary' style={{ opacity: 0.5 }}><SmallHeader text='Message' /></span>
+                                          <div className='col-12 whiteSpace-preWrap'>
                                              {note.message}
                                           </div>
                                        </li>

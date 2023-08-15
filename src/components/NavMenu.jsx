@@ -161,7 +161,13 @@ const NavMenu = ({ selectedLink, setSelectedLink }) => {
 
 
          {/* displayed on larger screens */}
-         <div className='largeMenu d-none d-md-flex flex-column p-3 position-fixed top-0 start-0 overflow-auto h-100 bg-white' style={{ width: '200px' }}>
+         <div
+            className='largeMenu d-none d-md-flex flex-column p-3 position-fixed top-0 start-0 overflow-auto h-100 bg-white'
+            style={{
+               borderRight: '1px solid var(--mainPalette6)',
+               width: '200px'
+            }}
+         >
             <span
                className='text-center mb-2'
                style={{ fontWeight: '500' }}

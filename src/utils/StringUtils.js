@@ -138,7 +138,7 @@ export const formatToCurrencyString = ({
       }
    };
 
-   return `${formatCurrencyStringWithThousandsGrouping(integer)}${decimal || ''}`;
+   return `${formatCurrencyStringWithThousandsGrouping(integer)}${decimal ?? ''}`;
 };
 
 export const formatCurrency = (input, onBlur = false) => {

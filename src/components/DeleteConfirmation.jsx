@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { CSSTransition } from 'react-transition-group';
 
 // components
 import ActionButton from './ActionButton';
@@ -63,43 +62,36 @@ const DeleteConfirmation = ({
    }, [API_BASE_URL, checkReference, doc_id, user]);
 
    return (
-      <CSSTransition
-         appear={true}
-         classNames='scale-'
-         in={true}
-         timeout={500}
-      >
-         <div className='shadow position-relative rounded background-white text-reset p-4'>
-            <div className='position-absolute top-0 end-0 p-2'><XButton handleOnClick={() => setShowThisForm(false)} /></div>
-            {/* show spinner with actively fetching data */}
-            {getIsLoading && <div className='my-5'><LoadingDocuments /></div>}
+      <div className='shadow position-relative rounded background-white text-reset p-4'>
+         <div className='position-absolute top-0 end-0 p-2'><XButton handleOnClick={() => setShowThisForm(false)} /></div>
+         {/* show spinner with actively fetching data */}
+         {getIsLoading && <div className='my-5'><LoadingDocuments /></div>}
 
-            {cannotDeleteError && <span>{'Could not delete. ' + error.message + ' Refresh and try again.'}</span>}
+         {cannotDeleteError && <span>{'Could not delete. ' + error.message + ' Refresh and try again.'}</span>}
 
-            {(references.length > 0) &&
-               <p className='m-0 px-3 pt-3 pb-2'>{`This ${model.toLowerCase()} is referenced on one or more jobs, you must delete, archive, or update the job(s) in order to delete this document.`}</p>
-            }
+         {(references.length > 0) &&
+            <p className='m-0 px-3 pt-3 pb-2'>{`This ${model.toLowerCase()} is referenced on one or more jobs, you must delete, archive, or update the job(s) in order to delete this document.`}</p>
+         }
 
-            {(!error && !getIsLoading && !getError && (references.length === 0)) && <>
-               <h2 className='fs-5'>Delete?</h2>
-               <p style={{ whiteSpace: 'pre-wrap' }}>{message}</p>
+         {(!error && !getIsLoading && !getError && (references.length === 0)) && <>
+            <h2 className='fs-5'>Delete?</h2>
+            <p style={{ whiteSpace: 'pre-wrap' }}>{message}</p>
 
-               <ActionButton
-                  alignX='right'
-                  handleOnClick={() => {
-                     deleteDocument({ _id: doc_id, dispatch, model, route })
-                        .then(isDeleted => {
-                           if (isDeleted) {
-                              setShowThisForm(false);
-                              callBack();
-                           };
-                        });
-                  }}
-                  text={(isLoading ? 'Deleting...' : 'Delete')}
-               />
-            </>}
-         </div>
-      </CSSTransition>
+            <ActionButton
+               alignX='right'
+               handleOnClick={() => {
+                  deleteDocument({ _id: doc_id, dispatch, model, route })
+                     .then(isDeleted => {
+                        if (isDeleted) {
+                           setShowThisForm(false);
+                           callBack();
+                        };
+                     });
+               }}
+               text={(isLoading ? 'Deleting...' : 'Delete')}
+            />
+         </>}
+      </div>
    );
 };
 
