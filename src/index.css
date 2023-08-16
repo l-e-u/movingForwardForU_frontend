@@ -42,13 +42,6 @@ body {
   max-width: 1440px;
 }
 
-.actionButton:disabled,
-button.page-link:disabled, .submitButton:disabled {
-  background-color: var(--bs-secondary) !important;
-  color: var(--bs-white) !important;
-  pointer-events: none !important;
-}
-
 .bg-none {
    background-color: transparent;
 }

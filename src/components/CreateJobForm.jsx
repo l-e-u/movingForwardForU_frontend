@@ -4,7 +4,6 @@ import { useState } from 'react';
 import { useCreateJob } from '../hooks/useCreateJob';
 
 // components
-import Modal from './Modal';
 import JobForm from './JobForm';
 
 const CreateJobForm = ({ hideForm }) => {
@@ -32,12 +31,6 @@ const CreateJobForm = ({ hideForm }) => {
       reference: '',
       status: null
    });
-   console.log(job.pickup, job.delivery)
-   const closeButtonClasses = 'position-absolute top-0 end-0 fw-bold p-3 text-secondary border-0';
-   const closeButtonStyles = { background: 'transparent', zIndex: '1' };
-
-   const closeIconClasses = 'bi bi-x-lg';
-
    const formHeading = 'New Job';
    const formSubHeading = `As a dispatcher, you can see all jobs, but a driver will only see jobs that have been assigned to them.`;
 
@@ -67,35 +60,25 @@ const CreateJobForm = ({ hideForm }) => {
       formattedJob.notes[0]?.attachments.forEach(attachment => {
          jobForm.append('attachments', attachment.file);
       });
-      console.log(formattedJob)
+
       const jobCreated = await createJob(jobForm);
 
       if (jobCreated) hideForm();
    };
 
    return (
-      <Modal blurBackdrop={true} topMarginIsFixed={true}>
-         <button
-            className={closeButtonClasses}
-            onClick={hideForm}
-            style={closeButtonStyles}
-            type='button'
-         >
-            <i className={closeIconClasses}></i>
-         </button>
-
-         <JobForm
-            heading={formHeading}
-            job={job}
-            error={error}
-            handleSubmit={handleOnSubmit}
-            isFetching={isLoading}
-            setJob={setJob}
-            subHeading={formSubHeading}
-            submitButtonIsDisabled={isLoading}
-            submitButtonText={submitButtonText}
-         />
-      </Modal>
+      <JobForm
+         heading={formHeading}
+         job={job}
+         error={error}
+         handleSubmit={handleOnSubmit}
+         hideForm={hideForm}
+         isFetching={isLoading}
+         setJob={setJob}
+         subHeading={formSubHeading}
+         submitButtonIsDisabled={isLoading}
+         submitButtonText={submitButtonText}
+      />
    );
 };
 

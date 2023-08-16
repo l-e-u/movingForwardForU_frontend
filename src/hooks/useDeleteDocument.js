@@ -3,20 +3,25 @@ import { useState } from 'react'
 // hooks
 import { useAuthContext } from '../hooks/useAuthContext';
 
-export const useDeleteDocument = () => {
+export const useDeleteDocument = ({
+   apiRouteName,
+   deleteFromContext,
+   documentID,
+}) => {
    const API_BASE_URL = process.env.API_BASE_URL;
+
    const [error, setError] = useState(null);
    const [isLoading, setIsLoading] = useState(null);
 
    const { user } = useAuthContext();
 
-   const deleteDocument = async ({ _id, dispatch, model, route }) => {
+   const deleteDocument = async () => {
       setIsLoading(true);
 
       // don't want to show the error if the user is trying to rectify, so null error at the start
       setError(null);
 
-      const response = await fetch(`${API_BASE_URL}/api/${route}/${_id}`, {
+      const response = await fetch(`${API_BASE_URL}/api/${apiRouteName}/${documentID}`, {
          method: 'DELETE',
          headers: {
             'Content-Type': 'application/json',
@@ -28,10 +33,9 @@ export const useDeleteDocument = () => {
       const json = await response.json();
 
       if (!response.ok) {
-         console.log(json);
-
          setError(json.error);
          setIsLoading(false);
+
          return false;
       };
 
@@ -39,7 +43,8 @@ export const useDeleteDocument = () => {
          setError(null);
          setIsLoading(false);
 
-         dispatch({ type: `DELETE_${model}`, payload: json });
+         deleteFromContext(json);
+
          return true;
       };
    };

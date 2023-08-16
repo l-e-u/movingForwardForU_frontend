@@ -2,18 +2,32 @@ import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 
 // used in forms only, absolute positioned so the form has to be positioned something other than static
-const SubmitButton = ({ buttonText, isSubmittingForm, isDisabled = false }) => {
+const SubmitButton = ({
+   buttonText,
+   isSubmittingForm,
+   buttonType = 'button',
+   isDisabled = false,
+}) => {
    const [ellipsis, setEllipsis] = useState('');
 
+   const canClick = !isSubmittingForm && !isDisabled;
+
    // styling
-   const submitButtonClasses = 'submitButton border-0 rounded-pill position-absolute top-100 start-50 text-white px-5 py-3';
-   const submitButtonStyles = { backgroundColor: 'var(--mainPalette4)' }
+   const submitButtonClasses = 'submitButton border-top-0 border-start-0 rounded-pill px-5 py-1';
+   const submitButtonStyles = {
+      backgroundColor: canClick ? 'var(--mainPalette4)' : 'var(--bs-gray-200)',
+      borderRight: canClick ? '2px solid var(--mainPalette2)' : '2px solid var(--bs-gray-400)',
+      borderBottom: canClick ? '2px solid var(--mainPalette2)' : '2px solid var(--bs-gray-400)',
+      color: canClick ? 'var(--bs-white)' : 'var(--bs-secondary)',
+      cursor: isDisabled ? 'none' : 'pointer',
+      opacity: isDisabled ? 0.5 : 1,
+   };
    const submitButtonVariants = {
       mount: {
-         transform: 'translate(-50%,-50%) scale(1)'
+         scale: 1,
       },
       onHover: {
-         transform: 'translate(-50%,-50%) scale(1.1)',
+         scale: 1.1,
          transition: {
             duration: 0.3,
          },
@@ -41,7 +55,7 @@ const SubmitButton = ({ buttonText, isSubmittingForm, isDisabled = false }) => {
          disabled={isSubmittingForm || isDisabled}
          initial='mount'
          style={submitButtonStyles}
-         type='submit'
+         type={buttonType}
          variants={submitButtonVariants}
          whileHover='onHover'
       >

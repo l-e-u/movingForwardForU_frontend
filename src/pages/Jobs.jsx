@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
+import { motion } from 'framer-motion';
 
 // hooks
 import { useJobsContext } from '../hooks/useJobsContext';
@@ -7,8 +7,6 @@ import { useAuthContext } from '../hooks/useAuthContext';
 import { useGetJobs } from '../hooks/useGetJobs';
 
 // components
-import CreateJobForm from '../components/CreateJobForm';
-import EditJobForm from '../components/EditJobForm';
 import JobDetails from '../components/JobDetails';
 
 const Jobs = ({
@@ -19,9 +17,6 @@ const Jobs = ({
    const { jobs } = useJobsContext();
 
    const { getJobs, error, isLoading } = useGetJobs();
-
-   const [showCreateForm, setShowCreateForm] = useState(false);
-   const [selectedJob, setSelectedJob] = useState(null);
 
    // pagination state
    const [limit, setLimit] = useState(10);
@@ -79,7 +74,8 @@ const Jobs = ({
          {
             jobs.map(job => (
                <motion.li key={job._id} variants={itemVariants}>
-                  <JobDetails job={job} showEditForm={() => setSelectedJob(job)} readOnly={true} />
+                  {/* drivers can only access this page and get restricted info version of the job detials */}
+                  <JobDetails job={job} showEditForm={() => setSelectedJob(job)} restrictInfo={true} />
                </motion.li>
             ))
          }

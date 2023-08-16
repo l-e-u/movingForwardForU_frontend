@@ -12,7 +12,7 @@ import Tabs from './Tabs';
 import { datePrettyString, formatToCurrencyString, phoneNumberFormatted } from '../utils/StringUtils';
 import { billingTotal } from '../utils/NumberUtils';
 
-const ContactDetails = ({ contact, showEditForm }) => {
+const ContactDetails = ({ contact, showDeleteForm, showEditForm }) => {
    const [showMore, setShowMore] = useState(false);
 
    const {
@@ -42,6 +42,11 @@ const ContactDetails = ({ contact, showEditForm }) => {
                   name: 'Edit',
                   icon: 'bi bi-pen',
                   handler: showEditForm
+               },
+               {
+                  name: 'Delete',
+                  icon: 'bi bi-trash3',
+                  handler: showDeleteForm
                },
                {
                   name: showMore ? 'Collapse' : 'Expand',
@@ -111,6 +116,11 @@ const ContactDetails = ({ contact, showEditForm }) => {
                      )
                   },
                   {
+                     name: 'Note',
+                     icon: 'bi bi-sticky',
+                     contentJSX: <p className='whiteSpace-preWrap m-0'>{note}</p>
+                  },
+                  {
                      name: 'Fees',
                      icon: 'bi bi-cash-stack',
                      contentJSX: (
@@ -125,11 +135,6 @@ const ContactDetails = ({ contact, showEditForm }) => {
                            {(defaultFees.length > 0) && <BillingTable billing={feesAsBillingFormat} />}
                         </>
                      )
-                  },
-                  {
-                     name: 'Note',
-                     icon: 'bi bi-sticky',
-                     contentJSX: <p className='whiteSpace-preWrap m-0'>{note}</p>
                   }
                ]}
             />

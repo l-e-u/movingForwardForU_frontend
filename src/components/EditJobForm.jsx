@@ -5,7 +5,6 @@ import { useUpdateJob } from '../hooks/useUpdateJob';
 
 // components
 import JobForm from './JobForm';
-import Modal from './Modal';
 
 const EditJobForm = ({
    currentJob,
@@ -27,13 +26,6 @@ const EditJobForm = ({
    });
 
    const { _id } = currentJob;
-
-   // styling for the button that closes the form
-   const closeButtonClasses = 'position-absolute border-0 top-0 end-0 fw-bold p-3 text-secondary';
-   const closeButtonStyles = { background: 'transparent', zIndex: '1' };
-
-   // close button X
-   const closeIconClasses = 'bi bi-x-lg';
 
    const formHeading = 'Edit Job';
    const formSubHeading = '';
@@ -169,28 +161,18 @@ const EditJobForm = ({
    };
 
    return (
-      <Modal blurBackdrop={true} topMarginIsFixed={true}>
-         <button
-            className={closeButtonClasses}
-            onClick={hideForm}
-            style={closeButtonStyles}
-            type='button'
-         >
-            <i className={closeIconClasses}></i>
-         </button>
-
-         <JobForm
-            job={editedJob}
-            error={error}
-            heading={formHeading}
-            handleSubmit={handleOnSubmit}
-            setJob={setEditedJob}
-            subHeading={formSubHeading}
-            submitButtonText={submitButtonText}
-            submitButtonIsDisabled={isLoading}
-            isFetching={isLoading}
-         />
-      </Modal>
+      <JobForm
+         job={editedJob}
+         error={error}
+         heading={formHeading}
+         handleSubmit={handleOnSubmit}
+         hideForm={hideForm}
+         setJob={setEditedJob}
+         subHeading={formSubHeading}
+         submitButtonText={submitButtonText}
+         submitButtonIsDisabled={isLoading}
+         isFetching={isLoading}
+      />
    );
 };
 

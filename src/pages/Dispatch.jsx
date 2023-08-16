@@ -9,15 +9,19 @@ import { useGetJobs } from '../hooks/useGetJobs';
 import CreateJobForm from '../components/CreateJobForm';
 import EditJobForm from '../components/EditJobForm';
 import JobDetails from '../components/JobDetails';
+import DeleteForm from '../components/DeleteForm';
 
 const Dispatch = ({
    filters,
    setFilters,
 }) => {
    const { getJobs, error, isLoading } = useGetJobs();
-   const { jobs } = useJobsContext();
+   const { jobs, dispatch } = useJobsContext();
 
    const [showCreateForm, setShowCreateForm] = useState(false);
+   const [showDeleteForm, setShowDeleteForm] = useState(false);
+   const [showEditForm, setShowEditForm] = useState(false);
+
    const [selectedJob, setSelectedJob] = useState(null);
 
    // pagination state
@@ -94,10 +98,27 @@ const Dispatch = ({
             }
          </AnimatePresence>
 
-         <AnimatePresence>
+         <AnimatePresence onExitComplete={() => setSelectedJob(null)}>
             {
-               selectedJob &&
-               <EditJobForm currentJob={selectedJob} hideForm={() => setSelectedJob(null)} />
+               showEditForm &&
+               <EditJobForm currentJob={selectedJob} hideForm={() => setShowEditForm(false)} />
+            }
+         </AnimatePresence>
+
+         <AnimatePresence onExitComplete={() => setSelectedJob(null)}>
+            {
+               showDeleteForm &&
+               <DeleteForm
+                  apiRouteName='jobs'
+                  deleteFromContext={deletedJob => dispatch({ type: 'DELETE_JOB', payload: deletedJob })}
+                  documentID={selectedJob._id}
+                  hideForm={() => setShowDeleteForm(false)}
+                  warning={
+                     selectedJob.notes.some(note => note.attachments.length > 0) ?
+                        'Deleting this job will also delete all attachments in its notes.' :
+                        null
+                  }
+               />
             }
          </AnimatePresence>
 
@@ -120,7 +141,19 @@ const Dispatch = ({
             {
                jobs.map(job => (
                   <motion.li key={job._id} variants={itemVariants}>
-                     <JobDetails job={job} showEditForm={() => setSelectedJob(job)} readOnly={false} />
+                     {/* dispatchers have access to all info */}
+                     <JobDetails
+                        job={job}
+                        showDeleteForm={() => {
+                           setSelectedJob(job);
+                           setShowDeleteForm(true);
+                        }}
+                        showEditForm={() => {
+                           setSelectedJob(job);
+                           setShowEditForm(true);
+                        }}
+                        restrictInfo={false}
+                     />
                   </motion.li>
                ))
             }

@@ -11,12 +11,16 @@ import { useGetFees } from '../hooks/useGetFees';
 import { useFeesContext } from '../hooks/useFeesContext';
 import DetailsContainer from '../components/DetailsContainer';
 import EllipsisMenu from '../components/EllipsisMenu';
+import DeleteForm from '../components/DeleteForm';
 
 const Fees = () => {
    const { getFees, error, isLoading } = useGetFees();
-   const { fees } = useFeesContext();
+   const { fees, dispatch } = useFeesContext();
 
    const [showCreateForm, setShowCreateForm] = useState(false);
+   const [showDeleteForm, setShowDeleteForm] = useState(false);
+   const [showEditForm, setShowEditForm] = useState(false);
+
    const [selectedFee, setSelectedFee] = useState(null);
 
    // button to add new documents classes, styles, and framer-motion variants
@@ -31,29 +35,6 @@ const Fees = () => {
             duration: 0.3,
          },
          boxShadow: '0px 0px 8px var(--mainPalette4)',
-      }
-   };
-
-
-   // delete and edit buttons variants
-   const actionButtonVariants = {
-      actionButton: {
-         background: 'transparent',
-         borderWidth: '1px',
-         borderStyle: 'solid',
-         borderColor: 'var(--bs-secondary)',
-         color: 'var(--bs-secondary)',
-         scale: 1,
-         opacity: 0.5
-      },
-      onHover: {
-         borderColor: 'var(--mainPalette4)',
-         color: 'var(--mainPalette4)',
-         scale: 1.1,
-         opacity: 1,
-         transition: {
-            duration: 0.2,
-         }
       }
    };
 
@@ -108,10 +89,23 @@ const Fees = () => {
             }
          </AnimatePresence>
 
-         <AnimatePresence>
+         <AnimatePresence onExitComplete={() => setSelectedFee(null)}>
             {
-               selectedFee &&
-               <EditFeeForm currentFee={selectedFee} hideForm={() => setSelectedFee(null)} />
+               showEditForm &&
+               <EditFeeForm currentFee={selectedFee} hideForm={() => setShowEditForm(false)} />
+            }
+         </AnimatePresence>
+
+         <AnimatePresence onExitComplete={() => setSelectedFee(null)}>
+            {
+               showDeleteForm &&
+               <DeleteForm
+                  apiRouteName='fees'
+                  deleteFromContext={deletedFee => dispatch({ type: 'DELETE_FEE', payload: deletedFee })}
+                  documentID={selectedFee._id}
+                  hideForm={() => setShowDeleteForm(false)}
+                  modelName='fee'
+               />
             }
          </AnimatePresence>
 
@@ -138,15 +132,21 @@ const Fees = () => {
                      <DetailsContainer>
                         <EllipsisMenu actions={[
                            {
-                              name: 'Delete',
-                              icon: 'bi bi-trash3',
-                              handler: () => { }
-                           },
-                           {
                               name: 'Edit',
                               icon: 'bi bi-pen',
-                              handler: () => setSelectedFee(fee)
-                           }
+                              handler: () => {
+                                 setSelectedFee(fee);
+                                 setShowEditForm(true);
+                              }
+                           },
+                           {
+                              name: 'Delete',
+                              icon: 'bi bi-trash3',
+                              handler: () => {
+                                 setSelectedFee(fee);
+                                 setShowDeleteForm(true);
+                              }
+                           },
                         ]}
                         />
 

@@ -15,6 +15,14 @@ const EllipsisMenu = ({ actions = [] }) => {
    const userEnteredMenuTrue = () => setUserEnteredMenu(true);
    const hideMenu = () => setShowMenu(false);
 
+   const ellipsisMenuStyles = {
+      background: 'var(--bs-gray-100)',
+      borderRight: '2px solid var(--bs-gray-400)',
+      borderBottom: '2px solid var(--bs-gray-400)',
+      marginRight: '2rem',
+      zIndex: 50
+   };
+
    const iconVariants = {
       mount: {
          opacity: 0.5
@@ -45,7 +53,7 @@ const EllipsisMenu = ({ actions = [] }) => {
 
    const actionOptionsJSX = actions.map((action, index) => (
       <button
-         className='bg-none border-0 d-flex gap-2 text-reset'
+         className='bg-none border-0 d-flex gap-3 text-reset'
          key={action.name.concat(index.toString().padStart(2, '0'))}
          onClick={handleOnClickAction(action.handler)}
          style={{ outline: 'none' }}
@@ -71,13 +79,13 @@ const EllipsisMenu = ({ actions = [] }) => {
             {
                showMenu &&
                <motion.div
-                  className='ellipsisMenu d-flex flex-column gap-2 bg-white border-end border-bottom rounded-1 fs-smaller position-absolute top-0 end-100 p-2 mt-2 shadow-sm'
+                  className='ellipsisMenu d-flex flex-column gap-3 rounded-1 fs-smaller position-absolute top-0 end-100 p-3 mt-2'
                   variants={fadeVariants}
                   initial='hidden'
                   animate='visible'
                   onMouseEnter={userEnteredMenuTrue}
                   onMouseLeave={hideMenu}
-                  style={{ marginRight: '2rem' }}
+                  style={ellipsisMenuStyles}
                   exit='hidden'
                >
                   {

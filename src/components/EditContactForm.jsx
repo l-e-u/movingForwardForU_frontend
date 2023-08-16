@@ -5,7 +5,6 @@ import { useUpdateContact } from '../hooks/useUpdateContact';
 
 // components
 import ContactForm from './ContactForm';
-import Modal from './Modal';
 
 // utilities
 import { filterDigitsFromString } from '../utils/StringUtils';
@@ -31,14 +30,6 @@ const EditContactForm = ({ currentContact, hideForm }) => {
       phoneNumber: currentContact.phoneNumber || '',
       website: currentContact.website || '',
    });
-
-   // styling for the button that closes the form
-   const closeButtonClasses = 'position-absolute border-0 top-0 end-0 fw-bold p-3 text-secondary';
-   const closeButtonStyles = { background: 'transparent', zIndex: '1' };
-
-   // close button X
-   const closeIconClasses = 'bi bi-x-lg';
-
    const formHeading = 'Edit Contact';
    const formSubHeading = '';
 
@@ -107,28 +98,18 @@ const EditContactForm = ({ currentContact, hideForm }) => {
    };
 
    return (
-      <Modal blurBackdrop={true} topMarginIsFixed={true}>
-         <button
-            className={closeButtonClasses}
-            onClick={hideForm}
-            style={closeButtonStyles}
-            type='button'
-         >
-            <i className={closeIconClasses}></i>
-         </button>
-
-         <ContactForm
-            contact={editedContact}
-            error={error}
-            heading={formHeading}
-            handleSubmit={handleOnSubmit}
-            setContact={setEditedContact}
-            subHeading={formSubHeading}
-            submitButtonText={submitButtonText}
-            submitButtonIsDisabled={isLoading}
-            isFetching={isLoading}
-         />
-      </Modal>
+      <ContactForm
+         contact={editedContact}
+         error={error}
+         heading={formHeading}
+         handleSubmit={handleOnSubmit}
+         hideForm={hideForm}
+         setContact={setEditedContact}
+         subHeading={formSubHeading}
+         submitButtonText={submitButtonText}
+         submitButtonIsDisabled={isLoading}
+         isFetching={isLoading}
+      />
    );
 };
 

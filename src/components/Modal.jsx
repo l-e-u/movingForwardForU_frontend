@@ -2,26 +2,36 @@ import { useEffect } from 'react';
 import { motion } from 'framer-motion';
 
 // Appears some time after order has been place, every time a page is switched via the browser arrows, the modal show is set to false
-const Modal = ({ children, blurBackdrop = false, topMarginIsFixed = false }) => {
-
-   // on mount, prevent the body from scrolling
-   useEffect(() => {
-      document.body.classList.add('overflow-hidden');
-
-      // on unmount, allow the body to scroll
-      return () => document.body.classList.remove('overflow-hidden');
-   }, []);
-
-   const modalClasses = 'myModal background position-fixed d-flex top-0 start-0 w-100 h-100 overflow-auto';
+const Modal = ({
+   children,
+   closeModal,
+   blurBackdrop = false,
+   canClose = false,
+   maxWidth = '600px',
+   topMarginIsFixed = false
+}) => {
+   const modalClasses = 'myModal position-fixed d-flex top-0 start-0 w-100 h-100 overflow-auto';
    const modalStyles = {
       background: 'linear-gradient(0deg, rgba(120,150,215,0.75) 0%, rgba(229,239,255,0.85) 29%, rgba(255,255,255,0) 100%)',
       zIndex: '1050'
    };
 
    // modals that change their height, will have a fixed height to prevent the modal being 
-   const contentMarginClasses = topMarginIsFixed ? 'mt-3 mt-md-5 mx-auto mb-0' : 'm-auto';
-   const contentClasses = `content position-relative ${contentMarginClasses}`;
-   const contentStyles = { backgroundColor: 'transparent' };
+   const contentMarginClasses = topMarginIsFixed ? 'mt-3 mt-md-5 mx-auto mb-auto' : 'm-auto';
+   const contentClasses = `content bg-white p-4 text-reset rounded-4 position-relative ${contentMarginClasses}`;
+   const contentStyles = {
+      maxWidth,
+      backgroundColor: 'transparent',
+      borderRight: '5px solid var(--bs-gray-400)',
+      borderBottom: '5px solid var(--bs-gray-400)',
+      width: '90vw'
+   };
+
+   // small x when modal can be closed
+   const closeButtonClasses = 'position-absolute top-0 end-0 pt-2 px-3 pb-3 text-danger border-0';
+   const closeButtonStyles = { background: 'transparent', transform: 'rotate(45deg)', zIndex: '1' };
+
+   const closeIconClasses = 'bi bi-plus';
 
    // backdrop will fade in before its children
    const backdropVariants = {
@@ -71,6 +81,14 @@ const Modal = ({ children, blurBackdrop = false, topMarginIsFixed = false }) => 
       modalStyles.WebkitBackdropFilter = 'blur(2px)';
    };
 
+   // on mount, prevent the body from scrolling
+   useEffect(() => {
+      document.body.classList.add('overflow-hidden');
+
+      // on unmount, allow the body to scroll
+      return () => document.body.classList.remove('overflow-hidden');
+   }, []);
+
    return (
       <motion.div
          className={modalClasses}
@@ -85,6 +103,17 @@ const Modal = ({ children, blurBackdrop = false, topMarginIsFixed = false }) => 
             style={contentStyles}
             variants={contentVariants}
          >
+            {
+               canClose &&
+               <button
+                  className={closeButtonClasses}
+                  onClick={closeModal}
+                  style={closeButtonStyles}
+                  type='button'
+               >
+                  <i className={closeIconClasses}></i>
+               </button>
+            }
             {children}
          </motion.div>
       </motion.div>

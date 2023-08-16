@@ -27,7 +27,7 @@ const NavMenu = ({ selectedLink, setSelectedLink }) => {
          borderBottom: '1px solid var(--mainPalette7)',
          paddingBottom: '0rem',
          height: '0px',
-         zIndex: '1'
+         zIndex: 999
       },
       animation: {
          boxShadow: '0px 1px 25px 1px var(--mainPalette7)',
@@ -62,7 +62,7 @@ const NavMenu = ({ selectedLink, setSelectedLink }) => {
       }
    };
 
-
+   // all the links to be used in either small or large menus
    const navLinksJSX = links.map((link, index) => {
       const { name, path } = link;
       const isSelected = selectedLink === name;
@@ -104,7 +104,7 @@ const NavMenu = ({ selectedLink, setSelectedLink }) => {
    // button that logs out the user
    const logoutButtonJSX = (
       <motion.button
-         className='border-0 bg-none text-danger text-end mt-auto'
+         className='border-0 bg-none text-danger text-end mt-auto me-3 me-md-0'
          onClick={logout}
          type='button'
          variants={fadeInOutVariants}
@@ -122,7 +122,7 @@ const NavMenu = ({ selectedLink, setSelectedLink }) => {
             <div
                className='d-flex position-relative justify-content-between align-items-center bg-white py-2'
                style={{
-                  zIndex: '2'
+                  zIndex: 1000
                }}
             >
 

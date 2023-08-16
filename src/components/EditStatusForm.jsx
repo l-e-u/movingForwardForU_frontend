@@ -4,7 +4,6 @@ import { useState } from 'react';
 import { useUpdateStatus } from '../hooks/useUpdateStatus';
 
 // components
-import Modal from './Modal';
 import StatusForm from './StatusForm';
 
 // Form to update a status
@@ -26,13 +25,6 @@ const EditStatusForm = ({ currentStatus, hideForm }) => {
 
    // changes value depending of the form is fetching or not
    const submitButtonText = isLoading ? 'Updating' : 'Update';
-
-   // styling for the button that closes/cancels the form
-   const closeButtonClasses = 'position-absolute border-0 bg-none top-0 end-0 fw-bold p-3 text-secondary';
-   const closeButtonStyles = { zIndex: '1' };
-
-   // close button X icon
-   const closeIconClasses = 'bi bi-x-lg';
 
    // before submitting, check all the fields and only send the fields that have been updated by the user
    const handleOnSubmit = async (e) => {
@@ -58,28 +50,18 @@ const EditStatusForm = ({ currentStatus, hideForm }) => {
    };
 
    return (
-      <Modal blurBackdrop={true}>
-         <button
-            className={closeButtonClasses}
-            onClick={hideForm}
-            style={closeButtonStyles}
-            type='button'
-         >
-            <i className={closeIconClasses}></i>
-         </button>
-
-         <StatusForm
-            {...editedStatus}
-            error={error}
-            heading={formHeading}
-            handleSubmit={handleOnSubmit}
-            setStatus={setEditedStatus}
-            subHeading={formSubHeading}
-            submitButtonText={submitButtonText}
-            submitButtonIsDisabled={isLoading}
-            isFetching={isLoading}
-         />
-      </Modal>
+      <StatusForm
+         {...editedStatus}
+         error={error}
+         heading={formHeading}
+         hideForm={hideForm}
+         handleSubmit={handleOnSubmit}
+         setStatus={setEditedStatus}
+         subHeading={formSubHeading}
+         submitButtonText={submitButtonText}
+         submitButtonIsDisabled={isLoading}
+         isFetching={isLoading}
+      />
    );
 };
 

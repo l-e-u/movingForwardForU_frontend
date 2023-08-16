@@ -9,13 +9,17 @@ import { useGetContacts } from '../hooks/useGetContacts';
 import CreateContactForm from '../components/CreateContactForm';
 import ContactDetails from '../components/ContactDetails';
 import EditContactForm from '../components/EditContactForm';
+import DeleteForm from '../components/DeleteForm';
 
 
 const Contacts = () => {
    const { getContacts, error, isLoading } = useGetContacts();
-   const { contacts } = useContactsContext();
+   const { contacts, dispatch } = useContactsContext();
 
    const [showCreateForm, setShowCreateForm] = useState(false);
+   const [showDeleteForm, setShowDeleteForm] = useState(false);
+   const [showEditForm, setShowEditForm] = useState(false);
+
    const [selectedContact, setSelectedContact] = useState(null);
 
    // button to add new documents classes, styles, and framer-motion variants
@@ -79,10 +83,23 @@ const Contacts = () => {
             }
          </AnimatePresence>
 
-         <AnimatePresence>
+         <AnimatePresence onExitComplete={() => setSelectedContact(null)}>
             {
-               selectedContact &&
-               <EditContactForm currentContact={selectedContact} hideForm={() => setSelectedContact(null)} />
+               showEditForm &&
+               <EditContactForm currentContact={selectedContact} hideForm={() => setShowEditForm(false)} />
+            }
+         </AnimatePresence>
+
+         <AnimatePresence onExitComplete={() => setSelectedContact(null)}>
+            {
+               showDeleteForm &&
+               <DeleteForm
+                  apiRouteName='contacts'
+                  deleteFromContext={deletedContact => dispatch({ type: 'DELETE_CONTACT', payload: deletedContact })}
+                  documentID={selectedContact._id}
+                  hideForm={() => setShowDeleteForm(false)}
+                  modelName='contact'
+               />
             }
          </AnimatePresence>
 
@@ -105,7 +122,17 @@ const Contacts = () => {
             {
                contacts.map(contact => (
                   <motion.li key={contact._id} variants={itemVariants} >
-                     <ContactDetails contact={contact} showEditForm={() => setSelectedContact(contact)} />
+                     <ContactDetails
+                        contact={contact}
+                        showDeleteForm={() => {
+                           setSelectedContact(contact);
+                           setShowDeleteForm(true);
+                        }}
+                        showEditForm={() => {
+                           setSelectedContact(contact);
+                           setShowEditForm(true);
+                        }}
+                     />
                   </motion.li>
                ))
             }

@@ -27,13 +27,6 @@ const EditFeeForm = ({ currentFee, hideForm }) => {
    // changes value depending of the form is fetching or not
    const submitButtonText = isLoading ? 'Updating' : 'Update';
 
-   // styling for the button that closes/cancels the form
-   const closeButtonClasses = 'position-absolute border-0 bg-none top-0 end-0 fw-bold p-3 text-secondary';
-   const closeButtonStyles = { zIndex: '1' };
-
-   // close button X icon
-   const closeIconClasses = 'bi bi-x-lg';
-
    // before submitting, check all the fields and only send the fields that have been updated by the user
    const handleOnSubmit = async (e) => {
       e.preventDefault();
@@ -58,28 +51,18 @@ const EditFeeForm = ({ currentFee, hideForm }) => {
    };
 
    return (
-      <Modal blurBackdrop={true}>
-         <button
-            className={closeButtonClasses}
-            onClick={hideForm}
-            style={closeButtonStyles}
-            type='button'
-         >
-            <i className={closeIconClasses}></i>
-         </button>
-
-         <FeeForm
-            {...editedFee}
-            error={error}
-            heading={formHeading}
-            handleSubmit={handleOnSubmit}
-            setFee={setEditededFee}
-            subHeading={formSubHeading}
-            submitButtonText={submitButtonText}
-            submitButtonIsDisabled={isLoading}
-            isFetching={isLoading}
-         />
-      </Modal>
+      <FeeForm
+         {...editedFee}
+         error={error}
+         heading={formHeading}
+         handleSubmit={handleOnSubmit}
+         hideForm={hideForm}
+         setFee={setEditededFee}
+         subHeading={formSubHeading}
+         submitButtonText={submitButtonText}
+         submitButtonIsDisabled={isLoading}
+         isFetching={isLoading}
+      />
    );
 };
 

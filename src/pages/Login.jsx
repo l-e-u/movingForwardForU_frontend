@@ -51,7 +51,8 @@ const Login = () => {
    };
 
    // classes, styling, and framer-motion variants for form
-   const formClasses = 'login position-relative bg-white rounded-4 p-4 text-reset shadow';
+   // const formClasses = 'login position-relative bg-white rounded-4 p-4 text-reset shadow';
+   const formClasses = 'login';
    const formStyles = { width: '90vw', maxWidth: '400px' };
 
    const iconClasses = 'position-absolute top-50 translate-middle';
@@ -144,11 +145,14 @@ const Login = () => {
 
                      {resetPasswordEmailSent && <div className='alert alert-success py-1 mt-2'>Email sent. Please check your inbox.</div>}
 
-                     <SubmitButton
-                        buttonText={isLoading ? 'Logging in' : 'Log in'}
-                        isSubmittingForm={isLoading || isLoadingResetPassword}
-                        isDisabled={isLoading || isLoadingResetPassword}
-                     />
+                     <div className='d-flex justify-content-end'>
+                        <SubmitButton
+                           buttonText={isLoading ? 'Logging in' : 'Log in'}
+                           buttonType='submit'
+                           isSubmittingForm={isLoading || isLoadingResetPassword}
+                           isDisabled={isLoading || isLoadingResetPassword}
+                        />
+                     </div>
                   </form>
                </Modal >
             }

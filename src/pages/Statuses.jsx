@@ -7,16 +7,20 @@ import { useStatusesContext } from '../hooks/useStatusesContext';
 
 // components
 import CreateStatusForm from '../components/CreateStatusForm';
-import EditStatusForm from '../components/EditStatusForm';
-import SmallHeader from '../components/SmallHeader';
+import DeleteForm from '../components/DeleteForm';
 import DetailsContainer from '../components/DetailsContainer';
+import EditStatusForm from '../components/EditStatusForm';
 import EllipsisMenu from '../components/EllipsisMenu';
+import SmallHeader from '../components/SmallHeader';
 
 const Statuses = () => {
    const { getStatuses, error, isLoading } = useGetStatuses();
-   const { statuses } = useStatusesContext();
+   const { statuses, dispatch } = useStatusesContext();
 
    const [showCreateForm, setShowCreateForm] = useState(false);
+   const [showDeleteForm, setShowDeleteForm] = useState(false);
+   const [showEditForm, setShowEditForm] = useState(false);
+
    const [selectedStatus, setSelectedStatus] = useState(null);
 
    // button to add new documents classes, styles, and framer-motion variants
@@ -83,10 +87,23 @@ const Statuses = () => {
             }
          </AnimatePresence>
 
-         <AnimatePresence>
+         <AnimatePresence onExitComplete={() => setSelectedStatus(null)}>
             {
-               selectedStatus &&
+               showEditForm &&
                <EditStatusForm currentStatus={selectedStatus} hideForm={() => setSelectedStatus(null)} />
+            }
+         </AnimatePresence>
+
+         <AnimatePresence onExitComplete={() => setSelectedStatus(null)}>
+            {
+               showDeleteForm &&
+               <DeleteForm
+                  apiRouteName='statuses'
+                  deleteFromContext={deletedStatus => dispatch({ type: 'DELETE_STATUS', payload: deletedStatus })}
+                  documentID={selectedStatus._id}
+                  hideForm={() => setShowDeleteForm(false)}
+                  modelName='status'
+               />
             }
          </AnimatePresence>
 
@@ -114,14 +131,20 @@ const Statuses = () => {
                      <DetailsContainer>
                         <EllipsisMenu actions={[
                            {
-                              name: 'Delete',
-                              icon: 'bi bi-trash3',
-                              handler: () => { }
-                           },
-                           {
                               name: 'Edit',
                               icon: 'bi bi-pen',
-                              handler: () => setSelectedStatus(status)
+                              handler: () => {
+                                 setSelectedStatus(status);
+                                 setShowEditForm(true);
+                              }
+                           },
+                           {
+                              name: 'Delete',
+                              icon: 'bi bi-trash3',
+                              handler: () => {
+                                 setSelectedStatus(status);
+                                 setShowDeleteForm(true);
+                              }
                            }
                         ]}
                         />

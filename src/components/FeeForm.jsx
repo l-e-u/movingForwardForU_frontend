@@ -3,6 +3,7 @@ import GrowingTextArea from './GrowingTextArea';
 import CurrencyInput from './CurrencyInput';
 import ErrorAlert from './ErrorAlert';
 import FormHeader from './FormHeader';
+import Modal from './Modal';
 import SmallHeader from './SmallHeader';
 import SubmitButton from './SubmitButton';
 import TextInput from './TextInput';
@@ -13,6 +14,7 @@ const FeeForm = ({
    error,
    handleSubmit,
    heading,
+   hideForm,
    isFetching,
    name,
    setFee,
@@ -20,57 +22,58 @@ const FeeForm = ({
    submitButtonText,
    submitButtonIsDisabled,
 }) => {
-   // styles for the form
-   const formClasses = 'newFeeForm position-relative p-4 pb-5 text-reset shadow bg-white rounded-4';
-   const formStyles = { width: '90vw', maxWidth: '500px' };
-
    return (
-      <form className={formClasses} onSubmit={handleSubmit} style={formStyles} >
+      <Modal blurBackdrop={true} canClose={true} closeModal={hideForm} maxWidth='500px'>
+         <form onSubmit={handleSubmit}>
 
-         <FormHeader text={heading} />
-         <p className='text-secondary whiteSpace-preWrap fs-smaller mb-4'>{subHeading}</p>
+            <FormHeader text={heading} />
+            <p className='text-secondary whiteSpace-preWrap fs-smaller mb-4'>{subHeading}</p>
 
-         <div className='container-fluid p-0'>
-            {/* AMOUNT */}
-            <div className='row mb-3'>
-               <div className='col-sm-3 d-flex justify-content-start justify-content-sm-end align-items-center text-secondary'>
-                  <SmallHeader text='Amount' />
+            <div className='container-fluid p-0'>
+               {/* AMOUNT */}
+               <div className='row mb-3'>
+                  <div className='col-sm-3 d-flex justify-content-start justify-content-sm-end align-items-center text-secondary'>
+                     <SmallHeader text='Amount' />
+                  </div>
+                  <div className='col-sm-9'>
+                     <CurrencyInput input={amount} setInput={input => setFee({ description, name, amount: input })} />
+                  </div>
                </div>
-               <div className='col-sm-9'>
-                  <CurrencyInput input={amount} setInput={input => setFee({ description, name, amount: input })} />
+
+               {/* NAME */}
+               <div className='row mb-3'>
+                  <div className='col-sm-3 d-flex justify-content-start justify-content-sm-end align-items-center text-secondary'>
+                     <SmallHeader text='Name' />
+                  </div>
+                  <div className='col-sm-9'>
+                     <TextInput input={name} setInput={input => setFee({ amount, description, name: input })} />
+                  </div>
                </div>
+
+               {/* DESCRIPTION */}
+               <div className='row mb-3'>
+                  <div className='col-sm-3 d-flex justify-content-start justify-content-sm-end align-items-center text-secondary'>
+                     <SmallHeader text='Description' />
+                  </div>
+                  <div className='col-sm-9'>
+                     <GrowingTextArea input={description} setInput={input => setFee({ amount, name, description: input })} />
+                  </div>
+               </div>
+
             </div>
 
-            {/* NAME */}
-            <div className='row mb-3'>
-               <div className='col-sm-3 d-flex justify-content-start justify-content-sm-end align-items-center text-secondary'>
-                  <SmallHeader text='Name' />
-               </div>
-               <div className='col-sm-9'>
-                  <TextInput input={name} setInput={input => setFee({ amount, description, name: input })} />
-               </div>
+            {error && <ErrorAlert message={error.message} />}
+
+            <div className='d-flex justify-content-end'>
+               <SubmitButton
+                  buttonText={submitButtonText}
+                  buttonType='submit'
+                  isDisabled={submitButtonIsDisabled}
+                  isSubmittingForm={isFetching}
+               />
             </div>
-
-            {/* DESCRIPTION */}
-            <div className='row mb-3'>
-               <div className='col-sm-3 d-flex justify-content-start justify-content-sm-end align-items-center text-secondary'>
-                  <SmallHeader text='Description' />
-               </div>
-               <div className='col-sm-9'>
-                  <GrowingTextArea input={description} setInput={input => setFee({ amount, name, description: input })} />
-               </div>
-            </div>
-
-         </div>
-
-         {error && <ErrorAlert message={error.message} />}
-
-         <SubmitButton
-            buttonText={submitButtonText}
-            isDisabled={submitButtonIsDisabled}
-            isSubmittingForm={isFetching}
-         />
-      </form>
+         </form>
+      </Modal>
    );
 };
 

@@ -69,8 +69,8 @@ const Users = () => {
    };
 
    // styling for the columns
-   const firstColumnClasses = 'col-sm-2 text-secondary text-sm-end';
-   const secondColumnClasses = 'col-sm-10'
+   const col1Classes = 'col-1 d-flex align-items-center justify-content-start fs-smaller text-secondary py-1 mb-auto';
+   const col2Classes = 'col-11';
 
    useEffect(() => {
       getUsers();
@@ -120,32 +120,33 @@ const Users = () => {
                            ]}
                         />
 
+                        {/* active / inactive */}
+                        <i className={`bi bi-${user.isActive ? 'person-check' : 'person-x'} fs-smaller me-2 text-secondary`}></i>
+                        <span className='text-secondary'><SmallHeader text={user.isActive ? 'Active' : 'Inactive'} /></span>
+
+                        <br />
+
+                        <i className='bi bi-person-lock fs-smaller me-2 text-secondary'></i>
+                        <span className='text-secondary text-capitalize'><SmallHeader text={user.roles.join(', ')} /></span>
 
                         {/* NAME */}
-                        <div className='mb-2' style={{ fontWeight: '600' }}>{user.fullName}</div>
+                        <div className='ms-3 ps-1 my-2' style={{ fontWeight: '600' }}>
+                           {user.fullName}
+                        </div>
 
-                        {/* NOTE */}
-                        <div className='row px-1 px-sm-3 px-md-4 px-lg-1'>
-                           {/* PHONE */}
-                           <div className='phone col-lg d-flex gap-2 justify-content-lg-center align-items-center mb-1 mb-lg-0'>
-                              <i className='bi bi-telephone text-secondary fs-smaller'></i>
-                              <div>
-                                 {`${user.phoneNumber ? phoneNumberFormatted(user.phoneNumber) : ''}`}
-                              </div>
+                        <div className='row g-0 px-3 mx-1'>
+                           <div className='text-secondary' style={{ opacity: '0.5' }}>
+                              <SmallHeader text='Contact' />
                            </div>
 
-                           {/* EMAIL */}
-                           <div className='email col-lg d-flex gap-2 justify-content-lg-center align-items-center'>
-                              <i className='bi bi-envelope-at text-secondary fs-smaller'></i>
-                              <div className='word-break-all'>{user.email}</div>
-                              {user.isVerified && <i className='bi bi-patch-check text-secondary fs-smaller'></i>}
-                           </div>
+                           <i className={`bi bi-phone ${col1Classes}`}></i>
+                           <span className={col2Classes} >{user.phoneNumber}</span>
 
-                           {/* NOTE */}
-                           <div className='address col-lg d-flex gap-2 justify-content-lg-center align-items-center mb-1 mb-lg-0'>
-                              <i className='bi bi-sticky text-secondary fs-smaller'></i>
-                              <div>{user.note}</div>
-                           </div>
+                           <i className={`bi bi-envelope-at ${col1Classes}`}></i>
+                           <span className={col2Classes + ' word-break-all'}>{user.email}</span>
+
+                           <i className={`bi bi-geo-alt ${col1Classes}`}></i>
+                           <span className={col2Classes + ' text-capitalize'}>{user.address}</span>
                         </div>
 
                      </DetailsContainer>
