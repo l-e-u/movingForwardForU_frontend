@@ -5,8 +5,10 @@ import { useUsersContext } from './useUsersContext';
 
 export const useRegisterUser = () => {
    const API_BASE_URL = process.env.API_BASE_URL;
+
    const [error, setError] = useState(null);
    const [isLoading, setIsLoading] = useState(null);
+
    const { dispatch } = useUsersContext();
    const { user } = useAuthContext();
 
@@ -29,10 +31,9 @@ export const useRegisterUser = () => {
       const json = await response.json();
 
       if (!response.ok) {
-         console.error(json);
-
          setError(json.error);
          setIsLoading(false);
+
          return false;
       };
 
@@ -41,6 +42,7 @@ export const useRegisterUser = () => {
          setIsLoading(false);
 
          dispatch({ type: 'CREATE_USER', payload: json });
+
          return true;
       };
    };

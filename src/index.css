@@ -91,6 +91,14 @@ body {
   font-size: .75rem !important;
 }
 
+.opacity-50 {
+   opacity: 0.5;
+}
+
+.opacity-100 {
+   opacity: 1;
+}
+
 input[type='date']::-webkit-calendar-picker-indicator{
    opacity: 0.5;
 }
@@ -208,6 +216,10 @@ input[type='date']::-webkit-calendar-picker-indicator{
 
 /* small screen and above */
 @media screen and (min-width: 576px) {
+  .opacity-sm-50 {
+   opacity: 0.5 !important;
+  }
+
   .w-sm-50 {
     width: 50% !important;
   }

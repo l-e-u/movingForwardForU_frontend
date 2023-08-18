@@ -29,10 +29,8 @@ export const dateStringFormat = (date) => {
    return `${day} ${month} ${year}`;
 };
 
-export const datePrettyString = ({ dateObject, dateString, includeTime }) => {
-   let date = dateObject;
-
-   if (dateString) date = new Date(dateString);
+export const datePrettyString = ({ date, includeTime }) => {
+   const dateCopy = new Date(date);
 
    const monthNames = [
       { abbr: 'jan', full: 'january' },
@@ -58,17 +56,17 @@ export const datePrettyString = ({ dateObject, dateString, includeTime }) => {
       { abbr: 'sat', full: 'saturday' },
    ];
 
-   const year = date.getFullYear();
-   const month = monthNames[date.getMonth()].full.padStart(2, '0');
-   const day = date.getDate().toString().padStart(2, '0');
-   const weekday = weekdayNames[date.getDay()].full;
+   const year = dateCopy.getFullYear();
+   const month = monthNames[dateCopy.getMonth()].full.padStart(2, '0');
+   const day = dateCopy.getDate().toString().padStart(2, '0');
+   const weekday = weekdayNames[dateCopy.getDay()].full;
    const prettyDate = `${weekday}, ${day} ${month} ${year}`;
    let prettyTime = '';
 
    if (includeTime) {
-      let hours = date.getHours();
+      let hours = dateCopy.getHours();
       const meridiem = hours < 12 ? 'AM' : 'PM';
-      const minutes = date.getMinutes();
+      const minutes = dateCopy.getMinutes();
 
       hours %= 12;
 

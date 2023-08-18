@@ -165,6 +165,7 @@ const ContactForm = ({
                               <div className='col-sm-9 col-md-10'>
                                  <TextInput
                                     input={website}
+                                    prefixText={'http://'}
                                     setInput={input => setContact({ ...contact, website: input })}
                                  />
                               </div>
@@ -187,7 +188,7 @@ const ContactForm = ({
 
                            <div className='defaultFeeSelect row mb-3'>
                               <div className='col-sm-3 col-md-2 d-flex justify-content-start justify-content-sm-end align-items-center text-secondary'>
-                                 <SmallHeader text='Default Fees' />
+                                 <SmallHeader text='Defaults' />
                               </div>
 
                               <div className='col-sm-9 col-md-10'>
@@ -210,7 +211,11 @@ const ContactForm = ({
 
             </div>
 
-            {error && <ErrorAlert message={error.message} />}
+            {error &&
+               <div className='mt-3'>
+                  <ErrorAlert message={error.message} />
+               </div>
+            }
 
             <div className='d-flex justify-content-end mt-3'>
                <SubmitButton

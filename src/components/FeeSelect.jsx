@@ -36,29 +36,32 @@ const FeeSelect = ({ selectedFees, setFees }) => {
 
    // styles for the select container and its children
    const feeSelectStyles = {
-      container: (base) => ({
+      valueContainer: (base) => ({
          ...base,
+         flexDirection: 'column',
+         flexWrap: 'no-wrap',
+         gap: '0.5rem'
       }),
       input: (base) => ({
          ...base,
          minWidth: '100px'
       }),
-      option: (base) => ({
-         ...base,
-      }),
       multiValue: (base) => ({
          ...base,
          backgroundColor: 'var(--bs-gray-100)',
-         flexGrow: '1'
+         borderRight: '1px solid var(--bs-gray-400)',
+         borderBottom: '1px solid var(--bs-gray-400)',
+         width: '100%'
       }),
       multiValueLabel: (base) => ({
          ...base,
          color: 'var(--mainPalette1)',
-         flexGrow: '1'
+         flexGrow: 1
       }),
       multiValueRemove: (base) => ({
          ...base,
-         color: 'red'
+         color: 'red',
+         transition: 'all 0.2s ease-in-out'
       })
    };
 
@@ -73,7 +76,7 @@ const FeeSelect = ({ selectedFees, setFees }) => {
          index: name,
          label: (
             <div className='d-md-flex justify-content-between px-2'>
-               <div>{name}</div>
+               <div className='text-wrap'>{name}</div>
                <div className='text-end'>$ {amount.toFixed(2)}</div>
             </div>
          ),
@@ -95,7 +98,9 @@ const FeeSelect = ({ selectedFees, setFees }) => {
 
    return (
       <Select
+         backspaceRemovesValue={false}
          classNamePrefix='mySelectInput'
+         closeMenuOnSelect={false}
          hideSelectedOptions={true}
          isClearable={false}
          isDisabled={isLoading}

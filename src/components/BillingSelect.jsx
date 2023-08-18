@@ -104,14 +104,11 @@ const BillingSelect = ({ billing, setBilling }) => {
          ...base,
          minWidth: '100px'
       }),
-      option: (base) => ({
-         ...base,
-      }),
       multiValue: (base) => ({
          ...base,
          backgroundColor: 'var(--bs-gray-100)',
-         borderRight: '1px solid var(--bs-gray-300)',
-         borderBottom: '1px solid var(--bs-gray-300)',
+         borderRight: '1px solid var(--bs-gray-400)',
+         borderBottom: '1px solid var(--bs-gray-400)',
          width: '100%'
       }),
       multiValueLabel: (base) => ({
@@ -121,7 +118,7 @@ const BillingSelect = ({ billing, setBilling }) => {
       }),
       multiValueRemove: (base) => ({
          ...base,
-         color: 'var(--bs-secondary)',
+         color: 'red',
          transition: 'all 0.2s ease-in-out'
       })
    };

@@ -13,8 +13,8 @@ const NavMenu = ({ selectedLink, setSelectedLink }) => {
       { name: 'Jobs', path: '/', icon: 'bi-list-check' },
       { name: 'Dispatch', path: '/dispatch', icon: 'bi-truck' },
       { name: 'Contacts', path: '/contacts', icon: 'bi-person-vcard' },
-      { name: 'Statuses', path: '/statuses', icon: 'bi-tags' },
       { name: 'Users', path: '/users', icon: 'bi-people' },
+      { name: 'Statuses', path: '/statuses', icon: 'bi-tags' },
       { name: 'Fees', path: '/fees', icon: 'bi-cash-coin' },
       { name: 'Archives', path: '/archives', icon: 'bi-archive' },
    ];

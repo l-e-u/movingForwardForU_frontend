@@ -50,10 +50,8 @@ const Login = () => {
       resetPassword(email);
    };
 
-   // classes, styling, and framer-motion variants for form
-   // const formClasses = 'login position-relative bg-white rounded-4 p-4 text-reset shadow';
+   // classes, styling, and framer-motion variants
    const formClasses = 'login';
-   const formStyles = { width: '90vw', maxWidth: '400px' };
 
    const iconClasses = 'position-absolute top-50 translate-middle';
    const iconStyles = { left: '1.5rem' };
@@ -80,8 +78,8 @@ const Login = () => {
 
          <AnimatePresence mode='wait'>
             {!user &&
-               <Modal blurBackdrop={false}>
-                  <form id='formLogin' className={formClasses} onSubmit={handleSubmit} style={formStyles}>
+               <Modal blurBackdrop={false} maxWidth='400px'>
+                  <form id='formLogin' className={formClasses} onSubmit={handleSubmit}>
 
                      <FormHeader text='Welcome back!' />
                      <p className='text-secondary fs-smaller'>Let's start by logging into your account.</p>

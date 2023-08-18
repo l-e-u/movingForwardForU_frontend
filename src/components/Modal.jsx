@@ -22,6 +22,8 @@ const Modal = ({
    const contentStyles = {
       maxWidth,
       backgroundColor: 'transparent',
+      borderTop: '1px solid var(--bs-gray-400)',
+      borderLeft: '1px solid var(--bs-gray-400)',
       borderRight: '5px solid var(--bs-gray-400)',
       borderBottom: '5px solid var(--bs-gray-400)',
       width: '90vw'

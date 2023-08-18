@@ -24,7 +24,6 @@ const NoteInput = ({
 }) => {
    const API_BASE_URL = process.env.API_BASE_URL;
 
-   const dateObject = new Date(createdAtDate);
    const hasAttachments = attachments.length > 0;
 
    const midOpacity = { opacity: 0.5 };
@@ -40,7 +39,7 @@ const NoteInput = ({
                >
                </i>
                <div className='col-12 col-sm-11 order-sm-1 fs-smaller text-secondary text-capitalize'>
-                  {datePrettyString({ dateObject, includeTime: true })}
+                  {datePrettyString({ date: createdAtDate, includeTime: true })}
                   <br />
                   {createdByName}
                </div>

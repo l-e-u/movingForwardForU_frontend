@@ -1,211 +1,209 @@
-// functions
-import { removeExtraSpaces } from '../utils/StringUtils';
-
 // components
-import RequiredFieldsText from './RequiredFieldsText';
+import FormHeader from './FormHeader';
 import GrowingTextArea from './GrowingTextArea';
-import ActionButton from './ActionButton'
+import Modal from './Modal';
+import TextInput from './TextInput';
+import SmallHeader from './SmallHeader';
+import ErrorAlert from './ErrorAlert';
+import SubmitButton from './SubmitButton';
 
 const UserForm = ({
    error,
    handleSubmit,
-   isDisabled,
-   isLoading,
+   heading,
+   hideForm,
+   isFetching,
    setUser,
+   subHeading,
+   submitButtonText,
+   submitButtonIsDisabled,
    user,
-   isEditing = false,
 }) => {
-   const errorFromEmailInput = error?.path === 'email';
-   const errorFromFirstNameInput = error?.path === 'firstName';
-   const errorFromLastNameInput = error?.path === 'lastName';
+   const { address, firstName, email, lastName, phoneNumber, note, roles } = user;
+
+   const col1Classes = 'col-sm-2 d-sm-flex justify-content-end align-items-center text-secondary';
+   const col2Classes = 'col-sm-10';
 
    return (
-      <form onSubmit={handleSubmit} className='d-flex flex-column gap-2'>
-         <RequiredFieldsText />
+      <Modal blurBackdrop={true} canClose={true} closeModal={hideForm}>
+         <form onSubmit={handleSubmit}>
+            <FormHeader text={heading} />
+            <p className='text-secondary whiteSpace-preWrap fs-smaller'>{subHeading}</p>
 
-         {/* Option to deactivate a user is only available for the Edit Form */}
-         {isEditing && <div className='form-check m-0'>
-            <input
-               type='checkbox'
-               className='form-check-input'
-               id='activeCheck'
-               checked={user.isActive}
-               onChange={() => {
-                  setUser(prev => {
-                     return {
-                        ...prev,
-                        isActive: !prev.isActive
-                     }
-                  })
-               }} />
-            <label className='form-check-label' htmlFor='activeCheck'>Active</label>
-            <br />
-            <small className='text-secondary'>Inactive users will not be able to login.</small>
-         </div>}
+            <div className='container-fluid p-0'>
 
-         <div className='form-check m-0'>
-            <input
-               type='checkbox'
-               className='form-check-input'
-               id='adminCheck'
-               checked={user.isAdmin}
-               onChange={() => {
-                  setUser(prev => {
-                     return {
-                        ...prev,
-                        isAdmin: !prev.isAdmin
-                     }
-                  })
-               }} />
-            <label className='form-check-label' htmlFor='adminCheck'>Administrator</label>
-            <br />
-            <small className='text-secondary'>A user with administrator privileges will be able to create, edit , and delete all documents. </small>
-         </div>
+               {/* FIRST & LAST NAME */}
+               <div className='names row mb-3'>
+                  <div className={col1Classes + ' d-none mt-sm-3'}>
+                     <SmallHeader text='Name' />
+                  </div>
 
-         <div className='d-flex flex-column flex-md-row gap-2'>
-            {/* NAME */}
-            <div className='form-floating flex-grow-1'>
-               <input
-                  type='text'
-                  className={'form-control' + (errorFromFirstNameInput ? ' is-invalid' : '')}
-                  name='firstName'
-                  id='firstName'
-                  placeholder='First Name'
-                  value={user.firstName}
-                  onChange={e => {
-                     setUser(prev => {
-                        return {
-                           ...prev,
-                           firstName: e.target.value
-                        }
-                     })
-                  }}
-                  onBlur={e => {
-                     setUser(prev => {
-                        return {
-                           ...prev,
-                           firstName: removeExtraSpaces(e.target.value.trim())
-                        }
-                     })
-                  }} />
-               <label htmlFor='firstName' className='form-label required'>
-                  {errorFromFirstNameInput ? <span className='inputError'>{error.message}</span> : 'First Name'}
-               </label>
+                  <div className={col2Classes}>
+                     <div className='row g-3'>
+                        <div className='col-sm-5'>
+                           <span className='opacity-100 opacity-sm-50 text-secondary'><SmallHeader text='First' /></span>
+                           <TextInput
+                              input={firstName}
+                              placeholder='Required'
+                              setInput={input => setUser({ ...user, firstName: input })}
+                           />
+                        </div>
+                        <div className='col-sm-7'>
+                           <span className='opacity-100 opacity-sm-50 text-secondary'><SmallHeader text='Last' /></span>
+                           <TextInput
+                              input={lastName}
+                              placeholder='Required'
+                              setInput={input => setUser({ ...user, lastName: input })}
+                           />
+                        </div>
+                     </div>
+                  </div>
+               </div>
+
+               {/* EMAIL */}
+               <div className='email row mb-3'>
+                  <div className={col1Classes}>
+                     <SmallHeader text='Email' />
+                  </div>
+
+                  <div className={col2Classes}>
+                     <TextInput
+                        input={email}
+                        placeholder='Required'
+                        setInput={input => setUser({ ...user, email: input })}
+                     />
+                  </div>
+               </div>
+
+               {/* ADDRESS */}
+               <div className='address row mb-3'>
+                  <div className={col1Classes}>
+                     <SmallHeader text='Address' />
+                  </div>
+
+                  <div className={col2Classes}>
+                     <TextInput
+                        input={address}
+                        setInput={input => setUser({ ...user, address: input })}
+                     />
+                  </div>
+               </div>
+
+               <div className='row mb-1'>
+                  <div className={col2Classes + ' whiteSpace-preWrap text-secondary fs-smaller mb-2 ms-auto'}>
+                     {`Dispatchers have permission to create and edit jobs.\nDrivers can have jobs assigned to them.\nPlease choose at least one.`}
+                  </div>
+               </div>
+
+               {/* ROLES CHECKBOXES */}
+               <div className='roles row mb-2'>
+                  <div className={col2Classes + ' d-flex text-secondary fs-smaller ms-auto'}>
+
+                     <div className='form-check me-5'>
+                        <input
+                           className='form-check-input'
+                           checked={roles.includes('dispatcher')}
+                           id='dispatcherCheck'
+                           name='dispatcherCheck'
+                           onChange={e => {
+                              const isChecked = e.target.checked;
+
+                              if (isChecked) {
+                                 setUser({
+                                    ...user,
+                                    roles: roles.toSpliced(-1, 0, 'dispatcher')
+                                 });
+
+                                 return;
+                              };
+
+                              setUser({
+                                 ...user,
+                                 roles: roles.filter(role => role !== 'dispatcher')
+                              })
+                           }}
+                           type='checkbox'
+                        />
+                        <label className='form-check-label' htmlFor='dispatcherCheck'>Dispatcher</label>
+                     </div>
+                     <div className='form-check'>
+                        <input
+                           className='form-check-input'
+                           checked={roles.includes('driver')}
+                           id='driverCheck'
+                           name='driverCheck'
+                           onChange={e => {
+                              const isChecked = e.target.checked;
+
+                              if (isChecked) {
+                                 setUser({
+                                    ...user,
+                                    roles: roles.toSpliced(-1, 0, 'driver')
+                                 });
+
+                                 return;
+                              };
+
+                              setUser({
+                                 ...user,
+                                 roles: roles.filter(role => role !== 'driver')
+                              })
+                           }}
+                           type='checkbox'
+                        />
+                        <label className='form-check-label' htmlFor='driverCheck'>Driver</label>
+                     </div>
+
+                  </div>
+               </div>
+
+               {/* PHONE NUMBER */}
+               <div className='mobile row mb-3'>
+                  <div className={col1Classes}>
+                     <SmallHeader text='Mobile' />
+                  </div>
+
+                  <div className={col2Classes}>
+                     <TextInput
+                        input={phoneNumber}
+                        prefixText='+1'
+                        setInput={input => setUser({ ...user, phoneNumber: input })}
+                     />
+                  </div>
+               </div>
+
+               {/* NOTE */}
+               <div className='note row'>
+                  <div className={col1Classes}>
+                     <SmallHeader text='Note' />
+                  </div>
+
+                  <div className={col2Classes}>
+                     <GrowingTextArea
+                        input={note}
+                        setInput={input => setUser({ ...user, note: input })}
+                     />
+                  </div>
+               </div>
+
             </div>
 
-            <div className='form-floating flex-grow-1'>
-               <input
-                  type='text'
-                  className={'form-control' + (errorFromLastNameInput ? ' is-invalid' : '')}
-                  name='lastName'
-                  id='lastName'
-                  placeholder='Last Name'
-                  value={user.lastName}
-                  onChange={e => {
-                     setUser(prev => {
-                        return {
-                           ...prev,
-                           lastName: e.target.value
-                        }
-                     })
-                  }}
-                  onBlur={e => {
-                     setUser(prev => {
-                        return {
-                           ...prev,
-                           lastName: removeExtraSpaces(e.target.value.trim())
-                        }
-                     })
-                  }} />
-               <label htmlFor='lastName' className='form-label required'>
-                  {errorFromLastNameInput ? <span className='inputError'>{error.message}</span> : 'Last Name'}
-               </label>
+            {error &&
+               <div className='mt-2'>
+                  <ErrorAlert message={error.message} />
+               </div>
+            }
+
+            <div className='d-flex justify-content-end mt-3'>
+               <SubmitButton
+                  buttonText={submitButtonText}
+                  buttonType='submit'
+                  isDisabled={submitButtonIsDisabled}
+                  isSubmittingForm={isFetching}
+               />
             </div>
-         </div>
-
-         <div className='d-flex flex-column flex-md-row gap-2'>
-
-            {/* EMAIL */}
-            <div className='form-floating flex-grow-1'>
-               <input
-                  type='email'
-                  className={'form-control' + (errorFromEmailInput ? ' is-invalid' : '')}
-                  id='email'
-                  placeholder='name@example.com'
-                  value={user.email}
-                  onChange={(e) => {
-                     setUser(prev => {
-                        return {
-                           ...prev,
-                           email: e.target.value
-                        }
-                     })
-                  }}
-                  onBlur={(e) => {
-                     setUser(prev => {
-                        return {
-                           ...prev,
-                           email: removeExtraSpaces(e.target.value.trim())
-                        }
-                     })
-                  }} />
-               <label htmlFor='email' className='form-label required'>
-                  {errorFromEmailInput ? <span className='inputError'>{error.message}</span> : 'Email'}
-               </label>
-            </div>
-
-            {/* ADDRESS */}
-            <div className='form-floating flex-grow-1'>
-               <input
-                  type='text'
-                  className='form-control'
-                  name='address'
-                  placeholder='Address'
-                  id='address'
-                  value={user.address ?? ''}
-                  onChange={(e) => {
-                     setUser(prev => {
-                        return {
-                           ...prev,
-                           address: removeExtraSpaces(e.target.value)
-                        }
-                     })
-                  }}
-                  onBlur={(e) => {
-                     setUser(prev => {
-                        return {
-                           ...prev,
-                           address: e.target.value.trim()
-                        }
-                     })
-                  }} />
-               <label htmlFor='address' className='form-label'>Address</label>
-            </div>
-         </div>
-
-         {/* COMMENTS */}
-         <div className='form-floating'>
-            <GrowingTextArea
-               className='form-control'
-               name='commentsTextarea'
-               onChange={e => setUser(prev => {
-                  return { ...prev, comments: e.target.value };
-               })}
-               placeholder='Comments'
-               value={user.comments}
-            />
-            <label htmlFor='commentsTextarea' className='form-label'>Comments</label>
-         </div>
-
-         {(isLoading && !isEditing) && <div className='alert alert-success py-1 m-0'>Sending email to user...</div>}
-
-         <ActionButton
-            alignX='right'
-            text={(isLoading ? 'Saving...' : 'Save')}
-            type='submit'
-            isDisabled={isDisabled}
-         />
-      </form>
+         </form>
+      </Modal>
    );
 };
 

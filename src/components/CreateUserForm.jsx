@@ -1,54 +1,53 @@
 import { useState } from 'react';
-import { CSSTransition } from 'react-transition-group';
 
 // hooks
 import { useRegisterUser } from '../hooks/useRegisterUser';
 
 // components
-import FormHeader from './FormHeader';
 import UserForm from './UserForm';
 
-const CreateUserForm = ({ setShowThisForm }) => {
-    const { registerUser, error, isLoading } = useRegisterUser();
-    const [user, setUser] = useState({
-        firstName: '',
-        lastName: '',
-        email: '',
-        comments: '',
-        isAdmin: false,
-    });
+const CreateUserForm = ({ hideForm }) => {
+   const { registerUser, error, isLoading } = useRegisterUser();
 
-    return (
-        <CSSTransition
-            appear={true}
-            classNames='scale-'
-            in={true}
-            timeout={500}
-        >
-            < div className='shadow'>
-                <FormHeader text='New User' handleCloseForm={() => setShowThisForm(false)} />
+   const [user, setUser] = useState({
+      address: '',
+      firstName: '',
+      email: '',
+      isAdmin: false,
+      lastName: '',
+      phoneNumber: '',
+      note: '',
+      roles: [],
+   });
 
-                <div className='rounded-bottom background-white text-reset px-3 pb-3 pt-1'>
+   const formHeading = 'Register User';
+   const subHeading = 'New users have to verify their email and set a password before they can login.';
+   const submitButtonText = isLoading ? 'Registering' : 'Register';
 
-                    <UserForm
-                        error={error}
-                        isDisabled={isLoading}
-                        isLoading={isLoading}
-                        handleSubmit={async (e) => {
-                            e.preventDefault();
+   const handleOnSubmit = async (e) => {
+      e.preventDefault();
 
-                            await registerUser(user)
-                                .then(isCreated => {
-                                    if (isCreated) setShowThisForm(false);
-                                })
-                        }}
-                        setUser={setUser}
-                        user={user}
-                    />
-                </div>
-            </div>
-        </CSSTransition>
-    );
+      const userRegistered = await registerUser(user);
+
+      if (userRegistered) hideForm();
+   };
+
+   return (
+      <UserForm
+         error={error}
+         handleSubmit={handleOnSubmit}
+         heading={formHeading}
+         hideForm={hideForm}
+         isDisabled={isLoading}
+         isFetching={isLoading}
+         isLoading={isLoading}
+         setUser={setUser}
+         subHeading={subHeading}
+         submitButtonText={submitButtonText}
+         submitButtonIsDisabled={isLoading}
+         user={user}
+      />
+   );
 };
 
 export default CreateUserForm;

@@ -10,10 +10,12 @@ const TextInput = ({ input, onBlur, placeholder, prefixText, setInput, type }) =
    const prefixStyles = { opacity: '0.5' };
 
    const inputClasses = 'myTextInput w-100 rounded-1 text-reset';
+
+   // if there's a prefixText, then for every 4 characters, apply 1.75rem
    const inputVariants = {
       mount: {
          border: '1px solid var(--bs-gray-400)',
-         padding: prefixText ? '0.5rem 0.5rem 0.5rem 2rem' : '0.5rem',
+         padding: prefixText ? `0.5rem 0.5rem 0.5rem ${Math.ceil(prefixText.length / 4) * 1.75}rem` : '0.5rem',
          outline: '2px solid transparent'
       },
       onFocus: {

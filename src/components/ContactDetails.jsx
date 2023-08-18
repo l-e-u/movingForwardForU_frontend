@@ -26,13 +26,14 @@ const ContactDetails = ({ contact, showDeleteForm, showEditForm }) => {
       note,
       organization,
       phoneExt,
-      phoneNumber
+      phoneNumber,
+      website
    } = contact;
    const feesAsBillingFormat = defaultFees.map(fee => ({ fee, overrideAmount: null }));
 
    // styling for the columns
-   const firstColumnClasses = 'col-sm-2 text-secondary text-sm-end';
-   const secondColumnClasses = 'col-sm-10'
+   const firstColumnClasses = 'col-1 d-flex align-items-center justify-content-start fs-smaller text-secondary py-1 mb-auto';
+   const secondColumnClasses = 'col-11';
 
    return (
       <DetailsContainer>
@@ -56,65 +57,70 @@ const ContactDetails = ({ contact, showDeleteForm, showEditForm }) => {
             ]}
          />
 
+         {/* CREATED ON */}
+         <i className='bi bi-person-add fs-smaller text-secondary me-2'></i>
+         <span className='text-secondary text-capitalize'>
+            <SmallHeader text={datePrettyString({ date: createdAt }).split(',')[1].trim()} />
+         </span>
+
          {/* organization/business name display */}
-         <div className='mb-2' style={{ fontWeight: '600' }}>{organization}</div>
+         <div className='ms-3 ps-1 my-2' style={{ fontWeight: '600' }}>{organization}</div>
 
-         {/* DEFAULT VIEW FOR QUICK READING */}
-         {/* address, phone, and email, this layout will flex depending on the screen size */}
-         <div className='row px-1 px-sm-3 px-md-4 px-lg-1'>
-            <div className='address col-lg d-flex gap-2 justify-content-lg-center align-items-center mb-1 mb-lg-0'>
-               <i className='bi bi-geo-alt text-secondary fs-smaller'></i>
-               <div>{address}</div>
-            </div>
+         <div className='row mx-2'>
+            <div className='col-sm col-lg col-xl'>
 
-            <div className='phone col-lg d-flex gap-2 justify-content-lg-center align-items-center mb-1 mb-lg-0'>
-               <i className='bi bi-telephone text-secondary fs-smaller'></i>
-               <div>
-                  {`${phoneNumberFormatted(phoneNumber)}${phoneExt ? ' x' + phoneExt : ''}`}
+               <div className='row g-0'>
+                  <div className='text-secondary' style={{ opacity: '0.5' }}>
+                     <SmallHeader text='Communications' />
+                  </div>
+
+                  <i className={`bi bi-person ${firstColumnClasses}`}></i>
+                  <span className={secondColumnClasses}>{name}</span>
+
+                  <i className={`bi bi-telephone ${firstColumnClasses}`}></i>
+                  <span className={secondColumnClasses}>
+                     {`${phoneNumberFormatted(phoneNumber)}${phoneExt ? ' x' + phoneExt : ''}`}
+                  </span>
+
+                  <i className={`bi bi-link-45deg ${firstColumnClasses}`}></i>
+                  <a
+                     className={secondColumnClasses + ' text-reset'}
+                     href={`http://${website}`}
+                     rel='noopener noreferrer'
+                     target='_blank'
+                  >
+                     {website}
+                  </a>
+
                </div>
+
             </div>
 
-            <div className='email col-lg d-flex gap-2 justify-content-lg-center align-items-center'>
-               <i className='bi bi-envelope-at text-secondary fs-smaller'></i>
-               <div className='word-break-all'>{email}</div>
+            <div className='col-sm col-lg col-xl'>
+
+               <div className='row g-0'>
+                  <div className='text-secondary' style={{ opacity: '0.5' }}>
+                     <SmallHeader text='Addresses' />
+                  </div>
+
+                  <i className={`bi bi-envelope-at ${firstColumnClasses}`}></i>
+                  <span className={secondColumnClasses + ' word-break-all'} >{email}</span>
+
+                  <i className={`bi bi-geo-alt ${firstColumnClasses}`}></i>
+                  <span className={secondColumnClasses}>{address}</span>
+
+                  <i className={`bi bi-mailbox ${firstColumnClasses}`}></i>
+                  <span className={secondColumnClasses}>{billingAddress}</span>
+
+               </div>
+
             </div>
          </div>
+
 
          <CollapsingSection maxHeight='300px' isExpanded={showMore}>
             <Tabs
                tabs={[
-                  {
-                     name: 'Details',
-                     icon: 'bi bi-person-rolodex',
-                     contentJSX: (
-                        <>
-                           {/* BILLING ADDRESS */}
-                           <div className='row px-2 mb-2'>
-                              <div className={firstColumnClasses}><SmallHeader text='Billing' /></div>
-                              <div className={secondColumnClasses}>{billingAddress}</div>
-                           </div>
-
-                           {/* NAME */}
-                           <div className='row px-2 mb-2'>
-                              <div className={firstColumnClasses}><SmallHeader text='Name' /></div>
-                              <div className={secondColumnClasses}>{name}</div>
-                           </div>
-
-                           {/* CREATOR */}
-                           <div className='row px-2 mb-2'>
-                              <div className={firstColumnClasses}><SmallHeader text='Creator' /></div>
-                              <div className={secondColumnClasses}>{createdBy.fullName}</div>
-                           </div>
-
-                           {/* CREATED */}
-                           <div className='row px-2'>
-                              <div className={firstColumnClasses}><SmallHeader text='Created' /></div>
-                              <div className={secondColumnClasses}>{datePrettyString({ dateString: createdAt, includeTime: true })}</div>
-                           </div>
-
-                        </>
-                     )
-                  },
                   {
                      name: 'Note',
                      icon: 'bi bi-sticky',

@@ -43,10 +43,10 @@ const JobDetails = ({
 
    // formatting strings for date and time
    const pickupTimeString = pickup.includeTime ?
-      timeStringFormat({ dateString: pickup.date, showMilitary: true }) :
+      timeStringFormat({ date: pickup.date, showMilitary: true }) :
       '--:--';
    const deliveryTimeString = delivery.includeTime ?
-      timeStringFormat({ dateString: delivery.date, showMilitary: true }) :
+      timeStringFormat({ date: delivery.date, showMilitary: true }) :
       '--:--';
 
    // holds ellipsis menu options depending on user roles, by default, everyone can expand for more info
@@ -106,7 +106,7 @@ const JobDetails = ({
                            <SmallHeader text='Created' />
                         </div>
                         <div className='col-sm-10 text-capitalize'>
-                           {datePrettyString({ dateString: createdAt, includeTime: true })}
+                           {datePrettyString({ date: createdAt, includeTime: true })}
                         </div>
                      </div>
                   </>
@@ -130,9 +130,15 @@ const JobDetails = ({
                   >
                      {
                         notes.map(note => (
-                           <li key={note._id} className='row d-flex justify-content-between mt-3' style={{ borderTop: '1px dotted var(--mainPalette4)' }}>
+                           <li
+                              key={note._id}
+                              className='row d-flex justify-content-between mt-3'
+                              style={{
+                                 borderTop: '1px dotted rgba(var(--bs-secondary-rgb), 0.25)',
+                              }}
+                           >
                               <div className='col-12 fs-smaller text-secondary text-capitalize mt-2'>
-                                 {datePrettyString({ dateString: note.createdAt, includeTime: true })}
+                                 {datePrettyString({ date: note.createdAt, includeTime: true })}
                               </div>
 
                               <div className='col-12 fs-smaller text-secondary mb-2'>
@@ -268,7 +274,7 @@ const JobDetails = ({
             <div className='col-sm col-lg col-xl'>
                <TransitDetails
                   address={pickup.address}
-                  dateText={datePrettyString({ dateString: pickup.date })}
+                  dateText={datePrettyString({ date: pickup.date })}
                   heading='Pickup'
                   timeText={pickupTimeString}
                />
@@ -278,7 +284,7 @@ const JobDetails = ({
             <div className='col-sm col-lg col-xl'>
                <TransitDetails
                   address={delivery.address}
-                  dateText={datePrettyString({ dateString: delivery.date })}
+                  dateText={datePrettyString({ date: delivery.date })}
                   heading='Delivery'
                   timeText={deliveryTimeString}
                />

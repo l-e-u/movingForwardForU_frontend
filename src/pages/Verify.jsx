@@ -2,14 +2,16 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'react-router';
 
 // components
-// import ActionButton from '../components/ActionButton';
-// import Card from '../components/Card';
-// import PasswordChecklist from 'react-password-checklist';
-// import LoadingDocuments from '../components/LoadingDocuments';
-// import PageContentWrapper from '../components/Page';
+import FormHeader from '../components/FormHeader';
+import Modal from '../components/Modal';
+import SubmitButton from '../components/SubmitButton';
 
 // hooks
 import { useVerify } from '../hooks/useVerify';
+
+// assets
+import logo from '../assets/movingForwardArrows.svg';
+import { AnimatePresence } from 'framer-motion';
 
 const Verify = () => {
    const API_BASE_URL = process.env.API_BASE_URL;
@@ -19,15 +21,30 @@ const Verify = () => {
 
    const { verify, error: verifyError, isLoading: verifyIsLoading } = useVerify();
 
+   const [password, setPassword] = useState('');
+   const [showPassword, setShowPassword] = useState(false);
    const [confirmPassword, setConfirmPassword] = useState('');
+   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
    const [error, setError] = useState(null);
    const [isLoading, setIsLoading] = useState(true);
-   const [password, setPassword] = useState('');
    const [passwordIsValid, setPasswordIsValid] = useState(false);
    const [user, setUser] = useState(null);
 
+   const passwordIconClass = `bi bi-eye${showPassword ? '' : '-slash'}`;
+   const confirmPasswordIconClass = `bi bi-eye${showConfirmPassword ? '' : '-slash'}`;
+
+   const iconClasses = 'position-absolute top-50 translate-middle';
+   const iconStyles = { left: '1.5rem' };
+
+   const inputClasses = 'form-control rounded-4';
+   const inputStyles = { borderColor: 'transparent', backgroundColor: 'var(--bs-gray-100)', paddingLeft: '2.5rem', fontSize: '14px' };
+
    const errorPasswordInput = verifyError?.path === 'password';
    const errorConfirmPasswordInput = verifyError?.path === 'confirmPassword';
+
+   // password requirements
+   const minLength = 8;
 
    // on first mount only, check if the email token is still valid and get user
    useEffect(() => {
@@ -72,7 +89,7 @@ const Verify = () => {
 
    const handleSubmit = (e) => {
       e.preventDefault();
-
+      return console.log(password, confirmPassword);
       verify({
          _id: user._id,
          password,
@@ -88,101 +105,176 @@ const Verify = () => {
          };
       });
    };
-return <></>
-//   return (
-//       <PageContentWrapper>
-//          <div className='flex-grow-1 mx-auto my-3' style={{ maxWidth: '1000px' }}>
-//             <Card
-//               header={<>
-//                   <h2 className='fs-3 mb-0'>
-//                      Welcome,
-//                   </h2>
-//                   <h3 className='mb-0'>{name + '!'}</h3>
-//               </>}
+   return (
+      <>
+         <div
+            className='d-flex align-items-start justify-content-center justify-content-lg-start bg-white position-absolute top-0 start-0 w-100 h-100'
+            style={{ color: 'var(--mainPalette2)' }}>
+            <div className='d-flex align-items-center justify-content-center gap-3 pt-3 ps-lg-4'>
+               <img style={{ height: '30px', width: '30px' }} src={logo} alt='SVG logo image' className='text-reset' />
+               <h1 className='fs-5 m-0'>Moving Forward for U</h1>
+            </div>
+         </div>
 
-//               body={<>
-//                   {/* while loading, display the loading spinner */}
-//                   {isLoading && <LoadingDocuments />}
+         <AnimatePresence mode='wait'>
+            <Modal blurBackdrop={true} maxWidth='400px'>
+               <form onSubmit={handleSubmit} >
+                  <FormHeader text={`Welcome,\n${name}!`} />
 
-//                   {/* show error when token has expired */}
-//                   {error?.token && <p>Oops! This link has expired.</p>}
+                  <p className='fs-smaller text-secondary'>Before you can login, please set your password.</p>
 
-//                   {/* succesful confirmation */}
-//                   {user?.isVerified && <p>You're good to go!</p>}
+                  {/* password input */}
+                  <div className='form-floating position-relative d-flex mb-3'>
+                     <i className={`${passwordIconClass} ${iconClasses}`} style={iconStyles}></i>
+                     <input
+                        className={inputClasses}
+                        id='password'
+                        name='password'
+                        onChange={(e) => setPassword(e.target.value)}
+                        placeholder='Password'
+                        style={inputStyles}
+                        type='password'
+                        value={password}
+                     />
+                     <label htmlFor='password' className='ps-5'>
+                        {errorPasswordInput ?
+                           <span className='ms-1 text-danger'>{error.message}</span>
+                           :
+                           'Password'
+                        }
+                     </label>
+                  </div>
 
-//                   {/* if the email token has expired OR the user has already been verified, direct them to the login screen */}
-//                   {(error?.token || user?.isVerified) &&
-//                      <>
-//                         <p style={{ whiteSpace: 'pre-wrap' }}>You will be redirected to the login page in 3 seconds...
-//                         </p>
-//                         <div className='spinner-border spinner-border-sm' role='status'>
-//                           <span className='visually-hidden'>Loading...</span>
-//                         </div>
-//                      </>
-//                   }
+                  {/* confirm password input */}
+                  <div className='form-floating position-relative mb-3'>
+                     <i className={`${confirmPasswordIconClass} ${iconClasses}`} style={iconStyles}></i>
+                     <input
+                        className={inputClasses}
+                        id='confirmPassword'
+                        name='confirmPassword'
+                        onChange={(e) => setConfirmPassword(e.target.value)}
+                        placeholder='Confirm Password'
+                        style={inputStyles}
+                        type='password'
+                        value={confirmPassword}
+                     />
+                     <label htmlFor='confirmPassword' className='ps-5'>
+                        {errorConfirmPasswordInput ?
+                           <span className='ms-1 text-danger'>{error.message}</span>
+                           :
+                           'Confirm Password'
+                        }
+                     </label>
+                  </div>
 
-//                   {/* have the user set their password to verify their email */}
-//                   {(!error && !user?.isVerified) &&
-//                      <form className='verify' onSubmit={handleSubmit}>
+                  {/* password checklist */}
+                  <p className='text-secondary fs-smaller'>Checklist of Requirements</p>
+                  <ul>
+                     <li>{`At least ${minLength} characters`}</li>
+                     <li></li>
+                     <li></li>
+                     <li></li>
+                     <li></li>
+                  </ul>
+               </form>
+            </Modal>
+         </AnimatePresence>
+      </>
+   )
+   //   return (
+   //       <PageContentWrapper>
+   //          <div className='flex-grow-1 mx-auto my-3' style={{ maxWidth: '1000px' }}>
+   //             <Card
+   //               header={<>
+   //                   <h2 className='fs-3 mb-0'>
+   //                      Welcome,
+   //                   </h2>
+   //                   <h3 className='mb-0'>{name + '!'}</h3>
+   //               </>}
 
-//                         <p>Please set your password to complete your account.<br />Afterwards you'll be able to login.</p>
+   //               body={<>
+   //                   {/* while loading, display the loading spinner */}
+   //                   {isLoading && <LoadingDocuments />}
 
-//                         <div className='form-floating mb-2'>
-//                           <input
-//                               className='form-control'
-//                               placeholder='Password'
-//                               type='password'
-//                               name='password'
-//                               id='password'
-//                               onChange={(e) => setPassword(e.target.value)}
-//                               value={password}
-//                           />
-//                           <label htmlFor='password'>
-//                               {errorPasswordInput ? <span className='ms-1 text-danger'>{verifyError.message}</span> : 'Password'}
-//                           </label>
-//                         </div>
+   //                   {/* show error when token has expired */}
+   //                   {error?.token && <p>Oops! This link has expired.</p>}
 
-//                         <div className='form-floating mb-3'>
-//                           <input
-//                               className='form-control'
-//                               placeholder='Confirm Password'
-//                               type='password'
-//                               name='confirmPassword'
-//                               id='confirmPassword'
-//                               onChange={(e) => setConfirmPassword(e.target.value)}
-//                               value={confirmPassword}
-//                           />
-//                           <label htmlFor='confirmPassword'>
-//                               {errorConfirmPasswordInput ? <span className='ms-1 text-danger'>{verifyError.message}</span> : 'Confirm Password'}
+   //                   {/* succesful confirmation */}
+   //                   {user?.isVerified && <p>You're good to go!</p>}
 
-//                           </label>
-//                         </div>
+   //                   {/* if the email token has expired OR the user has already been verified, direct them to the login screen */}
+   //                   {(error?.token || user?.isVerified) &&
+   //                      <>
+   //                         <p style={{ whiteSpace: 'pre-wrap' }}>You will be redirected to the login page in 3 seconds...
+   //                         </p>
+   //                         <div className='spinner-border spinner-border-sm' role='status'>
+   //                           <span className='visually-hidden'>Loading...</span>
+   //                         </div>
+   //                      </>
+   //                   }
 
-//                         <PasswordChecklist
-//                           rules={['minLength', 'specialChar', 'number', 'capital', 'match']}
-//                           minLength={8}
-//                           value={password}
-//                           valueAgain={confirmPassword}
-//                           onChange={isValid => setPasswordIsValid(isValid)}
-//                           iconComponents={{
-//                               InvalidIcon: <i className='text-danger bi bi-x me-1' style={{ paddingTop: '.125rem' }}></i>,
-//                               ValidIcon: <i className='text-success bi bi-check me-1'></i>
-//                           }} />
+   //                   {/* have the user set their password to verify their email */}
+   //                   {(!error && !user?.isVerified) &&
+   //                      <form className='verify' onSubmit={handleSubmit}>
 
-//                         <br />
-//                         <ActionButton
-//                           alignX='right'
-//                           isDisabled={verifyIsLoading || !passwordIsValid}
-//                           text={(verifyIsLoading ? 'Saving...' : 'Submit')}
-//                           type='submit'
-//                         />
-//                      </form>
-//                   }
-//               </>}
-//             />
-//          </div >
-//       </PageContentWrapper>
-//   )
+   //                         <p>Please set your password to complete your account.<br />Afterwards you'll be able to login.</p>
+
+   //                         <div className='form-floating mb-2'>
+   //                           <input
+   //                               className='form-control'
+   //                               placeholder='Password'
+   //                               type='password'
+   //                               name='password'
+   //                               id='password'
+   //                               onChange={(e) => setPassword(e.target.value)}
+   //                               value={password}
+   //                           />
+   //                           <label htmlFor='password'>
+   //                               {errorPasswordInput ? <span className='ms-1 text-danger'>{verifyError.message}</span> : 'Password'}
+   //                           </label>
+   //                         </div>
+
+   //                         <div className='form-floating mb-3'>
+   //                           <input
+   //                               className='form-control'
+   //                               placeholder='Confirm Password'
+   //                               type='password'
+   //                               name='confirmPassword'
+   //                               id='confirmPassword'
+   //                               onChange={(e) => setConfirmPassword(e.target.value)}
+   //                               value={confirmPassword}
+   //                           />
+   //                           <label htmlFor='confirmPassword'>
+   //                               {errorConfirmPasswordInput ? <span className='ms-1 text-danger'>{verifyError.message}</span> : 'Confirm Password'}
+
+   //                           </label>
+   //                         </div>
+
+   //                         <PasswordChecklist
+   //                           rules={['minLength', 'specialChar', 'number', 'capital', 'match']}
+   //                           minLength={8}
+   //                           value={password}
+   //                           valueAgain={confirmPassword}
+   //                           onChange={isValid => setPasswordIsValid(isValid)}
+   //                           iconComponents={{
+   //                               InvalidIcon: <i className='text-danger bi bi-x me-1' style={{ paddingTop: '.125rem' }}></i>,
+   //                               ValidIcon: <i className='text-success bi bi-check me-1'></i>
+   //                           }} />
+
+   //                         <br />
+   //                         <ActionButton
+   //                           alignX='right'
+   //                           isDisabled={verifyIsLoading || !passwordIsValid}
+   //                           text={(verifyIsLoading ? 'Saving...' : 'Submit')}
+   //                           type='submit'
+   //                         />
+   //                      </form>
+   //                   }
+   //               </>}
+   //             />
+   //          </div >
+   //       </PageContentWrapper>
+   //   )
 };
 
 export default Verify;
