@@ -29,7 +29,9 @@ export const useLogin = () => {
 
       if (response.ok) {
          const { user, token } = json;
+
          user.token = token;
+
          // save the user to local storage
          localStorage.setItem('token', JSON.stringify({ token: token }));
 

@@ -15,12 +15,11 @@ const SubmitButton = ({
    // styling
    const submitButtonClasses = 'submitButton border-top-0 border-start-0 rounded-pill px-5 py-1';
    const submitButtonStyles = {
-      backgroundColor: canClick ? 'var(--mainPalette4)' : 'var(--bs-gray-200)',
+      backgroundColor: canClick ? 'var(--mainPalette4)' : 'var(--bs-gray-100)',
       borderRight: canClick ? '2px solid var(--mainPalette2)' : '2px solid var(--bs-gray-400)',
       borderBottom: canClick ? '2px solid var(--mainPalette2)' : '2px solid var(--bs-gray-400)',
       color: canClick ? 'var(--bs-white)' : 'var(--bs-secondary)',
-      cursor: isDisabled ? 'none' : 'pointer',
-      opacity: isDisabled ? 0.5 : 1,
+      cursor: isDisabled ? 'default' : 'pointer',
    };
    const submitButtonVariants = {
       mount: {
@@ -57,7 +56,7 @@ const SubmitButton = ({
          style={submitButtonStyles}
          type={buttonType}
          variants={submitButtonVariants}
-         whileHover='onHover'
+         whileHover={canClick ? 'onHover' : 'none'}
       >
          <div className={textContainerClasses}>
             {buttonText}

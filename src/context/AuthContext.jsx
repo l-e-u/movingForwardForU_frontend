@@ -18,14 +18,13 @@ export const authReducer = (state, action) => {
 
 export const AuthContextProvider = ({ children }) => {
    const API_BASE_URL = process.env.API_BASE_URL;
+
    const [state, dispatch] = useReducer(authReducer, {
       user: null
    });
 
    // at first load, check if there's a user's token in local storage that has not been expired
    useEffect(() => {
-
-      console.log('trying to autoLogin')
       const item = localStorage.getItem('token');
 
       if (!item) return;
@@ -52,7 +51,7 @@ export const AuthContextProvider = ({ children }) => {
          // If JWT malformed or expired. navigate user to the login screen
          if (!response.ok) {
             localStorage.removeItem('token');
-            console.log('Something went wrong, try logging back in.');
+
             <Navigate to='/login' />
          };
       };

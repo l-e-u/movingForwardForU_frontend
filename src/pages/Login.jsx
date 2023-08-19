@@ -3,6 +3,7 @@ import { AnimatePresence } from 'framer-motion';
 
 // componenets
 import FormHeader from '../components/FormHeader';
+import LoadingDocuments from '../components/LoadingDocuments';
 import Modal from '../components/Modal';
 import SubmitButton from '../components/SubmitButton';
 
@@ -34,6 +35,8 @@ const Login = () => {
       return isValid;
    };
 
+   const showForm = () => !isLoadingResetPassword && !resetPasswordEmailSent;
+
    const handleSubmit = (e) => {
       e.preventDefault();
 
@@ -56,7 +59,7 @@ const Login = () => {
    const iconClasses = 'position-absolute top-50 translate-middle';
    const iconStyles = { left: '1.5rem' };
 
-   const inputClasses = 'form-control rounded-4 mb-2';
+   const inputClasses = 'form-control border-end border-bottom rounded-4 mb-2';
    const inputStyles = { borderColor: 'transparent', backgroundColor: 'var(--bs-gray-100)', paddingLeft: '2.5rem', fontSize: '14px' };
 
    // error identification
@@ -79,79 +82,85 @@ const Login = () => {
          <AnimatePresence mode='wait'>
             {!user &&
                <Modal blurBackdrop={false} maxWidth='400px'>
-                  <form id='formLogin' className={formClasses} onSubmit={handleSubmit}>
+                  {isLoadingResetPassword && <LoadingDocuments />}
 
-                     <FormHeader text='Welcome back!' />
-                     <p className='text-secondary fs-smaller'>Let's start by logging into your account.</p>
+                  {resetPasswordEmailSent &&
+                     <p className='whiteSpace-preWrap m-0'>{`An email has been sent.\nPlease check your inbox to reset your password.`}</p>
+                  }
 
-                     {/* email input */}
-                     <div className='form-floating position-relative'>
-                        <i className={`bi bi-envelope ${iconClasses}`} style={iconStyles}></i>
-                        <input
-                           className={inputClasses}
-                           id='email'
-                           name='email'
-                           onChange={(e) => setEmail(e.target.value)}
-                           placeholder='Email'
-                           style={inputStyles}
-                           type='email'
-                           value={email} />
-                        <label htmlFor='email' className='ps-5'>
-                           {errorEmailInput ?
-                              <span className='ms-1 text-danger'>{error?.message || resetPasswordError?.message}</span>
-                              :
-                              'Email'
+                  {showForm() &&
+                     <form id='formLogin' className={formClasses} onSubmit={handleSubmit}>
+
+                        <FormHeader text='Welcome back!' />
+                        <p className='text-secondary fs-smaller'>Let's start by logging into your account.</p>
+
+                        {/* email input */}
+                        <div className='form-floating position-relative'>
+                           <i className={`bi bi-envelope ${iconClasses}`} style={iconStyles}></i>
+                           <input
+                              className={inputClasses}
+                              id='email'
+                              name='email'
+                              onChange={(e) => setEmail(e.target.value)}
+                              placeholder='Email'
+                              style={inputStyles}
+                              type='email'
+                              value={email} />
+                           <label htmlFor='email' className='ps-5'>
+                              {errorEmailInput ?
+                                 <span className='ms-1 text-danger'>{error?.message || resetPasswordError?.message}</span>
+                                 :
+                                 'Email'
+                              }
+                           </label>
+                        </div>
+
+                        {/* password input */}
+                        <div className='form-floating position-relative'>
+                           <i className={`bi bi-shield-lock ${iconClasses}`} style={iconStyles}></i>
+                           <input
+                              className={inputClasses}
+                              id='password'
+                              name='password'
+                              onChange={(e) => setPassword(e.target.value)}
+                              placeholder='Password'
+                              style={inputStyles}
+                              type='password'
+                              value={password}
+                           />
+                           <label htmlFor='password' className='ps-5'>
+                              {errorPasswordInput ?
+                                 <span className='ms-1 text-danger'>{error.message}</span>
+                                 :
+                                 'Password'
+                              }
+                           </label>
+                        </div>
+                        <div>
+                           {isLoadingResetPassword && <span className='spinner-border spinner-border-sm me-1' role='status' aria-hidden='true'></span>}
+
+                           {(!isLoadingResetPassword && !resetPasswordEmailSent) &&
+                              <button
+                                 className='border-0 d-flex ms-auto mb-4'
+                                 onClick={handleResetPassword}
+                                 style={{ color: 'var(--mainPalette4)', backgroundColor: 'transparent' }}
+                                 type='button'
+                              >
+                                 Forgot Password?
+                              </button>
                            }
-                        </label>
-                     </div>
+                        </div>
 
-                     {/* password input */}
-                     <div className='form-floating position-relative'>
-                        <i className={`bi bi-shield-lock ${iconClasses}`} style={iconStyles}></i>
-                        <input
-                           className={inputClasses}
-                           id='password'
-                           name='password'
-                           onChange={(e) => setPassword(e.target.value)}
-                           placeholder='Password'
-                           style={inputStyles}
-                           type='password'
-                           value={password}
-                        />
-                        <label htmlFor='password' className='ps-5'>
-                           {errorPasswordInput ?
-                              <span className='ms-1 text-danger'>{error.message}</span>
-                              :
-                              'Password'
-                           }
-                        </label>
-                     </div>
-                     <div>
-                        {isLoadingResetPassword && <span className='spinner-border spinner-border-sm me-1' role='status' aria-hidden='true'></span>}
-
-                        {(!isLoadingResetPassword && !resetPasswordEmailSent) &&
-                           <button
-                              className='border-0 d-flex ms-auto mb-4'
-                              onClick={handleResetPassword}
-                              style={{ color: 'var(--mainPalette4)', backgroundColor: 'transparent' }}
-                              type='button'
-                           >
-                              Forgot Password?
-                           </button>
-                        }
-                     </div>
-
-                     {resetPasswordEmailSent && <div className='alert alert-success py-1 mt-2'>Email sent. Please check your inbox.</div>}
-
-                     <div className='d-flex justify-content-end'>
-                        <SubmitButton
-                           buttonText={isLoading ? 'Logging in' : 'Log in'}
-                           buttonType='submit'
-                           isSubmittingForm={isLoading || isLoadingResetPassword}
-                           isDisabled={isLoading || isLoadingResetPassword}
-                        />
-                     </div>
-                  </form>
+                        <div className='d-flex justify-content-end'>
+                           <SubmitButton
+                              buttonText={isLoading ? 'Logging in' : 'Log in'}
+                              buttonType='submit'
+                              isSubmittingForm={isLoading || isLoadingResetPassword}
+                              isDisabled={isLoading || isLoadingResetPassword}
+                           />
+                        </div>
+                     </form>
+                  }
                </Modal >
             }
          </AnimatePresence>
