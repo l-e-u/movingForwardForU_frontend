@@ -1,73 +1,82 @@
 import { useState } from 'react';
-import { CSSTransition } from 'react-transition-group';
 
 // hooks
 import { useUpdateUser } from '../hooks/useUpdateUser';
 
-// functions
-import { noCharChanges } from '../utils/StringUtils';
-
 // components
-import FormHeader from './FormHeader';
 import UserForm from './UserForm';
-import CautionNotice from './CautionNotice';
 
-const EditUserForm = ({ prev, setShowThisForm }) => {
-    const { updateUser, error, isLoading } = useUpdateUser();
-    const [user, setUser] = useState(prev);
-    const updatedProperties = {};
+const EditUserForm = ({ currentUser, hideForm }) => {
+   const { updateUser, error, isLoading } = useUpdateUser();
 
-    // check for any character changes in the values
-    // any changed properties are added to updatedProperties object
-    if (!noCharChanges(prev.firstName, user.firstName)) updatedProperties.firstName = user.firstName;
-    if (!noCharChanges(prev.lastName, user.lastName)) updatedProperties.lastName = user.lastName;
-    if (!noCharChanges(prev.email, user.email)) updatedProperties.email = user.email;
-    if (!noCharChanges(prev.address ?? '', user.address ?? '')) updatedProperties.address = user.address;
-    if (!noCharChanges(prev.comments ?? '', user.comments ?? '')) updatedProperties.comments = user.comments;
-    if (prev.isActive !== user.isActive) updatedProperties.isActive = user.isActive;
-    if (prev.isAdmin !== user.isAdmin) updatedProperties.isAdmin = user.isAdmin;
+   //  get the document id that's being edited
+   const { _id } = currentUser;
 
-    // any empty object means there has been no character changes on any inputs
-    const noInputChanges = Object.keys(updatedProperties).length === 0;
+   const [editedUser, setEditedUser] = useState({ ...currentUser, roles: [...currentUser.roles] });
 
-    return (
-        <CSSTransition
-            appear={true}
-            classNames='scale-'
-            in={true}
-            timeout={500}
-        >
-            <div className='shadow'>
-                <FormHeader text='Edit User' handleCloseForm={() => setShowThisForm(false)} />
+   // defining form options
+   const formHeading = 'Edit User';
 
-                <div className='rounded-bottom background-white text-reset p-3'>
-                    <CautionNotice text='Changes will also reflect on all other documents with this user.' />
+   // changes value depending of the form is fetching or not
+   const submitButtonText = isLoading ? 'Updating' : 'Update';
 
-                    <CautionNotice text={`Updating the email will require ${user.firstName} to verify it. They won't be able to login until they do.`} />
+   // before submitting, check all the fields and only send the fields that have been updated by the user
+   const handleOnSubmit = async (e) => {
+      e.preventDefault();
 
-                    <UserForm
-                        error={error}
-                        isDisabled={isLoading || noInputChanges}
-                        isLoading={isLoading}
-                        isEditing={true}
-                        handleSubmit={async (e) => {
-                            e.preventDefault();
+      const updatedFields = {};
 
-                            await updateUser({
-                                _id: prev._id,
-                                profile: updatedProperties
-                            })
-                                .then(isCreated => {
-                                    if (isCreated) setShowThisForm(false);
-                                })
-                        }}
-                        setUser={setUser}
-                        user={user}
-                    />
-                </div>
-            </div>
-        </CSSTransition>
-    )
+      for (const property of Object.keys(editedUser)) {
+         const currentValue = currentUser[property];
+         const editedValue = editedUser[property];
+
+         if (property === 'roles') {
+            if (currentValue.length !== editedValue.length) {
+               updatedFields.roles = editedValue;
+            };
+
+            for (let index = 0; index < currentValue.length; index++) {
+               const role = currentValue[index];
+
+               if (!editedValue.includes(role)) {
+                  updatedFields.roles = editedValue;
+                  break;
+               };
+            };
+         };
+
+         if (
+            (property === 'address') ||
+            (property === 'firstName') ||
+            (property === 'lastName') ||
+            (property === 'phoneNumber') ||
+            (property === 'email') ||
+            (property === 'note')
+         )
+            if (currentValue.toString().trim() !== editedValue.toString().trim()) {
+               updatedFields[property] = editedValue;
+            };
+      };
+
+      const wasUpdated = await updateUser({ _id, updatedFields });
+
+      if (wasUpdated) hideForm();
+   };
+
+   return (
+      <UserForm
+         error={error}
+         heading={formHeading}
+         hideForm={hideForm}
+         isFetching={isLoading}
+         handleSubmit={handleOnSubmit}
+         setUser={setEditedUser}
+         showActivation={true}
+         submitButtonText={submitButtonText}
+         submitButtonIsDisabled={isLoading}
+         user={editedUser}
+      />
+   );
 };
 
 export default EditUserForm;

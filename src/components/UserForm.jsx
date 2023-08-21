@@ -14,12 +14,12 @@ const UserForm = ({
    hideForm,
    isFetching,
    setUser,
-   subHeading,
+   showActivation,
    submitButtonText,
    submitButtonIsDisabled,
    user,
 }) => {
-   const { address, firstName, email, lastName, phoneNumber, note, roles } = user;
+   const { address, firstName, email, isActive, lastName, phoneNumber, note, roles } = user;
 
    const col1Classes = 'col-sm-2 d-sm-flex justify-content-end align-items-center text-secondary';
    const col2Classes = 'col-sm-10';
@@ -28,9 +28,39 @@ const UserForm = ({
       <Modal blurBackdrop={true} canClose={true} closeModal={hideForm}>
          <form onSubmit={handleSubmit}>
             <FormHeader text={heading} />
-            <p className='text-secondary whiteSpace-preWrap fs-smaller'>{subHeading}</p>
 
-            <div className='container-fluid p-0'>
+            {
+               showActivation &&
+               <p className='fs-smaller text-secondary mt-1 mb-0'>
+                  An inactive user will not be able to login despite their permissions and prevents assigning any jobs to them.
+                  <br />
+                  Useful when wanting to preserve history instead of deleting the user entirely.
+               </p>
+            }
+
+            <div className='container-fluid p-0 mt-3'>
+               {
+                  showActivation &&
+                  <div className='row mb-2'>
+                     <div className={col1Classes}>
+                        <label className='form-check-label fs-smaller' htmlFor='activateToggle'>Active</label>
+                     </div>
+
+                     <div className={col2Classes}>
+                        <div className='form-check form-switch d-flex align-items-center m-0'>
+                           <input
+                              className='form-check-input'
+                              checked={isActive}
+                              id='activateToggle'
+                              onChange={(e) => setUser({ ...user, isActive: e.target.checked })}
+                              name='activateToggle'
+                              role='switch'
+                              type='checkbox'
+                           />
+                        </div>
+                     </div>
+                  </div>
+               }
 
                {/* FIRST & LAST NAME */}
                <div className='names row mb-3'>
@@ -75,20 +105,7 @@ const UserForm = ({
                   </div>
                </div>
 
-               {/* ADDRESS */}
-               <div className='address row mb-3'>
-                  <div className={col1Classes}>
-                     <SmallHeader text='Address' />
-                  </div>
-
-                  <div className={col2Classes}>
-                     <TextInput
-                        input={address}
-                        setInput={input => setUser({ ...user, address: input })}
-                     />
-                  </div>
-               </div>
-
+               {/* ROLES */}
                <div className='row mb-1'>
                   <div className={col2Classes + ' whiteSpace-preWrap text-secondary fs-smaller mb-2 ms-auto'}>
                      {`Dispatchers have permission to create and edit jobs.\nDrivers can have jobs assigned to them.\nPlease choose at least one.`}
@@ -154,6 +171,20 @@ const UserForm = ({
                         <label className='form-check-label' htmlFor='driverCheck'>Driver</label>
                      </div>
 
+                  </div>
+               </div>
+
+               {/* ADDRESS */}
+               <div className='address row mb-3'>
+                  <div className={col1Classes}>
+                     <SmallHeader text='Address' />
+                  </div>
+
+                  <div className={col2Classes}>
+                     <TextInput
+                        input={address}
+                        setInput={input => setUser({ ...user, address: input })}
+                     />
                   </div>
                </div>
 

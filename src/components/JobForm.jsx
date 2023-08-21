@@ -29,7 +29,6 @@ const JobForm = ({
    heading,
    hideForm,
    isFetching,
-   subHeading,
    submitButtonIsDisabled,
    submitButtonText,
    setJob,
@@ -105,9 +104,7 @@ const JobForm = ({
          <form onSubmit={handleSubmit}>
 
             <FormHeader text={heading} />
-            <p className='text-secondary fs-smaller mb-3'>{subHeading}</p>
-
-            <div className='container-fluid p-0'>
+            <div className='container-fluid p-0 mt-3'>
                {/* STATUS SELECTIONS */}
                <div className='row mb-3'>
                   <div className='col-sm-2 d-flex justify-content-start justify-content-sm-end align-items-center text-secondary'>
@@ -397,12 +394,16 @@ const JobForm = ({
                   contentJSX: (
                      <>
                         {/* DRIVER SELECTION */}
+                        <div className='row'>
+                           <p className='col-sm-10 ms-auto fs-smaller text-secondary mb-2'>Drivers can only see the jobs that have been assigned to them.</p>
+                        </div>
+
                         <div className='row mb-3'>
                            <div className='col-sm-2 d-flex justify-content-start justify-content-sm-end align-items-center text-secondary'>
                               <SmallHeader text='Drivers' />
                            </div>
                            <div className='col-sm-10'>
-                              <UserSelect setUser={drivers => setJob(prev => ({ ...prev, drivers }))}
+                              <UserSelect drivers={drivers} setUser={drivers => setJob(prev => ({ ...prev, drivers }))}
                               />
                            </div>
                         </div>

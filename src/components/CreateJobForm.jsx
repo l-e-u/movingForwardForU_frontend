@@ -32,7 +32,6 @@ const CreateJobForm = ({ hideForm }) => {
       status: null
    });
    const formHeading = 'New Job';
-   const formSubHeading = `As a dispatcher, you can see all jobs, but a driver will only see jobs that have been assigned to them.`;
 
    const submitButtonText = isLoading ? 'Saving' : 'Save';
 
@@ -75,7 +74,6 @@ const CreateJobForm = ({ hideForm }) => {
          hideForm={hideForm}
          isFetching={isLoading}
          setJob={setJob}
-         subHeading={formSubHeading}
          submitButtonIsDisabled={isLoading}
          submitButtonText={submitButtonText}
       />

@@ -8,7 +8,7 @@ import { useUsersContext } from '../hooks/useUsersContext';
 // components
 import ErrorAlert from './ErrorAlert';
 
-const UserSelect = ({ placeholder, setUser }) => {
+const UserSelect = ({ drivers, placeholder, setUser }) => {
    const { getUsers, error, isLoading } = useGetUsers();
    const { users } = useUsersContext();
 
@@ -22,6 +22,9 @@ const UserSelect = ({ placeholder, setUser }) => {
             value: user._id
          }
       });
+
+   // populate all the drivers already selected
+   const valueSelections = selectOptions.filter(option => drivers.find(driver => driver._id === option.value));
 
    // user can selected multiple drivers, clearing returns an array
    const handleOnChange = (selectedOptions) => {
@@ -56,6 +59,7 @@ const UserSelect = ({ placeholder, setUser }) => {
          placeholder={placeholder || ''}
          options={selectOptions}
          onChange={handleOnChange}
+         value={valueSelections}
       />
    )
 };

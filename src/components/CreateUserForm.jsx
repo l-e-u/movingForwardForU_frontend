@@ -21,7 +21,6 @@ const CreateUserForm = ({ hideForm }) => {
    });
 
    const formHeading = 'Register User';
-   const subHeading = 'New users have to verify their email and set a password before they can login.';
    const submitButtonText = isLoading ? 'Registering' : 'Register';
 
    const handleOnSubmit = async (e) => {
@@ -42,7 +41,6 @@ const CreateUserForm = ({ hideForm }) => {
          isFetching={isLoading}
          isLoading={isLoading}
          setUser={setUser}
-         subHeading={subHeading}
          submitButtonText={submitButtonText}
          submitButtonIsDisabled={isLoading}
          user={user}

@@ -54,6 +54,10 @@ body {
    background: linear-gradient(to left, var(--mainPalette8), var(--mainPalette9));
 }
 
+.outline-0 {
+   outline: none;
+}
+
 .word-break-all {
    word-break: break-all;
 }

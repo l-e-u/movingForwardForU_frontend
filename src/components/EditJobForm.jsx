@@ -10,7 +10,7 @@ const EditJobForm = ({
    currentJob,
    hideForm,
 }) => {
-   const { updateJob, error, isLoading, setError } = useUpdateJob();
+   const { updateJob, error, isLoading } = useUpdateJob();
 
    const [editedJob, setEditedJob] = useState({
       ...currentJob,
@@ -28,7 +28,6 @@ const EditJobForm = ({
    const { _id } = currentJob;
 
    const formHeading = 'Edit Job';
-   const formSubHeading = '';
 
    // changes value depending of the form is fetching or not
    const submitButtonText = isLoading ? 'Saving' : 'Save';
@@ -168,7 +167,6 @@ const EditJobForm = ({
          handleSubmit={handleOnSubmit}
          hideForm={hideForm}
          setJob={setEditedJob}
-         subHeading={formSubHeading}
          submitButtonText={submitButtonText}
          submitButtonIsDisabled={isLoading}
          isFetching={isLoading}

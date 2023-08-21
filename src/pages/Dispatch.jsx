@@ -6,10 +6,12 @@ import { useJobsContext } from '../hooks/useJobsContext';
 import { useGetJobs } from '../hooks/useGetJobs';
 
 // components
+import AddDocumentButton from '../components/AddDocumentButton';
 import CreateJobForm from '../components/CreateJobForm';
+import DeleteForm from '../components/DeleteForm';
 import EditJobForm from '../components/EditJobForm';
 import JobDetails from '../components/JobDetails';
-import DeleteForm from '../components/DeleteForm';
+import LoadingDocuments from '../components/LoadingDocuments';
 
 const Dispatch = ({
    filters,
@@ -18,6 +20,8 @@ const Dispatch = ({
    const { getJobs, error, isLoading } = useGetJobs();
    const { jobs, dispatch } = useJobsContext();
 
+   // forms
+   const [showForm_AddNote, setShowForm_AddNote] = useState(false);
    const [showCreateForm, setShowCreateForm] = useState(false);
    const [showDeleteForm, setShowDeleteForm] = useState(false);
    const [showEditForm, setShowEditForm] = useState(false);
@@ -29,23 +33,6 @@ const Dispatch = ({
    const [currentPage, setCurrentPage] = useState(1);
    const [totalPages, setTotalPages] = useState(1);
    const [totalResults, setTotalResults] = useState(0);
-
-   // button to add new documents classes, styles, and framer-motion variants
-   const addButtonClasses = 'px-3 py-1 ms-auto position-relative border-start-0 border-top-0 rounded text-white d-flex justify-content-center align-items-center gap-1';
-   const addButtonVariants = {
-      mount: {
-         backgroundColor: 'var(--mainPalette4)',
-         borderRight: '1px solid var(--mainPalette2)',
-         borderBottom: '1px solid var(--mainPalette2)'
-      },
-      onHover: {
-         scale: 1.1,
-         transition: {
-            duration: 0.3,
-         },
-         boxShadow: '0px 0px 8px var(--mainPalette4)',
-      }
-   };
 
    // styling for the list container
    const listClasses = 'jobsList px-3 pb-0 px-md-5';
@@ -91,6 +78,9 @@ const Dispatch = ({
 
    return (
       <>
+         <AddDocumentButton handleClick={() => setShowCreateForm(true)} />
+
+         {/* CREATE FORM */}
          <AnimatePresence>
             {
                showCreateForm &&
@@ -98,6 +88,7 @@ const Dispatch = ({
             }
          </AnimatePresence>
 
+         {/* EDIT FORM */}
          <AnimatePresence onExitComplete={() => setSelectedJob(null)}>
             {
                showEditForm &&
@@ -105,6 +96,7 @@ const Dispatch = ({
             }
          </AnimatePresence>
 
+         {/* DELETE FORM */}
          <AnimatePresence onExitComplete={() => setSelectedJob(null)}>
             {
                showDeleteForm &&
@@ -122,42 +114,38 @@ const Dispatch = ({
             }
          </AnimatePresence>
 
-         {/* button to display the new job form */}
-         <div className='p-2'>
-            <motion.button
-               className={addButtonClasses}
-               onClick={() => setShowCreateForm(true)}
-               type='button'
-               variants={addButtonVariants}
-               initial='mount'
-               whileHover='onHover'
-            >
-               <i className='bi bi-plus'></i>
-               <i className='bi bi-truck'></i>
-            </motion.button>
-         </div>
-
-         <motion.ul className={listClasses} variants={listVariants} initial='mount' animate='animation'>
+         {/* LIST OF JOBS */}
+         <AnimatePresence mode='wait'>
             {
-               jobs.map(job => (
-                  <motion.li key={job._id} variants={itemVariants}>
-                     {/* dispatchers have access to all info */}
-                     <JobDetails
-                        job={job}
-                        showDeleteForm={() => {
-                           setSelectedJob(job);
-                           setShowDeleteForm(true);
-                        }}
-                        showEditForm={() => {
-                           setSelectedJob(job);
-                           setShowEditForm(true);
-                        }}
-                        restrictInfo={false}
-                     />
-                  </motion.li>
-               ))
+               !isLoading &&
+               <motion.ul className={listClasses} variants={listVariants} initial='mount' animate='animation'>
+                  {
+                     jobs.map(job => (
+                        <motion.li key={job._id} variants={itemVariants}>
+                           {/* dispatchers have access to all info */}
+                           <JobDetails
+                              job={job}
+                              showDeleteForm={() => {
+                                 setSelectedJob(job);
+                                 setShowDeleteForm(true);
+                              }}
+                              showEditForm={() => {
+                                 setSelectedJob(job);
+                                 setShowEditForm(true);
+                              }}
+                              restrictInfo={false}
+                           />
+                        </motion.li>
+                     ))
+                  }
+               </motion.ul>
             }
-         </motion.ul>
+         </AnimatePresence>
+
+         {/* LOADING INDICATOR SPINNER */}
+         <AnimatePresence mode='wait'>
+            {isLoading && <LoadingDocuments />}
+         </AnimatePresence>
       </>
    );
 };

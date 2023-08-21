@@ -6,10 +6,12 @@ import { useContactsContext } from '../hooks/useContactsContext';
 import { useGetContacts } from '../hooks/useGetContacts';
 
 // components
+import AddDocumentButton from '../components/AddDocumentButton';
 import CreateContactForm from '../components/CreateContactForm';
 import ContactDetails from '../components/ContactDetails';
-import EditContactForm from '../components/EditContactForm';
 import DeleteForm from '../components/DeleteForm';
+import EditContactForm from '../components/EditContactForm';
+import LoadingDocuments from '../components/LoadingDocuments';
 
 
 const Contacts = () => {
@@ -21,21 +23,6 @@ const Contacts = () => {
    const [showEditForm, setShowEditForm] = useState(false);
 
    const [selectedContact, setSelectedContact] = useState(null);
-
-   // button to add new documents classes, styles, and framer-motion variants
-   const addButtonClasses = 'px-3 py-1 ms-auto position-relative border-0 rounded text-white d-flex justify-content-center align-items-center gap-1';
-   const addButtonVariants = {
-      mount: {
-         backgroundColor: 'var(--mainPalette4)',
-      },
-      onHover: {
-         scale: 1.1,
-         transition: {
-            duration: 0.3,
-         },
-         boxShadow: '0px 0px 8px var(--mainPalette4)',
-      }
-   };
 
    // styling for the list container
    const listClasses = 'contacts px-3 pb-0 px-md-5';
@@ -76,6 +63,8 @@ const Contacts = () => {
 
    return (
       <>
+         <AddDocumentButton handleClick={() => setShowCreateForm(true)} />
+
          <AnimatePresence>
             {
                showCreateForm &&
@@ -103,40 +92,34 @@ const Contacts = () => {
             }
          </AnimatePresence>
 
-         {/* button to display the new contact form */}
-         <div className='p-2'>
-            <motion.button
-               className={addButtonClasses}
-               onClick={() => setShowCreateForm(true)}
-               type='button'
-               variants={addButtonVariants}
-               initial='mount'
-               whileHover='onHover'
-            >
-               <i className='bi bi-plus'></i>
-               <i className='bi bi-person-vcard'></i>
-            </motion.button>
-         </div>
-
-         <motion.ul className={listClasses} variants={listVariants} initial='mount' animate='animation'>
+         <AnimatePresence mode='wait'>
             {
-               contacts.map(contact => (
-                  <motion.li key={contact._id} variants={itemVariants} >
-                     <ContactDetails
-                        contact={contact}
-                        showDeleteForm={() => {
-                           setSelectedContact(contact);
-                           setShowDeleteForm(true);
-                        }}
-                        showEditForm={() => {
-                           setSelectedContact(contact);
-                           setShowEditForm(true);
-                        }}
-                     />
-                  </motion.li>
-               ))
+               !isLoading &&
+               <motion.ul className={listClasses} variants={listVariants} initial='mount' animate='animation'>
+                  {
+                     contacts.map(contact => (
+                        <motion.li key={contact._id} variants={itemVariants} >
+                           <ContactDetails
+                              contact={contact}
+                              showDeleteForm={() => {
+                                 setSelectedContact(contact);
+                                 setShowDeleteForm(true);
+                              }}
+                              showEditForm={() => {
+                                 setSelectedContact(contact);
+                                 setShowEditForm(true);
+                              }}
+                           />
+                        </motion.li>
+                     ))
+                  }
+               </motion.ul>
             }
-         </motion.ul>
+         </AnimatePresence>
+
+         <AnimatePresence mode='wait'>
+            {isLoading && <LoadingDocuments />}
+         </AnimatePresence>
       </>
    );
 };

@@ -3,20 +3,23 @@ import { Link } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 
 // hooks
+import { useAuthContext } from '../hooks/useAuthContext';
 import { useLogout } from '../hooks/useLogout';
 
 // assets
 import logo from '../assets/movingForwardArrows.svg';
 
 const NavMenu = ({ selectedLink, setSelectedLink }) => {
+   const { user } = useAuthContext();
+
    const links = [
-      { name: 'Jobs', path: '/', icon: 'bi-list-check' },
-      { name: 'Dispatch', path: '/dispatch', icon: 'bi-truck' },
-      { name: 'Contacts', path: '/contacts', icon: 'bi-person-vcard' },
-      { name: 'Users', path: '/users', icon: 'bi-people' },
-      { name: 'Statuses', path: '/statuses', icon: 'bi-tags' },
-      { name: 'Fees', path: '/fees', icon: 'bi-cash-coin' },
-      { name: 'Archives', path: '/archives', icon: 'bi-archive' },
+      { name: 'Jobs', path: '/', icon: 'bi-list-check', access: 'driver' },
+      { name: 'Dispatch', path: '/dispatch', icon: 'bi-truck', access: 'dispatcher' },
+      { name: 'Contacts', path: '/contacts', icon: 'bi-person-vcard', access: 'dispatcher' },
+      { name: 'Users', path: '/users', icon: 'bi-people', access: 'dispatcher' },
+      { name: 'Statuses', path: '/statuses', icon: 'bi-tags', access: 'dispatcher' },
+      { name: 'Fees', path: '/fees', icon: 'bi-cash-coin', access: 'dispatcher' },
+      { name: 'Archives', path: '/archives', icon: 'bi-archive', access: 'dispatcher' },
    ];
    const [expandMenu, setExpandMenu] = useState(false);
 
@@ -62,46 +65,7 @@ const NavMenu = ({ selectedLink, setSelectedLink }) => {
       }
    };
 
-   // all the links to be used in either small or large menus
-   const navLinksJSX = links.map((link, index) => {
-      const { name, path } = link;
-      const isSelected = selectedLink === name;
-
-      return (
-         <motion.div key={index} className='px-3 mb-2' variants={fadeInOutVariants} >
-            <Link
-               to={path}
-               className='text-decoration-none'
-               onClick={() => {
-                  setSelectedLink(name);
-                  setExpandMenu(false);
-               }}
-            >
-               <div
-                  className='navItem rounded px-3 py-1 d-flex justify-content-start align-items-center'
-                  style={{
-                     transition: 'all .2s ease-in-out',
-                     borderWidth: '1px',
-                     borderStyle: 'solid',
-                     borderTopColor: 'transparent',
-                     borderRightColor: isSelected ? 'var(--mainPalette7)' : 'transparent',
-                     borderBottomColor: isSelected ? 'var(--mainPalette7)' : 'transparent',
-                     borderLeftColor: 'transparent',
-                     color: isSelected ? 'var(--mainPalette4)' : 'var(--bs-secondary)',
-                     backgroundColor: isSelected ? 'var(--mainPalette9)' : 'transparent',
-                     opacity: isSelected ? '1' : '0.5',
-                     fontWeight: isSelected ? '500' : '400'
-                  }}
-               >
-                  <i className={`bi ${link.icon}`}></i>
-                  <span className='ms-3'>{link.name}</span>
-               </div>
-            </Link>
-         </motion.div>
-      );
-   });
-
-   // button that logs out the user
+   // all users will have a logout button
    const logoutButtonJSX = (
       <motion.button
          className='border-0 bg-none text-danger text-end mt-auto me-3 me-md-0'
@@ -113,6 +77,51 @@ const NavMenu = ({ selectedLink, setSelectedLink }) => {
          <i className='bi bi-box-arrow-right'></i>
       </motion.button>
    );
+
+   // links will be used in both small and large menu links
+   const navLinksJSX = [];
+
+   // add the links
+   for (let index = 0; index < links.length; index++) {
+      const { access, icon, name, path } = links[index];
+      const isSelected = selectedLink === name;
+
+      // only populate the links the user has access to
+      if (user.roles.includes(access)) {
+         navLinksJSX.push(
+            <motion.div key={name} className='px-3 mb-2' variants={fadeInOutVariants} >
+               <Link
+                  to={path}
+                  className='text-decoration-none'
+                  onClick={() => {
+                     setSelectedLink(name);
+                     setExpandMenu(false);
+                  }}
+               >
+                  <div
+                     className='navItem rounded px-3 py-1 d-flex justify-content-start align-items-center'
+                     style={{
+                        transition: 'all .2s ease-in-out',
+                        borderWidth: '1px',
+                        borderStyle: 'solid',
+                        borderTopColor: 'transparent',
+                        borderRightColor: isSelected ? 'var(--mainPalette7)' : 'transparent',
+                        borderBottomColor: isSelected ? 'var(--mainPalette7)' : 'transparent',
+                        borderLeftColor: 'transparent',
+                        color: isSelected ? 'var(--mainPalette4)' : 'var(--bs-secondary)',
+                        backgroundColor: isSelected ? 'var(--mainPalette9)' : 'transparent',
+                        opacity: isSelected ? '1' : '0.5',
+                        fontWeight: isSelected ? '500' : '400'
+                     }}
+                  >
+                     <i className={`bi ${icon}`}></i>
+                     <span className='ms-3'>{name}</span>
+                  </div>
+               </Link>
+            </motion.div>
+         );
+      };
+   };
 
    return (
       <nav aria-label='Navigation Menu' className='navMenu'>

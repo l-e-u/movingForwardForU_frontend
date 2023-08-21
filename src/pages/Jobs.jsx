@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 
 // hooks
 import { useJobsContext } from '../hooks/useJobsContext';
@@ -8,6 +8,8 @@ import { useGetJobs } from '../hooks/useGetJobs';
 
 // components
 import JobDetails from '../components/JobDetails';
+import LoadingDocuments from '../components/LoadingDocuments';
+import FormAddNote from '../components/FormAddNote';
 
 const Jobs = ({
    filters,
@@ -18,6 +20,11 @@ const Jobs = ({
 
    const { getJobs, error, isLoading } = useGetJobs();
 
+   // form
+   const [showForm_AddNote, setShowForm_AddNote] = useState(false);
+
+   const [selectedJob, setSelectedJob] = useState(null);
+
    // pagination state
    const [limit, setLimit] = useState(10);
    const [currentPage, setCurrentPage] = useState(1);
@@ -25,7 +32,7 @@ const Jobs = ({
    const [totalResults, setTotalResults] = useState(0);
 
    // styling for the list container
-   const listClasses = 'jobsList px-3 pb-0 px-md-5';
+   const listClasses = 'jobsList pt-3 px-3 pb-0 px-md-5';
    const listVariants = {
       mount: {
          listStyle: 'none',
@@ -70,16 +77,45 @@ const Jobs = ({
    }, [currentPage, filters, limit]);
 
    return (
-      <motion.ul className={listClasses} variants={listVariants} initial='mount' animate='animation'>
-         {
-            jobs.map(job => (
-               <motion.li key={job._id} variants={itemVariants}>
-                  {/* drivers can only access this page and get restricted info version of the job detials */}
-                  <JobDetails job={job} showEditForm={() => setSelectedJob(job)} restrictInfo={true} />
-               </motion.li>
-            ))
-         }
-      </motion.ul>
+      <>
+         {/* ADD NOTE FORM */}
+         <AnimatePresence onExitComplete={() => setSelectedJob(null)}>
+            {
+               showForm_AddNote &&
+               <FormAddNote hideForm={() => setShowForm_AddNote(false)} jobID={selectedJob._id} />
+            }
+         </AnimatePresence>
+
+         {/* LIST OF JOBS */}
+         <AnimatePresence mode='wait'>
+            {
+               !isLoading &&
+               <motion.ul className={listClasses} variants={listVariants} initial='mount' animate='animation'>
+                  {
+                     jobs.map(job => (
+                        <motion.li key={job._id} variants={itemVariants}>
+                           {/* drivers can only access this page and get restricted info version of the job detials */}
+                           <JobDetails
+                              job={job}
+                              // showEditForm={() => setSelectedJob(job)} 
+                              showForm_AddNote={() => {
+                                 setSelectedJob(job);
+                                 setShowForm_AddNote(true);
+                              }}
+                              restrictInfo={true}
+                           />
+                        </motion.li>
+                     ))
+                  }
+               </motion.ul>
+            }
+         </AnimatePresence>
+
+         {/* LOADING INDICATOR SPINNER */}
+         <AnimatePresence mode='wait'>
+            {isLoading && <LoadingDocuments />}
+         </AnimatePresence>
+      </>
    );
 };
 

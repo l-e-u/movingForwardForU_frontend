@@ -25,7 +25,7 @@ const StatusForm = ({
          <form onSubmit={handleSubmit}>
 
             <FormHeader text={heading} />
-            <p className='text-secondary whiteSpace-preWrap fs-smaller mb-4'>{subHeading}</p>
+            <p className='text-secondary whiteSpace-preWrap fs-smaller mt-1 mb-3'>{subHeading}</p>
 
             <div className='container-fluid p-0'>
                {/* NAME */}

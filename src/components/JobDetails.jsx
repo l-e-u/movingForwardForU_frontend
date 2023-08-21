@@ -18,6 +18,7 @@ const JobDetails = ({
    setFilters,
    showDeleteForm,
    showEditForm,
+   showForm_AddNote,
    restrictInfo,
 }) => {
    const API_BASE_URL = process.env.API_BASE_URL;
@@ -50,11 +51,18 @@ const JobDetails = ({
       '--:--';
 
    // holds ellipsis menu options depending on user roles, by default, everyone can expand for more info
-   const ellipsisMenuOptions = [{
-      name: showMore ? 'Collapse' : 'Expand',
-      icon: `bi bi-chevron-${showMore ? 'contract' : 'expand'}`,
-      handler: () => setShowMore(!showMore)
-   }];
+   const ellipsisMenuOptions = [
+      {
+         name: 'Note',
+         icon: 'bi bi-sticky',
+         handler: showForm_AddNote
+      },
+      {
+         name: showMore ? 'Collapse' : 'Expand',
+         icon: `bi bi-chevron-${showMore ? 'contract' : 'expand'}`,
+         handler: () => setShowMore(!showMore)
+      }
+   ];
 
    // holds the type of tabs and their content depending on user roles, by default, everyone has some access to detailed info and notes
    const tabsAndContentJSX = [
@@ -281,7 +289,7 @@ const JobDetails = ({
             </div>
 
             {/* DELIVERY DETAILS */}
-            <div className='col-sm col-lg col-xl'>
+            <div className='col-sm col-lg col-xl mt-2 mt-sm-0'>
                <TransitDetails
                   address={delivery.address}
                   dateText={datePrettyString({ date: delivery.date })}

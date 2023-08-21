@@ -41,7 +41,7 @@ const DeleteForm = ({
                {/* when trying to delete a contact, status, or fee, an error will be returned if that document is being used in any job */}
                {
                   documentInUse &&
-                  <p className='fs-smaller text-secondary whiteSpace-preWrap'>
+                  <p className='fs-smaller text-secondary whiteSpace-preWrap mt-3'>
                      {`This ${modelName} is referenced on a job.\nBefore this ${modelName} can be deleted, please unassign it from the job. \n\nAlternatively, the job can be deleted or achived.`}
                   </p>
                }

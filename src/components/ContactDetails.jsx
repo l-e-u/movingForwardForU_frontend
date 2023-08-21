@@ -96,7 +96,7 @@ const ContactDetails = ({ contact, showDeleteForm, showEditForm }) => {
 
             </div>
 
-            <div className='col-sm col-lg col-xl'>
+            <div className='col-sm col-lg col-xl mt-2 mt-sm-0'>
 
                <div className='row g-0'>
                   <div className='text-secondary' style={{ opacity: '0.5' }}>

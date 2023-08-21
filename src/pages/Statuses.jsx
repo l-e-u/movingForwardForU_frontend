@@ -6,11 +6,13 @@ import { useGetStatuses } from '../hooks/useGetStatuses';
 import { useStatusesContext } from '../hooks/useStatusesContext';
 
 // components
+import AddDocumentButton from '../components/AddDocumentButton';
 import CreateStatusForm from '../components/CreateStatusForm';
 import DeleteForm from '../components/DeleteForm';
 import DetailsContainer from '../components/DetailsContainer';
 import EditStatusForm from '../components/EditStatusForm';
 import EllipsisMenu from '../components/EllipsisMenu';
+import LoadingDocuments from '../components/LoadingDocuments';
 import SmallHeader from '../components/SmallHeader';
 
 const Statuses = () => {
@@ -80,6 +82,8 @@ const Statuses = () => {
 
    return (
       < >
+         <AddDocumentButton handleClick={() => setShowCreateForm(true)} />
+
          <AnimatePresence>
             {
                showCreateForm &&
@@ -90,7 +94,7 @@ const Statuses = () => {
          <AnimatePresence onExitComplete={() => setSelectedStatus(null)}>
             {
                showEditForm &&
-               <EditStatusForm currentStatus={selectedStatus} hideForm={() => setSelectedStatus(null)} />
+               <EditStatusForm currentStatus={selectedStatus} hideForm={() => setShowEditForm(false)} />
             }
          </AnimatePresence>
 
@@ -107,66 +111,58 @@ const Statuses = () => {
             }
          </AnimatePresence>
 
-         {/* button to display the new status form */}
-         <div className='p-2'>
-            <motion.button
-               className={addButtonClasses}
-               onClick={() => setShowCreateForm(true)}
-               type='button'
-               variants={addButtonVariants}
-               initial='mount'
-               whileHover='onHover'
-            >
-               <i className='bi bi-plus'></i>
-               <i className='bi bi-tags'></i>
-            </motion.button>
-         </div>
-
-         {/* each item on the list will be staggered as they fade in */}
-
-         <motion.ul className={listClasses} variants={listVariants} initial='mount' animate='animation'>
+         <AnimatePresence mode='wait'>
             {
-               statuses.map(status => (
-                  <motion.li key={status._id} variants={itemVariants} >
-                     <DetailsContainer>
-                        <EllipsisMenu actions={[
-                           {
-                              name: 'Edit',
-                              icon: 'bi bi-pen',
-                              handler: () => {
-                                 setSelectedStatus(status);
-                                 setShowEditForm(true);
-                              }
-                           },
-                           {
-                              name: 'Delete',
-                              icon: 'bi bi-trash3',
-                              handler: () => {
-                                 setSelectedStatus(status);
-                                 setShowDeleteForm(true);
-                              }
-                           }
-                        ]}
-                        />
+               !isLoading &&
+               <motion.ul className={listClasses} variants={listVariants} initial='mount' animate='animation'>
+                  {
+                     statuses.map(status => (
+                        <motion.li key={status._id} variants={itemVariants} >
+                           <DetailsContainer>
+                              <EllipsisMenu actions={[
+                                 {
+                                    name: 'Edit',
+                                    icon: 'bi bi-pen',
+                                    handler: () => {
+                                       setSelectedStatus(status);
+                                       setShowEditForm(true);
+                                    }
+                                 },
+                                 {
+                                    name: 'Delete',
+                                    icon: 'bi bi-trash3',
+                                    handler: () => {
+                                       setSelectedStatus(status);
+                                       setShowDeleteForm(true);
+                                    }
+                                 }
+                              ]}
+                              />
 
-                        {/* name */}
-                        <div className='row px-2 mb-2'>
-                           <div className={firstColumnClasses}>
-                              <SmallHeader text='Name' />
-                           </div>
-                           <div className={secondColumnClasses} style={{ fontWeight: '600' }}>{status.name}</div>
-                        </div>
+                              {/* name */}
+                              <div className='row px-2 mb-2'>
+                                 <div className={firstColumnClasses}>
+                                    <SmallHeader text='Name' />
+                                 </div>
+                                 <div className={secondColumnClasses} style={{ fontWeight: '600' }}>{status.name}</div>
+                              </div>
 
-                        {/* description */}
-                        <div className='row px-2'>
-                           <div className={firstColumnClasses}><SmallHeader text='Description' /></div>
-                           <div className={secondColumnClasses + ' whiteSpace-preWrap'}>{status.description}</div>
-                        </div>
-                     </DetailsContainer>
-                  </motion.li>
-               ))
+                              {/* description */}
+                              <div className='row px-2'>
+                                 <div className={firstColumnClasses}><SmallHeader text='Description' /></div>
+                                 <div className={secondColumnClasses + ' whiteSpace-preWrap'}>{status.description}</div>
+                              </div>
+                           </DetailsContainer>
+                        </motion.li>
+                     ))
+                  }
+               </motion.ul>
             }
-         </motion.ul>
+         </AnimatePresence>
+
+         <AnimatePresence mode='wait'>
+            {isLoading && <LoadingDocuments />}
+         </AnimatePresence>
       </>
    );
 };
