@@ -50,6 +50,10 @@ body {
    cursor: pointer;
 }
 
+.cursor-none {
+   cursor:none !important;
+}
+
 .lightGradient {
    background: linear-gradient(to left, var(--mainPalette8), var(--mainPalette9));
 }
@@ -64,6 +68,10 @@ body {
 
 .whiteSpace-preWrap {
    white-space: pre-wrap !important;
+}
+
+.visibility-hidden{
+   visibility: hidden !important;
 }
 
 .scrollBar::-webkit-scrollbar {

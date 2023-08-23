@@ -26,7 +26,35 @@ function App() {
    const [archiveFilters, setArchiveFilters] = useState({});
    const [jobFilters, setJobFilters] = useState({});
    const [myJobFilters, setMyJobFilters] = useState({});
-   const [selectedLink, setSelectedLink] = useState('Jobs')
+   const [selectedLink, setSelectedLink] = useState('Jobs');
+
+   const paginationDefaults = {
+      pages: {
+         current: 1,
+         total: 1
+
+      },
+      results: {
+         limit: 10,
+         total: 0,
+      }
+   };
+
+   const [paginations, setPaginations] = useState({
+      dispatch: paginationDefaults,
+      jobs: paginationDefaults,
+      contacts: paginationDefaults,
+   });
+
+   const setThisPagination = (pagination) => {
+      console.log(pagination);
+      console.log(selectedLink.toLowerCase());
+
+      setPaginations({
+         ...paginations,
+         [selectedLink.toLowerCase()]: pagination
+      });
+   };
 
    useEffect(() => {
       // reset state when user changes
@@ -34,6 +62,8 @@ function App() {
       setMyJobFilters({});
       setSelectedLink('Jobs');
    }, [user])
+
+   console.log(paginations);
 
    return (
       <div className='App'>
@@ -46,14 +76,27 @@ function App() {
                         path='/'
                         element={
                            user ?
-                              <Jobs filters={myJobFilters} setFilters={setMyJobFilters} selectedLink={selectedLink} setSelectedLink={setSelectedLink} /> :
-                              <Navigate to='/login' />}
+                              <Jobs
+                                 filters={myJobFilters}
+                                 pagination={paginations.jobs}
+                                 setFilters={setMyJobFilters}
+                                 setPagination={setThisPagination}
+                              />
+                              :
+                              <Navigate to='/login' />
+                        }
                      />
                      <Route
                         path='/dispatch'
                         element={
                            user ?
-                              <Dispatch filters={jobFilters} setFilters={setJobFilters} selectedLink={selectedLink} setSelectedLink={setSelectedLink} /> :
+                              <Dispatch
+                                 filters={jobFilters}
+                                 pagination={paginations.dispatch}
+                                 setFilters={setJobFilters}
+                                 setPagination={setThisPagination}
+                              />
+                              :
                               <Navigate to='/login' />
                         }
                      />
@@ -63,7 +106,12 @@ function App() {
                      />
                      <Route
                         path='/contacts'
-                        element={user ? <Contacts /> : <Navigate to='/login' />}
+                        element={
+                           user ?
+                              <Contacts pagination={paginations.contacts} setPagination={setThisPagination} />
+                              :
+                              <Navigate to='/login' />
+                        }
                      />
                      <Route
                         path='/users'

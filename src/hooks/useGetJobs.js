@@ -18,7 +18,7 @@ export const useGetJobs = () => {
 
    const clearError = () => setError(null);
 
-   const getJobs = async ({ filters, currentPage, limit }) => {
+   const getJobs = async ({ filters, currentPage, limit, setPaginationTotals }) => {
       setIsLoading(true);
       setError(null);
 
@@ -35,20 +35,20 @@ export const useGetJobs = () => {
 
       if (!response.ok) {
          setError(json.error);
-         setIsLoading(false);
       };
 
       if (response.ok) {
-         const { count, totalPages, results } = json;
+         const { paginatedResults, totalNumberOfResults, totalNumberOfPages } = json;
 
          setError(null);
-         setIsLoading(false);
-
-
-         dispatch({ type: 'SET_JOBS', payload: results });
-         return { count, totalPages };
-
+         dispatch({ type: 'SET_JOBS', payload: paginatedResults });
+         setPaginationTotals({
+            totalNumberOfResults,
+            totalNumberOfPages
+         });
       };
+
+      setIsLoading(false);
    };
 
    return { clearError, getJobs, error, isLoading };

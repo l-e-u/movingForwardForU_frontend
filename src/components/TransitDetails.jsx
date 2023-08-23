@@ -4,7 +4,7 @@ const TransitDetails = ({ address, dateText, heading, timeText }) => {
    const col1Classes = 'col-1 d-flex align-items-center justify-content-start fs-smaller text-secondary py-1 mb-auto';
    const col2Classes = 'col-11 text-capitalize';
 
-   const timeStyles = { letterSpacing: '2px' };
+   const timeStyles = { letterSpacing: '1px' };
 
    return (
       <div className='row g-0'>

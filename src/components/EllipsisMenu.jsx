@@ -17,8 +17,8 @@ const EllipsisMenu = ({ actions = [] }) => {
 
    const ellipsisMenuStyles = {
       background: 'var(--bs-gray-100)',
-      borderRight: '2px solid var(--bs-gray-400)',
-      borderBottom: '2px solid var(--bs-gray-400)',
+      borderRight: '1px solid var(--bs-gray-400)',
+      borderBottom: '1px solid var(--bs-gray-400)',
       marginRight: '2rem',
       zIndex: 50
    };

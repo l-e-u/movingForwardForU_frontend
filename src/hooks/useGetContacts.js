@@ -13,11 +13,11 @@ export const useGetContacts = () => {
    const [error, setError] = useState(null);
    const [isLoading, setIsLoading] = useState(false);
 
-   const getContacts = async () => {
+   const getContacts = async ({ currentPage, limit, setPaginationTotals }) => {
       setIsLoading(true);
       setError(null);
 
-      const response = await fetch(`${API_BASE_URL}/api/contacts`, {
+      const response = await fetch(`${API_BASE_URL}/api/contacts?page=${currentPage}&limit=${limit}`, {
          headers: {
             'Authentication': `Bearer ${user.token}`
          }
@@ -27,13 +27,18 @@ export const useGetContacts = () => {
       const json = await response.json();
 
       if (!response.ok) {
-         console.error(json);
          setError(json.error);
       };
 
       if (response.ok) {
+         const { paginatedResults, totalNumberOfResults, totalNumberOfPages } = json;
+
          setError(null);
-         dispatch({ type: 'SET_CONTACTS', payload: json });
+         dispatch({ type: 'SET_CONTACTS', payload: paginatedResults });
+         setPaginationTotals({
+            totalNumberOfResults,
+            totalNumberOfPages
+         });
       };
 
       setIsLoading(false);

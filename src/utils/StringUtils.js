@@ -77,13 +77,13 @@ export const datePrettyString = ({ date, includeTime }) => {
    return prettyTime + prettyDate;
 };
 
-export const timeStringFormat = ({ dateString, showMilitary, showTimezone = false }) => {
-   const date = new Date(dateString);
-   const militaryHr = date.getHours();
+export const timeStringFormat = ({ date, showMilitary, showTimezone = false }) => {
+   const dateCopy = new Date(date);
+   const militaryHr = dateCopy.getHours();
    const hr = militaryHr > 12 ? militaryHr % 12 : militaryHr;
    const meridiem = militaryHr < 12 ? 'A' : 'P';
    const hour = paddedZeroStartWhenSingleDigit(showMilitary ? militaryHr : hr);
-   const minutes = paddedZeroStartWhenSingleDigit(date.getMinutes());
+   const minutes = paddedZeroStartWhenSingleDigit(dateCopy.getMinutes());
 
    let timeString = hour;
 

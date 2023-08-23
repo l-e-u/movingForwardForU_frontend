@@ -72,7 +72,7 @@ function FormAddNote({ hideForm, jobID }) {
                setIsResizingImagesTrue={setIsResizingImagesTrue}
             />
 
-            <div className='text-secondary opacity-50 mt-3'><SmallHeader text='Message' /></div>
+            <div className='text-secondary mt-3'><SmallHeader text='Message' /></div>
             <GrowingTextArea
                input={message}
                setInput={message => setNote({ ...note, message })}

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence } from 'framer-motion';
 
 // hooks
 import { useContactsContext } from '../hooks/useContactsContext';
@@ -11,10 +11,14 @@ import CreateContactForm from '../components/CreateContactForm';
 import ContactDetails from '../components/ContactDetails';
 import DeleteForm from '../components/DeleteForm';
 import EditContactForm from '../components/EditContactForm';
+import ErrorAlert from '../components/ErrorAlert';
+import FadeInList from '../components/FadeInList';
 import LoadingDocuments from '../components/LoadingDocuments';
+import SmallHeader from '../components/SmallHeader';
+import NavPagination from '../components/NavPagination';
 
 
-const Contacts = () => {
+const Contacts = ({ pagination, setPagination }) => {
    const { getContacts, error, isLoading } = useGetContacts();
    const { contacts, dispatch } = useContactsContext();
 
@@ -24,46 +28,80 @@ const Contacts = () => {
 
    const [selectedContact, setSelectedContact] = useState(null);
 
-   // styling for the list container
-   const listClasses = 'contacts px-3 pb-0 px-md-5';
-   const listVariants = {
-      mount: {
-         listStyle: 'none',
-         margin: '0',
-         padding: '0'
-      },
-      animation: {
-         transition: {
-            when: 'beforeChildren',
-            staggerChildren: 0.1
+   // updates the pages.current or pages.total
+   const setPages = (page) => {
+      const [property, value] = Object.entries(page)[0];
+
+      setPagination({
+         ...pagination,
+         pages: {
+            ...pagination.pages,
+            [property]: value
          }
-      }
+      });
    };
 
-   // styling for an item in the list
-   const itemVariants = {
-      mount: {
-         opacity: 0,
-         marginBottom: '0'
-      },
-      animation: {
-         opacity: 1,
-         marginBottom: '1rem',
-         transition: {
-            marginBottom: {
-               delay: 0.5
-            }
+   // updates the results.limit when the limit is changed in nav pagination
+   const onChangeLimit = (number) => {
+      setPagination({
+         ...pagination,
+         pages: {
+            ...pagination.pages,
+            current: 1
+         },
+         results: {
+            total: 1,
+            limit: number
          }
-      }
+      });
    };
 
    useEffect(() => {
-      getContacts();
-   }, []);
+      getContacts({
+         currentPage: pagination.pages.current,
+         limit: pagination.results.limit,
+         setPaginationTotals: ({ totalNumberOfResults, totalNumberOfPages }) => {
+            setPagination({
+               ...pagination,
+               pages: {
+                  ...pagination.pages,
+                  total: totalNumberOfPages
+               },
+               results: {
+                  ...pagination.results,
+                  total: totalNumberOfResults
+               }
+            })
+         }
+      });
+   }, [pagination.results.limit, pagination.pages.current]);
 
    return (
       <>
-         <AddDocumentButton handleClick={() => setShowCreateForm(true)} />
+         <div className='d-flex flex-column gap-3 my-3 px-3'>
+            <div className='d-flex'>
+               {/* Display the total amount of search results */}
+               <div className='mt-auto me-auto text-secondary'>
+                  <SmallHeader text={`Total: ${pagination.results.total}`} />
+               </div>
+               <AddDocumentButton handleClick={() => setShowCreateForm(true)} />
+            </div>
+
+            <NavPagination
+               currentPage={pagination.pages.current}
+               isFetching={isLoading}
+               limit={pagination.results.limit}
+               onChangeLimit={onChangeLimit}
+               setCurrentPageToNextPage={() => {
+                  setPages({ current: pagination.pages.current + 1 });
+               }}
+               setCurrentPageToPreviousPage={() => {
+                  setPages({ current: pagination.pages.current - 1 });
+               }}
+               setPages={setPages}
+               totalPages={pagination.pages.total}
+            />
+         </div>
 
          <AnimatePresence>
             {
@@ -95,31 +133,32 @@ const Contacts = () => {
          <AnimatePresence mode='wait'>
             {
                !isLoading &&
-               <motion.ul className={listClasses} variants={listVariants} initial='mount' animate='animation'>
-                  {
-                     contacts.map(contact => (
-                        <motion.li key={contact._id} variants={itemVariants} >
-                           <ContactDetails
-                              contact={contact}
-                              showDeleteForm={() => {
-                                 setSelectedContact(contact);
-                                 setShowDeleteForm(true);
-                              }}
-                              showEditForm={() => {
-                                 setSelectedContact(contact);
-                                 setShowEditForm(true);
-                              }}
-                           />
-                        </motion.li>
-                     ))
-                  }
-               </motion.ul>
+               <FadeInList items={
+                  contacts.map(contact => (
+                     <ContactDetails
+                        contact={contact}
+                        showDeleteForm={() => {
+                           setSelectedContact(contact);
+                           setShowDeleteForm(true);
+                        }}
+                        showEditForm={() => {
+                           setSelectedContact(contact);
+                           setShowEditForm(true);
+                        }}
+                     />
+                  ))
+               } />
             }
          </AnimatePresence>
 
          <AnimatePresence mode='wait'>
             {isLoading && <LoadingDocuments />}
          </AnimatePresence>
+
+         {
+            error &&
+            <ErrorAlert message={error.message} />
+         }
       </>
    );
 };

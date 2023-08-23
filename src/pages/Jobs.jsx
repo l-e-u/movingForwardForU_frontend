@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence } from 'framer-motion';
 
 // hooks
 import { useJobsContext } from '../hooks/useJobsContext';
@@ -8,12 +8,18 @@ import { useGetJobs } from '../hooks/useGetJobs';
 
 // components
 import JobDetails from '../components/JobDetails';
-import LoadingDocuments from '../components/LoadingDocuments';
+import ErrorAlert from '../components/ErrorAlert';
+import FadeInList from '../components/FadeInList';
 import FormAddNote from '../components/FormAddNote';
+import LoadingDocuments from '../components/LoadingDocuments';
+import NavPagination from '../components/NavPagination';
+import SmallHeader from '../components/SmallHeader';
 
 const Jobs = ({
    filters,
+   pagination,
    setFilters,
+   setPagination
 }) => {
    const { user } = useAuthContext();
    const { jobs } = useJobsContext();
@@ -25,59 +31,84 @@ const Jobs = ({
 
    const [selectedJob, setSelectedJob] = useState(null);
 
-   // pagination state
-   const [limit, setLimit] = useState(10);
-   const [currentPage, setCurrentPage] = useState(1);
-   const [totalPages, setTotalPages] = useState(1);
-   const [totalResults, setTotalResults] = useState(0);
+   // updates the pages.current or pages.total
+   const setPages = (page) => {
+      const [property, value] = Object.entries(page)[0];
 
-   // styling for the list container
-   const listClasses = 'jobsList pt-3 px-3 pb-0 px-md-5';
-   const listVariants = {
-      mount: {
-         listStyle: 'none',
-         margin: '0',
-         padding: '0'
-      },
-      animation: {
-         transition: {
-            when: 'beforeChildren',
-            staggerChildren: 0.1
+      setPagination({
+         ...pagination,
+         pages: {
+            ...pagination.pages,
+            [property]: value
          }
-      }
+      });
    };
 
-   // styling for an item in the list
-   const itemVariants = {
-      mount: {
-         opacity: 0,
-         marginBottom: '0'
-      },
-      animation: {
-         opacity: 1,
-         marginBottom: '1rem',
-         transition: {
-            marginBottom: {
-               delay: 0.5
-            }
+   // updates the results.limit when the limit is changed in nav pagination
+   const onChangeLimit = (number) => {
+      setPagination({
+         ...pagination,
+         pages: {
+            ...pagination.pages,
+            current: 1
+         },
+         results: {
+            total: 1,
+            limit: number
          }
-      }
+      });
    };
 
    // fetches results as the user chooses filters or changes limits for results
    useEffect(() => {
       getJobs({
-         currentPage,
-         limit,
+         currentPage: pagination.pages.current,
+         limit: pagination.results.limit,
          filters: {
             ...filters,
             drivers: [user._id]
+         },
+         setPaginationTotals: ({ totalNumberOfResults, totalNumberOfPages }) => {
+            setPagination({
+               ...pagination,
+               pages: {
+                  ...pagination.pages,
+                  total: totalNumberOfPages
+               },
+               results: {
+                  ...pagination.results,
+                  total: totalNumberOfResults
+               }
+            })
          }
       });
-   }, [currentPage, filters, limit]);
+   }, [pagination.results.limit, pagination.pages.current, filters]);
 
    return (
       <>
+         <div className='px-3 my-3'>
+            {/* Display the total amount of search results */}
+            <div className='text-secondary'>
+               <SmallHeader text={`Total: ${pagination.results.total}`} />
+            </div>
+
+            <NavPagination
+               currentPage={pagination.pages.current}
+               isFetching={isLoading}
+               limit={pagination.results.limit}
+               onChangeLimit={onChangeLimit}
+               setCurrentPageToNextPage={() => {
+                  setPages({ current: pagination.pages.current + 1 });
+               }}
+               setCurrentPageToPreviousPage={() => {
+                  setPages({ current: pagination.pages.current - 1 });
+               }}
+               setPages={setPages}
+               totalPages={pagination.pages.total}
+               totalResults={pagination.results.total}
+            />
+         </div>
+
          {/* ADD NOTE FORM */}
          <AnimatePresence onExitComplete={() => setSelectedJob(null)}>
             {
@@ -90,24 +121,18 @@ const Jobs = ({
          <AnimatePresence mode='wait'>
             {
                !isLoading &&
-               <motion.ul className={listClasses} variants={listVariants} initial='mount' animate='animation'>
-                  {
-                     jobs.map(job => (
-                        <motion.li key={job._id} variants={itemVariants}>
-                           {/* drivers can only access this page and get restricted info version of the job detials */}
-                           <JobDetails
-                              job={job}
-                              // showEditForm={() => setSelectedJob(job)} 
-                              showForm_AddNote={() => {
-                                 setSelectedJob(job);
-                                 setShowForm_AddNote(true);
-                              }}
-                              restrictInfo={true}
-                           />
-                        </motion.li>
-                     ))
-                  }
-               </motion.ul>
+               <FadeInList items={
+                  jobs.map(job => (
+                     <JobDetails
+                        job={job}
+                        showForm_AddNote={() => {
+                           setSelectedJob(job);
+                           setShowForm_AddNote(true);
+                        }}
+                        restrictInfo={true}
+                     />
+                  ))
+               } />
             }
          </AnimatePresence>
 
@@ -115,6 +140,11 @@ const Jobs = ({
          <AnimatePresence mode='wait'>
             {isLoading && <LoadingDocuments />}
          </AnimatePresence>
+
+         {
+            error &&
+            <ErrorAlert message={error.message} />
+         }
       </>
    );
 };
