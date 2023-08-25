@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
 
@@ -21,13 +21,6 @@ import Users from './pages/Users.jsx';
 import Verify from './pages/Verify.jsx';
 
 function App() {
-   const { user } = useAuthContext();
-
-   const [archiveFilters, setArchiveFilters] = useState({});
-   const [jobFilters, setJobFilters] = useState({});
-   const [myJobFilters, setMyJobFilters] = useState({});
-   const [selectedLink, setSelectedLink] = useState('Jobs');
-
    const paginationDefaults = {
       pages: {
          current: 1,
@@ -40,30 +33,34 @@ function App() {
       }
    };
 
+   const { user } = useAuthContext();
+
+   const [selectedLink, setSelectedLink] = useState('Jobs');
    const [paginations, setPaginations] = useState({
+      archive: paginationDefaults,
+      contacts: paginationDefaults,
       dispatch: paginationDefaults,
       jobs: paginationDefaults,
-      contacts: paginationDefaults,
+   });
+   const [filters, setFilters] = useState({
+      archives: {},
+      dispatch: {},
+      jobs: {}
    });
 
-   const setThisPagination = (pagination) => {
-      console.log(pagination);
-      console.log(selectedLink.toLowerCase());
+   const setThisFilter = (filter) => {
+      setFilters({
+         ...filters,
+         [selectedLink.toLocaleLowerCase()]: filter
+      });
+   };
 
+   const setThisPagination = (pagination) => {
       setPaginations({
          ...paginations,
          [selectedLink.toLowerCase()]: pagination
       });
    };
-
-   useEffect(() => {
-      // reset state when user changes
-      setJobFilters({});
-      setMyJobFilters({});
-      setSelectedLink('Jobs');
-   }, [user])
-
-   console.log(paginations);
 
    return (
       <div className='App'>
@@ -77,9 +74,9 @@ function App() {
                         element={
                            user ?
                               <Jobs
-                                 filters={myJobFilters}
+                                 filters={filters.jobs}
                                  pagination={paginations.jobs}
-                                 setFilters={setMyJobFilters}
+                                 setFilters={setThisFilter}
                                  setPagination={setThisPagination}
                               />
                               :
@@ -91,9 +88,9 @@ function App() {
                         element={
                            user ?
                               <Dispatch
-                                 filters={jobFilters}
+                                 filters={filters.dispatch}
                                  pagination={paginations.dispatch}
-                                 setFilters={setJobFilters}
+                                 setFilters={setThisFilter}
                                  setPagination={setThisPagination}
                               />
                               :
@@ -108,7 +105,10 @@ function App() {
                         path='/contacts'
                         element={
                            user ?
-                              <Contacts pagination={paginations.contacts} setPagination={setThisPagination} />
+                              <Contacts
+                                 pagination={paginations.contacts}
+                                 setPagination={setThisPagination}
+                              />
                               :
                               <Navigate to='/login' />
                         }
@@ -123,7 +123,17 @@ function App() {
                      />
                      <Route
                         path='/archives'
-                        element={user ? <Archives filters={archiveFilters} setFilters={setArchiveFilters} /> : <Navigate to='/login' />}
+                        element={
+                           user ?
+                              <Archives
+                                 filters={filters.archives}
+                                 pagination={paginations.archive}
+                                 setFilters={setThisFilter}
+                                 setPagination={setThisPagination}
+                              />
+                              :
+                              <Navigate to='/login' />
+                        }
                      />
                      <Route
                         path='/login'

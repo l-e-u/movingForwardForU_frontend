@@ -10,6 +10,16 @@ const BillingTable = ({ billing }) => {
       return currency;
    };
 
+   billing.sort((a, b) => {
+      const feeName1 = a.fee.name;
+      const feeName2 = b.fee.name;
+
+      if (feeName1 < feeName2) return -1;
+      if (feeName1 > feeName2) return 1;
+
+      return 0;
+   });
+
    return (
       <table className='table table-sm text-reset m-0'>
          <thead>
@@ -23,6 +33,7 @@ const BillingTable = ({ billing }) => {
             {
                billing.map((bill, index) => {
                   const { overrideAmount, fee } = bill;
+                  const itemNumber = (index + 1).toString().padStart(2, '0');
                   const hasOverrideAmount = overrideAmount !== null;
                   const amountText = encloseNegativeNumber(fee.amount);
                   const overrideAmountText = hasOverrideAmount ? encloseNegativeNumber(overrideAmount) : '';
@@ -34,7 +45,7 @@ const BillingTable = ({ billing }) => {
                            scope='row'
                            style={{ ...scopeStyles, fontFamily: 'monospace' }}
                         >
-                           {index.toString().padStart(2, '0')}
+                           {itemNumber}
                         </th>
 
                         <td>{bill.fee.name}</td>

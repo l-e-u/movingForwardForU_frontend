@@ -54,7 +54,7 @@ const DeleteForm = ({
             <form className='deleteForm' onSubmit={handleSubmit}>
                <FormHeader text='Confirm' />
 
-               <p className='fs-smaller text-secondary'>This cannot be undone. Are you sure you want to delete?</p>
+               <p className='fs-smaller text-secondary mt-1'>This cannot be undone. Are you sure you want to delete?</p>
 
                {warning && <p className='fs-smaller text-secondary'>{warning}</p>}
 

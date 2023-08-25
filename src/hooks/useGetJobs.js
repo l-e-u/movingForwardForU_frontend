@@ -18,10 +18,12 @@ export const useGetJobs = () => {
 
    const clearError = () => setError(null);
 
-   const getJobs = async ({ filters, currentPage, limit, setPaginationTotals }) => {
+   const getJobs = async (props = { filters: {}, currentPage: 1, limit: 0, setPaginationTotals: () => { } }) => {
       setIsLoading(true);
       setError(null);
 
+      // set the query, subPath, and options before making the response
+      const { filters, currentPage, limit, setPaginationTotals } = props;
       const filtersQuery = urlQueryString(filters);
 
       const response = await fetch(`${API_BASE_URL}/api/jobs?page=${currentPage}&limit=${limit}${filtersQuery}`, {
@@ -33,9 +35,7 @@ export const useGetJobs = () => {
       // expecting the list of jobs depending on page and limit
       const json = await response.json();
 
-      if (!response.ok) {
-         setError(json.error);
-      };
+      if (!response.ok) setError(json.error);
 
       if (response.ok) {
          const { paginatedResults, totalNumberOfResults, totalNumberOfPages } = json;

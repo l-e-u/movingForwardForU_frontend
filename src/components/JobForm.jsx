@@ -434,7 +434,7 @@ const JobForm = ({
                               <SmallHeader text='Mileage' />
                            </div>
                            <div className='col-sm-10'>
-                              <TextInput input={job.mileage} setInput={input => setJob(prev => ({ ...prev, mileage: isNaN(input) ? 0 : Number(input) }))} />
+                              <TextInput input={job.mileage ?? ''} setInput={input => setJob(prev => ({ ...prev, mileage: isNaN(input) ? 0 : input }))} />
                            </div>
                         </div>
                      </>

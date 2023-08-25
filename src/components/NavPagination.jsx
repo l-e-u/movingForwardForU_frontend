@@ -27,7 +27,7 @@ const ArrowButton = ({ arrowDirection, isDisabled, onClick }) => (
       variants={buttonVariants}
       whileHover='onHover'
    >
-      <i className={`bi bi-arrow-${arrowDirection}-short`}></i>
+      <i className={`bi bi-arrow-${arrowDirection}`}></i>
    </motion.button>
 );
 

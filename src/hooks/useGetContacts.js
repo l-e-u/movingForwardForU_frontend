@@ -13,7 +13,10 @@ export const useGetContacts = () => {
    const [error, setError] = useState(null);
    const [isLoading, setIsLoading] = useState(false);
 
-   const getContacts = async ({ currentPage, limit, setPaginationTotals }) => {
+   // when nothing is passed, then all the results will be returned and no callback is used
+   const getContacts = async (props = { currentPage: 1, limit: 0, setPaginationTotals: () => { } }) => {
+      const { currentPage, limit, setPaginationTotals } = props;
+
       setIsLoading(true);
       setError(null);
 
@@ -35,6 +38,7 @@ export const useGetContacts = () => {
 
          setError(null);
          dispatch({ type: 'SET_CONTACTS', payload: paginatedResults });
+
          setPaginationTotals({
             totalNumberOfResults,
             totalNumberOfPages

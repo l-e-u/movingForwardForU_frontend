@@ -59,10 +59,6 @@ const EditJobForm = ({
                currentValue = currentSortedNotes.shift();
                editedValue = editedSortedNotes[0];
 
-               console.log(currentValue)
-               console.log(editedValue)
-
-
                // if the current note has been deleted, then any attachments have to be deleted
                if (currentValue._id !== editedValue?._id) {
                   hasBeenUpdated = true;

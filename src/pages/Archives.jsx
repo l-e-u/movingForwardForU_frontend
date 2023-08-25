@@ -1,72 +1,104 @@
 import { useState, useEffect } from 'react';
+import { AnimatePresence } from 'framer-motion';
 
-// context
-import { useAuthContext } from '../hooks/useAuthContext';
-import { useArchivesContext } from '../hooks/useArchiveContext';
 
-// functions
-import { urlQueryString } from '../utils/StringUtils';
+// hooks
+import { useGetJobs } from '../hooks/useGetJobs';
+import { useJobsContext } from '../hooks/useJobsContext';
 
 // components
-import ErrorLoadingDocuments from '../components/ErrorLoadingDocuments';
-import FilterAndASort from '../components/FilterAndSort';
-import LoadingDocuments from '../components/LoadingDocuments';
-import NavPagination from '../components/NavPagination';
-import ArchiveCard from '../components/ArchiveCard';
+import FadeInList from '../components/FadeInList';
+import ArchiveDetails from '../components/ArchiveDetails';
+import JobDetails from '../components/JobDetails';
 
-const Archives = ({ filters, setFilters }) => {
-   const API_BASE_URL = process.env.API_BASE_URL;
-   const { user } = useAuthContext();
-   const { archives, dispatch } = useArchivesContext();
+const Archives = ({
+   filters,
+   pagination,
+   setFilters,
+   setPagination
+}) => {
+   const { jobs } = useJobsContext();
+   const { getJobs, error, isLoading } = useGetJobs();
 
-   // used during fetching
-   const [error, setError] = useState(null);
-   const [isLoading, setIsLoading] = useState(null);
+   // form
+   const [showForm_AddNote, setShowForm_AddNote] = useState(false);
 
-   // pagination state
-   const [limit, setLimit] = useState(10);
-   const [currentPage, setCurrentPage] = useState(1);
-   const [totalPages, setTotalPages] = useState(1);
-   const [totalResults, setTotalResults] = useState(0);
+   const [selectedArchive, setSelectedArchive] = useState(null);
+
+   // updates the pages.current or pages.total
+   const setPages = (page) => {
+      const [property, value] = Object.entries(page)[0];
+
+      setPagination({
+         ...pagination,
+         pages: {
+            ...pagination.pages,
+            [property]: value
+         }
+      });
+   };
+
+   // updates the results.limit when the limit is changed in nav pagination
+   const onChangeLimit = (number) => {
+      setPagination({
+         ...pagination,
+         pages: {
+            ...pagination.pages,
+            current: 1
+         },
+         results: {
+            total: 1,
+            limit: number
+         }
+      });
+   };
 
    // fetches results as the user chooses filters or changes limits for results
    useEffect(() => {
-      const timeout = setTimeout(async () => {
-         setIsLoading(true);
-         setError(null);
+      getJobs({
+         currentPage: pagination.pages.current,
+         limit: pagination.results.limit,
+         filters: {
+            ...filters,
+            isArchived: true,
+         },
+         setPaginationTotals: ({ totalNumberOfResults, totalNumberOfPages }) => {
+            setPagination({
+               ...pagination,
+               pages: {
+                  ...pagination.pages,
+                  total: totalNumberOfPages
+               },
+               results: {
+                  ...pagination.results,
+                  total: totalNumberOfResults
+               }
+            })
+         }
+      });
+   }, [pagination.results.limit, pagination.pages.current, filters]);
 
-         const filterQuery = urlQueryString(filters);
-
-         const response = await fetch(`${API_BASE_URL}/api/archives?page=${currentPage}&limit=${limit}${filterQuery}`, {
-            headers: {
-               'Authentication': `Bearer ${user.token}`
+   return (
+      <>
+         <AnimatePresence mode='wait'>
+            {
+               !isLoading &&
+               <FadeInList items={
+                  jobs.map(archive => (
+                     <JobDetails
+                        job={archive}
+                        showForm_AddNote={() => {
+                           setSelectedArchive(archive);
+                           setShowForm_AddNote(true);
+                        }}
+                        restrictInfo={true}
+                     />
+                  ))
+               } />
             }
-         });
-
-         // expecting the list of jobs depending on page and limit
-         const json = await response.json();
-
-         if (!response.ok) {
-            console.error(json);
-            setError(json.error);
-            setIsLoading(false);
-         };
-
-         if (response.ok) {
-            setError(null);
-            setIsLoading(false);
-            setTotalPages(json.totalPages);
-            setTotalResults(json.count);
-            dispatch({ type: 'SET_ARCHIVES', payload: json.results });
-
-         };
-      }, 250);
-
-      return () => clearTimeout(timeout);
-   }, [API_BASE_URL, currentPage, dispatch, filters, limit, user]);
-
-
-return <></>;
+         </AnimatePresence>
+      </>
+   );
 };
 
 export default Archives;

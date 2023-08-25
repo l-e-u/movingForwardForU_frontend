@@ -16,6 +16,7 @@ import { billingTotal } from '../utils/NumberUtils';
 const JobDetails = ({
    job,
    setFilters,
+   showForm_Archive,
    showDeleteForm,
    showEditForm,
    showForm_AddNote,
@@ -24,7 +25,6 @@ const JobDetails = ({
    const API_BASE_URL = process.env.API_BASE_URL;
 
    const {
-      _id,
       billing,
       createdAt,
       createdBy,
@@ -78,6 +78,16 @@ const JobDetails = ({
                   </div>
                   <div className='col-sm-10'>
                      {parcel}
+                  </div>
+               </div>
+
+               {/* MILEAGE */}
+               <div className='row mb-1'>
+                  <div className='col-sm-2 text-sm-end text-secondary'>
+                     <SmallHeader text='Mileage' />
+                  </div>
+                  <div className='col-sm-10'>
+                     {mileage}
                   </div>
                </div>
                {
@@ -238,6 +248,11 @@ const JobDetails = ({
             name: 'Delete',
             icon: 'bi bi-trash3',
             handler: showDeleteForm
+         },
+         {
+            name: 'Archive',
+            icon: 'bi bi-archive',
+            handler: showForm_Archive
          }
       );
 

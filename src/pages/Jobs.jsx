@@ -66,6 +66,7 @@ const Jobs = ({
          limit: pagination.results.limit,
          filters: {
             ...filters,
+            isArchived: false,
             drivers: [user._id]
          },
          setPaginationTotals: ({ totalNumberOfResults, totalNumberOfPages }) => {
@@ -86,7 +87,7 @@ const Jobs = ({
 
    return (
       <>
-         <div className='px-3 my-3'>
+         <div className='d-flex flex-column gap-3 px-3 my-3'>
             {/* Display the total amount of search results */}
             <div className='text-secondary'>
                <SmallHeader text={`Total: ${pagination.results.total}`} />
