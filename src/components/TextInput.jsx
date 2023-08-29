@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 // utilities
 import { removeExtraSpaces } from '../utils/StringUtils';
 
-const TextInput = ({ input, onBlur, placeholder, prefixText, setInput, type }) => {
+const TextInput = ({ input, onBlur, placeholder, prefixText, setInput, type, isDisabled = false }) => {
    const inputWrapperClasses = 'position-relative';
 
    const prefixClasses = 'position-absolute ps-2 top-50 start-0 translate-middle-y text-secondary';
@@ -33,6 +33,7 @@ const TextInput = ({ input, onBlur, placeholder, prefixText, setInput, type }) =
 
    const inputJSX = <motion.input
       className={inputClasses}
+      disabled={isDisabled}
       initial='mount'
       onBlur={handleOnBlur}
       onChange={handleOnInput}

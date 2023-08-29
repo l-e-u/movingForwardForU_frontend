@@ -8,7 +8,7 @@ import { useFeesContext } from '../hooks/useFeesContext';
 import { useGetFees } from '../hooks/useGetFees';
 
 
-export const FilterFees = ({ selectedFeeFilters, setSelectedFeeFilters }) => {
+export const FilterFees = ({ isDisabled, selectedFeeFilters, setSelectedFeeFilters }) => {
    const { fees } = useFeesContext();
    const { getFees, error, isLoading } = useGetFees();
 
@@ -25,7 +25,7 @@ export const FilterFees = ({ selectedFeeFilters, setSelectedFeeFilters }) => {
          className='text-reset'
          classNamePrefix='mySelectInput'
          closeMenuOnSelect={false}
-         isDisabled={error || isLoading}
+         isDisabled={error || isLoading || isDisabled}
          isLoading={isLoading}
          isMulti={true}
          isSearchable={true}

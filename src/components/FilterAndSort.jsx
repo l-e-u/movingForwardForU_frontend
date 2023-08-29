@@ -1,5 +1,6 @@
+import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { useState } from 'react';
+import _ from 'lodash';
 
 // components
 import FilterCustomers from './FilterCustomers';
@@ -21,6 +22,10 @@ import TextInput from './TextInput';
 // utilities
 import { maxOutTimeOfDate, zeroOutTimeOfDate } from '../utils/DateUtils';
 
+// hooks
+import { useDebounce } from '../hooks/useDebounce';
+
+// quickly, easilty sets the pre selected date range
 const DateSetterButton = ({ buttonText, clearDateRange, handleOnClick_setDateRange, quickDateSelected, setQuickDateSelection }) => {
    const isSelected = buttonText === quickDateSelected;
    const variants = {
@@ -69,7 +74,6 @@ const DateSetterButton = ({ buttonText, clearDateRange, handleOnClick_setDateRan
       </motion.button>
    );
 };
-
 
 // mongodb includes time when searching by date, so the starting date's time will be set to midnight, and the ending date's time will be set to the last millisecond of that date
 const DateSettersContainer = ({ clearDateRange, hideFutureSelections, quickDateSelected, setDateRange, setQuickDateSelection }) => {
@@ -220,175 +224,202 @@ const FilterAndASort = ({
    clearFilters,
    filters,
    hideForm,
+   isFetching,
    setFilters,
    quickDateSelections,
    setQuickDateSelection
-}) => (
-   <Modal blurBackdrop={true} canClose={true} closeModal={hideForm} maxWidth='500px' topMarginIsFixed={true} >
-      <FormHeader text={'Filters'} />
+}) => {
+   const [filters_copy, setFilters_copy] = useState(_.cloneDeep(filters));
+   const debounce_filters_copy = useDebounce({ value: filters_copy, seconds: 1 });
 
-      <div className='text-secondary mt-2 mb-1'><SmallHeader text='Statuses' /></div>
-      <FilterStatuses
-         selectedStatusFilters={filters.status ?? []}
-         setSelectedStatusFilters={statusIDs => setFilters({ ...filters, status: statusIDs })}
-      />
+   useEffect(() => {
+      if (!_.isEqual(filters, debounce_filters_copy)) {
+         console.log('updating filters');
+         setFilters(debounce_filters_copy);
+      };
+   }, [debounce_filters_copy]);
 
-      <div className='text-secondary mt-2 mb-1'><SmallHeader text='Customers' /></div>
-      <FilterCustomers
-         selectedCustomerFilters={filters.customer ?? []}
-         setSelectedCustomerFilters={customerIDs => setFilters({ ...filters, customer: customerIDs })}
-      />
+   return (
+      <Modal blurBackdrop={true} canClose={true} closeModal={hideForm} maxWidth='500px' topMarginIsFixed={true} >
+         <FormHeader text={'Filters'} />
 
-      <div className='text-secondary mt-2 mb-1'><SmallHeader text='Drivers' /></div>
-      <FilterDrivers
-         selectedDriverFilters={filters.drivers ?? []}
-         setSelectedDriverFilters={driverIDs => setFilters({ ...filters, drivers: driverIDs })}
-      />
+         <div className='text-secondary mt-2 mb-1'><SmallHeader text='Statuses' /></div>
+         <FilterStatuses
+            isDisabled={isFetching}
+            selectedStatusFilters={filters_copy.status ?? []}
+            setSelectedStatusFilters={statusIDs => setFilters_copy({ ...filters_copy, status: statusIDs })}
+         />
 
-      <div className='text-secondary mt-2 mb-1'><SmallHeader text='Billing' /></div>
-      <FilterFees
-         selectedFeeFilters={filters.billing ?? []}
-         setSelectedFeeFilters={feeIDs => setFilters({ ...filters, billing: feeIDs })}
-      />
+         <div className='text-secondary mt-2 mb-1'><SmallHeader text='Customers' /></div>
+         <FilterCustomers
+            isDisabled={isFetching}
+            selectedCustomerFilters={filters_copy.customer ?? []}
+            setSelectedCustomerFilters={customerIDs => setFilters_copy({ ...filters_copy, customer: customerIDs })}
+         />
 
-      <div className='text-secondary mt-2 mb-1'><SmallHeader text='Mileage' /></div>
-      <div className='d-flex gap-3'>
-         <TextInput
-            input={filters.mileageGTE ?? ''}
-            setInput={input => {
-               // proceed if in put is a number
-               if (!isNaN(input)) {
-                  // update the value if the numbers are not same or it's ending in a decimal
-                  if (input !== filters.mileageGTE) {
-                     setFilters({
-                        ...filters,
-                        mileageGTE: input
-                     })
+         <div className='text-secondary mt-2 mb-1'><SmallHeader text='Drivers' /></div>
+         <FilterDrivers
+            isDisabled={isFetching}
+            selectedDriverFilters={filters_copy.drivers ?? []}
+            setSelectedDriverFilters={driverIDs => setFilters_copy({ ...filters_copy, drivers: driverIDs })}
+         />
+
+         <div className='text-secondary mt-2 mb-1'><SmallHeader text='Billing' /></div>
+         <FilterFees
+            isDisabled={isFetching}
+            selectedFeeFilters={filters_copy.billing ?? []}
+            setSelectedFeeFilters={feeIDs => setFilters_copy({ ...filters_copy, billing: feeIDs })}
+         />
+
+         <div className='text-secondary mt-2 mb-1'><SmallHeader text='Mileage' /></div>
+         <div className='d-flex gap-3'>
+            <TextInput
+               input={filters_copy.mileageGTE ?? ''}
+               isDisabled={isFetching}
+               setInput={input => {
+                  // proceed if in put is a number
+                  if (!isNaN(input)) {
+                     // update the value if the numbers are not same or it's ending in a decimal
+                     if (input !== filters_copy.mileageGTE) {
+                        setFilters_copy({
+                           ...filters_copy,
+                           mileageGTE: input
+                        })
+                     };
                   };
+               }}
+            />
+            <TextInput
+               input={filters_copy.mileageLTE ?? ''}
+               isDisabled={isFetching}
+               setInput={input => {
+                  // proceed if in put is a number
+                  if (!isNaN(input)) {
+                     // update the value if the numbers are not same or it's ending in a decimal
+                     if (input !== filters_copy.mileageLTE) {
+                        setFilters_copy({
+                           ...filters_copy,
+                           mileageLTE: input
+                        })
+                     };
+                  };
+               }}
+            />
+         </div>
+
+         <div className='text-secondary mt-2 mb-1'><SmallHeader text='Reference' /></div>
+         <TextInput
+            input={filters_copy.reference ?? ''}
+            isDisabled={isFetching}
+            setInput={input => {
+               if (input !== filters_copy.reference) {
+                  setFilters_copy({ ...filters_copy, reference: input });
                };
             }}
          />
+
+         <div className='text-secondary mt-2 mb-1'><SmallHeader text='Notes' /></div>
          <TextInput
-            input={filters.mileageLTE ?? ''}
+            input={filters_copy.notes ?? ''}
+            isDisabled={isFetching}
             setInput={input => {
-               // proceed if in put is a number
-               if (!isNaN(input)) {
-                  // update the value if the numbers are not same or it's ending in a decimal
-                  if (input !== filters.mileageLTE) {
-                     setFilters({
-                        ...filters,
-                        mileageLTE: input
-                     })
-                  };
+               if (input !== filters_copy.notes) {
+                  setFilters_copy({ ...filters_copy, notes: input });
                };
             }}
          />
-      </div>
 
-      <div className='text-secondary mt-2 mb-1'><SmallHeader text='Reference' /></div>
-      <TextInput
-         input={filters.reference ?? ''}
-         setInput={input => {
-            if (input !== filters.reference) {
-               setFilters({ ...filters, reference: input });
-            };
-         }}
-      />
+         <div className='text-secondary mt-2 mb-1'><SmallHeader text='Dates' /></div>
+         <Tabs tabs={[
+            {
+               name: 'Pickup',
+               icon: 'bi bi-box-arrow-in-up-right',
+               contentJSX: (
+                  <DateSettersContainer
+                     clearDateRange={() => {
+                        const { pickupGTE, pickupLTE, ...otherFilters } = filters_copy;
 
-      <div className='text-secondary mt-2 mb-1'><SmallHeader text='Notes' /></div>
-      <TextInput
-         input={filters.notes ?? ''}
-         setInput={input => {
-            if (input !== filters.notes) {
-               setFilters({ ...filters, notes: input });
-            };
-         }}
-      />
+                        setQuickDateSelection({ pickup: null });
+                        setFilters_copy({ ...otherFilters, });
+                     }}
+                     isDisabled={isFetching}
+                     quickDateSelected={quickDateSelections.pickup}
+                     setDateRange={({ dateEnd, dateStart }) => {
+                        const dates = {};
 
-      <div className='text-secondary mt-2 mb-1'><SmallHeader text='Dates' /></div>
-      <Tabs tabs={[
-         {
-            name: 'Pickup',
-            icon: 'bi bi-box-arrow-in-up-right',
-            contentJSX: (
-               <DateSettersContainer
-                  clearDateRange={() => {
-                     const { pickupGTE, pickupLTE, ...otherFilters } = filters;
+                        if (dateStart) dates.pickupGTE = dateStart;
+                        if (dateEnd) dates.pickupLTE = dateEnd;
 
-                     setQuickDateSelection({ pickup: null });
-                     setFilters({ ...otherFilters, });
-                  }}
-                  quickDateSelected={quickDateSelections.pickup}
-                  setDateRange={({ dateEnd, dateStart }) => {
-                     const dates = {};
+                        setFilters_copy({ ...filters_copy, ...dates });
+                     }}
+                     setQuickDateSelection={buttonText => setQuickDateSelection({ pickup: buttonText })}
+                  />
+               )
+            },
+            {
+               name: 'Delivery',
+               icon: 'bi bi-box-arrow-down-right',
+               contentJSX: (
+                  <DateSettersContainer
+                     clearDateRange={() => {
+                        const { deliveryGTE, deliveryLTE, ...otherFilters } = filters_copy;
 
-                     if (dateStart) dates.pickupGTE = dateStart;
-                     if (dateEnd) dates.pickupLTE = dateEnd;
+                        setQuickDateSelection({ delivery: null });
+                        setFilters_copy({ ...otherFilters, });
+                     }}
+                     isDisabled={isFetching}
+                     quickDateSelected={quickDateSelections.delivery}
+                     setDateRange={({ dateEnd, dateStart }) => {
+                        const dates = {};
 
-                     setFilters({ ...filters, ...dates });
-                  }}
-                  setQuickDateSelection={buttonText => setQuickDateSelection({ pickup: buttonText })}
-               />
-            )
-         },
-         {
-            name: 'Delivery',
-            icon: 'bi bi-box-arrow-down-right',
-            contentJSX: (
-               <DateSettersContainer
-                  clearDateRange={() => {
-                     const { deliveryGTE, deliveryLTE, ...otherFilters } = filters;
+                        if (dateStart) dates.deliveryGTE = dateStart;
+                        if (dateEnd) dates.deliveryLTE = dateEnd;
 
-                     setQuickDateSelection({ delivery: null });
-                     setFilters({ ...otherFilters, });
-                  }}
-                  quickDateSelected={quickDateSelections.delivery}
-                  setDateRange={({ dateEnd, dateStart }) => {
-                     const dates = {};
+                        setFilters_copy({ ...filters_copy, ...dates });
+                     }}
+                     setQuickDateSelection={buttonText => setQuickDateSelection({ delivery: buttonText })}
+                  />
+               )
+            },
+            {
+               name: 'Created',
+               icon: 'bi bi-calendar2-plus',
+               contentJSX: (
+                  <DateSettersContainer
+                     clearDateRange={() => {
+                        const { createdOnGTE, createdOnLTE, ...otherFilters } = filters_copy;
 
-                     if (dateStart) dates.deliveryGTE = dateStart;
-                     if (dateEnd) dates.deliveryLTE = dateEnd;
+                        setQuickDateSelection({ created: null });
+                        setFilters_copy({ ...otherFilters, });
+                     }}
+                     hideFutureSelections={true}
+                     isDisabled={isFetching}
+                     quickDateSelected={quickDateSelections.created}
+                     setDateRange={({ dateEnd, dateStart }) => {
+                        const dates = {};
 
-                     setFilters({ ...filters, ...dates });
-                  }}
-                  setQuickDateSelection={buttonText => setQuickDateSelection({ delivery: buttonText })}
-               />
-            )
-         },
-         {
-            name: 'Created',
-            icon: 'bi bi-calendar2-plus',
-            contentJSX: (
-               <DateSettersContainer
-                  clearDateRange={() => {
-                     const { createdOnGTE, createdOnLTE, ...otherFilters } = filters;
+                        if (dateStart) dates.createdOnGTE = dateStart;
+                        if (dateEnd) dates.createdOnLTE = dateEnd;
 
-                     setQuickDateSelection({ created: null });
-                     setFilters({ ...otherFilters, });
-                  }}
-                  hideFutureSelections={true}
-                  quickDateSelected={quickDateSelections.created}
-                  setDateRange={({ dateEnd, dateStart }) => {
-                     const dates = {};
+                        setFilters_copy({ ...filters_copy, ...dates });
+                     }}
+                     setQuickDateSelection={buttonText => setQuickDateSelection({ created: buttonText })}
+                  />
+               )
+            },
+         ]} />
 
-                     if (dateStart) dates.createdOnGTE = dateStart;
-                     if (dateEnd) dates.createdOnLTE = dateEnd;
-
-                     setFilters({ ...filters, ...dates });
-                  }}
-                  setQuickDateSelection={buttonText => setQuickDateSelection({ created: buttonText })}
-               />
-            )
-         },
-      ]} />
-
-      {/* clears all the filters and selected date buttons */}
-      <div className='mt-3'>
-         <Button handleClick={clearFilters}>
-            Clear All
-         </Button>
-      </div>
-   </Modal>
-);
+         {/* clears all the filters_copy and selected date buttons */}
+         <div className='mt-3'>
+            <Button
+               handleClick={clearFilters}
+               isDisabled={isFetching}
+            >
+               Clear All
+            </Button>
+         </div>
+      </Modal>
+   )
+};
 
 export default FilterAndASort;

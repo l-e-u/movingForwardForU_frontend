@@ -8,7 +8,7 @@ import { useUsersContext } from '../hooks/useUsersContext';
 import { useGetUsers } from '../hooks/useGetUsers';
 
 
-const FilterDrivers = ({ selectedDriverFilters, setSelectedDriverFilters }) => {
+const FilterDrivers = ({ isDisabled, selectedDriverFilters, setSelectedDriverFilters }) => {
    const { users } = useUsersContext();
    const { getUsers, error, isLoading } = useGetUsers();
 
@@ -26,7 +26,7 @@ const FilterDrivers = ({ selectedDriverFilters, setSelectedDriverFilters }) => {
          className='text-reset'
          classNamePrefix='mySelectInput'
          closeMenuOnSelect={false}
-         isDisabled={error || isLoading}
+         isDisabled={error || isLoading || isDisabled}
          isLoading={isLoading}
          isMulti={true}
          isSearchable={true}

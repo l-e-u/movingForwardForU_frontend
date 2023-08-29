@@ -59,7 +59,7 @@ const EllipsisMenu = ({ actions = [] }) => {
          style={{ outline: 'none' }}
          type='button'
       >
-         <i className={action.icon}></i>
+         <i className={`bi bi-${action.icon}`}></i>
          <span>{action.name}</span>
       </button>
    ));

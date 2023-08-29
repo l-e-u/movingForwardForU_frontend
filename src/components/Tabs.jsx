@@ -56,7 +56,7 @@ const Tabs = ({ tabs }) => {
                tabs.map((tab, index) => {
                   const { name, icon } = tab;
                   const isSelected = selectedTabIndex === index;
-                  const iconJSX = <i className={`${iconClasses} ${icon}`} style={{ opacity: isSelected ? '1' : '0.5' }}></i>;
+                  const iconJSX = <i className={`${iconClasses} bi bi-${icon}`} style={{ opacity: isSelected ? '1' : '0.5' }}></i>;
                   const labelJSX = <span style={{ opacity: isSelected ? '1' : '0.5' }}>{name}</span>;
 
                   if (hasOneTab) {

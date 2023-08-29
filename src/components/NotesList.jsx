@@ -1,53 +1,84 @@
 // components
-import FileDownloadButton from './FileDownloadLink';
+import AttachmentDownloadLink from './AttachmentDownloadLink';
+import SmallHeader from './SmallHeader';
 
 // utilities
-import { dateStringFormat, timeStringFormat } from '../utils/StringUtils';
+import { datePrettyString } from '../utils/StringUtils';
 
-const NotesList = ({ list }) => {
-   const listStyles = {
-      listStyle: 'none',
-      paddingInlineStart: '0px'
-   };
+const NotesList = ({ notes }) => (
+   <ul className='notesList list-style-none container-fluid p-0 m-0'>
+      {
+         notes.map(note => (
+            <li
+               key={note._id}
+               className='row d-flex justify-content-between mt-3'
+               style={{
+                  borderTop: '1px dotted rgba(var(--bs-secondary-rgb), 0.25)',
+               }}
+            >
+               <div className='col-12 fs-smaller text-secondary text-capitalize mt-2'>
+                  {datePrettyString({ date: note.createdAt, includeTime: true })}
+               </div>
 
-   const paragraphStyles = {
-      whiteSpace: 'pre-wrap',
-   };
+               <div className='col-12 fs-smaller text-secondary mb-2'>
+                  {note.createdBy.fullName}
+               </div>
 
-   const itemsJSX = list.map((note, index) => {
-      const { _id, attachments, createdBy, createdAt } = note;
-      const createdOnDate = new Date(createdAt);
-      const lastNote = index === list.length - 1;
+               {
+                  (note.attachments.length > 0) &&
+                  <div className='px-2 mb-2'>
+                     <table className='table table-sm table-borderless text-reset m-0'>
+                        <thead>
+                           <tr className='text-secondary fs-smaller'>
+                              <th className='fw-normal opacity-50' scope='col' colSpan='2'>
+                                 {`Attachment${note.attachments.length > 1 ? 's' : ''}`}
+                              </th>
+                              <th className='fw-normal opacity-50 text-end' colSpan='2' scope='col'>Type</th>
+                           </tr>
+                        </thead>
+                        <tbody>
+                           {
+                              note.attachments.map((attachment, index) => {
+                                 const number = index + 1;
+                                 const hasNewFile = !!attachment.file;
+                                 let fileType = attachment.contentType?.split('/')[1].toLowerCase();
 
-      return (
-         <li key={_id}>
-            <div className='position-relative fs-smaller text-secondary mb-1'>
-               <div>{createdBy.fullName}</div>
-               <div>{`${dateStringFormat(createdOnDate)} · ${timeStringFormat(createdOnDate, true)}`}</div>
-               <span className='position-absolute top-0 end-0'>{`# ${index + 1}`}</span>
-            </div>
+                                 if (hasNewFile) fileType = attachment.filename.split('.')[1];
 
-            <p className='m-0' style={paragraphStyles}>
-               {note.message + `kfjaoienfoaneiofa fkeagoanl a ioahgeoaeofj ijeoajfoaijef aijoeaifjioa joijeagfiojaoijkljdlafjlkdalfka kjldakf;j NEW LINE \n lkjdlkfajkd kdlfjadfklajdlfjalkdjfkl ajkldjf klajkdflj aklf   eoihgworighurghuieh ogrh a rba94h v949ha7g4b9 c  agc 94 joaigeja geeagio jogr`}
-            </p>
-            {attachments.map((attachment, index) => {
-               return (
-                  <div key={attachment._id} className='d-flex justify-content-end mt-2'>
-                     <span className='text-secondary fs-smaller me-1'>{`${index + 1}. `}</span>
-                     <FileDownloadButton key={attachment._id} {...attachment} />
+                                 return (
+                                    <tr key={attachment._id ?? index}>
+                                       <th
+                                          className='fs-smaller opacity-50 fw-normal text-secondary'
+                                          scope='row'
+                                          style={{ fontFamily: 'monospace' }}
+                                       >
+                                          {number.toString().padStart(2, '0')}
+                                       </th>
+
+                                       <td>
+                                          <AttachmentDownloadLink attachment={attachment} />
+                                       </td>
+
+                                       <td className='text-nowrap text-end align-middle'>
+                                          {fileType}
+                                       </td>
+                                    </tr>
+                                 )
+                              })
+                           }
+                        </tbody>
+                     </table>
                   </div>
-               )
-            })}
-            {!lastNote && <hr />}
-         </li>
-      );
-   });
+               }
 
-   return (
-      <ul className='m-0' style={listStyles}>
-         {itemsJSX}
-      </ul>
-   );
-};
+               <span className='text-secondary opacity-50' ><SmallHeader text='Message' /></span>
+               <div className='col-12 whiteSpace-preWrap'>
+                  {note.message}
+               </div>
+            </li>
+         ))
+      }
+   </ul>
+);
 
 export default NotesList;

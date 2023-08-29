@@ -16,8 +16,6 @@ export const useGetJobs = () => {
    const [error, setError] = useState(null);
    const [isLoading, setIsLoading] = useState(false);
 
-   const clearError = () => setError(null);
-
    const getJobs = async (props = { filters: {}, currentPage: 1, limit: 0, setPaginationTotals: () => { } }) => {
       setIsLoading(true);
       setError(null);
@@ -51,5 +49,5 @@ export const useGetJobs = () => {
       setIsLoading(false);
    };
 
-   return { clearError, getJobs, error, isLoading };
+   return { getJobs, error, isLoading };
 };

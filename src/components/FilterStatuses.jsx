@@ -7,7 +7,7 @@ import Select from 'react-select';
 import { useStatusesContext } from '../hooks/useStatusesContext';
 import { useGetStatuses } from '../hooks/useGetStatuses';
 
-const FilterStatuses = ({ selectedStatusFilters, setSelectedStatusFilters }) => {
+const FilterStatuses = ({ isDisabled, selectedStatusFilters, setSelectedStatusFilters }) => {
    const { statuses } = useStatusesContext();
    const { getStatuses, error, isLoading } = useGetStatuses();
 
@@ -25,7 +25,7 @@ const FilterStatuses = ({ selectedStatusFilters, setSelectedStatusFilters }) => 
          className='text-reset'
          classNamePrefix='mySelectInput'
          closeMenuOnSelect={false}
-         isDisabled={error || isLoading}
+         isDisabled={error || isLoading || isDisabled}
          isLoading={isLoading}
          isMulti={true}
          isSearchable={true}

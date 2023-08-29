@@ -13,9 +13,9 @@
    "dependencies": {
       "@rollup/plugin-replace": "^5.0.2",
       "framer-motion": "^10.13.1",
+      "lodash": "^4.17.21",
       "react": "^18.2.0",
       "react-dom": "^18.2.0",
-      "react-password-checklist": "^1.4.3",
       "react-places-autocomplete": "^7.3.0",
       "react-router-dom": "^6.13.0",
       "react-select": "^5.7.3",

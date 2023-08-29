@@ -3,33 +3,100 @@ import { AnimatePresence } from 'framer-motion';
 
 // hooks
 import { useJobsContext } from '../hooks/useJobsContext';
-import { useAuthContext } from '../hooks/useAuthContext';
 import { useGetJobs } from '../hooks/useGetJobs';
 
 // components
-import JobDetails from '../components/JobDetails';
+import AddDocumentButton from '../components/AddDocumentButton';
+import CreateJobForm from '../components/CreateJobForm';
+import DeleteForm from '../components/DeleteForm';
+import EditJobForm from '../components/EditJobForm';
 import ErrorAlert from '../components/ErrorAlert';
 import FadeInList from '../components/FadeInList';
+import FilterAndASort from '../components/FilterAndSort';
+import FilterButton from '../components/FilterButton';
 import FormAddNote from '../components/FormAddNote';
+import FormArchive from '../components/FormArchive';
+import JobCard from '../components/JobCard';
 import LoadingDocuments from '../components/LoadingDocuments';
 import NavPagination from '../components/NavPagination';
 import SmallHeader from '../components/SmallHeader';
 
 const Jobs = ({
    filters,
+   filters_quickDateSelections,
    pagination,
+   permissions,
    setFilters,
-   setPagination
+   setFilters_quickDateSelections,
+   setPagination,
 }) => {
-   const { user } = useAuthContext();
-   const { jobs } = useJobsContext();
-
    const { getJobs, error, isLoading } = useGetJobs();
+   const { jobs, dispatch } = useJobsContext();
 
-   // form
+   // booleans to determine what forms to show
    const [showForm_AddNote, setShowForm_AddNote] = useState(false);
+   const [showForm_Archive, setShowForm_Archive] = useState(false);
+   const [showForm_Create, setShowForm_Create] = useState(false);
+   const [showForm_Delete, setShowForm_Delete] = useState(false);
+   const [showForm_Edit, setShowForm_Edit] = useState(false);
 
+   // boolean to show the filter options
+   const [showFilters, setShowFilters] = useState(false);
+
+   const [jobResults, setJobResults] = useState([]);
+
+   // sets the job to have a note added, archived, deleted, or edited
    const [selectedJob, setSelectedJob] = useState(null);
+
+   const getAdditionalOptions = (job) => {
+      const options = [];
+
+      if (permissions.canArchive) {
+         options.push({
+            name: 'Archive',
+            icon: 'archive',
+            handler: () => {
+               setSelectedJob(job);
+               setShowForm_Archive(true);
+            }
+         });
+      };
+
+      if (permissions.canDelete) {
+         options.push({
+            name: 'Delete',
+            icon: 'trash3',
+            handler: () => {
+               setSelectedJob(job);
+               setShowForm_Delete(true);
+            }
+         });
+      };
+
+      if (permissions.canEdit) {
+         options.push({
+            name: 'Edit',
+            icon: 'pen',
+            handler: () => {
+               setSelectedJob(job);
+               setShowForm_Edit(true);
+            }
+         });
+      };
+
+      if (permissions.canAddNote) {
+         options.push({
+            name: 'Note',
+            icon: 'sticky',
+            handler: () => {
+               setSelectedJob(job);
+               setShowForm_AddNote(true);
+            }
+         });
+      };
+
+      return options;
+   };
 
    // updates the pages.current or pages.total
    const setPages = (page) => {
@@ -59,16 +126,15 @@ const Jobs = ({
       });
    };
 
-   // fetches results as the user chooses filters or changes limits for results
+   // once fetched, set the results to list
+   useEffect(() => setJobResults(jobs), [jobs]);
+
+   // fetch results and set jobResults
    useEffect(() => {
       getJobs({
          currentPage: pagination.pages.current,
          limit: pagination.results.limit,
-         filters: {
-            ...filters,
-            isArchived: false,
-            drivers: [user._id]
-         },
+         filters,
          setPaginationTotals: ({ totalNumberOfResults, totalNumberOfPages }) => {
             setPagination({
                ...pagination,
@@ -80,17 +146,21 @@ const Jobs = ({
                   ...pagination.results,
                   total: totalNumberOfResults
                }
-            })
+            });
          }
       });
-   }, [pagination.results.limit, pagination.pages.current, filters]);
+   }, [filters, pagination.pages.current, pagination.results.limit]);
 
    return (
       <>
-         <div className='d-flex flex-column gap-3 px-3 my-3'>
-            {/* Display the total amount of search results */}
-            <div className='text-secondary'>
-               <SmallHeader text={`Total: ${pagination.results.total}`} />
+         <div className='d-flex flex-column gap-3 my-3 px-3'>
+            <div className='d-flex gap-3'>
+               {/* Display the total amount of search results */}
+               <div className='flex-grow-1 mt-auto me-auto text-secondary'>
+                  <SmallHeader text={`Total: ${pagination.results.total}`} />
+               </div>
+               <FilterButton handleClick={() => setShowFilters(true)} />
+               {permissions.canCreate && <AddDocumentButton handleClick={() => setShowForm_Create(true)} />}
             </div>
 
             <NavPagination
@@ -106,34 +176,103 @@ const Jobs = ({
                }}
                setPages={setPages}
                totalPages={pagination.pages.total}
-               totalResults={pagination.results.total}
             />
          </div>
 
-         {/* ADD NOTE FORM */}
+         {/* ERROR MESSAGE */}
+         {
+            error &&
+            <div className='mx-3'>
+               <ErrorAlert message={error.message} />
+            </div>
+         }
+
+         {/* FILTER SELECTION */}
+         <AnimatePresence>
+            {
+               showFilters &&
+               <FilterAndASort
+                  clearFilters={() => {
+                     setFilters({});
+                     setFilters_quickDateSelections({
+                        pickup: null,
+                        delivery: null,
+                        created: null
+                     });
+                  }}
+                  filters={filters}
+                  hideForm={() => setShowFilters(false)}
+                  isFetching={isLoading}
+                  quickDateSelections={filters_quickDateSelections}
+                  setQuickDateSelection={selection => {
+                     setFilters_quickDateSelections({
+                        ...filters_quickDateSelections,
+                        ...selection
+                     })
+                  }}
+                  setFilters={setFilters}
+               />
+            }
+         </AnimatePresence>
+
+         {/* -------------- FORMS -------------- */}
          <AnimatePresence onExitComplete={() => setSelectedJob(null)}>
+            {/* ARCHIVE FORM */}
+            {
+               showForm_Archive &&
+               <FormArchive jobID={selectedJob._id} hideForm={() => setShowForm_Archive(false)} />
+            }
+
+            {/* ADD NOTE FORM */}
             {
                showForm_AddNote &&
                <FormAddNote hideForm={() => setShowForm_AddNote(false)} jobID={selectedJob._id} />
             }
+
+            {/* CREATE FORM */}
+            {
+               showForm_Create &&
+               <CreateJobForm hideForm={() => setShowForm_Create(false)} />
+            }
+
+            {/* EDIT FORM */}
+            {
+               showForm_Edit &&
+               <EditJobForm currentJob={selectedJob} hideForm={() => setShowForm_Edit(false)} />
+            }
+
+            {/* DELETE FORM */}
+            {
+               showForm_Delete &&
+               <DeleteForm
+                  apiRouteName='jobs'
+                  deleteFromContext={deletedJob => dispatch({ type: 'DELETE_JOB', payload: deletedJob })}
+                  documentID={selectedJob._id}
+                  hideForm={() => setShowForm_Delete(false)}
+                  warning={
+                     selectedJob.notes.some(note => note.attachments.length > 0) ?
+                        'Deleting this job will also delete all attachments in its notes.' :
+                        null
+                  }
+               />
+            }
          </AnimatePresence>
 
-         {/* LIST OF JOBS */}
+         {/* -------------- JOBS -------------- */}
          <AnimatePresence mode='wait'>
             {
                !isLoading &&
-               <FadeInList items={
-                  jobs.map(job => (
-                     <JobDetails
-                        job={job}
-                        showForm_AddNote={() => {
-                           setSelectedJob(job);
-                           setShowForm_AddNote(true);
-                        }}
-                        restrictInfo={true}
-                     />
-                  ))
-               } />
+               <FadeInList
+                  items={
+                     jobResults.map(job => (
+                        <JobCard
+                           {...permissions}
+                           job={job}
+                           documentActions={getAdditionalOptions(job)}
+                        />
+                     ))
+                  }
+               />
             }
          </AnimatePresence>
 
@@ -141,11 +280,6 @@ const Jobs = ({
          <AnimatePresence mode='wait'>
             {isLoading && <LoadingDocuments />}
          </AnimatePresence>
-
-         {
-            error &&
-            <ErrorAlert message={error.message} />
-         }
       </>
    );
 };

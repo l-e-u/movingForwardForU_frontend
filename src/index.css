@@ -58,6 +58,10 @@ body {
    background: linear-gradient(to left, var(--mainPalette8), var(--mainPalette9));
 }
 
+.list-style-none {
+   list-style: none;
+}
+
 .outline-0 {
    outline: none;
 }

@@ -8,7 +8,7 @@ import { useContactsContext } from '../hooks/useContactsContext';
 import { useGetContacts } from '../hooks/useGetContacts';
 
 
-const FilterCustomers = ({ selectedCustomerFilters, setSelectedCustomerFilters }) => {
+const FilterCustomers = ({ isDisabled, selectedCustomerFilters, setSelectedCustomerFilters }) => {
    const { contacts } = useContactsContext();
    const { getContacts, error, isLoading } = useGetContacts();
 
@@ -26,7 +26,7 @@ const FilterCustomers = ({ selectedCustomerFilters, setSelectedCustomerFilters }
          className='text-reset'
          classNamePrefix='mySelectInput'
          closeMenuOnSelect={false}
-         isDisabled={error || isLoading}
+         isDisabled={error || isLoading || isDisabled}
          isLoading={isLoading}
          isMulti={true}
          isSearchable={true}

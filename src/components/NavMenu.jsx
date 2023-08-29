@@ -13,7 +13,7 @@ const NavMenu = ({ selectedLink, setSelectedLink }) => {
    const { user } = useAuthContext();
 
    const links = [
-      { name: 'Jobs', path: '/', icon: 'bi-list-check', access: 'driver' },
+      { name: 'Jobs', path: '/jobs', icon: 'bi-list-check', access: 'driver' },
       { name: 'Dispatch', path: '/dispatch', icon: 'bi-truck', access: 'dispatcher' },
       { name: 'Contacts', path: '/contacts', icon: 'bi-person-vcard', access: 'dispatcher' },
       { name: 'Users', path: '/users', icon: 'bi-people', access: 'dispatcher' },

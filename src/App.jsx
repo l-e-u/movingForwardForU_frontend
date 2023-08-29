@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
 
@@ -10,18 +10,18 @@ import NavMenu from './components/NavMenu.jsx';
 import Page from './components/Page';
 
 // pages
-import Archives from './pages/Archives.jsx';
 import Contacts from './pages/Contacts.jsx';
 import Fees from './pages/Fees.jsx';
-import Dispatch from './pages/Dispatch.jsx'
 import Login from './pages/Login.jsx';
-import Jobs from './pages/Jobs.jsx';
+import JobsArchives from './pages/JobsArchives';
+import JobsDispatcher from './pages/JobsDispatcher';
+import JobsDriver from './pages/JobsDriver';
 import Statuses from './pages/Statuses.jsx';
 import Users from './pages/Users.jsx';
 import Verify from './pages/Verify.jsx';
 
 function App() {
-   const paginationDefaults = {
+   const defaults_paginations = {
       pages: {
          current: 1,
          total: 1
@@ -33,25 +33,46 @@ function App() {
       }
    };
 
+   const defaults_quickDateSelections = {
+      created: null,
+      delivery: null,
+      pickup: null
+   };
+
    const { user } = useAuthContext();
 
    const [selectedLink, setSelectedLink] = useState('Jobs');
+
    const [paginations, setPaginations] = useState({
-      archive: paginationDefaults,
-      contacts: paginationDefaults,
-      dispatch: paginationDefaults,
-      jobs: paginationDefaults,
+      archives: defaults_paginations,
+      contacts: defaults_paginations,
+      dispatch: defaults_paginations,
+      jobs: defaults_paginations,
    });
+
    const [filters, setFilters] = useState({
-      archives: {},
-      dispatch: {},
-      jobs: {}
+      archives: { isArchived: true },
+      dispatch: { isArchived: false },
+      jobs: { isArchived: false }
+   });
+
+   const [filters_quickDateSelections, setFilters_quickDateSelections] = useState({
+      archives: defaults_quickDateSelections,
+      jobs: defaults_quickDateSelections,
+      dispatch: defaults_quickDateSelections,
    });
 
    const setThisFilter = (filter) => {
       setFilters({
          ...filters,
-         [selectedLink.toLocaleLowerCase()]: filter
+         [selectedLink.toLowerCase()]: filter
+      });
+   };
+
+   const setThisFilter_quickDateSelections = (quickDateSelections) => {
+      setFilters_quickDateSelections({
+         ...filters_quickDateSelections,
+         [selectedLink.toLowerCase()]: quickDateSelections
       });
    };
 
@@ -62,6 +83,19 @@ function App() {
       });
    };
 
+   // after user login, update the filters for jobs, which returns jobs assigned to logged user
+   useEffect(() => {
+      if (user) {
+         setFilters({
+            ...filters,
+            jobs: {
+               ...filters.jobs,
+               drivers: [user._id]
+            }
+         });
+      };
+   }, [user]);
+
    return (
       <div className='App'>
          <AnimatePresence mode='wait'>
@@ -70,14 +104,19 @@ function App() {
                <Page>
                   <Routes>
                      <Route
-                        path='/'
+                        path='/jobs'
                         element={
                            user ?
-                              <Jobs
+                              <JobsDriver
                                  filters={filters.jobs}
+                                 filters_quickDateSelections={filters_quickDateSelections.jobs}
                                  pagination={paginations.jobs}
                                  setFilters={setThisFilter}
+                                 setFilters_quickDateSelections={setThisFilter_quickDateSelections}
                                  setPagination={setThisPagination}
+                                 showBilling={false}
+                                 showMoreDocumentOptions={false}
+                                 showMoreInDetails={false}
                               />
                               :
                               <Navigate to='/login' />
@@ -87,11 +126,16 @@ function App() {
                         path='/dispatch'
                         element={
                            user ?
-                              <Dispatch
+                              <JobsDispatcher
                                  filters={filters.dispatch}
+                                 filters_quickDateSelections={filters_quickDateSelections.dispatch}
                                  pagination={paginations.dispatch}
                                  setFilters={setThisFilter}
+                                 setFilters_quickDateSelections={setThisFilter_quickDateSelections}
                                  setPagination={setThisPagination}
+                                 showBilling={true}
+                                 showMoreDocumentOptions={true}
+                                 showMoreInDetails={true}
                               />
                               :
                               <Navigate to='/login' />
@@ -125,11 +169,16 @@ function App() {
                         path='/archives'
                         element={
                            user ?
-                              <Archives
+                              <JobsArchives
                                  filters={filters.archives}
-                                 pagination={paginations.archive}
+                                 filters_quickDateSelections={filters_quickDateSelections.archives}
+                                 pagination={paginations.archives}
                                  setFilters={setThisFilter}
+                                 setFilters_quickDateSelections={setThisFilter_quickDateSelections}
                                  setPagination={setThisPagination}
+                                 showBilling={true}
+                                 showMoreDocumentOptions={true}
+                                 showMoreInDetails={true}
                               />
                               :
                               <Navigate to='/login' />
@@ -137,11 +186,11 @@ function App() {
                      />
                      <Route
                         path='/login'
-                        element={!user ? <Login /> : <Navigate to='/' />}
+                        element={!user ? <Login /> : <Navigate to='/jobs' />}
                      />
                      <Route
                         path='/verify/:emailToken/'
-                        element={!user ? <Verify /> : <Navigate to='/' />}
+                        element={!user ? <Verify /> : <Navigate to='/jobs' />}
                      />
                   </Routes>
                </Page>
