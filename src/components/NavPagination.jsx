@@ -62,8 +62,8 @@ const NavPagination = ({
    setPages,
    totalPages,
 }) => {
-   const hasPrevious = currentPage === 1 ? false : true;
-   const hasNext = currentPage === totalPages ? false : true;
+   const hasPrevious = ((currentPage > 1) && (currentPage <= totalPages));
+   const hasNext = currentPage < totalPages ? true : false;
    const limits = [10, 25, 50, 100, 0];
    const pageNumbersJSX = [];
 
@@ -114,9 +114,7 @@ const NavPagination = ({
 
    return (
       <nav aria-label='pagination' className='d-flex justify-content-between'>
-         {
-            (totalPages > 1) && <div className='text-reset flex-grow-1'> {pageNumbersJSX} </div>
-         }
+         <div className='text-reset flex-grow-1'> {pageNumbersJSX} </div>
 
          <Select
             classNamePrefix='mySelect'

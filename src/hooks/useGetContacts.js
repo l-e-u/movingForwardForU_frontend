@@ -4,6 +4,9 @@ import { useState } from 'react';
 import { useContactsContext } from './useContactsContext';
 import { useAuthContext } from './useAuthContext';
 
+// utilities
+import { urlQueryString } from '../utils/StringUtils';
+
 export const useGetContacts = () => {
    const API_BASE_URL = process.env.API_BASE_URL;
 
@@ -14,13 +17,15 @@ export const useGetContacts = () => {
    const [isLoading, setIsLoading] = useState(false);
 
    // when nothing is passed, then all the results will be returned and no callback is used
-   const getContacts = async (props = { currentPage: 1, limit: 0, setPaginationTotals: () => { } }) => {
-      const { currentPage, limit, setPaginationTotals } = props;
-
+   const getContacts = async (props = { currentPage: 1, filters: {}, limit: 0, setPaginationTotals: () => { } }) => {
       setIsLoading(true);
       setError(null);
 
-      const response = await fetch(`${API_BASE_URL}/api/contacts?page=${currentPage}&limit=${limit}`, {
+      // set the query and options before making the reponse
+      const { currentPage, limit, filters, setPaginationTotals } = props;
+      const filterQuery = urlQueryString(filters);
+
+      const response = await fetch(`${API_BASE_URL}/api/contacts?page=${currentPage}&limit=${limit}${filterQuery}`, {
          headers: {
             'Authentication': `Bearer ${user.token}`
          }

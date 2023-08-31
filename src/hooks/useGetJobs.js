@@ -7,7 +7,7 @@ import { urlQueryString } from '../utils/StringUtils.js';
 import { useAuthContext } from './useAuthContext.js';
 import { useJobsContext } from './useJobsContext.js';
 
-export const useGetJobs = () => {
+export const useGetJobs = (subPath = '') => {
    const API_BASE_URL = process.env.API_BASE_URL;
 
    const { user } = useAuthContext();
@@ -20,11 +20,14 @@ export const useGetJobs = () => {
       setIsLoading(true);
       setError(null);
 
-      // set the query, subPath, and options before making the response
+      // set the query and options before making the response
       const { filters, currentPage, limit, setPaginationTotals } = props;
       const filtersQuery = urlQueryString(filters);
-
-      const response = await fetch(`${API_BASE_URL}/api/jobs?page=${currentPage}&limit=${limit}${filtersQuery}`, {
+      console.group()
+      console.log(filters);
+      console.log(filtersQuery)
+      console.groupEnd();
+      const response = await fetch(`${API_BASE_URL}/api/jobs${subPath}?page=${currentPage}&limit=${limit}${filtersQuery}`, {
          headers: {
             'Authentication': `Bearer ${user.token}`
          }

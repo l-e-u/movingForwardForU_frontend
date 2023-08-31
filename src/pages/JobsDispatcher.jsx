@@ -8,6 +8,7 @@ const JobsDispatcher = (props) => {
       canCreate: true,
       canDelete: true,
       canEdit: true,
+      filterStatus: true,
       showBilling: true,
       showDetails: true,
       showDrivers: true,

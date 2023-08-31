@@ -2,18 +2,19 @@ import { useEffect, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 
 // components
+import AddDocumentButton from '../components/AddDocumentButton';
 import CreateFeeForm from '../components/CreateFeeForm';
+import DeleteForm from '../components/DeleteForm';
+import DetailsContainer from '../components/DetailsContainer';
 import EditFeeForm from '../components/EditFeeForm';
+import EllipsisMenu from '../components/EllipsisMenu';
+import ErrorAlert from '../components/ErrorAlert';
+import LoadingDocuments from '../components/LoadingDocuments';
 import SmallHeader from '../components/SmallHeader';
 
 // hooks
 import { useGetFees } from '../hooks/useGetFees';
 import { useFeesContext } from '../hooks/useFeesContext';
-import DetailsContainer from '../components/DetailsContainer';
-import EllipsisMenu from '../components/EllipsisMenu';
-import DeleteForm from '../components/DeleteForm';
-import AddDocumentButton from '../components/AddDocumentButton';
-import LoadingDocuments from '../components/LoadingDocuments';
 
 const Fees = () => {
    const { getFees, error, isLoading } = useGetFees();
@@ -68,7 +69,21 @@ const Fees = () => {
 
    return (
       <>
-         <AddDocumentButton handleClick={() => setShowCreateForm(true)} />
+         <div className='d-flex my-3 px-3'>
+            <AddDocumentButton handleClick={() => setShowCreateForm(true)} />
+
+            {/* Display the total amount of search results */}
+            <div className='mt-auto ms-auto text-secondary'>
+               <SmallHeader text={`Total: ${fees.length}`} />
+            </div>
+         </div>
+         {/* ERROR MESSAGE */}
+         {
+            error &&
+            <div className='mx-3'>
+               <ErrorAlert message={error.message} />
+            </div>
+         }
 
          <AnimatePresence>
             {

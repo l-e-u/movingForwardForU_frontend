@@ -8,6 +8,7 @@ import DeleteForm from '../components/DeleteForm';
 import DetailsContainer from '../components/DetailsContainer';
 import EditUserForm from '../components/EditUserForm';
 import EllipsisMenu from '../components/EllipsisMenu';
+import ErrorAlert from '../components/ErrorAlert';
 import LoadingDocuments from '../components/LoadingDocuments';
 import SmallHeader from '../components/SmallHeader';
 
@@ -71,7 +72,22 @@ const Users = () => {
 
    return (
       <>
-         <AddDocumentButton handleClick={() => setShowCreateForm(true)} />
+         <div className='d-flex my-3 px-3'>
+            <AddDocumentButton handleClick={() => setShowCreateForm(true)} />
+
+            {/* Display the total amount of search results */}
+            <div className='mt-auto ms-auto text-secondary'>
+               <SmallHeader text={`Total: ${users.length}`} />
+            </div>
+         </div>
+
+         {/* ERROR MESSAGE */}
+         {
+            error &&
+            <div className='mx-3'>
+               <ErrorAlert message={error.message} />
+            </div>
+         }
 
          <AnimatePresence>
             {

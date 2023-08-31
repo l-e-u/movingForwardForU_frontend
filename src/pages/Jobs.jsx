@@ -29,8 +29,9 @@ const Jobs = ({
    setFilters,
    setFilters_quickDateSelections,
    setPagination,
+   subPath,
 }) => {
-   const { getJobs, error, isLoading } = useGetJobs();
+   const { getJobs, error, isLoading } = useGetJobs(subPath ? subPath : '');
    const { jobs, dispatch } = useJobsContext();
 
    // booleans to determine what forms to show
@@ -153,16 +154,7 @@ const Jobs = ({
 
    return (
       <>
-         <div className='d-flex flex-column gap-3 my-3 px-3'>
-            <div className='d-flex gap-3'>
-               {/* Display the total amount of search results */}
-               <div className='flex-grow-1 mt-auto me-auto text-secondary'>
-                  <SmallHeader text={`Total: ${pagination.results.total}`} />
-               </div>
-               <FilterButton handleClick={() => setShowFilters(true)} />
-               {permissions.canCreate && <AddDocumentButton handleClick={() => setShowForm_Create(true)} />}
-            </div>
-
+         <div className='my-3 px-3'>
             <NavPagination
                currentPage={pagination.pages.current}
                isFetching={isLoading}
@@ -177,6 +169,17 @@ const Jobs = ({
                setPages={setPages}
                totalPages={pagination.pages.total}
             />
+
+            <div className='d-flex gap-3 mt-3'>
+               {permissions.canCreate && <AddDocumentButton handleClick={() => setShowForm_Create(true)} />}
+
+               <FilterButton handleClick={() => setShowFilters(true)} />
+
+               {/* Display the total amount of search results */}
+               <div className='mt-auto ms-auto text-secondary'>
+                  <SmallHeader text={`Total: ${pagination.results.total}`} />
+               </div>
+            </div>
          </div>
 
          {/* ERROR MESSAGE */}
@@ -192,6 +195,7 @@ const Jobs = ({
             {
                showFilters &&
                <FilterAndASort
+                  {...permissions}
                   clearFilters={() => {
                      setFilters({});
                      setFilters_quickDateSelections({

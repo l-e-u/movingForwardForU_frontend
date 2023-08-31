@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
 
@@ -51,9 +51,10 @@ function App() {
    });
 
    const [filters, setFilters] = useState({
-      archives: { isArchived: true },
-      dispatch: { isArchived: false },
-      jobs: { isArchived: false }
+      archives: {},
+      contacts: {},
+      dispatch: {},
+      jobs: {}
    });
 
    const [filters_quickDateSelections, setFilters_quickDateSelections] = useState({
@@ -83,19 +84,6 @@ function App() {
       });
    };
 
-   // after user login, update the filters for jobs, which returns jobs assigned to logged user
-   useEffect(() => {
-      if (user) {
-         setFilters({
-            ...filters,
-            jobs: {
-               ...filters.jobs,
-               drivers: [user._id]
-            }
-         });
-      };
-   }, [user]);
-
    return (
       <div className='App'>
          <AnimatePresence mode='wait'>
@@ -104,7 +92,7 @@ function App() {
                <Page>
                   <Routes>
                      <Route
-                        path='/jobs'
+                        path='/'
                         element={
                            user ?
                               <JobsDriver
@@ -150,7 +138,9 @@ function App() {
                         element={
                            user ?
                               <Contacts
+                                 filters={filters.contacts}
                                  pagination={paginations.contacts}
+                                 setFilters={setThisFilter}
                                  setPagination={setThisPagination}
                               />
                               :
@@ -186,11 +176,11 @@ function App() {
                      />
                      <Route
                         path='/login'
-                        element={!user ? <Login /> : <Navigate to='/jobs' />}
+                        element={!user ? <Login /> : <Navigate to='/' />}
                      />
                      <Route
                         path='/verify/:emailToken/'
-                        element={!user ? <Verify /> : <Navigate to='/jobs' />}
+                        element={!user ? <Verify /> : <Navigate to='/' />}
                      />
                   </Routes>
                </Page>

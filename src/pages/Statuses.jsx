@@ -12,6 +12,7 @@ import DeleteForm from '../components/DeleteForm';
 import DetailsContainer from '../components/DetailsContainer';
 import EditStatusForm from '../components/EditStatusForm';
 import EllipsisMenu from '../components/EllipsisMenu';
+import ErrorAlert from '../components/ErrorAlert';
 import LoadingDocuments from '../components/LoadingDocuments';
 import SmallHeader from '../components/SmallHeader';
 
@@ -24,21 +25,6 @@ const Statuses = () => {
    const [showEditForm, setShowEditForm] = useState(false);
 
    const [selectedStatus, setSelectedStatus] = useState(null);
-
-   // button to add new documents classes, styles, and framer-motion variants
-   const addButtonClasses = 'px-3 py-1 ms-auto position-relative border-0 rounded text-white d-flex justify-content-center align-items-center gap-1';
-   const addButtonVariants = {
-      mount: {
-         backgroundColor: 'var(--mainPalette4)',
-      },
-      onHover: {
-         scale: 1.1,
-         transition: {
-            duration: 0.3,
-         },
-         boxShadow: '0px 0px 8px var(--mainPalette4)',
-      }
-   };
 
    // styling for the list container
    const listClasses = 'statusesList px-md-5 py-0 px-3 m-0';
@@ -82,7 +68,22 @@ const Statuses = () => {
 
    return (
       < >
-         <AddDocumentButton handleClick={() => setShowCreateForm(true)} />
+         <div className='d-flex my-3 px-3'>
+            <AddDocumentButton handleClick={() => setShowCreateForm(true)} />
+
+            {/* Display the total amount of search results */}
+            <div className='mt-auto ms-auto text-secondary'>
+               <SmallHeader text={`Total: ${statuses.length}`} />
+            </div>
+         </div>
+
+         {/* ERROR MESSAGE */}
+         {
+            error &&
+            <div className='mx-3'>
+               <ErrorAlert message={error.message} />
+            </div>
+         }
 
          <AnimatePresence>
             {

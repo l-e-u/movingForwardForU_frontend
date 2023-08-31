@@ -19,7 +19,6 @@ const ContactDetails = ({ contact, showDeleteForm, showEditForm }) => {
       address,
       billingAddress,
       createdAt,
-      createdBy,
       defaultFees,
       email,
       name,
@@ -84,7 +83,7 @@ const ContactDetails = ({ contact, showDeleteForm, showEditForm }) => {
 
                   <i className={`bi bi-link-45deg ${firstColumnClasses}`}></i>
                   <a
-                     className={secondColumnClasses + ' text-reset'}
+                     className={secondColumnClasses + ' text-reset word-break-all'}
                      href={`http://${website}`}
                      rel='noopener noreferrer'
                      target='_blank'

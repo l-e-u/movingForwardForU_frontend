@@ -16,11 +16,16 @@ import FadeInList from '../components/FadeInList';
 import LoadingDocuments from '../components/LoadingDocuments';
 import SmallHeader from '../components/SmallHeader';
 import NavPagination from '../components/NavPagination';
+import FilterNavigation from '../components/FilterNavigation';
+import Button from '../components/Button';
+import CollapsingSection from '../components/CollapsingSection';
 
 
-const Contacts = ({ pagination, setPagination }) => {
+const Contacts = ({ filters, pagination, setFilters, setPagination }) => {
    const { getContacts, error, isLoading } = useGetContacts();
    const { contacts, dispatch } = useContactsContext();
+
+   const [showAlphabetFiltering, setShowAlphabetFiltering] = useState(false);
 
    const [showCreateForm, setShowCreateForm] = useState(false);
    const [showDeleteForm, setShowDeleteForm] = useState(false);
@@ -50,7 +55,6 @@ const Contacts = ({ pagination, setPagination }) => {
             current: 1
          },
          results: {
-            total: 1,
             limit: number
          }
       });
@@ -58,6 +62,7 @@ const Contacts = ({ pagination, setPagination }) => {
 
    useEffect(() => {
       getContacts({
+         filters,
          currentPage: pagination.pages.current,
          limit: pagination.results.limit,
          setPaginationTotals: ({ totalNumberOfResults, totalNumberOfPages }) => {
@@ -74,19 +79,13 @@ const Contacts = ({ pagination, setPagination }) => {
             })
          }
       });
-   }, [pagination.results.limit, pagination.pages.current]);
+   }, [filters, pagination.results.limit, pagination.pages.current]);
+   console.log(filters);
 
+   console.log(pagination.pages.total)
    return (
       <>
-         <div className='d-flex flex-column gap-3 my-3 px-3'>
-            <div className='d-flex'>
-               {/* Display the total amount of search results */}
-               <div className='mt-auto me-auto text-secondary'>
-                  <SmallHeader text={`Total: ${pagination.results.total}`} />
-               </div>
-               <AddDocumentButton handleClick={() => setShowCreateForm(true)} />
-            </div>
-
+         <div className='my-3 px-3'>
             <NavPagination
                currentPage={pagination.pages.current}
                isFetching={isLoading}
@@ -101,6 +100,35 @@ const Contacts = ({ pagination, setPagination }) => {
                setPages={setPages}
                totalPages={pagination.pages.total}
             />
+
+            <CollapsingSection isExpanded={showAlphabetFiltering}>
+               <FilterNavigation
+                  isFetching={isLoading}
+                  currentLetter={filters.organization?.charAt(1)}
+                  setLetterFilter={letter => setFilters({ ...filters, organization: `^${letter}` })}
+               />
+            </CollapsingSection>
+
+            <div className='d-flex gap-3 mt-3'>
+               <AddDocumentButton handleClick={() => setShowCreateForm(true)} />
+
+               <Button handleClick={() => {
+                  if (showAlphabetFiltering) {
+                     const { organization, ...otherFilters } = filters;
+                     if (organization) setFilters(otherFilters);
+                  };
+                  setShowAlphabetFiltering(!showAlphabetFiltering);
+               }} >
+                  <span className='fs-smaller'>A - Z</span>
+                  {showAlphabetFiltering && <i className='bi bi-x-circle fs-smaller ms-3'></i>}
+               </Button>
+
+               {/* Display the total amount of search results */}
+               <div className='text-secondary mt-auto ms-auto'>
+                  <SmallHeader text={`Total: ${pagination.results.total}`} />
+               </div>
+            </div>
+
          </div>
 
          <AnimatePresence>

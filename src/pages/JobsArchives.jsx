@@ -8,6 +8,7 @@ const JobsArchives = (props) => {
       canCreate: false,
       canDelete: true,
       canEdit: false,
+      filterStatus: false,
       showBilling: true,
       showDetails: true,
       showDrivers: true,
@@ -18,7 +19,8 @@ const JobsArchives = (props) => {
 
    const jobsDriverProps = {
       ...props,
-      permissions
+      permissions,
+      subPath: '/archived'
    };
 
    return <Jobs {...jobsDriverProps} />

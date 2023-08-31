@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 
 const Button = ({ children, handleClick }) => {
-   const addButtonClasses = 'px-3 py-1 ms-auto position-relative border-start-0 border-top-0 rounded text-white d-flex justify-content-center align-items-center gap-1';
+   const addButtonClasses = 'px-3 py-1 border-start-0 border-top-0 rounded text-white d-flex align-items-center justify-content-center text-nowrap';
    const addButtonVariants = {
       mount: {
          backgroundColor: 'var(--mainPalette4)',

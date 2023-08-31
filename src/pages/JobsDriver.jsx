@@ -8,6 +8,7 @@ const JobsDriver = (props) => {
       canCreate: false,
       canDelete: false,
       canEdit: false,
+      filterStatus: true,
       showBilling: false,
       showDetails: true,
       showDrivers: false,
@@ -18,7 +19,8 @@ const JobsDriver = (props) => {
 
    const jobsDriverProps = {
       ...props,
-      permissions
+      permissions,
+      subPath: '/driver'
    };
 
    return <Jobs {...jobsDriverProps} />

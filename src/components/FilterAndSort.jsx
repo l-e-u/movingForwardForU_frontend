@@ -140,7 +140,7 @@ const DateSettersContainer = ({ clearDateRange, hideFutureSelections, quickDateS
       <div className='container-fluid p-0'>
          <div className='row'>
 
-            <div className='col-md d-flex flex-column gap-3'>
+            <div className='col-sm d-flex flex-column gap-3 pb-3 pb-sm-0'>
                <DateSetterButton
                   buttonText='Yesterday'
                   clearDateRange={clearDateRange}
@@ -163,7 +163,7 @@ const DateSettersContainer = ({ clearDateRange, hideFutureSelections, quickDateS
                   setQuickDateSelection={setQuickDateSelection}
                />
             </div>
-            <div className='col-md d-flex flex-column gap-3'>
+            <div className='col-sm d-flex flex-column gap-3'>
                <DateSetterButton
                   buttonText='Today'
                   clearDateRange={clearDateRange}
@@ -190,7 +190,7 @@ const DateSettersContainer = ({ clearDateRange, hideFutureSelections, quickDateS
             {/* this targetes the 'createdOn' dates. since you cannot have a created date of tomorrow and beyond */}
             {
                !hideFutureSelections &&
-               <div className='col-md d-flex flex-column gap-3'>
+               <div className='col-sm d-flex flex-column gap-3 pt-3 pt-sm-0'>
                   <DateSetterButton
                      buttonText='Tomorrow'
                      clearDateRange={clearDateRange}
@@ -223,9 +223,12 @@ const DateSettersContainer = ({ clearDateRange, hideFutureSelections, quickDateS
 const FilterAndASort = ({
    clearFilters,
    filters,
+   filterStatus,
    hideForm,
    isFetching,
    setFilters,
+   showBilling,
+   showDrivers,
    quickDateSelections,
    setQuickDateSelection
 }) => {
@@ -233,50 +236,63 @@ const FilterAndASort = ({
    const debounce_filters_copy = useDebounce({ value: filters_copy, seconds: 1 });
 
    useEffect(() => {
-      if (!_.isEqual(filters, debounce_filters_copy)) {
-         console.log('updating filters');
-         setFilters(debounce_filters_copy);
-      };
+      if (!_.isEqual(filters, debounce_filters_copy)) setFilters(debounce_filters_copy);
    }, [debounce_filters_copy]);
 
    return (
       <Modal blurBackdrop={true} canClose={true} closeModal={hideForm} maxWidth='500px' topMarginIsFixed={true} >
          <FormHeader text={'Filters'} />
 
-         <div className='text-secondary mt-2 mb-1'><SmallHeader text='Statuses' /></div>
-         <FilterStatuses
-            isDisabled={isFetching}
-            selectedStatusFilters={filters_copy.status ?? []}
-            setSelectedStatusFilters={statusIDs => setFilters_copy({ ...filters_copy, status: statusIDs })}
-         />
+         {
+            filterStatus &&
+            <>
+               <div className='text-secondary mt-2 mb-1'><SmallHeader text='Statuses' /></div>
+               <FilterStatuses
+                  isDisabled={isFetching}
+                  selectedStatusFilters={filters_copy.status ?? []}
+                  setSelectedStatusFilters={statusIDs => setFilters_copy({ ...filters_copy, status: statusIDs })}
+               />
+            </>
+         }
 
-         <div className='text-secondary mt-2 mb-1'><SmallHeader text='Customers' /></div>
+         <div className='text-secondary mt-2 mb-1'><SmallHeader text='Organization' /></div>
          <FilterCustomers
             isDisabled={isFetching}
             selectedCustomerFilters={filters_copy.customer ?? []}
             setSelectedCustomerFilters={customerIDs => setFilters_copy({ ...filters_copy, customer: customerIDs })}
          />
 
-         <div className='text-secondary mt-2 mb-1'><SmallHeader text='Drivers' /></div>
-         <FilterDrivers
-            isDisabled={isFetching}
-            selectedDriverFilters={filters_copy.drivers ?? []}
-            setSelectedDriverFilters={driverIDs => setFilters_copy({ ...filters_copy, drivers: driverIDs })}
-         />
+         {
+            showDrivers &&
+            <>
+               <div className='text-secondary mt-2 mb-1'><SmallHeader text='Drivers' /></div>
+               <FilterDrivers
+                  isDisabled={isFetching}
+                  selectedDriverFilters={filters_copy.drivers ?? []}
+                  setSelectedDriverFilters={driverIDs => setFilters_copy({ ...filters_copy, drivers: driverIDs })}
+               />
+            </>
+         }
 
-         <div className='text-secondary mt-2 mb-1'><SmallHeader text='Billing' /></div>
-         <FilterFees
-            isDisabled={isFetching}
-            selectedFeeFilters={filters_copy.billing ?? []}
-            setSelectedFeeFilters={feeIDs => setFilters_copy({ ...filters_copy, billing: feeIDs })}
-         />
+         {
+            showBilling &&
+            <>
+               <div className='text-secondary mt-2 mb-1'><SmallHeader text='Billing' /></div>
+               <FilterFees
+                  isDisabled={isFetching}
+                  selectedFeeFilters={filters_copy.billing ?? []}
+                  setSelectedFeeFilters={feeIDs => setFilters_copy({ ...filters_copy, billing: feeIDs })}
+               />
+            </>
+         }
 
          <div className='text-secondary mt-2 mb-1'><SmallHeader text='Mileage' /></div>
          <div className='d-flex gap-3'>
             <TextInput
                input={filters_copy.mileageGTE ?? ''}
-               isDisabled={isFetching}
                setInput={input => {
+                  if (isFetching) return;
+
                   // proceed if in put is a number
                   if (!isNaN(input)) {
                      // update the value if the numbers are not same or it's ending in a decimal
@@ -293,6 +309,8 @@ const FilterAndASort = ({
                input={filters_copy.mileageLTE ?? ''}
                isDisabled={isFetching}
                setInput={input => {
+                  if (isFetching) return;
+
                   // proceed if in put is a number
                   if (!isNaN(input)) {
                      // update the value if the numbers are not same or it's ending in a decimal
@@ -310,8 +328,9 @@ const FilterAndASort = ({
          <div className='text-secondary mt-2 mb-1'><SmallHeader text='Reference' /></div>
          <TextInput
             input={filters_copy.reference ?? ''}
-            isDisabled={isFetching}
             setInput={input => {
+               if (isFetching) return;
+
                if (input !== filters_copy.reference) {
                   setFilters_copy({ ...filters_copy, reference: input });
                };
@@ -321,8 +340,9 @@ const FilterAndASort = ({
          <div className='text-secondary mt-2 mb-1'><SmallHeader text='Notes' /></div>
          <TextInput
             input={filters_copy.notes ?? ''}
-            isDisabled={isFetching}
             setInput={input => {
+               if (isFetching) return;
+
                if (input !== filters_copy.notes) {
                   setFilters_copy({ ...filters_copy, notes: input });
                };
