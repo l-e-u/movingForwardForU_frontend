@@ -27,18 +27,24 @@ const JobCard = ({
    showDrivers,
    showNotes
 }) => {
-   const {
+   const { archive } = job;
+
+   let {
       billing,
       createdAt,
       createdBy,
       customer,
       delivery,
       drivers,
+      isArchived,
       notes,
       pickup,
       reference,
       status
    } = job;
+
+   // reset the billing if this job is archived
+   if (isArchived) billing = archive.billing;
 
    const [sectionExpanded, setSectionExpanded] = useState(false);
 
@@ -47,6 +53,13 @@ const JobCard = ({
       createdAt: showCreatedAt ? createdAt : null,
       createdBy: showCreatedBy ? createdBy : null,
       drivers: showDrivers ? drivers : null,
+   };
+
+   // when the job is archived and user is on the Archives page, ensure to use the archive properties and format them so Job Details can read them
+   if (isArchived) {
+      jobDetailsProps.createdAt = archive.date;
+      jobDetailsProps.createdBy = { fullName: archive.createdBy };
+      jobDetailsProps.drivers = archive.drivers.map(driver => ({ fullName: driver }));
    };
 
    // formatting strings for date and time
@@ -120,9 +133,11 @@ const JobCard = ({
          <EllipsisMenu actions={ellipsisMenuOptions} />
 
          {/* DEFAULT VIEW FOR QUICK READING */}
-         {/* STATUS */}
-         <i className='bi bi-stars fs-smaller me-2 text-secondary'></i>
-         <span className='text-secondary'><SmallHeader text={status.name} /></span>
+         {/* STATUS OR ARCHIVED DATE */}
+         <i className={`bi bi-${isArchived ? 'archive' : 'stars'} fs-smaller me-2 text-secondary`}></i>
+         <span className='text-secondary text-capitalize'>
+            <SmallHeader text={isArchived ? datePrettyString({ date: archive.date }) : status.name} />
+         </span>
 
          <br />
 
@@ -132,7 +147,7 @@ const JobCard = ({
 
          {/* ORGANIZATION */}
          <div className='ms-3 ps-1 my-2' style={{ fontWeight: '600' }}>
-            {customer.organization}
+            {isArchived ? archive.customer : customer.organization}
          </div>
 
          {/* PICKUP AND DELIVERY DETAILS */}

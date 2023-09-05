@@ -5,25 +5,18 @@ import Modal from './Modal';
 import SubmitButton from './SubmitButton';
 
 // hooks
-import { useUpdateJob } from '../hooks/useUpdateJob';
+import { useArchiveJob } from '../hooks/useArchiveJob';
 
 const FormArchive = ({ hideForm, jobID }) => {
-   const { updateJob, error, isLoading } = useUpdateJob();
+   const { archiveJob, error, isLoading } = useArchiveJob();
 
    const submitButtonText = isLoading ? 'Archiving' : 'Archive';
    const handleSubmit = async (e) => {
       e.preventDefault();
 
-      const updatedJobForm = new FormData();
-      const updatedFields = { isArchived: true, archivedOn: new Date() };
-      const filesToDelete = [];
+      const jobArchived = await archiveJob({ _id: jobID });
 
-      updatedJobForm.append('filesToDelete', JSON.stringify(filesToDelete));
-      updatedJobForm.append('updates', JSON.stringify(updatedFields));
-
-      const jobUpdated = await updateJob({ _id: jobID, updatedJobForm });
-
-      if (jobUpdated) hideForm();
+      if (jobArchived) hideForm();
    };
 
    return (

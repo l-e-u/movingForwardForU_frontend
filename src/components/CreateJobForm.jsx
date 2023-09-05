@@ -38,7 +38,7 @@ const CreateJobForm = ({ hideForm }) => {
    const handleOnSubmit = async (e) => {
       e.preventDefault();
 
-      const formattedJob = {
+      const jobCreated = await createJob({
          ...job,
          billing: job.billing.map(bill => ({
             fee: bill.fee._id,
@@ -49,18 +49,7 @@ const CreateJobForm = ({ hideForm }) => {
          mileage: Number(job.mileage),
          notes: job.notes.map(note => ({ ...note, createdBy: note.createdBy._id })),
          status: job.status?._id
-      }
-
-      // create a multipart form data object to send to server
-      const jobForm = new FormData();
-
-      jobForm.append('job', JSON.stringify(formattedJob));
-
-      formattedJob.notes[0]?.attachments.forEach(attachment => {
-         jobForm.append('attachments', attachment.file);
       });
-
-      const jobCreated = await createJob(jobForm);
 
       if (jobCreated) hideForm();
    };

@@ -13,13 +13,25 @@ export const useUpdateJob = () => {
    const { user } = useAuthContext();
    const { dispatch } = useJobsContext();
 
-   const updateJob = async ({ _id, updatedJobForm }) => {
+   const updateJob = async ({ _id, filesToDelete, updates }) => {
       setIsLoading(true);
       setError(null);
 
+      // format the updates into a new form to send in response
+      const form = new FormData();
+
+      form.append('updates', JSON.stringify(updates));
+
+      if (filesToDelete) form.append('filesToDelete', JSON.stringify(filesToDelete));
+
+      // if there's notes, check the first one (new notes are added at the start), and append the files for upload
+      if (updates.notes && !updates.notes[0].hasOwnProperty('_id')) {
+         updates.notes[0].attachments.forEach(attachment => form.append('attachments', attachment.file));
+      };
+
       const response = await fetch(`${API_BASE_URL}/api/jobs/` + _id, {
          method: 'PATCH',
-         body: updatedJobForm,
+         body: form,
          headers: { 'Authentication': `Bearer ${user.token}` }
       });
 

@@ -99,18 +99,19 @@ const Jobs = ({
       return options;
    };
 
-   // updates the pages.current or pages.total
-   const setPages = (page) => {
-      const [property, value] = Object.entries(page)[0];
-
+   const setCurrentPage = (number) => {
       setPagination({
          ...pagination,
          pages: {
             ...pagination.pages,
-            [property]: value
+            current: number
          }
       });
    };
+
+   // trigger a fetch to update the current page
+   // all forms, except adding a note, will need to trigger a refresh
+   const refreshCurrentPage = () => setCurrentPage(pagination.page.current);
 
    // updates the results.limit when the limit is changed in nav pagination
    const onChangeLimit = (number) => {
@@ -160,13 +161,7 @@ const Jobs = ({
                isFetching={isLoading}
                limit={pagination.results.limit}
                onChangeLimit={onChangeLimit}
-               setCurrentPageToNextPage={() => {
-                  setPages({ current: pagination.pages.current + 1 });
-               }}
-               setCurrentPageToPreviousPage={() => {
-                  setPages({ current: pagination.pages.current - 1 });
-               }}
-               setPages={setPages}
+               setCurrentPage={setCurrentPage}
                totalPages={pagination.pages.total}
             />
 
@@ -196,14 +191,6 @@ const Jobs = ({
                showFilters &&
                <FilterAndASort
                   {...permissions}
-                  clearFilters={() => {
-                     setFilters({});
-                     setFilters_quickDateSelections({
-                        pickup: null,
-                        delivery: null,
-                        created: null
-                     });
-                  }}
                   filters={filters}
                   hideForm={() => setShowFilters(false)}
                   isFetching={isLoading}

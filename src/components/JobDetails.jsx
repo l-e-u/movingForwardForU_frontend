@@ -36,8 +36,8 @@ const JobDetails = ({ createdAt, createdBy, drivers, mileage, parcel }) => (
             <div className='col-sm-10'>
                {(drivers.length === 0) && <div>None assigned</div>}
                {
-                  drivers.map(driver => (
-                     <div key={driver._id}>{driver.fullName}</div>
+                  drivers.map((driver, index) => (
+                     <div key={driver._id || index}>{driver.fullName}</div>
                   ))
                }
             </div>

@@ -10,15 +10,25 @@ export const useCreateJob = () => {
    const [isLoading, setIsLoading] = useState(null);
    const { user } = useAuthContext();
 
-   const createJob = async (jobForm) => {
+   const createJob = async (job) => {
       setIsLoading(true);
 
       // don't want to show the error if the user is trying to rectify, so null error at the start
       setError(null);
 
+      // format the job in a new form to send in response
+      const form = new FormData();
+
+      form.append('job', JSON.stringify(job));
+
+      // when there's notes, append all the files for upload
+      job.notes[0]?.attachments.forEach(attachment => {
+         form.append('attachments', attachment.file);
+      });
+
       const response = await fetch(`${API_BASE_URL}/api/jobs`, {
          method: 'POST',
-         body: jobForm,
+         body: form,
          headers: { 'Authentication': `Bearer ${user.token}` }
       });
 
@@ -40,5 +50,5 @@ export const useCreateJob = () => {
       };
    };
 
-   return { createJob, isLoading, error, setError };
+   return { createJob, isLoading, error };
 };

@@ -34,6 +34,7 @@ function App() {
    };
 
    const defaults_quickDateSelections = {
+      archived: null,
       created: null,
       delivery: null,
       pickup: null

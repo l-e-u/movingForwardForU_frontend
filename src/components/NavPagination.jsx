@@ -57,9 +57,7 @@ const NavPagination = ({
    limit,
    isFetching,
    onChangeLimit,
-   setCurrentPageToNextPage,
-   setCurrentPageToPreviousPage,
-   setPages,
+   setCurrentPage,
    totalPages,
 }) => {
    const hasPrevious = ((currentPage > 1) && (currentPage <= totalPages));
@@ -78,7 +76,7 @@ const NavPagination = ({
          isDisabled={!hasPrevious || isFetching}
          key={'prevPage'}
          onClick={() => {
-            if (hasPrevious) setCurrentPageToPreviousPage();
+            if (hasPrevious) setCurrentPage(currentPage - 1);
          }}
       />
    );
@@ -94,7 +92,7 @@ const NavPagination = ({
             isDisabled={isFetching}
             key={pageNumber}
             onClick={() => {
-               if (!isCurrentPage) setPages({ current: pageNumber });
+               if (!isCurrentPage) setCurrentPage(pageNumber);
             }}
             pageNumber={pageNumber}
          />
@@ -107,7 +105,7 @@ const NavPagination = ({
          isDisabled={!hasNext || isFetching}
          key={'nextPage'}
          onClick={() => {
-            if (hasNext) setCurrentPageToNextPage();
+            if (hasNext) setCurrentPage(currentPage + 1);
          }}
       />
    );

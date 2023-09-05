@@ -37,20 +37,13 @@ function FormAddNote({ hideForm, jobID }) {
    const handleSubmit = async (e) => {
       e.preventDefault();
 
-      const updatedJobForm = new FormData();
-
-      attachments.forEach(attachment => updatedJobForm.append('attachments', attachment.file));
-
-      updatedJobForm.append('filesToDelete', JSON.stringify([]));
-      updatedJobForm.append(
-         'updates',
-         JSON.stringify({
-            notes: [note],
-            driverNote: true
-         })
-      );
-
-      const noteAdded = await updateJob({ updatedJobForm, _id: jobID });
+      const noteAdded = await updateJob({
+         _id: jobID,
+         updates: {
+            driverNote: true,
+            notes: [note]
+         }
+      });
 
       if (noteAdded) hideForm();
    };

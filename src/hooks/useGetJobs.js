@@ -23,10 +23,7 @@ export const useGetJobs = (subPath = '') => {
       // set the query and options before making the response
       const { filters, currentPage, limit, setPaginationTotals } = props;
       const filtersQuery = urlQueryString(filters);
-      console.group()
-      console.log(filters);
-      console.log(filtersQuery)
-      console.groupEnd();
+
       const response = await fetch(`${API_BASE_URL}/api/jobs${subPath}?page=${currentPage}&limit=${limit}${filtersQuery}`, {
          headers: {
             'Authentication': `Bearer ${user.token}`

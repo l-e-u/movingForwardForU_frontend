@@ -221,19 +221,95 @@ const DateSettersContainer = ({ clearDateRange, hideFutureSelections, quickDateS
 };
 
 const FilterAndASort = ({
-   clearFilters,
    filters,
+   filterArchivedOn,
+   filterCustomer,
+   filterBilling,
+   filterDrivers,
+   filterMileage,
    filterStatus,
    hideForm,
    isFetching,
    setFilters,
-   showBilling,
-   showDrivers,
    quickDateSelections,
    setQuickDateSelection
 }) => {
    const [filters_copy, setFilters_copy] = useState(_.cloneDeep(filters));
    const debounce_filters_copy = useDebounce({ value: filters_copy, seconds: 1 });
+
+   const clearAllFilters = () => {
+      setFilters_copy({});
+      setQuickDateSelection({
+         archived: null,
+         created: null,
+         delivery: null,
+         pickup: null,
+      });
+   };
+
+   const clearArchivedDateRange = () => {
+      const { archivedOnGTE, archivedOnLTE, ...otherFilters } = filters_copy;
+
+      setQuickDateSelection({ archived: null });
+      setFilters_copy({ ...otherFilters, });
+   };
+
+   const clearCreatedDateRange = () => {
+      const { createdOnGTE, createdOnLTE, ...otherFilters } = filters_copy;
+
+      setQuickDateSelection({ created: null });
+      setFilters_copy({ ...otherFilters, });
+   };
+
+   const clearPickupDateRange = () => {
+      const { pickupGTE, pickupLTE, ...otherFilters } = filters_copy;
+
+      setQuickDateSelection({ pickup: null });
+      setFilters_copy({ ...otherFilters, });
+   };
+
+   const clearDeliveryDateRange = () => {
+      const { deliveryGTE, deliveryLTE, ...otherFilters } = filters_copy;
+
+      setQuickDateSelection({ delivery: null });
+      setFilters_copy({ ...otherFilters, });
+   };
+
+   const setArchivedDateRange = ({ dateEnd, dateStart }) => {
+      const dates = {};
+
+      if (dateStart) dates.archivedOnGTE = dateStart;
+      if (dateEnd) dates.archivedOnLTE = dateEnd;
+
+      setFilters_copy({ ...filters_copy, ...dates });
+   };
+
+   const setCreatedDateRange = ({ dateEnd, dateStart }) => {
+      const dates = {};
+
+      if (dateStart) dates.createdOnGTE = dateStart;
+      if (dateEnd) dates.createdOnLTE = dateEnd;
+
+      setFilters_copy({ ...filters_copy, ...dates });
+   };
+
+   const setDeliveryDateRange = ({ dateEnd, dateStart }) => {
+      const dates = {};
+
+      if (dateStart) dates.deliveryGTE = dateStart;
+      if (dateEnd) dates.deliveryLTE = dateEnd;
+
+      setFilters_copy({ ...filters_copy, ...dates });
+   };
+
+   const setPickupDateRange = ({ dateEnd, dateStart }) => {
+      const dates = {};
+
+      if (dateStart) dates.pickupGTE = dateStart;
+      if (dateEnd) dates.pickupLTE = dateEnd;
+
+      setFilters_copy({ ...filters_copy, ...dates });
+   };
 
    useEffect(() => {
       if (!_.isEqual(filters, debounce_filters_copy)) setFilters(debounce_filters_copy);
@@ -255,15 +331,19 @@ const FilterAndASort = ({
             </>
          }
 
-         <div className='text-secondary mt-2 mb-1'><SmallHeader text='Organization' /></div>
-         <FilterCustomers
-            isDisabled={isFetching}
-            selectedCustomerFilters={filters_copy.customer ?? []}
-            setSelectedCustomerFilters={customerIDs => setFilters_copy({ ...filters_copy, customer: customerIDs })}
-         />
+         {filterCustomer &&
+            <>
+               <div className='text-secondary mt-2 mb-1'><SmallHeader text='Organization' /></div>
+               <FilterCustomers
+                  isDisabled={isFetching}
+                  selectedCustomerFilters={filters_copy.customer ?? []}
+                  setSelectedCustomerFilters={customerIDs => setFilters_copy({ ...filters_copy, customer: customerIDs })}
+               />
+            </>
+         }
 
          {
-            showDrivers &&
+            filterDrivers &&
             <>
                <div className='text-secondary mt-2 mb-1'><SmallHeader text='Drivers' /></div>
                <FilterDrivers
@@ -275,7 +355,7 @@ const FilterAndASort = ({
          }
 
          {
-            showBilling &&
+            filterBilling &&
             <>
                <div className='text-secondary mt-2 mb-1'><SmallHeader text='Billing' /></div>
                <FilterFees
@@ -286,44 +366,49 @@ const FilterAndASort = ({
             </>
          }
 
-         <div className='text-secondary mt-2 mb-1'><SmallHeader text='Mileage' /></div>
-         <div className='d-flex gap-3'>
-            <TextInput
-               input={filters_copy.mileageGTE ?? ''}
-               setInput={input => {
-                  if (isFetching) return;
+         {
+            filterMileage &&
+            <>
+               <div className='text-secondary mt-2 mb-1'><SmallHeader text='Mileage' /></div>
+               <div className='d-flex gap-3'>
+                  <TextInput
+                     input={filters_copy.mileageGTE ?? ''}
+                     setInput={input => {
+                        if (isFetching) return;
 
-                  // proceed if in put is a number
-                  if (!isNaN(input)) {
-                     // update the value if the numbers are not same or it's ending in a decimal
-                     if (input !== filters_copy.mileageGTE) {
-                        setFilters_copy({
-                           ...filters_copy,
-                           mileageGTE: input
-                        })
-                     };
-                  };
-               }}
-            />
-            <TextInput
-               input={filters_copy.mileageLTE ?? ''}
-               isDisabled={isFetching}
-               setInput={input => {
-                  if (isFetching) return;
+                        // proceed if in put is a number
+                        if (!isNaN(input)) {
+                           // update the value if the numbers are not same or it's ending in a decimal
+                           if (input !== filters_copy.mileageGTE) {
+                              setFilters_copy({
+                                 ...filters_copy,
+                                 mileageGTE: input
+                              })
+                           };
+                        };
+                     }}
+                  />
+                  <TextInput
+                     input={filters_copy.mileageLTE ?? ''}
+                     isDisabled={isFetching}
+                     setInput={input => {
+                        if (isFetching) return;
 
-                  // proceed if in put is a number
-                  if (!isNaN(input)) {
-                     // update the value if the numbers are not same or it's ending in a decimal
-                     if (input !== filters_copy.mileageLTE) {
-                        setFilters_copy({
-                           ...filters_copy,
-                           mileageLTE: input
-                        })
-                     };
-                  };
-               }}
-            />
-         </div>
+                        // proceed if in put is a number
+                        if (!isNaN(input)) {
+                           // update the value if the numbers are not same or it's ending in a decimal
+                           if (input !== filters_copy.mileageLTE) {
+                              setFilters_copy({
+                                 ...filters_copy,
+                                 mileageLTE: input
+                              })
+                           };
+                        };
+                     }}
+                  />
+               </div>
+            </>
+         }
 
          <div className='text-secondary mt-2 mb-1'><SmallHeader text='Reference' /></div>
          <TextInput
@@ -356,22 +441,10 @@ const FilterAndASort = ({
                icon: 'bi bi-box-arrow-in-up-right',
                contentJSX: (
                   <DateSettersContainer
-                     clearDateRange={() => {
-                        const { pickupGTE, pickupLTE, ...otherFilters } = filters_copy;
-
-                        setQuickDateSelection({ pickup: null });
-                        setFilters_copy({ ...otherFilters, });
-                     }}
+                     clearDateRange={clearPickupDateRange}
                      isDisabled={isFetching}
                      quickDateSelected={quickDateSelections.pickup}
-                     setDateRange={({ dateEnd, dateStart }) => {
-                        const dates = {};
-
-                        if (dateStart) dates.pickupGTE = dateStart;
-                        if (dateEnd) dates.pickupLTE = dateEnd;
-
-                        setFilters_copy({ ...filters_copy, ...dates });
-                     }}
+                     setDateRange={setPickupDateRange}
                      setQuickDateSelection={buttonText => setQuickDateSelection({ pickup: buttonText })}
                   />
                )
@@ -381,49 +454,25 @@ const FilterAndASort = ({
                icon: 'bi bi-box-arrow-down-right',
                contentJSX: (
                   <DateSettersContainer
-                     clearDateRange={() => {
-                        const { deliveryGTE, deliveryLTE, ...otherFilters } = filters_copy;
-
-                        setQuickDateSelection({ delivery: null });
-                        setFilters_copy({ ...otherFilters, });
-                     }}
+                     clearDateRange={clearDeliveryDateRange}
                      isDisabled={isFetching}
                      quickDateSelected={quickDateSelections.delivery}
-                     setDateRange={({ dateEnd, dateStart }) => {
-                        const dates = {};
-
-                        if (dateStart) dates.deliveryGTE = dateStart;
-                        if (dateEnd) dates.deliveryLTE = dateEnd;
-
-                        setFilters_copy({ ...filters_copy, ...dates });
-                     }}
+                     setDateRange={setDeliveryDateRange}
                      setQuickDateSelection={buttonText => setQuickDateSelection({ delivery: buttonText })}
                   />
                )
             },
             {
-               name: 'Created',
-               icon: 'bi bi-calendar2-plus',
+               name: filterArchivedOn ? 'Archived' : 'Created',
+               icon: `bi bi-${filterArchivedOn ? 'archive' : 'calendar2-plus'}`,
                contentJSX: (
                   <DateSettersContainer
-                     clearDateRange={() => {
-                        const { createdOnGTE, createdOnLTE, ...otherFilters } = filters_copy;
-
-                        setQuickDateSelection({ created: null });
-                        setFilters_copy({ ...otherFilters, });
-                     }}
+                     clearDateRange={filterArchivedOn ? clearArchivedDateRange : clearCreatedDateRange}
                      hideFutureSelections={true}
                      isDisabled={isFetching}
-                     quickDateSelected={quickDateSelections.created}
-                     setDateRange={({ dateEnd, dateStart }) => {
-                        const dates = {};
-
-                        if (dateStart) dates.createdOnGTE = dateStart;
-                        if (dateEnd) dates.createdOnLTE = dateEnd;
-
-                        setFilters_copy({ ...filters_copy, ...dates });
-                     }}
-                     setQuickDateSelection={buttonText => setQuickDateSelection({ created: buttonText })}
+                     quickDateSelected={filterArchivedOn ? quickDateSelections.archived : quickDateSelections.created}
+                     setDateRange={filterArchivedOn ? setArchivedDateRange : setCreatedDateRange}
+                     setQuickDateSelection={buttonText => setQuickDateSelection(filterArchivedOn ? { archived: buttonText } : { created: buttonText })}
                   />
                )
             },
@@ -432,7 +481,7 @@ const FilterAndASort = ({
          {/* clears all the filters_copy and selected date buttons */}
          <div className='mt-3'>
             <Button
-               handleClick={clearFilters}
+               handleClick={clearAllFilters}
                isDisabled={isFetching}
             >
                Clear All

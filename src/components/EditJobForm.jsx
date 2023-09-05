@@ -35,9 +35,19 @@ const EditJobForm = ({
    const handleOnSubmit = async (e) => {
       e.preventDefault();
 
-      const updatedJobForm = new FormData();
-      const updatedFields = {};
+      const updates = {};
       const filesToDelete = [];
+
+      // oldest to newest
+      const sortDateAscending = ((a, b) => {
+         const createdDate1 = new Date(a.createdAt);
+         const createdDate2 = new Date(b.createdAt);
+
+         if (createdDate1 < createdDate2) return 1;
+         if (createdDate1 > createdDate2) return -1;
+
+         return 0;
+      });
 
       // check if there has been any changes in the fields
       for (const [property, value] of Object.entries(currentJob)) {
@@ -48,11 +58,9 @@ const EditJobForm = ({
          let editedValue;
 
          if (property === 'notes') {
-            const sortByCreatedDateOldestFirst = (a, b) => ((new Date(a.createdAt)) - (new Date(b.createdAt)));
-
             // sort both current and edited notes from oldest to newest, only one new note can be added at a time, so a new note can always be found at the end of edited notes
-            const currentSortedNotes = value.map(note => ({ ...note })).sort(sortByCreatedDateOldestFirst);
-            const editedSortedNotes = editedJob.notes.map(note => ({ ...note })).sort(sortByCreatedDateOldestFirst);
+            const currentSortedNotes = value.map(note => ({ ...note })).sort(sortDateAscending);
+            const editedSortedNotes = editedJob.notes.map(note => ({ ...note })).sort(sortDateAscending);
 
             // start from the oldest notes, front of the array
             while (currentSortedNotes.length > 0) {
@@ -76,11 +84,8 @@ const EditJobForm = ({
                editedSortedNotes.shift();
             };
 
-            // after looping through the current notes, any new note is left behind and handled here
-            if (editedSortedNotes.length > 0) {
-               editedSortedNotes[0].attachments.forEach(attachment => updatedJobForm.append('attachments', attachment.file));
-               hasBeenUpdated = true;
-            };
+            // after looping through the current notes, if there's one left behind, then that one is new
+            if (editedSortedNotes.length > 0) hasBeenUpdated = true;
 
             if (hasBeenUpdated) updatedValue = editedJob.notes.map(note => ({ ...note, createdBy: note.createdBy._id }));
          };
@@ -100,12 +105,13 @@ const EditJobForm = ({
          };
 
          if (property === 'drivers') {
-            currentValue = JSON.stringify(value.drivers);
+            currentValue = JSON.stringify(value);
             editedValue = JSON.stringify(editedJob.drivers);
 
             if (currentValue !== editedValue) {
                hasBeenUpdated = true;
-
+               console.log(value)
+               console.log(editedJob)
                updatedValue = editedJob.drivers.map(driver => driver._id);
             };
          };
@@ -144,13 +150,10 @@ const EditJobForm = ({
          };
 
          // any flagged updates are stored
-         if (hasBeenUpdated) updatedFields[property] = updatedValue;
+         if (hasBeenUpdated) updates[property] = updatedValue;
       };
 
-      updatedJobForm.append('filesToDelete', JSON.stringify(filesToDelete));
-      updatedJobForm.append('updates', JSON.stringify(updatedFields));
-
-      const jobUpdated = await updateJob({ _id, updatedJobForm });
+      const jobUpdated = await updateJob({ _id, filesToDelete, updates });
 
       if (jobUpdated) hideForm();
    };

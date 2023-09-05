@@ -37,13 +37,8 @@ const JobForm = ({
    const {
       billing,
       customer,
-      delivery,
       drivers,
-      mileage,
       notes,
-      parcel,
-      pickup,
-      reference,
       status,
    } = job;
    const defaultSearchType = 'contacts';
@@ -537,9 +532,15 @@ const JobForm = ({
                      </>
                   )
                },
-            ]} />
+            ]}
+            />
 
-            {error && <ErrorAlert message={error.message} />}
+            {
+               error &&
+               <div className='mt-3'>
+                  <ErrorAlert message={error.message} />
+               </div>
+            }
 
             <div className='d-flex justify-content-end mt-3'>
                <SubmitButton

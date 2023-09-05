@@ -1,7 +1,6 @@
 import { formatToCurrencyString } from '../utils/StringUtils';
 
 const BillingTable = ({ billing }) => {
-   const scopeStyles = { opacity: 0.5 };
    const encloseNegativeNumber = (amount) => {
       let currency = formatToCurrencyString({ amount, setTwoDecimalPlaces: true });
 
@@ -24,9 +23,9 @@ const BillingTable = ({ billing }) => {
       <table className='table table-sm text-reset m-0'>
          <thead>
             <tr className='text-secondary fs-smaller'>
-               <th className='fw-normal text-center' scope='col' style={scopeStyles}></th>
-               <th className='fw-normal' scope='col' style={scopeStyles}>Fee</th>
-               <th className='fw-normal text-end' colSpan='2' scope='col' style={scopeStyles}>Amount</th>
+               <th className='fw-normal text-center opacity-50' scope='col'></th>
+               <th className='fw-normal opacity-50' scope='col'>Fee</th>
+               <th className='fw-normal text-end opacity-50' colSpan='2' scope='col'>Amount</th>
             </tr>
          </thead>
          <tbody>
@@ -39,21 +38,17 @@ const BillingTable = ({ billing }) => {
                   const overrideAmountText = hasOverrideAmount ? encloseNegativeNumber(overrideAmount) : '';
 
                   return (
-                     <tr key={bill._id || fee._id}>
+                     <tr key={bill._id || fee._id || index}>
                         <th
-                           className='fs-smaller fw-normal text-secondary text-center'
+                           className='fs-smaller fw-normal text-secondary text-center opacity-50 font-monospace'
                            scope='row'
-                           style={{ ...scopeStyles, fontFamily: 'monospace' }}
                         >
                            {itemNumber}
                         </th>
 
                         <td>{bill.fee.name}</td>
 
-                        <td
-                           className='text-nowrap text-end align-middle text-decoration-line-through'
-                           style={{ opacity: 0.5 }}
-                        >
+                        <td className='text-nowrap text-end align-middle text-decoration-line-through opacity-50' >
                            {hasOverrideAmount ? amountText : overrideAmountText}
                         </td>
                         <td className='text-nowrap text-end align-middle'>

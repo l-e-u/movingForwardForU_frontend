@@ -57,7 +57,6 @@ const MultiValueContainer = (props) => {
 // the struck-through amount on the left only appears if the original fee amount has been overridden by the bill overrideAmount
 const MultiValueLabel = (props) => {
    const { fee, isEditing, overrideAmount } = props.data.value;
-   console.log(props.data.value)
    const hasOverride = !!overrideAmount;
    const originalCurrency = formatToCurrencyString({ amount: fee.amount, setTwoDecimalPlaces: true });
    const overrideCurrency = formatToCurrencyString({ amount: overrideAmount ?? 0, setTwoDecimalPlaces: true });
