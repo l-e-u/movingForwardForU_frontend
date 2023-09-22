@@ -25,7 +25,7 @@ const Contacts = ({ filters, pagination, setFilters, setPagination }) => {
    const { getContacts, error, isLoading } = useGetContacts();
    const { contacts, dispatch } = useContactsContext();
 
-   const [showAlphabetFiltering, setShowAlphabetFiltering] = useState(false);
+   const [showAlphabetFiltering, setShowAlphabetFiltering] = useState(filters.organization ? true : false);
 
    const [showCreateForm, setShowCreateForm] = useState(false);
    const [showDeleteForm, setShowDeleteForm] = useState(false);
@@ -33,15 +33,12 @@ const Contacts = ({ filters, pagination, setFilters, setPagination }) => {
 
    const [selectedContact, setSelectedContact] = useState(null);
 
-   // updates the pages.current or pages.total
-   const setPages = (page) => {
-      const [property, value] = Object.entries(page)[0];
-
+   const setCurrentPage = (number) => {
       setPagination({
          ...pagination,
          pages: {
             ...pagination.pages,
-            [property]: value
+            current: number
          }
       });
    };
@@ -80,9 +77,7 @@ const Contacts = ({ filters, pagination, setFilters, setPagination }) => {
          }
       });
    }, [filters, pagination.results.limit, pagination.pages.current]);
-   console.log(filters);
 
-   console.log(pagination.pages.total)
    return (
       <>
          <div className='my-3 px-3'>
@@ -91,13 +86,7 @@ const Contacts = ({ filters, pagination, setFilters, setPagination }) => {
                isFetching={isLoading}
                limit={pagination.results.limit}
                onChangeLimit={onChangeLimit}
-               setCurrentPageToNextPage={() => {
-                  setPages({ current: pagination.pages.current + 1 });
-               }}
-               setCurrentPageToPreviousPage={() => {
-                  setPages({ current: pagination.pages.current - 1 });
-               }}
-               setPages={setPages}
+               setCurrentPage={setCurrentPage}
                totalPages={pagination.pages.total}
             />
 
