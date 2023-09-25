@@ -71,11 +71,11 @@ const Login = () => {
    return (
       <>
          <div
-            className='d-flex align-items-start justify-content-center justify-content-lg-start bg-white position-absolute top-0 start-0 w-100 h-100'
+            className='d-flex align-items-start justify-content-center justify-content-md-start'
             style={{ color: 'var(--mainPalette2)' }}>
             <div className='d-flex align-items-center justify-content-center gap-3 pt-3 ps-lg-4'>
                <img style={{ height: '30px', width: '30px' }} src={logo} alt='SVG logo image' className='text-reset' />
-               <h1 className='fs-5 m-0'>Moving Forward for U</h1>
+               <h1 className='fs-5 m-0'>Parcel Manager</h1>
             </div>
          </div>
 

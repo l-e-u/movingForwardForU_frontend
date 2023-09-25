@@ -7,18 +7,18 @@ import { useGetContacts } from '../hooks/useGetContacts';
 
 // components
 import AddDocumentButton from '../components/AddDocumentButton';
-import CreateContactForm from '../components/CreateContactForm';
+import Button from '../components/Button';
+import CollapsingSection from '../components/CollapsingSection';
 import ContactDetails from '../components/ContactDetails';
+import CreateContactForm from '../components/CreateContactForm';
 import DeleteForm from '../components/DeleteForm';
 import EditContactForm from '../components/EditContactForm';
 import ErrorAlert from '../components/ErrorAlert';
 import FadeInList from '../components/FadeInList';
-import LoadingDocuments from '../components/LoadingDocuments';
-import SmallHeader from '../components/SmallHeader';
-import NavPagination from '../components/NavPagination';
 import FilterNavigation from '../components/FilterNavigation';
-import Button from '../components/Button';
-import CollapsingSection from '../components/CollapsingSection';
+import LoadingDocuments from '../components/LoadingDocuments';
+import NavPagination from '../components/NavPagination';
+import SmallHeader from '../components/SmallHeader';
 
 
 const Contacts = ({ filters, pagination, setFilters, setPagination }) => {

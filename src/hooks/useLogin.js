@@ -3,8 +3,10 @@ import { useAuthContext } from "./useAuthContext";
 
 export const useLogin = () => {
    const API_BASE_URL = process.env.API_BASE_URL;
+
    const [error, setError] = useState(null);
    const [isLoading, setIsLoading] = useState(null);
+
    const { dispatch } = useAuthContext();
 
    const login = async (email, password) => {

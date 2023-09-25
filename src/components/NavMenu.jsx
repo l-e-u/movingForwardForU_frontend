@@ -181,7 +181,7 @@ const NavMenu = ({ selectedLink, setSelectedLink }) => {
                className='text-center mb-2'
                style={{ fontWeight: '500' }}
             >
-               Moving Forward for U
+               Parcel Manager
             </span>
 
             {/* LOGO */}

@@ -10,15 +10,17 @@ import NavMenu from './components/NavMenu.jsx';
 import Page from './components/Page';
 
 // pages
-import Contacts from './pages/Contacts.jsx';
-import Fees from './pages/Fees.jsx';
-import Login from './pages/Login.jsx';
+import Contacts from './pages/Contacts';
+import Fees from './pages/Fees';
+import Login from './pages/Login';
 import JobsArchives from './pages/JobsArchives';
 import JobsDispatcher from './pages/JobsDispatcher';
 import JobsDriver from './pages/JobsDriver';
-import Statuses from './pages/Statuses.jsx';
-import Users from './pages/Users.jsx';
-import Verify from './pages/Verify.jsx';
+import Statuses from './pages/Statuses';
+import Users from './pages/Users';
+import Verify from './pages/Verify';
+import Demo from './pages/Demo';
+import NotFound404 from './pages/404';
 
 function App() {
    const defaults_paginations = {
@@ -85,11 +87,21 @@ function App() {
       });
    };
 
+   const showNavMenu = () => {
+      const pagesWithNavMenu = ['Jobs', 'Dispatch', 'Contacts', 'Users', 'Statuses', 'Fees', 'Archives'];
+
+      return user && pagesWithNavMenu.includes(selectedLink);
+   };
+
    return (
       <div className='App'>
          <AnimatePresence mode='wait'>
+
             <BrowserRouter>
-               {user && <NavMenu selectedLink={selectedLink} setSelectedLink={setSelectedLink} />}
+               {
+                  showNavMenu() && <NavMenu selectedLink={selectedLink} setSelectedLink={setSelectedLink} />
+               }
+
                <Page>
                   <Routes>
                      <Route
@@ -111,6 +123,7 @@ function App() {
                               <Navigate to='/login' />
                         }
                      />
+
                      <Route
                         path='/dispatch'
                         element={
@@ -130,10 +143,12 @@ function App() {
                               <Navigate to='/login' />
                         }
                      />
+
                      <Route
                         path='/statuses'
                         element={user ? <Statuses /> : <Navigate to='/login' />}
                      />
+
                      <Route
                         path='/contacts'
                         element={
@@ -148,14 +163,17 @@ function App() {
                               <Navigate to='/login' />
                         }
                      />
+
                      <Route
                         path='/users'
                         element={user ? <Users /> : <Navigate to='/login' />}
                      />
+
                      <Route
                         path='/fees'
                         element={user ? <Fees /> : <Navigate to='/login' />}
                      />
+
                      <Route
                         path='/archives'
                         element={
@@ -167,6 +185,8 @@ function App() {
                                  setFilters={setThisFilter}
                                  setFilters_quickDateSelections={setThisFilter_quickDateSelections}
                                  setPagination={setThisPagination}
+                                 selectedLink={selectedLink}
+                                 setSelectedLink={setSelectedLink}
                                  showBilling={true}
                                  showMoreDocumentOptions={true}
                                  showMoreInDetails={true}
@@ -175,19 +195,23 @@ function App() {
                               <Navigate to='/login' />
                         }
                      />
+
                      <Route
                         path='/login'
                         element={!user ? <Login /> : <Navigate to='/' />}
                      />
+
                      <Route
                         path='/verify/:emailToken/'
                         element={!user ? <Verify /> : <Navigate to='/' />}
                      />
+
+                     <Route path='/demo' element={<Demo setSelectedLink={setSelectedLink} />} />
+
+                     {/* 404 */}
+                     <Route path='/*' element={<NotFound404 setSelectedLink={setSelectedLink} />} />
                   </Routes>
                </Page>
-               {/* <footer className='d-flex flex-wrap justify-content-center text-center text-secondary mt-3 px-4 pb-3 w-100 fs-smaller'>
-                  <span className='mx-1'><i className='bi bi-c-circle'></i> {new Date().getFullYear()} Moving Forward, LLC.</span><span>All Rights Reserved</span>
-               </footer> */}
             </BrowserRouter>
          </AnimatePresence>
       </div>
