@@ -58,7 +58,8 @@ const Demo = ({ setSelectedLink }) => {
       <>
          <div
             className='d-flex align-items-start justify-content-center justify-content-md-start'
-            style={{ color: 'var(--mainPalette2)' }}>
+            style={{ color: 'var(--mainPalette2)' }}
+         >
             <div className='d-flex align-items-center justify-content-center gap-3 pt-3 ps-lg-4'>
                <img style={{ height: '30px', width: '30px' }} src={logo} alt='SVG logo image' className='text-reset' />
                <h1 className='fs-5 m-0'>Parcel Manager</h1>
@@ -66,14 +67,17 @@ const Demo = ({ setSelectedLink }) => {
          </div>
 
          <AnimatePresence mode='wait'>
-            <Modal blurBackdrop={false} maxWidth='400px'>
+            <Modal blurBackdrop={false} maxWidth='500px'>
 
                <FormHeader text='Demo' />
 
                <motion.div className='mt-3' variants={containerVariants} initial='mount' animate='animate'>
 
                   <motion.p className='my-2' variants={childVariants}>Hey there!</motion.p>
+
                   <motion.p className='my-2' variants={childVariants}>Hang on while I log you in as a dispatcher and driver, I'll let you know when it's ready...</motion.p>
+
+                  <motion.p className='my-2' variants={childVariants}>Feel free to create or edit jobs, contacts, notes, and much more. </motion.p>
 
                   <motion.div className='mt-2' variants={childVariants}>
                      {
