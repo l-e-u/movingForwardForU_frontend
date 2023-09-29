@@ -94,7 +94,7 @@ function App() {
    };
 
    return (
-      <div className='App'>
+      <div className='App' style={{ minHeight: '100vh' }}>
          <AnimatePresence mode='wait'>
 
             <BrowserRouter>
